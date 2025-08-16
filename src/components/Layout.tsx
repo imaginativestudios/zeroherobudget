@@ -23,11 +23,19 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Skip to main content link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-royal shadow-royal border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-accent" />
+            <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
             <h1 className="text-lg sm:text-xl font-bold text-sidebar-foreground">
               Budget & Debt
             </h1>
@@ -37,8 +45,11 @@ export const Layout = ({ children }: LayoutProps) => {
             size="sm"
             onClick={toggleMobileMenu}
             className="text-sidebar-foreground hover:bg-sidebar-accent/50"
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </Button>
         </div>
       </header>
@@ -52,17 +63,21 @@ export const Layout = ({ children }: LayoutProps) => {
       )}
 
       {/* Sidebar */}
-      <div className={cn(
-        "fixed h-full z-50 transform transition-transform duration-300 ease-in-out",
-        "w-64 lg:w-64",
-        "lg:translate-x-0",
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      )}>
-        <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full">
+      <div 
+        className={cn(
+          "fixed h-full z-50 transform transition-transform duration-300 ease-in-out",
+          "w-64 lg:w-64",
+          "lg:translate-x-0",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+        id="mobile-navigation"
+        aria-label="Main navigation"
+      >
+        <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full" role="navigation" aria-label="Primary navigation">
           <div className="p-4 lg:p-6">
             {/* Desktop Header */}
             <div className="hidden lg:flex items-center gap-3 mb-8">
-              <Crown className="h-8 w-8 text-accent" />
+              <Crown className="h-8 w-8 text-accent" aria-hidden="true" />
               <h1 className="text-xl font-bold text-sidebar-foreground">
                 Budget & Debt
               </h1>
@@ -85,8 +100,9 @@ export const Layout = ({ children }: LayoutProps) => {
                           ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
                           : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                       )}
+                      aria-current={isActive ? "page" : undefined}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon className="h-5 w-5" aria-hidden="true" />
                       <span className="font-medium">{item.name}</span>
                     </Link>
                   </li>
@@ -98,12 +114,16 @@ export const Layout = ({ children }: LayoutProps) => {
       </div>
 
       {/* Main Content */}
-      <main className={cn(
-        "transition-all duration-300 ease-in-out",
-        "safe-header-pt", // ensures content is below fixed header on mobile/tablet
-        "lg:ml-64", // Desktop left margin for sidebar
-        "p-4 sm:p-6 lg:p-8"
-      )}>
+      <main 
+        id="main-content"
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          "safe-header-pt", // ensures content is below fixed header on mobile/tablet
+          "lg:ml-64", // Desktop left margin for sidebar
+          "p-4 sm:p-6 lg:p-8"
+        )}
+        role="main"
+      >
         {children}
       </main>
     </div>

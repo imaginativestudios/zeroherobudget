@@ -45,26 +45,26 @@ export const Dashboard = () => {
   const colors = ["#0284c7", "#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6", "#f97316"];
 
   return (
-    <div className="space-y-8 p-4">
+    <div className="space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Crown className="h-8 w-8 text-accent" />
-            Royal Financial Dashboard
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2 sm:gap-3">
+            <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
+            <span className="leading-tight">Royal Financial Dashboard</span>
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
             Your path to financial sovereignty
           </p>
         </div>
-        <Button variant="gold" size="lg">
-          <TrendingUp className="h-5 w-5" />
-          View Reports
+        <Button variant="gold" size="lg" className="w-full sm:w-auto">
+          <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="text-sm sm:text-base">View Reports</span>
         </Button>
       </div>
 
       {/* Financial Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <FinancialCard
           title="Monthly Income"
           amount={income}
@@ -91,14 +91,14 @@ export const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         {/* Spending by Category Chart */}
         <Card className="shadow-royal">
           <CardHeader>
-            <CardTitle className="text-xl">Spending by Category</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Spending by Category</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -123,10 +123,10 @@ export const Dashboard = () => {
         {/* Debt Payoff Projection */}
         <Card className="shadow-royal">
           <CardHeader>
-            <CardTitle className="text-xl">Debt Payoff Projection</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Debt Payoff Projection</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={schedule.timeline} margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -152,14 +152,14 @@ export const Dashboard = () => {
       {/* Upcoming Payoffs */}
       <Card className="shadow-royal">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Target className="h-6 w-6 text-accent" />
+          <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
+            <Target className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
             Upcoming Payoffs ({strategy} Strategy)
           </CardTitle>
         </CardHeader>
         <CardContent>
           {schedule.perDebt && schedule.perDebt.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
               {schedule.perDebt
                 .filter(debt => debt.months !== null)
                 .slice(0, 6)
@@ -206,14 +206,14 @@ export const Dashboard = () => {
           
           {leftover > 0 && (
             <div className="mt-6 p-4 bg-gradient-subtle rounded-lg border">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h4 className="font-semibold text-foreground">Extra Payment Strategy</h4>
                   <p className="text-sm text-muted-foreground">
                     Applying {formatCurrency(leftover)} extra monthly using {strategy} method
                   </p>
                 </div>
-                <Button variant="royal">
+                <Button variant="royal" className="w-full sm:w-auto">
                   Optimize Strategy
                 </Button>
               </div>

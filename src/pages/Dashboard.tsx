@@ -46,11 +46,6 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-8 p-4">
-      {/* Debug - Remove this once working */}
-      <div style={{ background: 'red', color: 'white', padding: '20px', fontSize: '24px' }}>
-        DASHBOARD IS RENDERING - You should see this red box
-      </div>
-      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

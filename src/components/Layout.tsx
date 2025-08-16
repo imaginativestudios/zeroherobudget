@@ -1,4 +1,4 @@
-import { Crown, Home, DollarSign, Target, TrendingDown, Menu, X } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -35,7 +35,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-royal shadow-royal border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
+            <Rocket className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
             <h1 className="text-lg sm:text-xl font-bold text-sidebar-foreground">
               Freedom Finance
             </h1>
@@ -77,7 +77,7 @@ export const Layout = ({ children }: LayoutProps) => {
           <div className="p-4 lg:p-6">
             {/* Desktop Header */}
             <div className="hidden lg:flex items-center gap-3 mb-8">
-              <Crown className="h-8 w-8 text-accent" aria-hidden="true" />
+              <Rocket className="h-8 w-8 text-accent" aria-hidden="true" />
               <h1 className="text-xl font-bold text-sidebar-foreground">
                 Freedom Finance
               </h1>

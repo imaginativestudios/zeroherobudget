@@ -158,11 +158,11 @@ All colors MUST be HSL.
 @layer components {
   /* Ensure content clears fixed mobile/tablet header safely (with notches) */
   .safe-header-pt {
-    padding-top: calc(64px + env(safe-area-inset-top)) !important;
+    padding-top: calc(88px + env(safe-area-inset-top)) !important;
   }
   @media (min-width: 640px) {
     .safe-header-pt {
-      padding-top: calc(96px + env(safe-area-inset-top)) !important;
+      padding-top: calc(120px + env(safe-area-inset-top)) !important;
     }
   }
   @media (min-width: 1024px) {

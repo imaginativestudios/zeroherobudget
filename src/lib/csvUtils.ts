@@ -26,7 +26,11 @@ export function toCsv(rows: string[][]): string {
   const escapeValue = (value: any): string => {
     if (value == null) return "";
     const str = String(value);
-    return /[",\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
+    
+    // Prevent CSV formula injection by escaping dangerous characters
+    const sanitized = /^[=+\-@]/.test(str) ? "'" + str : str;
+    
+    return /[",\n]/.test(sanitized) ? '"' + sanitized.replace(/"/g, '""') + '"' : sanitized;
   };
   
   return rows.map(row => row.map(escapeValue).join(",")).join("\n");
@@ -89,12 +93,18 @@ export function mapExpenseCsv(rows: string[][]): Expense[] {
     const row = rows[r];
     if (!row || row.every(x => !String(x || "").trim())) continue;
     
+    // Sanitize input values
+    const name = sanitizeTextInput(row[getIndex("name")] || "");
+    const notes = sanitizeTextInput(row[getIndex("notes")] || "");
+    const category = sanitizeTextInput(row[getIndex("category")] || "Uncategorized");
+    const planned = Math.max(0, Math.min(1000000, parseFloat(row[getIndex("planned")]) || 0));
+    
     result.push({
       id: crypto.randomUUID(),
-      name: row[getIndex("name")] || "",
-      planned: parseFloat(row[getIndex("planned")]) || 0,
-      notes: row[getIndex("notes")] || "",
-      category: row[getIndex("category")] || "Uncategorized"
+      name,
+      planned,
+      notes,
+      category
     });
   }
   
@@ -112,19 +122,51 @@ export function mapDebtCsv(rows: string[][]): Debt[] {
     const row = rows[r];
     if (!row || row.every(x => !String(x || "").trim())) continue;
     
-    const balance = parseFloat(row[getIndex("balance")]) || 0;
+    // Sanitize and validate input values
+    const name = sanitizeTextInput(row[getIndex("name")] || "");
+    const type = sanitizeTextInput(row[getIndex("type")] || "debt");
+    const balance = Math.max(0, Math.min(10000000, parseFloat(row[getIndex("balance")]) || 0));
+    const apr = Math.max(0, Math.min(100, parseFloat(row[getIndex("apr")]) || 0));
+    const min = Math.max(0, Math.min(balance, parseFloat(row[getIndex("min")]) || 0));
+    
     result.push({
       id: crypto.randomUUID(),
-      name: row[getIndex("name")] || "",
+      name,
       balance,
-      apr: parseFloat(row[getIndex("apr")]) || 0,
-      min: parseFloat(row[getIndex("min")]) || 0,
-      type: row[getIndex("type")] || "debt",
+      apr,
+      min,
+      type,
       _orig: balance
     });
   }
   
   return result;
+}
+
+// Sanitize text input to prevent XSS and limit length
+export function sanitizeTextInput(input: string): string {
+  if (!input) return "";
+  return input
+    .toString()
+    .trim()
+    .slice(0, 255) // Limit length
+    .replace(/[<>]/g, ""); // Remove potential HTML tags
+}
+
+// Validate CSV file before processing
+export function validateCsvFile(file: File): { isValid: boolean; error?: string } {
+  const maxSize = 5 * 1024 * 1024; // 5MB limit
+  const allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
+  
+  if (file.size > maxSize) {
+    return { isValid: false, error: "File size must be less than 5MB" };
+  }
+  
+  if (!allowedTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.csv')) {
+    return { isValid: false, error: "Please select a valid CSV file" };
+  }
+  
+  return { isValid: true };
 }
 
 export function downloadCsv(filename: string, csvContent: string): void {

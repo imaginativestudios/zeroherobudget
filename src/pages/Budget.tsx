@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
-import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, type Expense, type Asset } from "@/lib/csvUtils";
+import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 
 export const Budget = () => {
   const [income, setIncome] = useLocalStorage("bdt_income", 18254);
@@ -77,12 +77,27 @@ export const Budget = () => {
     const file = event.target.files?.[0];
     if (!file) return;
     
-    const text = await file.text();
-    const rows = parseCsv(text);
-    const mapped = mapExpenseCsv(rows);
+    // Validate file before processing
+    const validation = validateCsvFile(file);
+    if (!validation.isValid) {
+      alert(`Import failed: ${validation.error}`);
+      event.target.value = "";
+      return;
+    }
     
-    if (mapped.length) {
-      setExpenses(mapped);
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const mapped = mapExpenseCsv(rows);
+      
+      if (mapped.length) {
+        setExpenses(mapped);
+      } else {
+        alert("No valid expense data found in the file");
+      }
+    } catch (error) {
+      alert("Failed to import file. Please check the format and try again.");
+      console.error("Import error:", error);
     }
     
     event.target.value = "";

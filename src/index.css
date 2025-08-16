@@ -115,7 +115,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-size: clamp(14px, 2.5vw, 16px);
     line-height: 1.6;
   }

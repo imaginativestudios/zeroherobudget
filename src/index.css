@@ -154,3 +154,20 @@ All colors MUST be HSL.
     gap: clamp(0.5rem, 2vw, 1.5rem);
   }
 }
+
+@layer components {
+  /* Ensure content clears fixed mobile/tablet header safely (with notches) */
+  .safe-header-pt {
+    padding-top: calc(64px + env(safe-area-inset-top));
+  }
+  @media (min-width: 640px) {
+    .safe-header-pt {
+      padding-top: calc(96px + env(safe-area-inset-top));
+    }
+  }
+  @media (min-width: 1024px) {
+    .safe-header-pt {
+      padding-top: 0px;
+    }
+  }
+}

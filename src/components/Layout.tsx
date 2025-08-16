@@ -100,7 +100,7 @@ export const Layout = ({ children }: LayoutProps) => {
       {/* Main Content */}
       <main className={cn(
         "transition-all duration-300 ease-in-out",
-        "pt-20 sm:pt-24 lg:pt-0", // Increased mobile/tablet top padding
+        "safe-header-pt", // ensures content is below fixed header on mobile/tablet
         "lg:ml-64", // Desktop left margin for sidebar
         "p-4 sm:p-6 lg:p-8"
       )}>

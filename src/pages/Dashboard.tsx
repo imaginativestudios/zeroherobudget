@@ -47,24 +47,28 @@ export const Dashboard = () => {
   return (
     <div className="space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2 sm:gap-3">
-            <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-            <span className="leading-tight">Royal Financial Dashboard</span>
-          </h1>
-          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-            Your path to financial sovereignty
-          </p>
+      <div className="flex flex-col gap-4 pt-2 sm:pt-4 lg:pt-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2 sm:gap-3">
+              <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
+              <span className="leading-tight">Royal Financial Dashboard</span>
+            </h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+              Your path to financial sovereignty
+            </p>
+          </div>
+          <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
+            <Button 
+              variant="gold" 
+              size="lg" 
+              className="w-full sm:w-auto min-w-[140px] shadow-gold border-2 border-accent-dark/30 font-semibold"
+            >
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-sm sm:text-base">View Reports</span>
+            </Button>
+          </div>
         </div>
-        <Button 
-          variant="gold" 
-          size="lg" 
-          className="w-full sm:w-auto min-w-[140px] shadow-gold border-2 border-accent-dark/30 font-semibold"
-        >
-          <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
-          <span className="text-sm sm:text-base">View Reports</span>
-        </Button>
       </div>
 
       {/* Financial Overview Cards */}

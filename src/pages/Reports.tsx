@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Crown, BarChart3 } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -18,8 +18,7 @@ export const Reports = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <Crown className="h-8 w-8 text-accent" />
+      <div className="pt-8">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
       </div>
       

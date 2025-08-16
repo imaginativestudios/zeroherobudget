@@ -37,7 +37,7 @@ export const Layout = ({ children }: LayoutProps) => {
           <div className="flex items-center gap-3">
             <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
             <h1 className="text-lg sm:text-xl font-bold text-sidebar-foreground">
-              Budget & Debt
+              Freedom Finance
             </h1>
           </div>
           <Button
@@ -79,7 +79,7 @@ export const Layout = ({ children }: LayoutProps) => {
             <div className="hidden lg:flex items-center gap-3 mb-8">
               <Crown className="h-8 w-8 text-accent" aria-hidden="true" />
               <h1 className="text-xl font-bold text-sidebar-foreground">
-                Budget & Debt
+                Freedom Finance
               </h1>
             </div>
             

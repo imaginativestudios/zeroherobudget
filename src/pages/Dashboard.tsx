@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Crown, DollarSign, TrendingUp, Target, AlertTriangle } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle } from "lucide-react";
 import { FinancialCard } from "@/components/FinancialCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,10 +49,9 @@ export const Dashboard = () => {
       {/* Header */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2 sm:gap-3">
-              <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-              <span className="leading-tight">Royal Financial Dashboard</span>
+          <div className="pt-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+              <span className="leading-tight">Dashboard</span>
             </h1>
             <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Your path to financial sovereignty
@@ -60,9 +59,9 @@ export const Dashboard = () => {
           </div>
           <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
             <Button 
-              variant="gold" 
+              variant="default" 
               size="lg" 
-              className="w-full sm:w-auto min-w-[140px] shadow-gold border-2 border-accent-dark/30 font-semibold"
+              className="w-full sm:w-auto min-w-[140px] font-semibold"
             >
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="text-sm sm:text-base">View Reports</span>

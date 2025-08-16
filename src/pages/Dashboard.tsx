@@ -45,7 +45,12 @@ export const Dashboard = () => {
   const colors = ["#0284c7", "#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6", "#f97316"];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-4">
+      {/* Debug - Remove this once working */}
+      <div style={{ background: 'red', color: 'white', padding: '20px', fontSize: '24px' }}>
+        DASHBOARD IS RENDERING - You should see this red box
+      </div>
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

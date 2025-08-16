@@ -29,11 +29,11 @@ All colors MUST be HSL.
     --muted: 250 20% 95%;
     --muted-foreground: 260 10% 40%; /* Improved contrast from 45% to 40% */
 
-    --accent: 45 100% 60%;
-    --accent-foreground: 260 15% 8%;
+    --accent: 35 85% 45%; /* Improved contrast: darker, less saturated yellow-orange */
+    --accent-foreground: 0 0% 100%; /* White text on accent backgrounds */
     
-    --accent-light: 45 100% 70%;
-    --accent-dark: 45 100% 50%;
+    --accent-light: 35 85% 55%; /* Lighter variant */
+    --accent-dark: 35 85% 35%; /* Darker variant for better contrast */
 
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;

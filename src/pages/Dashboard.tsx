@@ -57,7 +57,11 @@ export const Dashboard = () => {
             Your path to financial sovereignty
           </p>
         </div>
-        <Button variant="gold" size="lg" className="w-full sm:w-auto">
+        <Button 
+          variant="gold" 
+          size="lg" 
+          className="w-full sm:w-auto min-w-[140px] shadow-gold border-2 border-accent-dark/30 font-semibold"
+        >
           <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
           <span className="text-sm sm:text-base">View Reports</span>
         </Button>

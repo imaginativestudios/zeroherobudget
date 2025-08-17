@@ -105,7 +105,7 @@ export const Budget = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="pt-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportExpenses}>

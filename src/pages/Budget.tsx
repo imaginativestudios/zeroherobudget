@@ -1,20 +1,30 @@
 import { useState } from "react";
-import { Crown, DollarSign, Plus, Download, Upload, Trash2 } from "lucide-react";
+import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
+import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 
 export const Budget = () => {
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useLocalStorage("bdt_income", 18254);
   const [expenses, setExpenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
   const [assets, setAssets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  
+  const { getMonthlyActuals } = useTransactions();
+  const monthlyActuals = getMonthlyActuals(selectedMonth);
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
+  const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
+  const actualLeftover = Math.max(0, (income || 0) - totalActual);
 
   const addExpense = () => {
     setExpenses([
@@ -105,24 +115,47 @@ export const Budget = () => {
 
   return (
     <div className="space-y-8">
-      <div className="pt-8 flex items-center justify-between">
+      <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportExpenses}>
-            <Download className="h-4 w-4" />
-            Export CSV
-          </Button>
-          <Button variant="outline" onClick={() => document.getElementById('import-file')?.click()}>
-            <Upload className="h-4 w-4" />
-            Import CSV
-          </Button>
-          <input
-            id="import-file"
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={importExpenses}
-          />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Label className="text-sm font-medium">Compare vs:</Label>
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => {
+                  const date = new Date();
+                  date.setMonth(date.getMonth() - i);
+                  const monthStr = date.toISOString().slice(0, 7);
+                  return (
+                    <SelectItem key={monthStr} value={monthStr}>
+                      {formatMonthDisplay(monthStr)}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportExpenses}>
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
+            <Button variant="outline" onClick={() => document.getElementById('import-file')?.click()}>
+              <Upload className="h-4 w-4" />
+              Import CSV
+            </Button>
+            <input
+              id="import-file"
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={importExpenses}
+            />
+          </div>
         </div>
       </div>
 
@@ -159,52 +192,76 @@ export const Budget = () => {
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
+               <thead>
                  <tr>
                   <th className="text-left p-3 font-semibold">Category</th>
                   <th className="text-left p-3 font-semibold">Planned</th>
+                  <th className="text-left p-3 font-semibold">Actual</th>
+                  <th className="text-left p-3 font-semibold">Variance</th>
                   <th className="text-left p-3 font-semibold">Notes</th>
                   <th className="text-center p-3 font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {expenses.map((expense) => (
-                  <tr key={expense.id}>
-                    <td className="p-3">
-                      <Input
-                        value={expense.name}
-                        onChange={(e) => updateExpense(expense.id, 'name', e.target.value)}
-                        className="min-w-0"
-                      />
-                    </td>
-                    <td className="p-3">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={expense.planned}
-                        onChange={(e) => updateExpense(expense.id, 'planned', parseFloat(e.target.value) || 0)}
-                        className="w-32"
-                      />
-                    </td>
-                    <td className="p-3">
-                      <Input
-                        value={expense.notes || ""}
-                        onChange={(e) => updateExpense(expense.id, 'notes', e.target.value)}
-                        className="min-w-0"
-                      />
-                    </td>
-                    <td className="p-3 text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeExpense(expense.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+               <tbody>
+                {expenses.map((expense) => {
+                  const actual = monthlyActuals[expense.id] || 0;
+                  const variance = actual - expense.planned;
+                  const variancePercent = expense.planned > 0 ? (variance / expense.planned) * 100 : 0;
+                  
+                  return (
+                    <tr key={expense.id}>
+                      <td className="p-3">
+                        <Input
+                          value={expense.name}
+                          onChange={(e) => updateExpense(expense.id, 'name', e.target.value)}
+                          className="min-w-0"
+                        />
+                      </td>
+                      <td className="p-3">
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={expense.planned}
+                          onChange={(e) => updateExpense(expense.id, 'planned', parseFloat(e.target.value) || 0)}
+                          className="w-32"
+                        />
+                      </td>
+                      <td className="p-3">
+                        <div className="w-32 px-3 py-2 text-sm bg-muted rounded-md">
+                          {formatCurrency(actual)}
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <div className={`w-36 px-3 py-2 text-sm rounded-md font-medium ${
+                          variance === 0 
+                            ? 'bg-muted text-muted-foreground' 
+                            : variance > 0 
+                              ? 'bg-destructive/10 text-destructive' 
+                              : 'bg-success/10 text-success'
+                        }`}>
+                          {variance === 0 ? 'No data' : `${formatCurrency(variance)} (${variancePercent > 0 ? '+' : ''}${variancePercent.toFixed(1)}%)`}
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <Input
+                          value={expense.notes || ""}
+                          onChange={(e) => updateExpense(expense.id, 'notes', e.target.value)}
+                          className="min-w-0"
+                        />
+                      </td>
+                      <td className="p-3 text-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeExpense(expense.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -216,10 +273,16 @@ export const Budget = () => {
             </Button>
             <div className="space-y-1 text-right">
               <div className="text-lg font-semibold">
-                Total Expenses: {formatCurrency(totalExpenses)}
+                Total Planned: {formatCurrency(totalExpenses)}
+              </div>
+              <div className="text-lg font-semibold">
+                Total Actual: {formatCurrency(totalActual)}
               </div>
               <div className={`text-lg font-bold ${leftover >= 0 ? 'text-success' : 'text-destructive'}`}>
-                Leftover: {formatCurrency(leftover)}
+                Planned Leftover: {formatCurrency(leftover)}
+              </div>
+              <div className={`text-lg font-bold ${actualLeftover >= 0 ? 'text-success' : 'text-destructive'}`}>
+                Actual Leftover: {formatCurrency(actualLeftover)}
               </div>
             </div>
           </div>

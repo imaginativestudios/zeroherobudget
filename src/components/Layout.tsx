@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Menu, X } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const navigationItems = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "Budgets", href: "/budgets", icon: DollarSign },
   { name: "Debts", href: "/debts", icon: Target },
+  { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Reports", href: "/reports", icon: TrendingDown },
 ];
 

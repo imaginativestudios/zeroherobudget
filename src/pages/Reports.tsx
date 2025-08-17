@@ -1,25 +1,53 @@
-import { useMemo } from "react";
-import { BarChart3 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { BarChart3, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
+import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export const Reports = () => {
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [schedule] = useLocalStorage("bdt_schedule", { timeline: [], totalInterest: 0, perDebt: [] });
+  const { getMonthlyActuals } = useTransactions();
+  const monthlyActuals = getMonthlyActuals(selectedMonth);
 
   const expenseData = useMemo(() => 
     expenses.map(expense => ({
-      name: expense.name,
-      planned: expense.planned || 0
-    })), [expenses]
+      name: expense.name.length > 15 ? expense.name.substring(0, 15) + '...' : expense.name,
+      planned: expense.planned || 0,
+      actual: monthlyActuals[expense.id] || 0
+    })), [expenses, monthlyActuals]
   );
 
   return (
     <div className="space-y-8">
-      <div className="pt-8">
+      <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <Label className="text-sm font-medium">Month:</Label>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 12 }, (_, i) => {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthStr = date.toISOString().slice(0, 7);
+                return (
+                  <SelectItem key={monthStr} value={monthStr}>
+                    {formatMonthDisplay(monthStr)}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
         <Card className="shadow-royal overflow-hidden">
@@ -27,7 +55,7 @@ export const Reports = () => {
           <CardTitle className="text-xl flex items-center gap-3">
             <BarChart3 className="h-6 w-6 text-accent" />
             <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Planned Expenses (Monthly)
+              Planned vs Actual - {formatMonthDisplay(selectedMonth)}
             </span>
           </CardTitle>
         </CardHeader>
@@ -86,6 +114,15 @@ export const Reports = () => {
                   strokeWidth={1}
                   stroke="hsl(var(--primary))"
                   filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
+                />
+                <Bar 
+                  dataKey="actual" 
+                  name="Actual" 
+                  fill="hsl(var(--accent))"
+                  radius={[4, 4, 0, 0]}
+                  strokeWidth={1}
+                  stroke="hsl(var(--accent))"
+                  filter="drop-shadow(0 2px 4px hsl(var(--accent) / 0.2))"
                 />
               </BarChart>
             </ResponsiveContainer>

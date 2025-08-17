@@ -38,7 +38,7 @@ All colors MUST be HSL.
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 70% 40%; /* Improved contrast from 45% to 40% */
+    --success: 260 100% 25%; /* Dark purple instead of green */
     --success-foreground: 0 0% 100%;
 
     --border: 260 20% 82%; /* Improved contrast from 88% to 82% */

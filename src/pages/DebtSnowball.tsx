@@ -100,7 +100,7 @@ export const DebtSnowball = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="pt-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-foreground">Debt Snowball Strategy</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportDebts}>

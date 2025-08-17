@@ -95,7 +95,7 @@ export const OptimizeStrategyDialog = ({
           {/* Strategy Comparison */}
           <TabsContent value="comparison" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className={`border-2 ${currentStrategy === 'Snowball' ? 'border-primary' : 'border-border'}`}>
+              <Card className={`border-2 flex flex-col h-full ${currentStrategy === 'Snowball' ? 'border-primary' : 'border-border'}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5 text-primary" />
@@ -103,8 +103,8 @@ export const OptimizeStrategyDialog = ({
                     {currentStrategy === 'Snowball' && <Badge variant="default">Current</Badge>}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
+                <CardContent className="space-y-4 flex-1 flex flex-col">
+                  <div className="space-y-2 flex-1">
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">Payoff Time</span>
                       <span className="font-semibold">{snowballResult.perDebt[0]?.payoffLabel || 'N/A'}</span>
@@ -117,26 +117,26 @@ export const OptimizeStrategyDialog = ({
                       <span className="text-sm text-muted-foreground">Strategy</span>
                       <span className="text-sm">Smallest balance first</span>
                     </div>
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Pros:</strong> Quick psychological wins, builds momentum
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <strong>Best for:</strong> Staying motivated, multiple small debts
-                    </p>
+                    <div className="pt-2">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Pros:</strong> Quick psychological wins, builds momentum
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        <strong>Best for:</strong> Staying motivated, multiple small debts
+                      </p>
+                    </div>
                   </div>
                   <Button 
                     onClick={() => handleStrategySelect('Snowball')}
                     variant={currentStrategy === 'Snowball' ? 'default' : 'outline'}
-                    className="w-full"
+                    className="w-full mt-auto"
                   >
                     {currentStrategy === 'Snowball' ? 'Current Strategy' : 'Switch to Snowball'}
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className={`border-2 ${currentStrategy === 'Avalanche' ? 'border-primary' : 'border-border'}`}>
+              <Card className={`border-2 flex flex-col h-full ${currentStrategy === 'Avalanche' ? 'border-primary' : 'border-border'}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-accent" />
@@ -144,8 +144,8 @@ export const OptimizeStrategyDialog = ({
                     {currentStrategy === 'Avalanche' && <Badge variant="default">Current</Badge>}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
+                <CardContent className="space-y-4 flex-1 flex flex-col">
+                  <div className="space-y-2 flex-1">
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">Payoff Time</span>
                       <span className="font-semibold">{avalancheResult.perDebt[0]?.payoffLabel || 'N/A'}</span>
@@ -158,19 +158,19 @@ export const OptimizeStrategyDialog = ({
                       <span className="text-sm text-muted-foreground">Strategy</span>
                       <span className="text-sm">Highest interest first</span>
                     </div>
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Pros:</strong> Saves the most money, mathematically optimal
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <strong>Best for:</strong> High-interest debts, disciplined approach
-                    </p>
+                    <div className="pt-2">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Pros:</strong> Saves the most money, mathematically optimal
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        <strong>Best for:</strong> High-interest debts, disciplined approach
+                      </p>
+                    </div>
                   </div>
                   <Button 
                     onClick={() => handleStrategySelect('Avalanche')}
                     variant={currentStrategy === 'Avalanche' ? 'default' : 'outline'}
-                    className="w-full"
+                    className="w-full mt-auto"
                   >
                     {currentStrategy === 'Avalanche' ? 'Current Strategy' : 'Switch to Avalanche'}
                   </Button>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { Button } from "@/components/ui/button";
@@ -94,9 +95,12 @@ export const Dashboard = () => {
               variant="default" 
               size="lg" 
               className="w-full sm:w-auto min-w-[140px] font-semibold"
+              asChild
             >
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-sm sm:text-base">View Reports</span>
+              <Link to="/reports">
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-base">View Reports</span>
+              </Link>
             </Button>
           </div>
         </div>

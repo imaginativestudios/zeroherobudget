@@ -137,7 +137,7 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
-            <div className="h-72 sm:h-80">
+            <div className="h-80 sm:h-96 lg:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <defs>
@@ -156,8 +156,8 @@ export const Dashboard = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={85}
-                    innerRadius={25}
+                    outerRadius="75%"
+                    innerRadius="30%"
                     stroke="hsl(var(--background))"
                     strokeWidth={2}
                     label={false}
@@ -203,7 +203,7 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
-            <div className="h-72 sm:h-80">
+            <div className="h-80 sm:h-96 lg:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
                   <defs>

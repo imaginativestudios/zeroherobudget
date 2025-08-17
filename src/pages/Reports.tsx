@@ -32,7 +32,7 @@ export const Reports = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="pb-6">
-          <div className="h-96">
+          <div className="h-96 sm:h-[450px] lg:h-[500px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={expenseData} margin={{ left: 20, right: 20, top: 20, bottom: 60 }}>
                 <defs>

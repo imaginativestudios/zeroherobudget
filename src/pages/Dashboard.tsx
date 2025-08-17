@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle } from "lucide-react";
 import { FinancialCard } from "@/components/FinancialCard";
+import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -12,9 +13,10 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, Ca
 export const Dashboard = () => {
   const [income] = useLocalStorage("bdt_income", 18254);
   const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [debts] = useLocalStorage("bdt_debts", SAMPLE_DEBTS);
-  const [strategy] = useLocalStorage("bdt_strategy", "Snowball");
+  const [debts, setDebts] = useLocalStorage("bdt_debts", SAMPLE_DEBTS);
+  const [strategy, setStrategy] = useLocalStorage("bdt_strategy", "Snowball");
   const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
   const totalExpenses = useMemo(() => 
     expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0), [expenses]
@@ -326,7 +328,11 @@ export const Dashboard = () => {
                     Applying {formatCurrency(leftover)} extra monthly using {strategy} method
                   </p>
                 </div>
-                <Button variant="royal" className="w-full sm:w-auto">
+                <Button 
+                  variant="royal" 
+                  className="w-full sm:w-auto"
+                  onClick={() => setOptimizeDialogOpen(true)}
+                >
                   Optimize Strategy
                 </Button>
               </div>
@@ -334,6 +340,18 @@ export const Dashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      <OptimizeStrategyDialog
+        open={optimizeDialogOpen}
+        onOpenChange={setOptimizeDialogOpen}
+        debts={debts}
+        currentLeftover={leftover}
+        currentStrategy={strategy}
+        onStrategyUpdate={(newStrategy, extraPayment) => {
+          setStrategy(newStrategy);
+          // Could also update leftover/extra payment if needed
+        }}
+      />
     </div>
   );
 };

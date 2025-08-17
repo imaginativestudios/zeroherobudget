@@ -120,7 +120,7 @@ export const Layout = ({ children }: LayoutProps) => {
           "transition-all duration-300 ease-in-out",
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
-          "p-4 sm:p-6 lg:p-8"
+          "p-2 sm:p-4 lg:p-8"
         )}
         role="main"
       >

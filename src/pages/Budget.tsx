@@ -235,7 +235,7 @@ export const Budget = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
+                <tr>
                   <th className="text-left p-3 font-semibold">Asset</th>
                   <th className="text-left p-3 font-semibold">Value</th>
                   <th className="text-center p-3 font-semibold">Actions</th>
@@ -243,7 +243,7 @@ export const Budget = () => {
               </thead>
               <tbody>
                 {assets.map((asset) => (
-                  <tr key={asset.id} className="border-b border-border">
+                  <tr key={asset.id}>
                     <td className="p-3">
                       <Input
                         value={asset.name}

@@ -9,17 +9,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useAccounts } from "@/hooks/useAccounts";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
-import { toCsv, downloadCsv, parseCsv, validateCsvFile } from "@/lib/csvUtils";
+import { toCsv, downloadCsv, parseCsv, validateCsvFile, mapTransactionCsv } from "@/lib/csvUtils";
 
 export const Transactions = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const [selectedAccount, setSelectedAccount] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  
+  const { accounts, getActiveAccounts } = useAccounts();
+  const activeAccounts = getActiveAccounts();
   
   const {
     transactions,
@@ -35,17 +40,19 @@ export const Transactions = () => {
     description: "",
     amount: 0,
     category: "",
+    accountId: activeAccounts[0]?.id || 'default-checking',
+    flow: 'out' as 'in' | 'out',
     expenseId: "",
     notes: ""
   });
 
-  const monthTransactions = getTransactionsByMonth(selectedMonth);
+  const monthTransactions = getTransactionsByMonth(selectedMonth, selectedAccount);
   const filteredTransactions = monthTransactions.filter(t =>
     t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalSpending = getTotalActualSpending(selectedMonth);
+  const totalSpending = getTotalActualSpending(selectedMonth, selectedAccount);
 
   const handleAddTransaction = () => {
     if (!newTransaction.description || newTransaction.amount <= 0) return;
@@ -60,6 +67,8 @@ export const Transactions = () => {
       description: "",
       amount: 0,
       category: "",
+      accountId: activeAccounts[0]?.id || 'default-checking',
+      flow: 'out' as 'in' | 'out',
       expenseId: "",
       notes: ""
     });
@@ -73,6 +82,8 @@ export const Transactions = () => {
       description: transaction.description,
       amount: transaction.amount,
       category: transaction.category,
+      accountId: transaction.accountId,
+      flow: transaction.flow,
       expenseId: transaction.expenseId || "",
       notes: transaction.notes || ""
     });
@@ -92,6 +103,8 @@ export const Transactions = () => {
       description: "",
       amount: 0,
       category: "",
+      accountId: activeAccounts[0]?.id || 'default-checking',
+      flow: 'out' as 'in' | 'out',
       expenseId: "",
       notes: ""
     });
@@ -99,17 +112,22 @@ export const Transactions = () => {
 
   const exportTransactions = () => {
     const rows = [
-      ["date", "description", "amount", "category", "expenseId", "notes"],
+      ["date", "description", "amount", "category", "account", "flow", "expenseId", "notes"],
       ...monthTransactions.map(t => [
         t.date,
         t.description,
         t.amount.toString(),
         t.category,
+        accounts.find(a => a.id === t.accountId)?.name || t.accountId,
+        t.flow,
         t.expenseId || "",
         t.notes || ""
       ])
     ];
-    downloadCsv(`transactions-${selectedMonth}.csv`, toCsv(rows));
+    const filename = selectedAccount === 'all' 
+      ? `transactions-${selectedMonth}.csv`
+      : `transactions-${selectedMonth}-${accounts.find(a => a.id === selectedAccount)?.name || selectedAccount}.csv`;
+    downloadCsv(filename, toCsv(rows));
   };
 
   const importTransactions = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,27 +146,22 @@ export const Transactions = () => {
       const rows = parseCsv(text);
       if (!rows.length) return;
       
-      const header = rows[0].map(h => h.trim().toLowerCase());
-      const getIndex = (key: string) => header.indexOf(key);
+      const parsedTransactions = mapTransactionCsv(rows, accounts);
       
-      for (let r = 1; r < rows.length; r++) {
-        const row = rows[r];
-        if (!row || row.every(x => !String(x || "").trim())) continue;
-        
-        const description = row[getIndex("description")]?.trim();
-        const amount = parseFloat(row[getIndex("amount")]) || 0;
-        
-        if (description && amount > 0) {
-          addTransaction({
-            date: row[getIndex("date")] || formatDate(new Date()),
-            description,
-            amount,
-            category: row[getIndex("category")] || "Uncategorized",
-            expenseId: row[getIndex("expenseid")] || undefined,
-            notes: row[getIndex("notes")] || ""
-          });
-        }
+      for (const transaction of parsedTransactions) {
+        addTransaction({
+          date: transaction.date,
+          description: transaction.description,
+          amount: transaction.amount,
+          category: transaction.category,
+          accountId: transaction.accountId,
+          flow: transaction.flow,
+          expenseId: transaction.expenseId,
+          notes: transaction.notes || ""
+        });
       }
+      
+      alert(`Successfully imported ${parsedTransactions.length} transactions.`);
     } catch (error) {
       alert("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);
@@ -203,6 +216,23 @@ export const Transactions = () => {
                         </SelectItem>
                       );
                     })}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Label>Account:</Label>
+                <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Accounts</SelectItem>
+                    {activeAccounts.map(account => (
+                      <SelectItem key={account.id} value={account.id}>
+                        {account.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -261,6 +291,36 @@ export const Transactions = () => {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
+                      <Label>Account</Label>
+                      <Select value={newTransaction.accountId} onValueChange={(value) => setNewTransaction({...newTransaction, accountId: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select account" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activeAccounts.map(account => (
+                            <SelectItem key={account.id} value={account.id}>
+                              {account.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Type</Label>
+                      <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({...newTransaction, flow: value})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="out">Expense (Money Out)</SelectItem>
+                          <SelectItem value="in">Income (Money In)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
                       <Label>Category</Label>
                       <Input
                         value={newTransaction.category}
@@ -310,6 +370,7 @@ export const Transactions = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             {formatMonthDisplay(selectedMonth)} Summary
+            {selectedAccount !== 'all' && ` - ${accounts.find(a => a.id === selectedAccount)?.name}`}
             <span className="text-lg font-bold text-destructive">
               Total Spent: {formatCurrency(totalSpending)}
             </span>
@@ -335,6 +396,7 @@ export const Transactions = () => {
                     <th className="text-left p-3 font-semibold">Date</th>
                     <th className="text-left p-3 font-semibold">Description</th>
                     <th className="text-left p-3 font-semibold">Amount</th>
+                    <th className="text-left p-3 font-semibold">Account</th>
                     <th className="text-left p-3 font-semibold">Category</th>
                     <th className="text-left p-3 font-semibold">Budget Line</th>
                     <th className="text-center p-3 font-semibold">Actions</th>
@@ -345,7 +407,12 @@ export const Transactions = () => {
                     <tr key={transaction.id} className="border-b hover:bg-muted/50">
                       <td className="p-3">{formatDisplayDate(transaction.date)}</td>
                       <td className="p-3">{transaction.description}</td>
-                      <td className="p-3 font-medium">{formatCurrency(transaction.amount)}</td>
+                      <td className="p-3 font-medium">
+                        <span className={transaction.flow === 'in' ? 'text-green-600' : 'text-red-600'}>
+                          {transaction.flow === 'in' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        </span>
+                      </td>
+                      <td className="p-3">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
                       <td className="p-3">{transaction.category}</td>
                       <td className="p-3">
                         {transaction.expenseId 
@@ -363,6 +430,8 @@ export const Transactions = () => {
                                 description: "",
                                 amount: 0,
                                 category: "",
+                                accountId: activeAccounts[0]?.id || 'default-checking',
+                                flow: 'out' as 'in' | 'out',
                                 expenseId: "",
                                 notes: ""
                               });
@@ -401,7 +470,7 @@ export const Transactions = () => {
                                     />
                                   </div>
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                   <Label>Description</Label>
                                   <Input
@@ -409,6 +478,36 @@ export const Transactions = () => {
                                     onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
                                     placeholder="Transaction description"
                                   />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label>Account</Label>
+                                    <Select value={newTransaction.accountId} onValueChange={(value) => setNewTransaction({...newTransaction, accountId: value})}>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select account" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {activeAccounts.map(account => (
+                                          <SelectItem key={account.id} value={account.id}>
+                                            {account.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Type</Label>
+                                    <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({...newTransaction, flow: value})}>
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="out">Expense (Money Out)</SelectItem>
+                                        <SelectItem value="in">Income (Money In)</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-4">

@@ -1,9 +1,11 @@
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, MonthlyActuals } from '@/types/transactions';
 import { isDateInMonth } from '@/lib/dateUtils';
+import { useAccounts } from './useAccounts';
 
 export function useTransactions() {
   const [transactions, setTransactions] = useLocalStorage<Transaction[]>('bdt_transactions', []);
+  const { updateAccount, getAccountById } = useAccounts();
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
     const newTransaction: Transaction = {
@@ -11,6 +13,14 @@ export function useTransactions() {
       id: crypto.randomUUID(),
     };
     setTransactions([...transactions, newTransaction]);
+    
+    // Update account balance
+    const account = getAccountById(transaction.accountId);
+    if (account) {
+      const balanceChange = transaction.flow === 'in' ? transaction.amount : -transaction.amount;
+      updateAccount(account.id, { balance: account.balance + balanceChange });
+    }
+    
     return newTransaction;
   };
 
@@ -24,16 +34,20 @@ export function useTransactions() {
     setTransactions(transactions.filter(t => t.id !== id));
   };
 
-  const getTransactionsByMonth = (monthStr: string): Transaction[] => {
-    return transactions.filter(t => isDateInMonth(t.date, monthStr));
+  const getTransactionsByMonth = (monthStr: string, accountId?: string): Transaction[] => {
+    let filtered = transactions.filter(t => isDateInMonth(t.date, monthStr));
+    if (accountId && accountId !== 'all') {
+      filtered = filtered.filter(t => t.accountId === accountId);
+    }
+    return filtered;
   };
 
-  const getMonthlyActuals = (monthStr: string): MonthlyActuals => {
-    const monthTransactions = getTransactionsByMonth(monthStr);
+  const getMonthlyActuals = (monthStr: string, accountId?: string): MonthlyActuals => {
+    const monthTransactions = getTransactionsByMonth(monthStr, accountId);
     const actuals: MonthlyActuals = {};
     
     monthTransactions.forEach(transaction => {
-      if (transaction.expenseId) {
+      if (transaction.expenseId && transaction.flow === 'out') {
         actuals[transaction.expenseId] = (actuals[transaction.expenseId] || 0) + transaction.amount;
       }
     });
@@ -41,8 +55,9 @@ export function useTransactions() {
     return actuals;
   };
 
-  const getTotalActualSpending = (monthStr: string): number => {
-    return getTransactionsByMonth(monthStr)
+  const getTotalActualSpending = (monthStr: string, accountId?: string): number => {
+    return getTransactionsByMonth(monthStr, accountId)
+      .filter(t => t.flow === 'out')
       .reduce((sum, t) => sum + t.amount, 0);
   };
 

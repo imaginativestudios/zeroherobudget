@@ -1,9 +1,29 @@
+export interface Transaction {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  category: string;
+  accountId: string;
+  flow: 'in' | 'out';
+  expenseId?: string;
+  notes?: string;
+}
+
 export interface Expense {
   id: string;
   name: string;
   planned: number;
   notes: string;
   category: string;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  type: 'checking' | 'savings' | 'credit' | 'cash' | 'investment';
+  balance: number;
+  isActive: boolean;
 }
 
 export interface Debt {
@@ -14,6 +34,107 @@ export interface Debt {
   min: number;
   type: string;
   _orig?: number;
+}
+
+export function mapTransactionCsv(rows: string[][], accounts: Account[]): Transaction[] {
+  if (!rows.length) return [];
+  
+  const header = rows[0].map(h => h.trim().toLowerCase());
+  const getIndex = (key: string) => header.indexOf(key);
+  
+  // Try to find account mapping - common bank CSV headers
+  const accountMapping = new Map<string, string>();
+  const defaultAccount = accounts.find(a => a.isActive) || accounts[0];
+  
+  const result: Transaction[] = [];
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row.every(x => !String(x || "").trim())) continue;
+    
+    // Parse amount - handle different formats
+    let amount = 0;
+    let flow: 'in' | 'out' = 'out';
+    
+    const amountStr = row[getIndex("amount")] || row[getIndex("transaction amount")] || 
+                     row[getIndex("debit")] || row[getIndex("credit")] || "";
+    
+    // Check for separate debit/credit columns
+    const debitAmount = parseFloat(row[getIndex("debit")] || "0");
+    const creditAmount = parseFloat(row[getIndex("credit")] || "0");
+    
+    if (debitAmount > 0) {
+      amount = debitAmount;
+      flow = 'out';
+    } else if (creditAmount > 0) {
+      amount = creditAmount;
+      flow = 'in';
+    } else {
+      const parsedAmount = parseFloat(amountStr.replace(/[,$]/g, ''));
+      if (!isNaN(parsedAmount)) {
+        amount = Math.abs(parsedAmount);
+        flow = parsedAmount < 0 ? 'out' : 'in';
+      }
+    }
+    
+    if (amount <= 0) continue;
+    
+    // Parse description
+    const description = sanitizeTextInput(
+      row[getIndex("description")] || 
+      row[getIndex("transaction description")] || 
+      row[getIndex("memo")] || 
+      row[getIndex("reference")] || 
+      "Imported Transaction"
+    );
+    
+    // Parse date
+    let date = row[getIndex("date")] || row[getIndex("transaction date")] || row[getIndex("post date")];
+    if (date) {
+      // Try to parse different date formats
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        date = parsedDate.toISOString().split('T')[0];
+      } else {
+        date = new Date().toISOString().split('T')[0];
+      }
+    } else {
+      date = new Date().toISOString().split('T')[0];
+    }
+    
+    // Parse category
+    const category = sanitizeTextInput(
+      row[getIndex("category")] || 
+      row[getIndex("transaction category")] || 
+      "Imported"
+    );
+    
+    // Determine account (for now, use default - could be enhanced to map account names)
+    const accountName = row[getIndex("account")] || row[getIndex("account name")] || "";
+    let accountId = defaultAccount?.id || 'default-checking';
+    
+    if (accountName) {
+      const matchedAccount = accounts.find(a => 
+        a.name.toLowerCase().includes(accountName.toLowerCase()) ||
+        accountName.toLowerCase().includes(a.name.toLowerCase())
+      );
+      if (matchedAccount) {
+        accountId = matchedAccount.id;
+      }
+    }
+    
+    result.push({
+      id: crypto.randomUUID(),
+      date,
+      description,
+      amount,
+      category,
+      accountId,
+      flow,
+      notes: sanitizeTextInput(row[getIndex("notes")] || "")
+    });
+  }
+  
+  return result;
 }
 
 export interface Asset {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GripVertical, Plus, Edit, Trash2, Check, X } from "lucide-react";
+import { GripVertical, Plus, MoreHorizontal, Edit, Trash2, Check, X } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -12,6 +12,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/constants";
@@ -132,19 +138,7 @@ export function GroupCard({
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-lg">{groupName}</h3>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditing(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <h3 className="font-semibold text-lg">{groupName}</h3>
                 )}
               </div>
               
@@ -161,17 +155,43 @@ export function GroupCard({
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteGroup();
-                    }}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="bg-background border z-50"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsEditing(true);
+                        }}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Group
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteGroup();
+                        }}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Group
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>

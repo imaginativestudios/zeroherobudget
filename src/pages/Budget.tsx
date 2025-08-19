@@ -18,8 +18,8 @@ export const Budget = () => {
   const [expenses, setExpenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
   const [assets, setAssets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
   
-  const { getMonthlyActuals } = useTransactions();
-  const monthlyActuals = getMonthlyActuals(selectedMonth);
+  const { getMonthlyActualsByCategory } = useTransactions();
+  const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);

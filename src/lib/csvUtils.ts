@@ -36,7 +36,7 @@ export interface Debt {
   _orig?: number;
 }
 
-export function mapTransactionCsv(rows: string[][], accounts: Account[]): Transaction[] {
+export function mapTransactionCsv(rows: string[][], accounts: Account[], expenses?: any[]): Transaction[] {
   if (!rows.length) return [];
   
   const header = rows[0].map(h => h.trim().toLowerCase());
@@ -122,6 +122,17 @@ export function mapTransactionCsv(rows: string[][], accounts: Account[]): Transa
       }
     }
     
+    // Try to link to budget expense by matching category
+    let expenseId: string | undefined;
+    if (expenses && flow === 'out') {
+      const matchedExpense = expenses.find(expense => 
+        expense.category?.toLowerCase() === category?.toLowerCase()
+      );
+      if (matchedExpense) {
+        expenseId = matchedExpense.id;
+      }
+    }
+
     result.push({
       id: crypto.randomUUID(),
       date,
@@ -130,6 +141,7 @@ export function mapTransactionCsv(rows: string[][], accounts: Account[]): Transa
       category,
       accountId,
       flow,
+      expenseId,
       notes: sanitizeTextInput(row[getIndex("notes")] || "")
     });
   }

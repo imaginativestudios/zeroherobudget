@@ -152,7 +152,7 @@ export const Transactions = () => {
         return;
       }
       
-      const parsedTransactions = mapTransactionCsv(rows, accounts);
+      const parsedTransactions = mapTransactionCsv(rows, accounts, expenses);
       
       if (parsedTransactions.length === 0) {
         toast.error("No valid transactions found in CSV");

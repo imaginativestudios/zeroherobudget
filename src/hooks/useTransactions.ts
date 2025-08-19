@@ -81,6 +81,30 @@ export function useTransactions() {
     return actuals;
   };
 
+  const getMonthlyActualsByCategory = (monthStr: string, expenses: any[], accountId?: string): MonthlyActuals => {
+    const monthTransactions = getTransactionsByMonth(monthStr, accountId);
+    const actuals: MonthlyActuals = {};
+    
+    monthTransactions.forEach(transaction => {
+      if (transaction.flow === 'out') {
+        // First try to use expenseId if it exists
+        if (transaction.expenseId) {
+          actuals[transaction.expenseId] = (actuals[transaction.expenseId] || 0) + transaction.amount;
+        } else {
+          // Fall back to category matching
+          const matchedExpense = expenses.find(expense => 
+            expense.category?.toLowerCase() === transaction.category?.toLowerCase()
+          );
+          if (matchedExpense) {
+            actuals[matchedExpense.id] = (actuals[matchedExpense.id] || 0) + transaction.amount;
+          }
+        }
+      }
+    });
+    
+    return actuals;
+  };
+
   const getTotalActualSpending = (monthStr: string, accountId?: string): number => {
     return getTransactionsByMonth(monthStr, accountId)
       .filter(t => t.flow === 'out')
@@ -95,6 +119,7 @@ export function useTransactions() {
     removeTransaction,
     getTransactionsByMonth,
     getMonthlyActuals,
+    getMonthlyActualsByCategory,
     getTotalActualSpending,
   };
 }

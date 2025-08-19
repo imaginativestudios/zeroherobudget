@@ -10,6 +10,7 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
+import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -102,6 +103,7 @@ export const Budget = () => {
       
       if (mapped.length) {
         setExpenses(mapped);
+        // Note: useExpenseGroups will automatically handle group order after import
       } else {
         alert("No valid expense data found in the file");
       }
@@ -194,94 +196,15 @@ export const Budget = () => {
           <CardTitle className="text-xl">Monthly Expenses</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-               <thead>
-                 <tr>
-                  <th className="text-left p-3 font-semibold">Category</th>
-                  <th className="text-left p-3 font-semibold">Planned</th>
-                  <th className="text-left p-3 font-semibold">Actual</th>
-                  <th className="text-left p-3 font-semibold">Variance</th>
-                  <th className="text-left p-3 font-semibold">Notes</th>
-                  <th className="text-center p-3 font-semibold">Actions</th>
-                </tr>
-              </thead>
-               <tbody>
-                {expenses.map((expense) => {
-                  const actual = monthlyActuals[expense.id] || 0;
-                  const variance = actual - expense.planned;
-                  const variancePercent = expense.planned > 0 ? (variance / expense.planned) * 100 : 0;
-                  
-                  return (
-                    <tr key={expense.id}>
-                      <td className="p-3">
-                        <Input
-                          value={expense.name}
-                          onChange={(e) => updateExpense(expense.id, 'name', e.target.value)}
-                          className="min-w-0"
-                        />
-                      </td>
-                      <td className="p-3">
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={expense.planned}
-                          onChange={(e) => updateExpense(expense.id, 'planned', parseFloat(e.target.value) || 0)}
-                          className="w-32"
-                        />
-                      </td>
-                      <td className="p-3">
-                        <div className="w-32 px-3 py-2 text-sm bg-muted rounded-md">
-                          {formatCurrency(actual)}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <div className={`w-36 px-3 py-2 text-sm rounded-md font-medium ${
-                          variance === 0 
-                            ? 'bg-muted text-muted-foreground' 
-                            : variance > 0 
-                              ? 'bg-destructive/10 text-destructive' 
-                              : 'bg-success/10 text-success'
-                        }`}>
-                          {variance === 0 ? 'No data' : `${formatCurrency(variance)} (${variancePercent > 0 ? '+' : ''}${variancePercent.toFixed(1)}%)`}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <Input
-                          value={expense.notes || ""}
-                          onChange={(e) => updateExpense(expense.id, 'notes', e.target.value)}
-                          className="min-w-0"
-                        />
-                      </td>
-                      <td className="p-3 text-center">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeExpense(expense.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <GroupableExpenses
+            expenses={expenses}
+            setExpenses={setExpenses}
+            monthlyActuals={monthlyActuals}
+          />
           
           <div className="flex justify-between items-center mt-6 pt-4 border-t border-border">
-            <Button onClick={addExpense} variant="royal">
-              <Plus className="h-4 w-4" />
-              Add Expense
-            </Button>
+            <div></div>
             <div className="space-y-1 text-right">
-              <div className="text-lg font-semibold">
-                Total Planned: {formatCurrency(totalExpenses)}
-              </div>
-              <div className="text-lg font-semibold">
-                Total Actual: {formatCurrency(totalActual)}
-              </div>
               <div className={`text-lg font-bold ${leftover >= 0 ? 'text-success' : 'text-destructive'}`}>
                 Planned Leftover: {formatCurrency(leftover)}
               </div>

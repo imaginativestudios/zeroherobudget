@@ -1,0 +1,262 @@
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useExpenseGroups } from "@/hooks/useExpenseGroups";
+import { formatCurrency } from "@/lib/constants";
+import { type Expense } from "@/lib/csvUtils";
+import { GroupCard } from "./GroupCard";
+
+interface GroupableExpensesProps {
+  expenses: Expense[];
+  setExpenses: (expenses: Expense[]) => void;
+  monthlyActuals: { [expenseId: string]: number };
+}
+
+export function GroupableExpenses({
+  expenses,
+  setExpenses,
+  monthlyActuals,
+}: GroupableExpensesProps) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [showAddGroup, setShowAddGroup] = useState(false);
+
+  const {
+    groupOrder,
+    deriveGroups,
+    addGroup,
+    renameGroup,
+    deleteGroup,
+    reorderGroups,
+    moveItemToGroup,
+  } = useExpenseGroups(expenses);
+
+  const groupedExpenses = deriveGroups(expenses);
+  const availableGroups = [...groupOrder];
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+
+    if (activeData?.type === "group") {
+      // Reordering groups
+      const activeIndex = groupOrder.findIndex(group => `group-${group}` === activeId);
+      const overIndex = groupOrder.findIndex(group => `group-${group}` === overId);
+      
+      if (activeIndex !== overIndex) {
+        const newOrder = [...groupOrder];
+        const [removed] = newOrder.splice(activeIndex, 1);
+        newOrder.splice(overIndex, 0, removed);
+        reorderGroups(newOrder);
+      }
+    } else if (activeData?.type === "expense") {
+      // Moving expense
+      const expense = activeData.expense as Expense;
+      const currentGroup = expense.category || 'Uncategorized';
+
+      if (overData?.type === "group") {
+        // Moving to a different group
+        const targetGroup = overData.groupName;
+        if (currentGroup !== targetGroup) {
+          moveItemToGroup(expense.id, targetGroup, expenses, setExpenses);
+        }
+      } else if (overData?.type === "expense") {
+        // Reordering within same group or moving to different group
+        const targetExpense = overData.expense as Expense;
+        const targetGroup = targetExpense.category || 'Uncategorized';
+        
+        if (currentGroup !== targetGroup) {
+          moveItemToGroup(expense.id, targetGroup, expenses, setExpenses);
+        } else {
+          // Reorder within same group
+          const groupExpenses = groupedExpenses[currentGroup];
+          const activeIndex = groupExpenses.findIndex(e => e.id === expense.id);
+          const overIndex = groupExpenses.findIndex(e => e.id === targetExpense.id);
+          
+          if (activeIndex !== overIndex) {
+            const newExpenses = [...expenses];
+            const otherExpenses = newExpenses.filter(e => (e.category || 'Uncategorized') !== currentGroup);
+            const reorderedGroup = [...groupExpenses];
+            const [removed] = reorderedGroup.splice(activeIndex, 1);
+            reorderedGroup.splice(overIndex, 0, removed);
+            
+            setExpenses([...otherExpenses, ...reorderedGroup]);
+          }
+        }
+      }
+    }
+
+    setActiveId(null);
+  };
+
+  const handleAddExpense = (groupName: string) => {
+    const newExpense: Expense = {
+      id: crypto.randomUUID(),
+      name: "New Expense",
+      planned: 0,
+      notes: "",
+      category: groupName
+    };
+    setExpenses([...expenses, newExpense]);
+  };
+
+  const handleUpdateExpense = (id: string, field: keyof Expense, value: string | number) => {
+    setExpenses(expenses.map(expense => 
+      expense.id === id ? { ...expense, [field]: value } : expense
+    ));
+  };
+
+  const handleRemoveExpense = (id: string) => {
+    setExpenses(expenses.filter(expense => expense.id !== id));
+  };
+
+  const handleMoveToGroup = (itemId: string, targetGroup: string) => {
+    moveItemToGroup(itemId, targetGroup, expenses, setExpenses);
+  };
+
+  const handleRenameGroup = (oldName: string, newName: string) => {
+    renameGroup(oldName, newName, expenses, setExpenses);
+  };
+
+  const handleDeleteGroup = (groupName: string) => {
+    if (deleteGroup(groupName, expenses)) {
+      // Successfully deleted
+    }
+  };
+
+  const handleAddGroup = () => {
+    if (newGroupName.trim() && !availableGroups.includes(newGroupName.trim())) {
+      addGroup(newGroupName.trim());
+      setNewGroupName("");
+      setShowAddGroup(false);
+    }
+  };
+
+  const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
+  const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <Dialog open={showAddGroup} onOpenChange={setShowAddGroup}>
+          <DialogTrigger asChild>
+            <Button variant="outline">
+              <Plus className="h-4 w-4" />
+              Add Group
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Group</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Group name"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleAddGroup();
+                }}
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setShowAddGroup(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleAddGroup}>Add Group</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={groupOrder.map(group => `group-${group}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-4">
+            {groupOrder.map((groupName) => (
+              <GroupCard
+                key={groupName}
+                groupName={groupName}
+                expenses={groupedExpenses[groupName] || []}
+                monthlyActuals={monthlyActuals}
+                availableGroups={availableGroups}
+                onAddExpense={handleAddExpense}
+                onUpdateExpense={handleUpdateExpense}
+                onRemoveExpense={handleRemoveExpense}
+                onMoveToGroup={handleMoveToGroup}
+                onRenameGroup={handleRenameGroup}
+                onDeleteGroup={handleDeleteGroup}
+              />
+            ))}
+          </div>
+        </SortableContext>
+
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-card border border-border rounded-lg p-4 shadow-lg">
+              <div className="font-semibold">
+                {activeId.startsWith('group-') ? activeId.replace('group-', '') : 'Moving item...'}
+              </div>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+
+      <div className="flex justify-between items-center pt-4 border-t border-border">
+        <div></div>
+        <div className="space-y-1 text-right">
+          <div className="text-lg font-semibold">
+            Total Planned: {formatCurrency(totalExpenses)}
+          </div>
+          <div className="text-lg font-semibold">
+            Total Actual: {formatCurrency(totalActual)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

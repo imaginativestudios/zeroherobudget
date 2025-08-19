@@ -122,10 +122,7 @@ export const Budget = () => {
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
             <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg border">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span className="text-sm font-medium">Compare vs</span>
-              </div>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                 <SelectTrigger className="w-44 bg-background">
                   <SelectValue />

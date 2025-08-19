@@ -115,52 +115,57 @@ export const Budget = () => {
 
   return (
     <div className="space-y-8">
-      <div className="pt-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <Label className="text-sm font-medium whitespace-nowrap">Compare vs:</Label>
+      <div className="pt-8 space-y-4">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
+          
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            {/* Compare Section */}
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg border">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-4 w-4" />
+                <span className="text-sm font-medium">Compare vs</span>
+              </div>
+              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                <SelectTrigger className="w-44 bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    const monthStr = date.toISOString().slice(0, 7);
+                    return (
+                      <SelectItem key={monthStr} value={monthStr}>
+                        {formatMonthDisplay(monthStr)}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => {
-                  const date = new Date();
-                  date.setMonth(date.getMonth() - i);
-                  const monthStr = date.toISOString().slice(0, 7);
-                  return (
-                    <SelectItem key={monthStr} value={monthStr}>
-                      {formatMonthDisplay(monthStr)}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={exportExpenses}>
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-            <Button variant="outline" onClick={() => document.getElementById('import-file')?.click()}>
-              <Upload className="h-4 w-4" />
-              Import CSV
-            </Button>
-            <input
-              id="import-file"
-              type="file"
-              accept=".csv"
-              className="hidden"
-              onChange={importExpenses}
-            />
+
+            {/* Actions Section */}
+            <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border">
+              <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-background">
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">Export</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()} className="bg-background">
+                <Upload className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">Import</span>
+              </Button>
+              <input
+                id="import-file"
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={importExpenses}
+              />
+            </div>
           </div>
         </div>
       </div>
-
       {/* Income Section */}
       <Card className="shadow-royal">
         <CardHeader>

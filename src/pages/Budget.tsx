@@ -115,13 +115,13 @@ export const Budget = () => {
 
   return (
     <div className="space-y-8">
-      <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="pt-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 justify-center">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <Label className="text-sm font-medium">Compare vs:</Label>
+              <Label className="text-sm font-medium whitespace-nowrap">Compare vs:</Label>
             </div>
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-40">
@@ -141,7 +141,7 @@ export const Budget = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={exportExpenses}>
               <Download className="h-4 w-4" />
               Export CSV

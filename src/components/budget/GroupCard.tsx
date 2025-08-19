@@ -148,20 +148,7 @@ export function GroupCard({
                 )}
               </div>
               
-              <div className="flex items-center gap-6 text-sm">
-                <div className="text-right">
-                  <div>Planned: {formatCurrency(plannedTotal)}</div>
-                  <div>Actual: {formatCurrency(actualTotal)}</div>
-                  <div className={`font-medium ${
-                    varianceTotal === 0 
-                      ? 'text-muted-foreground' 
-                      : varianceTotal > 0 
-                        ? 'text-destructive' 
-                        : 'text-success'
-                  }`}>
-                    Variance: {formatCurrency(varianceTotal)}
-                  </div>
-                </div>
+               <div className="flex items-center gap-6 text-sm">
                 
                 <div className="flex items-center gap-1">
                   <Button
@@ -195,14 +182,12 @@ export function GroupCard({
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-3 font-semibold">Item</th>
-                      <th className="text-left p-3 font-semibold">Planned</th>
-                      <th className="text-left p-3 font-semibold">Actual</th>
-                      <th className="text-left p-3 font-semibold">Variance</th>
-                      <th className="text-left p-3 font-semibold">Notes</th>
-                      <th className="text-center p-3 font-semibold">Actions</th>
-                    </tr>
+                     <tr className="border-b">
+                       <th className="text-left p-3 font-semibold">Item</th>
+                       <th className="text-left p-3 font-semibold">Planned</th>
+                       <th className="text-left p-3 font-semibold">Actual</th>
+                       <th className="text-center p-3 font-semibold">Actions</th>
+                     </tr>
                   </thead>
                   <tbody>
                     <SortableContext

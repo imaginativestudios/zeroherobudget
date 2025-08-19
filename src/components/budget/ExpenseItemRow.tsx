@@ -84,24 +84,6 @@ export function ExpenseItemRow({
         </div>
       </td>
       <td className="p-3">
-        <div className={`w-36 px-3 py-2 text-sm rounded-md font-medium ${
-          variance === 0 
-            ? 'bg-muted text-muted-foreground' 
-            : variance > 0 
-              ? 'bg-destructive/10 text-destructive' 
-              : 'bg-success/10 text-success'
-        }`}>
-          {variance === 0 ? 'No data' : `${formatCurrency(variance)} (${variancePercent > 0 ? '+' : ''}${variancePercent.toFixed(1)}%)`}
-        </div>
-      </td>
-      <td className="p-3">
-        <Input
-          value={expense.notes || ""}
-          onChange={(e) => onUpdate('notes', e.target.value)}
-          className="min-w-0"
-        />
-      </td>
-      <td className="p-3">
         <div className="flex items-center gap-2">
           <Select
             value={expense.category || 'Uncategorized'}

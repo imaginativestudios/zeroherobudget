@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Calendar, Plus, Download, Upload, Search, Trash2, Edit } from "lucide-react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ export const Transactions = () => {
   const {
     transactions,
     addTransaction,
+    addTransactionsBulk,
     updateTransaction,
     removeTransaction,
     getTransactionsByMonth,
@@ -136,7 +138,7 @@ export const Transactions = () => {
     
     const validation = validateCsvFile(file);
     if (!validation.isValid) {
-      alert(`Import failed: ${validation.error}`);
+      toast.error(`Import failed: ${validation.error}`);
       event.target.value = "";
       return;
     }
@@ -144,26 +146,40 @@ export const Transactions = () => {
     try {
       const text = await file.text();
       const rows = parseCsv(text);
-      if (!rows.length) return;
+      if (!rows.length) {
+        toast.error("CSV file is empty");
+        event.target.value = "";
+        return;
+      }
       
       const parsedTransactions = mapTransactionCsv(rows, accounts);
       
-      for (const transaction of parsedTransactions) {
-        addTransaction({
-          date: transaction.date,
-          description: transaction.description,
-          amount: transaction.amount,
-          category: transaction.category,
-          accountId: transaction.accountId,
-          flow: transaction.flow,
-          expenseId: transaction.expenseId,
-          notes: transaction.notes || ""
-        });
+      if (parsedTransactions.length === 0) {
+        toast.error("No valid transactions found in CSV");
+        event.target.value = "";
+        return;
       }
       
-      alert(`Successfully imported ${parsedTransactions.length} transactions.`);
+      // Use bulk import to avoid state update issues
+      addTransactionsBulk(parsedTransactions.map(transaction => ({
+        date: transaction.date,
+        description: transaction.description,
+        amount: transaction.amount,
+        category: transaction.category,
+        accountId: transaction.accountId,
+        flow: transaction.flow,
+        expenseId: transaction.expenseId,
+        notes: transaction.notes || ""
+      })));
+      
+      // Find the most recent transaction month and switch to it
+      const dates = parsedTransactions.map(t => t.date).sort();
+      const mostRecentMonth = dates[dates.length - 1].slice(0, 7);
+      setSelectedMonth(mostRecentMonth);
+      
+      toast.success(`Successfully imported ${parsedTransactions.length} transactions`);
     } catch (error) {
-      alert("Failed to import file. Please check the format and try again.");
+      toast.error("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);
     }
     

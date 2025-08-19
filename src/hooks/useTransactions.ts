@@ -24,6 +24,32 @@ export function useTransactions() {
     return newTransaction;
   };
 
+  const addTransactionsBulk = (newTransactions: Omit<Transaction, 'id'>[]) => {
+    const transactionsWithIds = newTransactions.map(transaction => ({
+      ...transaction,
+      id: crypto.randomUUID(),
+    }));
+    
+    setTransactions([...transactions, ...transactionsWithIds]);
+    
+    // Update account balances for all transactions
+    const balanceUpdates: { [accountId: string]: number } = {};
+    transactionsWithIds.forEach(transaction => {
+      const balanceChange = transaction.flow === 'in' ? transaction.amount : -transaction.amount;
+      balanceUpdates[transaction.accountId] = (balanceUpdates[transaction.accountId] || 0) + balanceChange;
+    });
+    
+    // Apply balance updates to accounts
+    Object.entries(balanceUpdates).forEach(([accountId, change]) => {
+      const account = getAccountById(accountId);
+      if (account) {
+        updateAccount(accountId, { balance: account.balance + change });
+      }
+    });
+    
+    return transactionsWithIds;
+  };
+
   const updateTransaction = (id: string, updates: Partial<Transaction>) => {
     setTransactions(transactions.map(t => 
       t.id === id ? { ...t, ...updates } : t
@@ -64,6 +90,7 @@ export function useTransactions() {
   return {
     transactions,
     addTransaction,
+    addTransactionsBulk,
     updateTransaction,
     removeTransaction,
     getTransactionsByMonth,

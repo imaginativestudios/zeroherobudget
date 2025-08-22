@@ -220,4 +220,18 @@ All colors MUST be HSL.
     overflow-wrap: anywhere;
     word-break: break-word;
   }
+
+  /* Cross-browser gradient text utility */
+  .text-gradient-royal {
+    background: var(--gradient-royal);
+    background-image: var(--gradient-royal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    /* Fallback for browsers that don't support gradient text */
+    @supports not (background-clip: text) {
+      color: hsl(var(--primary));
+    }
+  }
 }

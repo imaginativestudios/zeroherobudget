@@ -422,14 +422,14 @@ export const Transactions = () => {
                   {filteredTransactions.map((transaction) => (
                     <tr key={transaction.id} className="border-b hover:bg-muted/50">
                       <td className="p-3">{formatDisplayDate(transaction.date)}</td>
-                      <td className="p-3">{transaction.description}</td>
+                      <td className="p-3 break-anywhere">{transaction.description}</td>
                       <td className="p-3 font-medium">
                         <span className={transaction.flow === 'in' ? 'text-green-600' : 'text-red-600'}>
                           {transaction.flow === 'in' ? '+' : '-'}{formatCurrency(transaction.amount)}
                         </span>
                       </td>
                       <td className="p-3">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
-                      <td className="p-3">{transaction.category}</td>
+                      <td className="p-3 break-anywhere">{transaction.category}</td>
                       <td className="p-3">
                         {transaction.expenseId 
                           ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown"

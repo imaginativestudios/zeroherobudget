@@ -35,13 +35,13 @@ export const FinancialCard = ({
   return (
     <Card className={cn("shadow-elegant hover:shadow-royal transition-royal", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
           {title}
         </CardTitle>
         <Icon className="h-5 w-5 text-accent" />
       </CardHeader>
       <CardContent>
-        <div className={cn("text-2xl font-bold", getTrendColor())}>
+        <div className={cn("text-2xl font-bold min-w-0 truncate", getTrendColor())}>
           {formatCurrency(amount)}
         </div>
       </CardContent>

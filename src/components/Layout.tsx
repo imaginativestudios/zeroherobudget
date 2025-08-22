@@ -96,7 +96,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       to={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base",
+                        "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                         isActive
                           ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
                           : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
@@ -104,7 +104,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       aria-current={isActive ? "page" : undefined}
                     >
                       <item.icon className="h-5 w-5" aria-hidden="true" />
-                      <span className="font-medium">{item.name}</span>
+                      <span className="font-medium truncate">{item.name}</span>
                     </Link>
                   </li>
                 );

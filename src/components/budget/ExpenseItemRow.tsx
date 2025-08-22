@@ -53,7 +53,7 @@ export function ExpenseItemRow({
       style={style}
       className={`${isDragging ? 'opacity-50' : ''}`}
     >
-      <td className="p-3">
+      <td className="p-3 break-anywhere">
         <div className="flex items-center gap-2">
           <button
             className="cursor-grab text-muted-foreground hover:text-foreground"

@@ -234,7 +234,7 @@ export const Budget = () => {
               <tbody>
                 {assets.map((asset) => (
                   <tr key={asset.id}>
-                    <td className="p-3">
+                    <td className="p-3 break-anywhere">
                       <Input
                         value={asset.name}
                         onChange={(e) => updateAsset(asset.id, 'name', e.target.value)}

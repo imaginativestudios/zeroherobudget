@@ -109,7 +109,7 @@ export function GroupCard({
         <AccordionItem value={`group-${groupName}`} className="border-none">
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
             <div className="flex items-center justify-between w-full mr-4">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <button
                   className="cursor-grab text-muted-foreground hover:text-foreground"
                   {...attributes}
@@ -138,7 +138,7 @@ export function GroupCard({
                     </Button>
                   </div>
                 ) : (
-                  <h3 className="font-semibold text-lg">{groupName}</h3>
+                  <h3 className="font-semibold text-lg min-w-0 truncate text-balance">{groupName}</h3>
                 )}
               </div>
               

@@ -138,7 +138,7 @@ export const Dashboard = () => {
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg sm:text-xl text-gradient-royal flex items-center gap-2 sm:gap-3">
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
               <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
               Spending by Category
             </CardTitle>
@@ -205,7 +205,7 @@ export const Dashboard = () => {
         {/* Debt Payoff Projection */}
         <Card className="shadow-royal overflow-hidden">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg sm:text-xl text-gradient-royal flex items-center gap-2 sm:gap-3">
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
               <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
               Debt Payoff Projection
             </CardTitle>

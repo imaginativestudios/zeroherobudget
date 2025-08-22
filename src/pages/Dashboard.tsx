@@ -113,24 +113,28 @@ export const Dashboard = () => {
           amount={income}
           icon={DollarSign}
           trend="up"
+          to="/reports/income"
         />
         <FinancialCard
           title="Planned Expenses"
           amount={totalExpenses}
           icon={TrendingUp}
           trend="neutral"
+          to="/reports/expenses"
         />
         <FinancialCard
           title="Available for Debt"
           amount={leftover}
           icon={Target}
           trend="up"
+          to="/reports/available"
         />
         <FinancialCard
           title="Net Worth"
           amount={netWorth}
           icon={AlertTriangle}
           trend={netWorth >= 0 ? "up" : "down"}
+          to="/reports/net-worth"
         />
       </div>
 

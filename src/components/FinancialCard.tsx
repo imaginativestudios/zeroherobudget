@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface FinancialCardProps {
@@ -8,6 +9,7 @@ interface FinancialCardProps {
   icon: LucideIcon;
   trend?: "up" | "down" | "neutral";
   className?: string;
+  to?: string;
 }
 
 export const FinancialCard = ({ 
@@ -15,7 +17,8 @@ export const FinancialCard = ({
   amount, 
   icon: Icon, 
   trend = "neutral",
-  className 
+  className,
+  to
 }: FinancialCardProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -32,8 +35,12 @@ export const FinancialCard = ({
     }
   };
 
-  return (
-    <Card className={cn("shadow-elegant hover:shadow-royal transition-royal", className)}>
+  const cardContent = (
+    <Card className={cn(
+      "shadow-elegant hover:shadow-royal transition-royal",
+      to && "cursor-pointer hover:translate-y-[-1px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      className
+    )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
           {title}
@@ -47,4 +54,14 @@ export const FinancialCard = ({
       </CardContent>
     </Card>
   );
+
+  if (to) {
+    return (
+      <Link to={to} className="block">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 };

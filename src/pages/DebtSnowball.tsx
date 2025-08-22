@@ -267,7 +267,7 @@ export const DebtSnowball = () => {
       {/* Timeline Chart */}
       <Card className="shadow-royal">
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl bg-gradient-primary bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <CardTitle className="text-lg sm:text-xl bg-gradient-royal bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
             <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
             Total Balance Over Time
           </CardTitle>

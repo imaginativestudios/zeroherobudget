@@ -14,6 +14,8 @@ import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
 import { SubscriptionsReport } from "@/pages/reports/SubscriptionsReport";
+import Auth from "./pages/Auth";
+import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,23 +26,32 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/budgets" element={<Budget />} />
-            <Route path="/debts" element={<DebtSnowball />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/subscriptions" element={<Subscriptions />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/reports/income" element={<IncomeReport />} />
-            <Route path="/reports/expenses" element={<Reports />} />
-            <Route path="/reports/available" element={<AvailableForDebtReport />} />
-            <Route path="/reports/net-worth" element={<NetWorthReport />} />
-            <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Public route for authentication */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* Protected routes with layout */}
+          <Route path="/*" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/budgets" element={<Budget />} />
+                <Route path="/debts" element={<DebtSnowball />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/reports/income" element={<IncomeReport />} />
+                <Route path="/reports/expenses" element={<Reports />} />
+                <Route path="/reports/available" element={<AvailableForDebtReport />} />
+                <Route path="/reports/net-worth" element={<NetWorthReport />} />
+                <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          } />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

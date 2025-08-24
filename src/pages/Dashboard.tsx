@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
@@ -18,6 +19,8 @@ export const Dashboard = () => {
   const [strategy, setStrategy] = useLocalStorage("bdt_strategy", "Snowball");
   const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
+
+  const { getTotalMonthlySpend } = useSubscriptions();
 
   const totalExpenses = useMemo(() => 
     expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0), [expenses]
@@ -34,6 +37,7 @@ export const Dashboard = () => {
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
   const netWorth = totalAssets - totalDebt;
+  const monthlySubscriptionSpend = getTotalMonthlySpend();
 
   // Prepare spending by category data
   const spendingByCategory = useMemo(() => {
@@ -107,7 +111,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Financial Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
         <FinancialCard
           title="Monthly Income"
           amount={income}
@@ -121,6 +125,13 @@ export const Dashboard = () => {
           icon={TrendingUp}
           trend="neutral"
           to="/reports/expenses"
+        />
+        <FinancialCard
+          title="Subscriptions"
+          amount={monthlySubscriptionSpend}
+          icon={CreditCard}
+          trend="neutral"
+          to="/subscriptions"
         />
         <FinancialCard
           title="Available for Debt"

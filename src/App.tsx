@@ -8,10 +8,12 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
 import { Transactions } from "@/pages/Transactions";
+import { Subscriptions } from "@/pages/Subscriptions";
 import { Reports } from "@/pages/Reports";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
+import { SubscriptionsReport } from "@/pages/reports/SubscriptionsReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,11 +30,13 @@ const App = () => (
             <Route path="/budgets" element={<Budget />} />
             <Route path="/debts" element={<DebtSnowball />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/reports/income" element={<IncomeReport />} />
             <Route path="/reports/expenses" element={<Reports />} />
             <Route path="/reports/available" element={<AvailableForDebtReport />} />
             <Route path="/reports/net-worth" element={<NetWorthReport />} />
+            <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

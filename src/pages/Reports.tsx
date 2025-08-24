@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { BarChart3, Calendar } from "lucide-react";
+import { BarChart3, Calendar, CreditCard, DollarSign, TrendingUp, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -22,6 +23,37 @@ export const Reports = () => {
       actual: monthlyActuals[expense.id] || 0
     })), [expenses, monthlyActuals]
   );
+
+  const reportTypes = [
+    {
+      title: "Income Report",
+      description: "Track your monthly income sources and trends",
+      icon: DollarSign,
+      href: "/reports/income",
+      color: "text-success"
+    },
+    {
+      title: "Available for Debt",
+      description: "See how much you can allocate to debt payments",
+      icon: Target,
+      href: "/reports/available", 
+      color: "text-warning"
+    },
+    {
+      title: "Net Worth Report",
+      description: "Monitor your assets, debts, and overall net worth",
+      icon: TrendingUp,
+      href: "/reports/net-worth",
+      color: "text-primary"
+    },
+    {
+      title: "Subscription Report",
+      description: "Analyze your recurring subscription spending",
+      icon: CreditCard,
+      href: "/reports/subscriptions",
+      color: "text-accent"
+    }
+  ];
 
   return (
     <div className="space-y-8">
@@ -49,8 +81,29 @@ export const Reports = () => {
           </Select>
         </div>
       </div>
+
+      {/* Report Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {reportTypes.map((report) => (
+          <Link key={report.href} to={report.href}>
+            <Card className="shadow-elegant hover:shadow-royal transition-royal cursor-pointer hover:translate-y-[-1px] h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-base">
+                  <report.icon className={`h-5 w-5 ${report.color}`} />
+                  {report.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {report.description}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
       
-        <Card className="shadow-royal overflow-hidden">
+      <Card className="shadow-royal overflow-hidden">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
             <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />

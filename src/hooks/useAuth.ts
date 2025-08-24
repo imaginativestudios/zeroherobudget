@@ -52,20 +52,24 @@ export const useAuth = () => {
     });
     
     if (error) {
-      toast({
-        variant: "destructive",
-        title: "Sign up failed",
-        description: error.message,
-      });
       return { error };
     }
     
-    toast({
-      title: "Check your email",
-      description: "We've sent you a confirmation link to complete your registration.",
+    return { error: null };
+  };
+
+  const resendConfirmation = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
     });
     
-    return { error: null };
+    return { error };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -74,21 +78,7 @@ export const useAuth = () => {
       password,
     });
     
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Sign in failed",
-        description: error.message,
-      });
-      return { error };
-    }
-    
-    toast({
-      title: "Welcome back!",
-      description: "You have successfully signed in.",
-    });
-    
-    return { error: null };
+    return { error };
   };
 
   const signOut = async () => {
@@ -116,5 +106,6 @@ export const useAuth = () => {
     signUp,
     signIn,
     signOut,
+    resendConfirmation,
   };
 };

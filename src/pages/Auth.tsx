@@ -5,14 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/useAuth';
-import { Crown, Mail, Lock } from 'lucide-react';
+import { Crown, Mail, Lock, CheckCircle, AlertCircle, RefreshCcw } from 'lucide-react';
 
 const Auth = () => {
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, signIn, signUp, resendConfirmation } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [isResending, setIsResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   // Redirect if already authenticated
   if (user && !loading) {
@@ -31,14 +37,62 @@ const Auth = () => {
     if (!email || !password) return;
     
     setIsSubmitting(true);
+    setAuthError('');
     
     if (type === 'signin') {
-      await signIn(email, password);
+      const { error } = await signIn(email, password);
+      if (error) {
+        if (error.message === 'Email not confirmed') {
+          setAuthError('email_not_confirmed');
+        } else {
+          setAuthError(error.message);
+        }
+      }
     } else {
-      await signUp(email, password);
+      const { error } = await signUp(email, password);
+      if (error) {
+        if (error.message?.includes('rate limit')) {
+          setAuthError('Rate limit exceeded. Please wait a moment and try again.');
+        } else {
+          setAuthError(error.message);
+        }
+      } else {
+        setSignupSuccess(true);
+        setSignupEmail(email);
+      }
     }
     
     setIsSubmitting(false);
+  };
+
+  const handleResendConfirmation = async () => {
+    if (resendCooldown > 0) return;
+    
+    setIsResending(true);
+    const emailToUse = signupEmail || email;
+    const { error } = await resendConfirmation(emailToUse);
+    
+    if (error) {
+      if (error.message?.includes('rate limit')) {
+        setAuthError('Rate limit exceeded. Please wait a moment before resending.');
+      } else {
+        setAuthError(error.message);
+      }
+    } else {
+      setAuthError('');
+      setResendCooldown(60);
+      const timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    setIsResending(false);
   };
 
   return (
@@ -57,10 +111,71 @@ const Auth = () => {
         </CardHeader>
         
         <CardContent>
+          {signupSuccess && (
+            <Alert className="mb-4 border-success bg-success/10">
+              <CheckCircle className="h-4 w-4 text-success" />
+              <AlertDescription>
+                Check your email! We've sent a confirmation link to {signupEmail}.
+                <Button
+                  variant="link"
+                  onClick={handleResendConfirmation}
+                  disabled={isResending || resendCooldown > 0}
+                  className="h-auto p-0 ml-1 text-success"
+                >
+                  {isResending ? (
+                    <>
+                      <RefreshCcw className="h-3 w-3 mr-1 animate-spin" />
+                      Sending...
+                    </>
+                  ) : resendCooldown > 0 ? (
+                    `Resend in ${resendCooldown}s`
+                  ) : (
+                    'Resend email'
+                  )}
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {authError && authError !== 'email_not_confirmed' && (
+            <Alert className="mb-4 border-destructive bg-destructive/10">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <AlertDescription className="text-destructive">
+                {authError}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {authError === 'email_not_confirmed' && (
+            <Alert className="mb-4 border-warning bg-warning/10">
+              <AlertCircle className="h-4 w-4 text-warning" />
+              <AlertDescription>
+                Please confirm your email before signing in.
+                <Button
+                  variant="link"
+                  onClick={handleResendConfirmation}
+                  disabled={isResending || resendCooldown > 0}
+                  className="h-auto p-0 ml-1 text-warning"
+                >
+                  {isResending ? (
+                    <>
+                      <RefreshCcw className="h-3 w-3 mr-1 animate-spin" />
+                      Sending...
+                    </>
+                  ) : resendCooldown > 0 ? (
+                    `Resend in ${resendCooldown}s`
+                  ) : (
+                    'Resend confirmation'
+                  )}
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Tabs defaultValue="signin" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin" disabled={signupSuccess}>Sign In</TabsTrigger>
+              <TabsTrigger value="signup" disabled={signupSuccess}>Sign Up</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin" className="space-y-4">

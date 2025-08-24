@@ -1,11 +1,10 @@
 
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Menu, X, LogOut } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut } from "lucide-react";
 import { Link, useLocation, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { HouseholdHeader } from "@/components/HouseholdHeader";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +12,7 @@ interface LayoutProps {
 
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Household", href: "/household", icon: Users },
   { name: "Budgets", href: "/budgets", icon: DollarSign },
   { name: "Debts", href: "/debts", icon: Target },
   { name: "Transactions", href: "/transactions", icon: Receipt },
@@ -160,7 +160,6 @@ export const Layout = ({ children }: LayoutProps) => {
         )}
         role="main"
       >
-        <HouseholdHeader />
         {children}
       </main>
     </div>

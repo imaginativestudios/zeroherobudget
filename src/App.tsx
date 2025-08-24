@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,8 @@ import { DebtSnowball } from "@/pages/DebtSnowball";
 import { Transactions } from "@/pages/Transactions";
 import { Subscriptions } from "@/pages/Subscriptions";
 import { Reports } from "@/pages/Reports";
+import { Household } from "@/pages/Household";
+import { AcceptInvite } from "@/pages/AcceptInvite";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
@@ -27,8 +30,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Public route for authentication */}
+          {/* Public routes */}
           <Route path="/auth" element={<Auth />} />
+          <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           
           {/* Protected routes with layout */}
           <Route path="/*" element={
@@ -36,6 +40,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/household" element={<Household />} />
                 <Route path="/budgets" element={<Budget />} />
                 <Route path="/debts" element={<DebtSnowball />} />
                 <Route path="/transactions" element={<Transactions />} />

@@ -1,8 +1,10 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Menu, X } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Menu, X, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { HouseholdHeader } from "@/components/HouseholdHeader";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,7 @@ const navigationItems = [
 
 export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
+  const { signOut, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -111,6 +114,24 @@ export const Layout = ({ children }: LayoutProps) => {
                 );
               })}
             </ul>
+
+            {/* User section at bottom */}
+            {user && (
+              <div className="mt-8 pt-4 border-t border-sidebar-border">
+                <div className="text-xs text-muted-foreground mb-2 px-3">
+                  Signed in as {user.email}
+                </div>
+                <Button
+                  onClick={signOut}
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            )}
           </div>
         </nav>
       </div>
@@ -126,6 +147,7 @@ export const Layout = ({ children }: LayoutProps) => {
         )}
         role="main"
       >
+        <HouseholdHeader />
         {children}
       </main>
     </div>

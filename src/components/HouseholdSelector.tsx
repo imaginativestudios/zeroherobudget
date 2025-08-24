@@ -1,0 +1,47 @@
+import { ChevronDown, Home, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useHouseholds } from '@/hooks/useHouseholds';
+
+export function HouseholdSelector() {
+  const { households, currentHousehold, setCurrentHousehold } = useHouseholds();
+
+  const selectedHousehold = households.find(h => h.id === currentHousehold);
+
+  if (households.length === 0) {
+    return null;
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="w-[200px] justify-between">
+          <div className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            <span className="truncate">
+              {selectedHousehold?.name || 'Select Household'}
+            </span>
+          </div>
+          <ChevronDown className="h-4 w-4 shrink-0" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-[200px]">
+        {households.map((household) => (
+          <DropdownMenuItem
+            key={household.id}
+            onClick={() => setCurrentHousehold(household.id)}
+            className="flex items-center gap-2"
+          >
+            <Users className="h-4 w-4" />
+            <span className="truncate">{household.name}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

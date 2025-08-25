@@ -17,6 +17,21 @@ export function HouseholdSelector() {
     return null;
   }
 
+  // If only one household, show a simple button without dropdown
+  if (households.length === 1) {
+    return (
+      <Button variant="outline" className="w-[200px] justify-start">
+        <div className="flex items-center gap-2">
+          <Home className="h-4 w-4" />
+          <span className="truncate">
+            {selectedHousehold?.name || households[0]?.name}
+          </span>
+        </div>
+      </Button>
+    );
+  }
+
+  // Multiple households - show dropdown
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

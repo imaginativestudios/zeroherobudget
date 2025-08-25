@@ -112,11 +112,23 @@ export function Household() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={getRoleBadgeVariant(member.role)} className="flex items-center gap-1">
-                        {getRoleIcon(member.role)}
-                        {member.role}
-                      </Badge>
-                      {canManageHousehold() && member.profile_id !== member.profile_id && (
+                      {canManageHousehold() && member.role !== 'owner' ? (
+                        <select
+                          value={member.role}
+                          onChange={(e) => updateMemberRole(member.id, e.target.value as 'admin' | 'member' | 'viewer')}
+                          className="text-sm border rounded px-2 py-1 bg-background"
+                        >
+                          <option value="admin">Admin</option>
+                          <option value="member">Member</option>
+                          <option value="viewer">Viewer</option>
+                        </select>
+                      ) : (
+                        <Badge variant={getRoleBadgeVariant(member.role)} className="flex items-center gap-1">
+                          {getRoleIcon(member.role)}
+                          {member.role}
+                        </Badge>
+                      )}
+                      {canManageHousehold() && member.role !== 'owner' && (
                         <Button
                           variant="ghost"
                           size="sm"

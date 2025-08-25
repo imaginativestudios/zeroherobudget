@@ -178,6 +178,14 @@ export type Database = {
         Args: { household_id: string; user_id: string }
         Returns: Database["public"]["Enums"]["household_role"]
       }
+      share_household_with: {
+        Args: { other_profile_id: string; uid?: string }
+        Returns: boolean
+      }
+      user_in_household: {
+        Args: { hh_id: string; uid?: string }
+        Returns: boolean
+      }
     }
     Enums: {
       household_role: "owner" | "admin" | "member" | "viewer"

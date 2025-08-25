@@ -1,5 +1,5 @@
 
-import { Users, UserPlus, Mail, Crown, Shield, Eye, Trash2 } from 'lucide-react';
+import { Users, UserPlus, Mail, Crown, Shield, Eye, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,8 @@ export function Household() {
     getCurrentUserRole,
     canManageHousehold,
     removeMember,
-    updateMemberRole
+    updateMemberRole,
+    cancelInvitation
   } = useHouseholds();
 
   const selectedHousehold = households.find(h => h.id === currentHousehold);
@@ -60,6 +61,12 @@ export function Household() {
   const handleRemoveMember = async (memberId: string) => {
     if (confirm('Are you sure you want to remove this member?')) {
       await removeMember(memberId);
+    }
+  };
+
+  const handleCancelInvitation = async (invitationId: string) => {
+    if (confirm('Are you sure you want to cancel this invitation?')) {
+      await cancelInvitation(invitationId);
     }
   };
 
@@ -179,10 +186,22 @@ export function Household() {
                           </p>
                         </div>
                       </div>
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        {getRoleIcon(invitation.role)}
-                        {invitation.role}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          {getRoleIcon(invitation.role)}
+                          {invitation.role}
+                        </Badge>
+                        {canManageHousehold() && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCancelInvitation(invitation.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

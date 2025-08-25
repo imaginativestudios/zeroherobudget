@@ -196,6 +196,36 @@ export function useHouseholds() {
     }
   };
 
+  const cancelInvitation = async (invitationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('household_invitations')
+        .delete()
+        .eq('id', invitationId);
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to cancel invitation",
+        });
+        return { error };
+      }
+
+      await fetchInvitations();
+      
+      toast({
+        title: "Invitation canceled",
+        description: "The invitation has been canceled",
+      });
+
+      return { error: null };
+    } catch (error) {
+      console.error('Error canceling invitation:', error);
+      return { error };
+    }
+  };
+
   const acceptInvitation = async (token: string) => {
     try {
       const { data, error } = await supabase.rpc('accept_invitation', {
@@ -315,6 +345,7 @@ export function useHouseholds() {
     loading,
     setCurrentHousehold,
     createInvitation,
+    cancelInvitation,
     acceptInvitation,
     updateMemberRole,
     removeMember,

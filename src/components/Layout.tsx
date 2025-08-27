@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { DemoDataButton } from "./DemoDataButton";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -130,9 +131,12 @@ export const Layout = ({ children }: LayoutProps) => {
 
             {/* User section at bottom */}
             {user && (
-              <div className="mt-8 pt-4 border-t border-sidebar-border">
+              <div className="mt-8 pt-4 border-t border-sidebar-border space-y-3">
                 <div className="text-xs text-muted-foreground mb-2 px-3">
                   Signed in as {user.email}
+                </div>
+                <div className="px-3">
+                  <DemoDataButton />
                 </div>
                 <Button
                   onClick={signOut}

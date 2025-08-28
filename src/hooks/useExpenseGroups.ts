@@ -1,4 +1,4 @@
-import { useLocalStorage } from './useLocalStorage';
+import { useUserLocalStorage } from './useUserLocalStorage';
 import { type Expense } from '@/lib/csvUtils';
 
 export interface GroupedExpenses {
@@ -6,7 +6,7 @@ export interface GroupedExpenses {
 }
 
 export function useExpenseGroups(expenses: Expense[]) {
-  const [groupOrder, setGroupOrder] = useLocalStorage<string[]>('bdt_group_order', []);
+  const [groupOrder, setGroupOrder] = useUserLocalStorage<string[]>('bdt_group_order', []);
 
   const ensureGroupOrder = (currentExpenses: Expense[]) => {
     const existingGroups = Array.from(new Set(currentExpenses.map(e => e.category || 'Uncategorized')));

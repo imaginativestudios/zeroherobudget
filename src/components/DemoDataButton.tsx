@@ -3,16 +3,30 @@ import { setupDemoData, clearDemoData, isDemoDataSetup } from "@/lib/demoData";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Play, Trash2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { DEMO_EMAIL } from "@/lib/constants";
 
 export const DemoDataButton = () => {
+  const { user } = useAuth();
   const [hasDemoData, setHasDemoData] = useState(false);
 
+  // Only show for demo account
+  if (!user || user.email !== DEMO_EMAIL) {
+    return null;
+  }
+
+  // Auto-seed demo data for demo users on first sign-in
   useEffect(() => {
-    setHasDemoData(isDemoDataSetup());
-  }, []);
+    if (user && user.email === DEMO_EMAIL && !hasDemoData) {
+      setupDemoData(user.id);
+      setHasDemoData(true);
+    }
+  }, [user, hasDemoData]);
 
   const handleSetupDemo = () => {
-    setupDemoData();
+    if (!user) return;
+    
+    setupDemoData(user.id);
     setHasDemoData(true);
     toast({
       title: "Demo data loaded",
@@ -23,7 +37,9 @@ export const DemoDataButton = () => {
   };
 
   const handleClearDemo = () => {
-    clearDemoData();
+    if (!user) return;
+    
+    clearDemoData(user.id);
     setHasDemoData(false);
     toast({
       title: "Demo data cleared",

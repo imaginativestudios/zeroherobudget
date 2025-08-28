@@ -1,4 +1,4 @@
-import { useLocalStorage } from './useLocalStorage';
+import { useUserLocalStorage } from './useUserLocalStorage';
 import { Account } from '@/types/transactions';
 
 const DEFAULT_ACCOUNTS: Account[] = [
@@ -12,7 +12,7 @@ const DEFAULT_ACCOUNTS: Account[] = [
 ];
 
 export function useAccounts() {
-  const [accounts, setAccounts] = useLocalStorage<Account[]>('bdt_accounts', DEFAULT_ACCOUNTS);
+  const [accounts, setAccounts] = useUserLocalStorage<Account[]>('bdt_accounts', DEFAULT_ACCOUNTS);
 
   const addAccount = (account: Omit<Account, 'id'>) => {
     const newAccount: Account = {

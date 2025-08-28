@@ -4,17 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } from "@/lib/csvUtils";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export const DebtSnowball = () => {
-  const [debts, setDebts] = useLocalStorage("bdt_debts", SAMPLE_DEBTS);
-  const [strategy, setStrategy] = useLocalStorage("bdt_strategy", "Snowball");
-  const [income] = useLocalStorage("bdt_income", 18254);
-  const [expenses] = useLocalStorage("bdt_expenses", []);
+  const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
+  const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
+  const [income] = useUserLocalStorage("bdt_income", 0);
+  const [expenses] = useUserLocalStorage("bdt_expenses", []);
 
   const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);

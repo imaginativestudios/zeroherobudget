@@ -173,6 +173,22 @@ const Auth = () => {
             </Alert>
           )}
 
+          {/* Demo Account Button */}
+          <div className="mb-4 p-3 bg-gradient-subtle rounded-lg border">
+            <p className="text-sm text-muted-foreground mb-2">Try the demo account:</p>
+            <Button
+              variant="outline"
+              size="sm" 
+              className="w-full"
+              onClick={() => {
+                setEmail('demo@example.com');
+                setPassword('demo123456');
+              }}
+            >
+              Use Demo Account
+            </Button>
+          </div>
+
           <Tabs defaultValue="signin" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin" disabled={signupSuccess}>Sign In</TabsTrigger>

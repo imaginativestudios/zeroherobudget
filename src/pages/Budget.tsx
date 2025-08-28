@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
@@ -14,9 +14,9 @@ import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [income, setIncome] = useLocalStorage("bdt_income", 18254);
-  const [expenses, setExpenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [assets, setAssets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  const [income, setIncome] = useUserLocalStorage("bdt_income", 0);
+  const [expenses, setExpenses] = useUserLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  const [assets, setAssets] = useUserLocalStorage("bdt_assets", DEFAULT_ASSETS);
   
   const { getMonthlyActualsByCategory } = useTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);

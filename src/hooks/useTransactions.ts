@@ -1,10 +1,10 @@
-import { useLocalStorage } from './useLocalStorage';
+import { useUserLocalStorage } from './useUserLocalStorage';
 import { Transaction, MonthlyActuals } from '@/types/transactions';
 import { isDateInMonth } from '@/lib/dateUtils';
 import { useAccounts } from './useAccounts';
 
 export function useTransactions() {
-  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('bdt_transactions', []);
+  const [transactions, setTransactions] = useUserLocalStorage<Transaction[]>('bdt_transactions', []);
   const { updateAccount, getAccountById } = useAccounts();
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {

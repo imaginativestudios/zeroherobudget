@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
@@ -12,7 +12,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cart
 
 export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  const [expenses] = useUserLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
   const { getMonthlyActuals } = useTransactions();
   const monthlyActuals = getMonthlyActuals(selectedMonth);
 

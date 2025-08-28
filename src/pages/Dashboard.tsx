@@ -6,18 +6,18 @@ import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 export const Dashboard = () => {
-  const [income] = useLocalStorage("bdt_income", 18254);
-  const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [debts, setDebts] = useLocalStorage("bdt_debts", SAMPLE_DEBTS);
-  const [strategy, setStrategy] = useLocalStorage("bdt_strategy", "Snowball");
-  const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  const [income] = useUserLocalStorage("bdt_income", 0);
+  const [expenses] = useUserLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
+  const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
+  const [assets] = useUserLocalStorage("bdt_assets", DEFAULT_ASSETS);
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
   const { getTotalMonthlySpend } = useSubscriptions();

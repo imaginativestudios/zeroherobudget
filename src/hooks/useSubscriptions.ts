@@ -1,4 +1,4 @@
-import { useLocalStorage } from './useLocalStorage';
+import { useUserLocalStorage } from './useUserLocalStorage';
 import { useTransactions } from './useTransactions';
 import { Subscription, SubscriptionMatch, SubscriptionSuggestion, SubscriptionSpend } from '@/types/subscriptions';
 import { autoDetectSubscriptions, calculateNextChargeDate } from '@/lib/subscriptionDetection';
@@ -8,8 +8,8 @@ const STORAGE_KEY = 'bdt_subscriptions';
 const MATCHES_STORAGE_KEY = 'bdt_subscription_matches';
 
 export function useSubscriptions() {
-  const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>(STORAGE_KEY, []);
-  const [matches, setMatches] = useLocalStorage<SubscriptionMatch[]>(MATCHES_STORAGE_KEY, []);
+  const [subscriptions, setSubscriptions] = useUserLocalStorage<Subscription[]>(STORAGE_KEY, []);
+  const [matches, setMatches] = useUserLocalStorage<SubscriptionMatch[]>(MATCHES_STORAGE_KEY, []);
   const { transactions } = useTransactions();
 
   const addSubscription = (subscription: Omit<Subscription, 'id' | 'createdAt'>) => {

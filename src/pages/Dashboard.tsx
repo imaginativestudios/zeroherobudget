@@ -90,9 +90,6 @@ export const Dashboard = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
               <span className="leading-tight">Dashboard</span>
             </h1>
-            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-              Your path to financial sovereignty
-            </p>
           </div>
           <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
             <Button 

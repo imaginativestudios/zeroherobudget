@@ -3,11 +3,13 @@ import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown,
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
+import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
+import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
@@ -21,6 +23,9 @@ export const Dashboard = () => {
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
   const { getTotalMonthlySpend } = useSubscriptions();
+  const { transactions } = useTransactions();
+
+  const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
   const totalExpenses = useMemo(() => 
     expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0), [expenses]
@@ -156,61 +161,65 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
-            <div className="h-80 sm:h-96 lg:h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <defs>
-                    <linearGradient id="pieGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" />
-                      <stop offset="100%" stopColor="hsl(var(--primary) / 0.8)" />
-                    </linearGradient>
-                    <linearGradient id="pieGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="hsl(var(--accent))" />
-                      <stop offset="100%" stopColor="hsl(var(--accent) / 0.8)" />
-                    </linearGradient>
-                  </defs>
-                  <Pie
-                    data={spendingByCategory}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius="75%"
-                    innerRadius="30%"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={2}
-                    label={false}
-                  >
-                    {spendingByCategory.map((_, index) => (
-                      <Cell 
-                        key={index} 
-                        fill={colors[index % colors.length]}
-                        className="drop-shadow-sm hover:brightness-110 transition-all duration-300"
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value) => formatCurrency(Number(value))}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                      fontSize: "14px"
-                    }}
-                  />
-                  <Legend 
-                    verticalAlign="bottom" 
-                    height={36}
-                    iconType="circle"
-                    wrapperStyle={{
-                      fontSize: "12px",
-                      color: "hsl(var(--foreground))"
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            {hasAnyTransactions ? (
+              <div className="h-80 sm:h-96 lg:h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <defs>
+                      <linearGradient id="pieGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" />
+                        <stop offset="100%" stopColor="hsl(var(--primary) / 0.8)" />
+                      </linearGradient>
+                      <linearGradient id="pieGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="hsl(var(--accent))" />
+                        <stop offset="100%" stopColor="hsl(var(--accent) / 0.8)" />
+                      </linearGradient>
+                    </defs>
+                    <Pie
+                      data={spendingByCategory}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="75%"
+                      innerRadius="30%"
+                      stroke="hsl(var(--background))"
+                      strokeWidth={2}
+                      label={false}
+                    >
+                      {spendingByCategory.map((_, index) => (
+                        <Cell 
+                          key={index} 
+                          fill={colors[index % colors.length]}
+                          className="drop-shadow-sm hover:brightness-110 transition-all duration-300"
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value) => formatCurrency(Number(value))}
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--popover))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+                        fontSize: "14px"
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      iconType="circle"
+                      wrapperStyle={{
+                        fontSize: "12px",
+                        color: "hsl(var(--foreground))"
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <EmptyChartNotice />
+            )}
           </CardContent>
         </Card>
 
@@ -223,61 +232,65 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
-            <div className="h-80 sm:h-96 lg:h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-                  <defs>
-                    <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    stroke="hsl(var(--border))" 
-                    strokeOpacity={0.5}
-                  />
-                  <XAxis 
-                    dataKey="label" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tick={{ fill: "hsl(var(--muted-foreground))" }}
-                  />
-                  <YAxis 
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tick={{ fill: "hsl(var(--muted-foreground))" }}
-                  />
-                  <Tooltip 
-                    formatter={(value) => formatCurrency(Number(value))}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                      fontSize: "14px"
-                    }}
-                  />
-                  <Legend 
-                    wrapperStyle={{
-                      fontSize: "12px",
-                      color: "hsl(var(--foreground))"
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="totalBalance" 
-                    name="Total Balance" 
-                    strokeWidth={3} 
-                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, fill: "hsl(var(--primary))", strokeWidth: 2 }}
-                    stroke="hsl(var(--primary))"
-                    filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            {hasAnyTransactions ? (
+              <div className="h-80 sm:h-96 lg:h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                    <defs>
+                      <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      stroke="hsl(var(--border))" 
+                      strokeOpacity={0.5}
+                    />
+                    <XAxis 
+                      dataKey="label" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tick={{ fill: "hsl(var(--muted-foreground))" }}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tick={{ fill: "hsl(var(--muted-foreground))" }}
+                    />
+                    <Tooltip 
+                      formatter={(value) => formatCurrency(Number(value))}
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--popover))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+                        fontSize: "14px"
+                      }}
+                    />
+                    <Legend 
+                      wrapperStyle={{
+                        fontSize: "12px",
+                        color: "hsl(var(--foreground))"
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="totalBalance" 
+                      name="Total Balance" 
+                      strokeWidth={3} 
+                      dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: "hsl(var(--primary))", strokeWidth: 2 }}
+                      stroke="hsl(var(--primary))"
+                      filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <EmptyChartNotice />
+            )}
           </CardContent>
         </Card>
       </div>

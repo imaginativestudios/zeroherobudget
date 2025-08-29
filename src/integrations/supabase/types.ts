@@ -177,7 +177,7 @@ export type Database = {
         Returns: Json
       }
       create_default_household: {
-        Args: { user_id: string }
+        Args: Record<PropertyKey, never> | { user_id: string }
         Returns: string
       }
       get_user_household_role: {

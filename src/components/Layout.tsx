@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { DemoDataButton } from "./DemoDataButton";
+import { Logo } from "./Logo";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -53,11 +54,9 @@ export const Layout = ({ children }: LayoutProps) => {
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-royal shadow-royal border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
-          <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <Rocket className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
-            <h1 className="text-lg sm:text-xl font-bold text-sidebar-foreground">
-              ZERO HERO
-            </h1>
+          <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
+            <Logo className="h-6 sm:h-7 w-auto" />
+            <span className="sr-only">Zero Hero</span>
           </Link>
           <Button
             variant="ghost"
@@ -95,11 +94,9 @@ export const Layout = ({ children }: LayoutProps) => {
         <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full" role="navigation" aria-label="Primary navigation">
           <div className="p-4 lg:p-6">
             {/* Desktop Header */}
-            <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity">
-              <Rocket className="h-8 w-8 text-accent" aria-hidden="true" />
-              <h1 className="text-xl font-bold text-sidebar-foreground">
-                ZERO HERO
-              </h1>
+            <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
+              <Logo className="h-8 w-auto" />
+              <span className="sr-only">Zero Hero</span>
             </Link>
             
             {/* Mobile padding for header */}

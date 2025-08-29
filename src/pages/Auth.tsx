@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/useAuth';
 import { Crown, Mail, Lock, CheckCircle, AlertCircle, RefreshCcw, Eye, EyeOff } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 const Auth = () => {
   const { user, loading, signIn, signUp, resendConfirmation } = useAuth();
@@ -101,10 +102,9 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-royal">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-12 h-12 bg-gradient-royal rounded-full flex items-center justify-center">
-            <Crown className="w-6 h-6 text-primary-foreground" />
+            <Logo className="h-7 w-auto drop-shadow" />
           </div>
           <div>
-            <CardTitle className="text-2xl text-gradient-royal">Zero Hero</CardTitle>
             <CardDescription className="text-muted-foreground">
               Your personal financial command center
             </CardDescription>

@@ -207,8 +207,8 @@ export const IncomeReport = () => {
               <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-medium mb-2">No Income Transactions</h3>
               <p className="mb-4">
-                No income transactions recorded for {formatMonthDisplay(selectedMonth)}.
-                The total above is based on your planned monthly income.
+                No income transactions recorded for {formatMonthDisplay(selectedMonth)}. 
+                Charts and detailed analysis will populate once you enter or upload transactions.
               </p>
               <Button asChild>
                 <Link to="/transactions">Add Income Transaction</Link>

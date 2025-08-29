@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -22,6 +23,11 @@ export const Reports = () => {
       planned: expense.planned || 0,
       actual: monthlyActuals[expense.id] || 0
     })), [expenses, monthlyActuals]
+  );
+
+  const hasTransactionData = useMemo(() => 
+    Object.values(monthlyActuals).some(amount => amount > 0),
+    [monthlyActuals]
   );
 
   const reportTypes = [
@@ -111,73 +117,77 @@ export const Reports = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="pb-6">
-          <div className="h-96 sm:h-[450px] lg:h-[500px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={expenseData} margin={{ left: 20, right: 20, top: 20, bottom: 60 }}>
-                <defs>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.9}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid 
-                  strokeDasharray="3 3" 
-                  stroke="hsl(var(--border))" 
-                  strokeOpacity={0.5}
-                />
-                <XAxis 
-                  dataKey="name" 
-                  angle={-30} 
-                  textAnchor="end" 
-                  interval={0} 
-                  height={60}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <YAxis 
-                  tickFormatter={(value) => formatCurrency(value)}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <Tooltip 
-                  formatter={(value) => formatCurrency(Number(value))}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                    fontSize: "14px"
-                  }}
-                />
-                <Legend 
-                  wrapperStyle={{
-                    fontSize: "12px",
-                    color: "hsl(var(--foreground))"
-                  }}
-                />
-                <Bar 
-                  dataKey="planned" 
-                  name="Planned" 
-                  fill="url(#barGradient)"
-                  radius={[4, 4, 0, 0]}
-                  strokeWidth={1}
-                  stroke="hsl(var(--primary))"
-                  filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
-                />
-                <Bar 
-                  dataKey="actual" 
-                  name="Actual" 
-                  fill="hsl(var(--accent))"
-                  radius={[4, 4, 0, 0]}
-                  strokeWidth={1}
-                  stroke="hsl(var(--accent))"
-                  filter="drop-shadow(0 2px 4px hsl(var(--accent) / 0.2))"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {hasTransactionData ? (
+            <div className="h-96 sm:h-[450px] lg:h-[500px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={expenseData} margin={{ left: 20, right: 20, top: 20, bottom: 60 }}>
+                  <defs>
+                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="hsl(var(--border))" 
+                    strokeOpacity={0.5}
+                  />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-30} 
+                    textAnchor="end" 
+                    interval={0} 
+                    height={60}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <YAxis 
+                    tickFormatter={(value) => formatCurrency(value)}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <Tooltip 
+                    formatter={(value) => formatCurrency(Number(value))}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+                      fontSize: "14px"
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      fontSize: "12px",
+                      color: "hsl(var(--foreground))"
+                    }}
+                  />
+                  <Bar 
+                    dataKey="planned" 
+                    name="Planned" 
+                    fill="url(#barGradient)"
+                    radius={[4, 4, 0, 0]}
+                    strokeWidth={1}
+                    stroke="hsl(var(--primary))"
+                    filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
+                  />
+                  <Bar 
+                    dataKey="actual" 
+                    name="Actual" 
+                    fill="hsl(var(--accent))"
+                    radius={[4, 4, 0, 0]}
+                    strokeWidth={1}
+                    stroke="hsl(var(--accent))"
+                    filter="drop-shadow(0 2px 4px hsl(var(--accent) / 0.2))"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <EmptyChartNotice />
+          )}
         </CardContent>
       </Card>
     </div>

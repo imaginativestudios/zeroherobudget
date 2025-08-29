@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -67,6 +68,11 @@ export const AvailableForDebtReport = () => {
       hasActualSpending: actualSpending > 0
     };
   }, [selectedMonth, income, expenses, getTotalActualSpending, getTransactionsByMonth]);
+
+  const hasAnyTransactions = useMemo(() => 
+    monthlyData.some(month => month.spending > 0 || month.income !== income),
+    [monthlyData, income]
+  );
 
   return (
     <div className="space-y-6">
@@ -165,62 +171,69 @@ export const AvailableForDebtReport = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="pb-6">
-          <div className="h-80 sm:h-96 lg:h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={monthlyData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <YAxis 
-                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <Tooltip 
-                  formatter={(value, name) => [formatCurrency(Number(value)), name]}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                    fontSize: "14px"
-                  }}
-                />
-                <Legend 
-                  wrapperStyle={{
-                    fontSize: "12px",
-                    color: "hsl(var(--foreground))"
-                  }}
-                />
-                <Bar 
-                  dataKey="income" 
-                  name="Income" 
-                  fill="hsl(var(--primary) / 0.3)" 
-                  stroke="hsl(var(--primary))"
-                />
-                <Bar 
-                  dataKey="spending" 
-                  name="Spending" 
-                  fill="hsl(var(--destructive) / 0.3)" 
-                  stroke="hsl(var(--destructive))"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="available" 
-                  name="Available for Debt" 
-                  strokeWidth={3} 
-                  dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: "hsl(var(--accent))", strokeWidth: 2 }}
-                  stroke="hsl(var(--accent))"
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+          {hasAnyTransactions ? (
+            <div className="h-80 sm:h-96 lg:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={monthlyData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <YAxis 
+                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <Tooltip 
+                    formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+                      fontSize: "14px"
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      fontSize: "12px",
+                      color: "hsl(var(--foreground))"
+                    }}
+                  />
+                  <Bar 
+                    dataKey="income" 
+                    name="Income" 
+                    fill="hsl(var(--primary) / 0.3)" 
+                    stroke="hsl(var(--primary))"
+                  />
+                  <Bar 
+                    dataKey="spending" 
+                    name="Spending" 
+                    fill="hsl(var(--destructive) / 0.3)" 
+                    stroke="hsl(var(--destructive))"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="available" 
+                    name="Available for Debt" 
+                    strokeWidth={3} 
+                    dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: "hsl(var(--accent))", strokeWidth: 2 }}
+                    stroke="hsl(var(--accent))"
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <EmptyChartNotice 
+              title="No Transaction Data" 
+              message="This trend chart will populate once you enter or upload transactions to track your income and spending patterns"
+            />
+          )}
         </CardContent>
       </Card>
 

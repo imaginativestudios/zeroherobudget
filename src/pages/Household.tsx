@@ -103,22 +103,20 @@ export function Household() {
                 {householdMembers.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
+                    className="flex items-center gap-3 p-3 border rounded-lg"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                        {member.profile?.display_name?.[0] || member.profile?.email?.[0] || 'U'}
-                      </div>
-                      <div>
-                        <p className="font-medium">
-                          {member.profile?.display_name || member.profile?.email}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {member.profile?.email}
-                        </p>
-                      </div>
+                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                      {member.profile?.display_name?.[0] || member.profile?.email?.[0] || 'U'}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">
+                        {member.profile?.display_name || member.profile?.email}
+                      </p>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {member.profile?.email}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       {canManageHousehold() && member.role !== 'owner' ? (
                         <select
                           value={member.role}
@@ -130,7 +128,7 @@ export function Household() {
                           <option value="viewer">Viewer</option>
                         </select>
                       ) : (
-                        <Badge variant={getRoleBadgeVariant(member.role)} className="flex items-center gap-1">
+                        <Badge variant={getRoleBadgeVariant(member.role)} className="flex items-center gap-1 whitespace-nowrap">
                           {getRoleIcon(member.role)}
                           {member.role}
                         </Badge>
@@ -173,21 +171,19 @@ export function Household() {
                   {invitations.map((invitation) => (
                     <div
                       key={invitation.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
+                      className="flex items-center gap-3 p-3 border rounded-lg"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                          <UserPlus className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{invitation.email}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Invited {new Date(invitation.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
+                      <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                        <UserPlus className="h-4 w-4" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{invitation.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Invited {new Date(invitation.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
                           {getRoleIcon(invitation.role)}
                           {invitation.role}
                         </Badge>

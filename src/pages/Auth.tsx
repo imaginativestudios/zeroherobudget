@@ -106,7 +106,7 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-royal">
         <CardHeader className="text-center">
           <CardDescription className="text-muted-foreground">
-            Your personal financial command center
+            from balances due to a more balanced you
           </CardDescription>
         </CardHeader>
         

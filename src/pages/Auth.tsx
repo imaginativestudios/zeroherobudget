@@ -98,17 +98,16 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-royal px-4">
+      <div className="mb-8">
+        <Logo variant="color" src="/lovable-uploads/c6c5c284-49c5-4e08-976c-035d6d52da2b.png" className="h-16 sm:h-20 w-auto drop-shadow-lg" />
+      </div>
+      
       <Card className="w-full max-w-md shadow-royal">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto flex justify-center">
-            <Logo variant="color" src="/lovable-uploads/c6c5c284-49c5-4e08-976c-035d6d52da2b.png" className="h-12 sm:h-14 w-auto drop-shadow" />
-          </div>
-          <div>
-            <CardDescription className="text-muted-foreground">
-              Your personal financial command center
-            </CardDescription>
-          </div>
+        <CardHeader className="text-center">
+          <CardDescription className="text-muted-foreground">
+            Your personal financial command center
+          </CardDescription>
         </CardHeader>
         
         <CardContent>

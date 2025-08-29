@@ -5,16 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
+import { useTransactions } from "@/hooks/useTransactions";
 import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } from "@/lib/csvUtils";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
   const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
   const [income] = useUserLocalStorage("bdt_income", 0);
   const [expenses] = useUserLocalStorage("bdt_expenses", []);
+  const { transactions } = useTransactions();
 
   const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
@@ -273,34 +276,43 @@ export const DebtSnowball = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={schedule.timeline} margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="label" />
-                <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="totalBalance" 
-                  name="Total Balance" 
-                  strokeWidth={3} 
-                  dot={false}
-                  stroke="hsl(var(--primary))"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {schedule.totalInterest > 0 && (
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <div className="text-sm text-muted-foreground">
-                Total Interest Projected: <span className="font-bold text-destructive text-lg">
-                  {formatCurrency(schedule.totalInterest)}
-                </span>
+          {transactions.length > 0 ? (
+            <>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={schedule.timeline} margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                    <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="totalBalance" 
+                      name="Total Balance" 
+                      strokeWidth={3} 
+                      dot={false}
+                      stroke="hsl(var(--primary))"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-            </div>
+              
+              {schedule.totalInterest > 0 && (
+                <div className="mt-4 p-4 bg-muted rounded-lg">
+                  <div className="text-sm text-muted-foreground">
+                    Total Interest Projected: <span className="font-bold text-destructive text-lg">
+                      {formatCurrency(schedule.totalInterest)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <EmptyChartNotice 
+              title="No Data Available"
+              message="This chart will populate once you enter or upload transactions"
+            />
           )}
         </CardContent>
       </Card>

@@ -21,7 +21,7 @@ export const Logo = ({ className, alt = "Zero Hero logo", variant = "white" }: L
     <img
       src={currentSrc}
       alt={alt}
-      className={cn("w-auto", className)}
+      className={cn("block h-auto w-auto", className)}
       onError={() => setSrcIndex((i) => (i < FALLBACKS.length - 1 ? i + 1 : i))}
     />
   );

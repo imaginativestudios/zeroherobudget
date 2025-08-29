@@ -102,7 +102,7 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-royal">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto flex justify-center">
-            <Logo variant="color" className="h-12 sm:h-14 drop-shadow" />
+            <Logo variant="color" src="/lovable-uploads/c6c5c284-49c5-4e08-976c-035d6d52da2b.png" className="h-12 sm:h-14 w-auto drop-shadow" />
           </div>
           <div>
             <CardDescription className="text-muted-foreground">

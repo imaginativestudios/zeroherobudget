@@ -272,7 +272,7 @@ export const DebtSnowball = () => {
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
             <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
-            Total Balance Over Time
+            Total Debt Balance Over Time
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -289,7 +289,7 @@ export const DebtSnowball = () => {
                     <Line 
                       type="monotone" 
                       dataKey="totalBalance" 
-                      name="Total Balance" 
+                      name="Total Debt Balance" 
                       strokeWidth={3} 
                       dot={false}
                       stroke="hsl(var(--primary))"

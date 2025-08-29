@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useProfile } from "@/hooks/useProfile";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
@@ -24,6 +25,7 @@ export const Dashboard = () => {
 
   const { getTotalMonthlySpend } = useSubscriptions();
   const { transactions } = useTransactions();
+  const { profile } = useProfile();
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
@@ -43,6 +45,9 @@ export const Dashboard = () => {
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
   const netWorth = totalAssets - totalDebt;
   const monthlySubscriptionSpend = getTotalMonthlySpend();
+
+  // Get greeting name
+  const greetingName = profile?.first_name || profile?.display_name || 'there';
 
   // Prepare spending by category data
   const spendingByCategory = useMemo(() => {
@@ -93,7 +98,7 @@ export const Dashboard = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="pt-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              <span className="leading-tight">Dashboard</span>
+              <span className="leading-tight">Welcome, {greetingName}!</span>
             </h1>
           </div>
           <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
@@ -151,6 +156,7 @@ export const Dashboard = () => {
         />
       </div>
 
+      {/* Charts Section */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden">

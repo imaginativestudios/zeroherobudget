@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,13 +8,15 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/useAuth';
-import { Crown, Mail, Lock, CheckCircle, AlertCircle, RefreshCcw, Eye, EyeOff } from 'lucide-react';
+import { Crown, Mail, Lock, CheckCircle, AlertCircle, RefreshCcw, Eye, EyeOff, User } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 const Auth = () => {
   const { user, loading, signIn, signUp, resendConfirmation } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
@@ -37,6 +40,7 @@ const Auth = () => {
 
   const handleSubmit = async (type: 'signin' | 'signup') => {
     if (!email || !password) return;
+    if (type === 'signup' && (!firstName || !lastName)) return;
     
     setIsSubmitting(true);
     setAuthError('');
@@ -51,7 +55,7 @@ const Auth = () => {
         }
       }
     } else {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, firstName, lastName);
       if (error) {
         if (error.message?.includes('rate limit')) {
           setAuthError('Rate limit exceeded. Please wait a moment and try again.');
@@ -172,7 +176,6 @@ const Auth = () => {
             </Alert>
           )}
 
-
           <Tabs defaultValue="signin" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin" disabled={signupSuccess}>Sign In</TabsTrigger>
@@ -240,6 +243,40 @@ const Auth = () => {
             
             <TabsContent value="signup" className="space-y-4">
               <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-firstname">First Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-firstname"
+                        type="text"
+                        placeholder="First name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="pl-10"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-lastname">Last Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-lastname"
+                        type="text"
+                        placeholder="Last name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="pl-10"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
@@ -290,7 +327,7 @@ const Auth = () => {
                 <Button 
                   className="w-full bg-gradient-royal hover:opacity-90 transition-opacity"
                   onClick={() => handleSubmit('signup')}
-                  disabled={isSubmitting || !email || !password}
+                  disabled={isSubmitting || !email || !password || !firstName || !lastName}
                 >
                   {isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </Button>

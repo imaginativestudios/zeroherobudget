@@ -91,9 +91,7 @@ export function useHouseholds() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase.rpc('create_default_household', {
-        user_id: user.id
-      });
+      const { data, error } = await supabase.rpc('create_default_household');
 
       if (error) {
         console.error('Error creating default household:', error);

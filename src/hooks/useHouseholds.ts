@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Household, HouseholdMember, HouseholdInvitation } from '@/types/households';
@@ -118,6 +119,8 @@ export function useHouseholds() {
             id,
             email,
             display_name,
+            first_name,
+            last_name,
             avatar_url,
             created_at,
             updated_at

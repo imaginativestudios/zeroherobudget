@@ -3,16 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { useAccounts } from '@/hooks/useAccounts';
+import { ChartInsight } from '@/components/ChartInsight';
+import { DataFreshnessIndicator } from '@/components/DataFreshnessIndicator';
+import { useSupabaseSubscriptions } from '@/hooks/useSupabaseSubscriptions';
+import { useSupabaseAccounts } from '@/hooks/useSupabaseAccounts';
 import { formatCurrency } from '@/lib/constants';
 import { format, subMonths, startOfMonth } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { CreditCard } from 'lucide-react';
 
 export function SubscriptionsReport() {
-  const { subscriptions, getMonthlySubscriptionSpend, getMonthlyEquivalent } = useSubscriptions();
-  const { getActiveAccounts, getAccountById } = useAccounts();
+  const {
+    subscriptions,
+    getTotalMonthlySpend,
+  } = useSupabaseSubscriptions();
+
+  const { getActiveAccounts, getAccountById } = useSupabaseAccounts();
   const accounts = getActiveAccounts();
 
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -27,19 +33,30 @@ export function SubscriptionsReport() {
     for (let i = 5; i >= 0; i--) {
       const date = subMonths(startOfMonth(new Date()), i);
       const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const monthSpend = getMonthlySubscriptionSpend(monthStr, selectedAccountId === 'all' ? undefined : selectedAccountId);
-      const totalSpent = monthSpend.reduce((sum, s) => sum + s.totalSpent, 0);
+      
+      // For now, use current subscriptions (in a real app, you'd have historical data)
+      const monthlySpend = subscriptions
+        .filter(sub => sub.is_active)
+        .reduce((total, sub) => {
+          const cycleFactor = sub.billing_cycle === 'yearly' ? 1/12 : 1;
+          return total + (sub.amount * cycleFactor);
+        }, 0);
       
       data.push({
         month: format(date, 'MMM yyyy'),
-        amount: totalSpent,
+        amount: monthlySpend,
       });
     }
     return data;
-  }, [getMonthlySubscriptionSpend, selectedAccountId]);
+  }, [subscriptions]);
 
   // Get current month subscription spending by service
-  const currentMonthSpend = getMonthlySubscriptionSpend(selectedMonth, selectedAccountId === 'all' ? undefined : selectedAccountId);
+  const currentMonthSpend = subscriptions
+    .filter(s => s.is_active && (selectedAccountId === 'all' || s.id === selectedAccountId))
+    .map(s => ({
+      subscriptionName: s.name,
+      totalSpent: s.billing_cycle === 'yearly' ? s.amount / 12 : s.amount,
+    }));
   
   const pieData = currentMonthSpend.map((spend, index) => ({
     name: spend.subscriptionName,
@@ -50,10 +67,10 @@ export function SubscriptionsReport() {
   // Get all active subscriptions with monthly equivalents
   const subscriptionTable = useMemo(() => {
     return subscriptions
-      .filter(s => selectedAccountId === 'all' || s.accountId === selectedAccountId)
+      .filter(s => selectedAccountId === 'all' || s.id === selectedAccountId)
       .map(subscription => {
-        const monthlyEquivalent = getMonthlyEquivalent(subscription);
-        const accountName = getAccountById(subscription.accountId)?.name || 'Unknown';
+        const monthlyEquivalent = subscription.billing_cycle === 'yearly' ? subscription.amount / 12 : subscription.amount;
+        const accountName = 'N/A'; // Will be implemented when account mapping is available
         
         return {
           ...subscription,
@@ -62,7 +79,18 @@ export function SubscriptionsReport() {
         };
       })
       .sort((a, b) => b.monthlyEquivalent - a.monthlyEquivalent);
-  }, [subscriptions, selectedAccountId, getMonthlyEquivalent, getAccountById]);
+  }, [subscriptions, selectedAccountId]);
+
+  // Generate insights
+  const subscriptionInsight = useMemo(() => {
+    const activeCount = subscriptions.filter(s => s.is_active).length;
+    const totalMonthly = getTotalMonthlySpend();
+    
+    if (activeCount === 0) return "Add your subscriptions to track recurring expenses and identify potential savings.";
+    if (activeCount > 10) return `You have ${activeCount} active subscriptions. Consider auditing for unused services.`;
+    if (totalMonthly > 200) return `Your monthly subscription commitment is ${formatCurrency(totalMonthly)}. Look for optimization opportunities.`;
+    return `You're managing ${activeCount} subscriptions effectively.`;
+  }, [subscriptions, getTotalMonthlySpend]);
 
   const colors = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
@@ -81,14 +109,19 @@ export function SubscriptionsReport() {
 
   const totalCurrentMonth = currentMonthSpend.reduce((sum, s) => sum + s.totalSpent, 0);
   const totalMonthlyCommitment = subscriptionTable
-    .filter(s => s.status === 'active')
+    .filter(s => s.is_active)
     .reduce((sum, s) => sum + s.monthlyEquivalent, 0);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Subscription Report</h1>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Subscription Report</h1>
+          <div className="flex items-center gap-2">
+            <DataFreshnessIndicator isLive />
+          </div>
+        </div>
       </div>
 
       {/* Filters */}
@@ -162,7 +195,7 @@ export function SubscriptionsReport() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {subscriptionTable.filter(s => s.status === 'active').length}
+              {subscriptionTable.filter(s => s.is_active).length}
             </div>
             <p className="text-xs text-muted-foreground">
               Total subscriptions: {subscriptionTable.length}
@@ -231,6 +264,8 @@ export function SubscriptionsReport() {
                       outerRadius={120}
                       paddingAngle={2}
                       dataKey="value"
+                      label={({ name, percent }) => percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ''}
+                      labelLine={false}
                     >
                       {pieData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -252,6 +287,10 @@ export function SubscriptionsReport() {
                 No subscription charges found for this month
               </div>
             )}
+            
+            <div className="mt-4">
+              <ChartInsight insight={subscriptionInsight} type="info" />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -285,16 +324,16 @@ export function SubscriptionsReport() {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>{formatCurrency(subscription.expectedAmount)}</TableCell>
-                  <TableCell className="capitalize">{subscription.cycle}</TableCell>
-                  <TableCell className="font-medium">
-                    {formatCurrency(subscription.monthlyEquivalent)}
-                  </TableCell>
-                  <TableCell>{subscription.accountName}</TableCell>
-                  <TableCell>
-                    {subscription.nextCharge && format(new Date(subscription.nextCharge), 'MMM d, yyyy')}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(subscription.status)}</TableCell>
+                   <TableCell>{formatCurrency(subscription.amount)}</TableCell>
+                   <TableCell className="capitalize">{subscription.billing_cycle}</TableCell>
+                   <TableCell className="font-medium">
+                     {formatCurrency(subscription.monthlyEquivalent)}
+                   </TableCell>
+                   <TableCell>{subscription.accountName}</TableCell>
+                   <TableCell>
+                     {subscription.next_billing_date && format(new Date(subscription.next_billing_date), 'MMM d, yyyy')}
+                   </TableCell>
+                   <TableCell>{getStatusBadge(subscription.is_active ? 'active' : 'inactive')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

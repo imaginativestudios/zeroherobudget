@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
+import { ChartInsight } from "@/components/ChartInsight";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { useSupabaseSubscriptions } from "@/hooks/useSupabaseSubscriptions";
 import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
 import { useProfile } from "@/hooks/useProfile";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
+import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
@@ -57,7 +59,7 @@ export const Dashboard = () => {
   // Get greeting name
   const greetingName = profile?.first_name || profile?.display_name || 'there';
 
-  // Prepare spending by category data
+  // Prepare spending by category data with insights
   const spendingByCategory = useMemo(() => {
     const categoryTotals: { [key: string]: number } = {};
     expenses.forEach(expense => {
@@ -66,6 +68,59 @@ export const Dashboard = () => {
     });
     return Object.entries(categoryTotals).map(([name, value]) => ({ name, value }));
   }, [expenses]);
+
+  // Find largest expense category for insights
+  const largestExpenseCategory = useMemo(() => {
+    if (spendingByCategory.length === 0) return undefined;
+    
+    const largest = spendingByCategory.reduce((max, category) => 
+      category.value > max.value ? category : max
+    );
+    
+    const percentage = totalExpenses > 0 ? (largest.value / totalExpenses) * 100 : 0;
+    return { name: largest.name, amount: largest.value, percentage };
+  }, [spendingByCategory, totalExpenses]);
+
+  // Generate insights
+  const insightData: InsightData = {
+    income,
+    expenses: totalExpenses,
+    netWorth,
+    subscriptions: monthlySubscriptionSpend,
+    availableForDebt: leftover,
+    totalDebt,
+    totalTransactions: transactions.length,
+    largestExpenseCategory,
+    ...getPreviousMonthData({ income, expenses: totalExpenses, netWorth, subscriptions: monthlySubscriptionSpend, availableForDebt: leftover })
+  };
+
+  const insights = generateFinancialInsights(insightData);
+
+  // Chart insights
+  const spendingInsight = useMemo(() => {
+    if (largestExpenseCategory && largestExpenseCategory.percentage > 50) {
+      return `${largestExpenseCategory.name} represents over half of your spending. Consider if this allocation aligns with your priorities.`;
+    }
+    if (spendingByCategory.length > 8) {
+      return "You have many spending categories. Consider consolidating to better track your major expenses.";
+    }
+    if (spendingByCategory.length === 0) {
+      return "Start by adding expense categories to better understand your spending patterns.";
+    }
+    return "Your spending appears well-distributed across categories.";
+  }, [largestExpenseCategory, spendingByCategory]);
+
+  const debtInsight = useMemo(() => {
+    if (debts.length === 0) return "Great job staying debt-free! Keep building your wealth.";
+    if (leftover === 0) return "Find ways to increase available funds for faster debt payoff.";
+    
+    const highInterestDebt = debts.find(d => d.interest_rate > 20);
+    if (highInterestDebt) {
+      return `Focus on paying off ${highInterestDebt.name} first due to its high ${highInterestDebt.interest_rate}% interest rate.`;
+    }
+    
+    return "You're making good progress on your debt payoff journey!";
+  }, [debts, leftover]);
 
   const colors = [
     "hsl(var(--primary))",
@@ -133,6 +188,8 @@ export const Dashboard = () => {
           icon={DollarSign}
           trend="up"
           to="/reports/income"
+          previousAmount={insightData.previousIncome}
+          insight={insights.income}
         />
         <FinancialCard
           title="Planned Expenses"
@@ -140,6 +197,8 @@ export const Dashboard = () => {
           icon={TrendingUp}
           trend="neutral"
           to="/reports/expenses"
+          previousAmount={insightData.previousExpenses}
+          insight={insights.expenses}
         />
         <FinancialCard
           title="Subscriptions"
@@ -147,6 +206,8 @@ export const Dashboard = () => {
           icon={CreditCard}
           trend="neutral"
           to="/subscriptions"
+          previousAmount={insightData.previousSubscriptions}
+          insight={insights.subscriptions}
         />
         <FinancialCard
           title="Available for Debt"
@@ -154,6 +215,8 @@ export const Dashboard = () => {
           icon={Target}
           trend="up"
           to="/reports/available"
+          previousAmount={insightData.previousAvailableForDebt}
+          insight={insights.availableForDebt}
         />
         <FinancialCard
           title="Net Worth"
@@ -161,6 +224,8 @@ export const Dashboard = () => {
           icon={AlertTriangle}
           trend={netWorth >= 0 ? "up" : "down"}
           to="/reports/net-worth"
+          previousAmount={insightData.previousNetWorth}
+          insight={insights.netWorth}
         />
       </div>
 
@@ -234,6 +299,12 @@ export const Dashboard = () => {
             ) : (
               <EmptyChartNotice />
             )}
+            
+            {hasAnyTransactions && spendingInsight && (
+              <div className="mt-4">
+                <ChartInsight insight={spendingInsight} type="info" />
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -246,62 +317,67 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
-            {hasAnyTransactions ? (
-              <div className="h-80 sm:h-96 lg:h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-                    <defs>
-                      <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid 
-                      strokeDasharray="3 3" 
-                      stroke="hsl(var(--border))" 
-                      strokeOpacity={0.5}
-                    />
-                    <XAxis 
-                      dataKey="label" 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      tick={{ fill: "hsl(var(--muted-foreground))" }}
-                    />
-                    <YAxis 
-                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      tick={{ fill: "hsl(var(--muted-foreground))" }}
-                    />
-                    <Tooltip 
-                      formatter={(value) => formatCurrency(Number(value))}
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                        fontSize: "14px"
-                      }}
-                    />
-                    <Legend 
-                      wrapperStyle={{
-                        fontSize: "12px",
-                        color: "hsl(var(--foreground))"
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="totalBalance" 
-                      name="Total Balance" 
-                      strokeWidth={3} 
-                      dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6, fill: "hsl(var(--primary))", strokeWidth: 2 }}
-                      stroke="hsl(var(--primary))"
-                      filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            {hasAnyTransactions && schedule.timeline.length > 0 ? (
+              <>
+                <div className="h-80 sm:h-96 lg:h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                      <defs>
+                        <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid 
+                        strokeDasharray="3 3" 
+                        stroke="hsl(var(--border))" 
+                        strokeOpacity={0.5}
+                      />
+                      <XAxis 
+                        dataKey="label" 
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tick={{ fill: "hsl(var(--muted-foreground))" }}
+                      />
+                      <YAxis 
+                        tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tick={{ fill: "hsl(var(--muted-foreground))" }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => formatCurrency(Number(value))}
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--popover))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+                          fontSize: "14px"
+                        }}
+                      />
+                      <Legend 
+                        wrapperStyle={{
+                          fontSize: "12px",
+                          color: "hsl(var(--foreground))"
+                        }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="totalBalance" 
+                        name="Total Balance" 
+                        strokeWidth={3} 
+                        dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6, fill: "hsl(var(--primary))", strokeWidth: 2 }}
+                        stroke="hsl(var(--primary))"
+                        filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4">
+                  <ChartInsight insight={debtInsight} type="info" />
+                </div>
+              </>
             ) : (
               <EmptyChartNotice />
             )}

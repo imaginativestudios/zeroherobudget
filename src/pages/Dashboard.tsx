@@ -7,24 +7,25 @@ import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
-import { useSubscriptions } from "@/hooks/useSubscriptions";
-import { useTransactions } from "@/hooks/useTransactions";
+import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
+import { useSupabaseDebts } from "@/hooks/useSupabaseDebts";
+import { useSupabaseSubscriptions } from "@/hooks/useSupabaseSubscriptions";
+import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
 import { useProfile } from "@/hooks/useProfile";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 export const Dashboard = () => {
-  const [income] = useUserLocalStorage("bdt_income", 0);
-  const [expenses] = useUserLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
-  const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
-  const [assets] = useUserLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  const [income] = useSupabaseSettings().useIncome();
+  const [expenses] = useSupabaseSettings().useExpenses();
+  const { debts } = useSupabaseDebts();
+  const [strategy, setStrategy] = useSupabaseSettings().useStrategy();
+  const [assets] = useSupabaseSettings().useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
-  const { getTotalMonthlySpend } = useSubscriptions();
-  const { transactions } = useTransactions();
+  const { getTotalMonthlySpend } = useSupabaseSubscriptions();
+  const { transactions } = useSupabaseTransactions();
   const { profile } = useProfile();
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
@@ -38,7 +39,14 @@ export const Dashboard = () => {
   );
   
   const schedule = useMemo(() => 
-    simulatePayoff(debts, leftover, strategy as "Snowball" | "Avalanche"), [debts, leftover, strategy]
+    simulatePayoff(debts.map(d => ({
+      id: d.id,
+      name: d.name,
+      balance: d.balance,
+      min: d.minimum_payment,
+      apr: d.interest_rate,
+      type: d.type as 'card' | 'loan'
+    })), leftover, strategy as "Snowball" | "Avalanche"), [debts, leftover, strategy]
   );
 
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
@@ -54,7 +62,7 @@ export const Dashboard = () => {
     const categoryTotals: { [key: string]: number } = {};
     expenses.forEach(expense => {
       const category = expense.category || "Other";
-      categoryTotals[category] = (categoryTotals[category] || 0) + (expense.planned || 0);
+      categoryTotals[category] = (categoryTotals[category] || 0) + (expense.amount || 0);
     });
     return Object.entries(categoryTotals).map(([name, value]) => ({ name, value }));
   }, [expenses]);
@@ -381,7 +389,14 @@ export const Dashboard = () => {
       <OptimizeStrategyDialog
         open={optimizeDialogOpen}
         onOpenChange={setOptimizeDialogOpen}
-        debts={debts}
+        debts={debts.map(d => ({
+          id: d.id,
+          name: d.name,
+          balance: d.balance,
+          min: d.minimum_payment,
+          apr: d.interest_rate,
+          type: d.type as 'card' | 'loan'
+        }))}
         currentLeftover={leftover}
         currentStrategy={strategy}
         onStrategyUpdate={(newStrategy, extraPayment) => {

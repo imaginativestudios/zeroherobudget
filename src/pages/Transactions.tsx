@@ -8,9 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useTransactions } from "@/hooks/useTransactions";
-import { useAccounts } from "@/hooks/useAccounts";
+import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
+import { useSupabaseAccounts } from "@/hooks/useSupabaseAccounts";
+import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
@@ -22,20 +22,78 @@ export const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  const [expenses] = useSupabaseSettings().useExpenses();
   
-  const { accounts, getActiveAccounts } = useAccounts();
+  const { accounts, getActiveAccounts } = useSupabaseAccounts();
   const activeAccounts = getActiveAccounts();
   
   const {
-    transactions,
-    addTransaction,
-    addTransactionsBulk,
-    updateTransaction,
+    transactions: rawTransactions,
+    addTransaction: addRawTransaction,
+    addTransactionsBulk: addRawTransactionsBulk,
+    updateTransaction: updateRawTransaction,
     removeTransaction,
-    getTransactionsByMonth,
-    getTotalActualSpending
-  } = useTransactions();
+    getTransactionsByMonth: getRawTransactionsByMonth,
+    getTotalActualSpending: getRawTotalActualSpending
+  } = useSupabaseTransactions();
+
+  // Map Supabase transactions to expected format
+  const transactions = rawTransactions.map(t => ({
+    id: t.id,
+    date: t.date,
+    description: t.description,
+    amount: t.amount,
+    category: t.category,
+    accountId: t.account_id,
+    flow: t.flow,
+    expenseId: t.expense_id,
+    notes: t.notes
+  }));
+
+  // Wrapper functions to handle field mapping
+  const addTransaction = (transaction: any) => {
+    return addRawTransaction({
+      ...transaction,
+      account_id: transaction.accountId,
+      expense_id: transaction.expenseId,
+    });
+  };
+
+  const addTransactionsBulk = (transactions: any[]) => {
+    const mappedTransactions = transactions.map(t => ({
+      ...t,
+      account_id: t.accountId,
+      expense_id: t.expenseId,
+    }));
+    return addRawTransactionsBulk(mappedTransactions);
+  };
+
+  const updateTransaction = (id: string, updates: any) => {
+    const mappedUpdates = {
+      ...updates,
+      account_id: updates.accountId,
+      expense_id: updates.expenseId,
+    };
+    return updateRawTransaction(id, mappedUpdates);
+  };
+
+  const getTransactionsByMonth = (month: string, accountId?: string) => {
+    return getRawTransactionsByMonth(month, accountId).map(t => ({
+      id: t.id,
+      date: t.date,
+      description: t.description,
+      amount: t.amount,
+      category: t.category,
+      accountId: t.account_id,
+      flow: t.flow,
+      expenseId: t.expense_id,
+      notes: t.notes
+    }));
+  };
+
+  const getTotalActualSpending = (month: string, accountId?: string) => {
+    return getRawTotalActualSpending(month, accountId);
+  };
 
   const [newTransaction, setNewTransaction] = useState({
     date: formatDate(new Date()),
@@ -152,7 +210,13 @@ export const Transactions = () => {
         return;
       }
       
-      const parsedTransactions = mapTransactionCsv(rows, accounts, expenses);
+      const parsedTransactions = mapTransactionCsv(rows, accounts.map(a => ({
+        id: a.id,
+        name: a.name,
+        type: a.type,
+        balance: a.balance,
+        isActive: a.is_active
+      })), expenses);
       
       if (parsedTransactions.length === 0) {
         toast.error("No valid transactions found in CSV");

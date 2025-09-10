@@ -515,20 +515,8 @@ export type Database = {
         Returns: Json
       }
       create_default_household: {
-        Args: Record<PropertyKey, never> | { user_id: string }
+        Args: Record<PropertyKey, never>
         Returns: string
-      }
-      get_user_household_role: {
-        Args: { household_id: string; user_id: string }
-        Returns: Database["public"]["Enums"]["household_role"]
-      }
-      share_household_with: {
-        Args: { other_profile_id: string; uid?: string }
-        Returns: boolean
-      }
-      user_in_household: {
-        Args: { hh_id: string; uid?: string }
-        Returns: boolean
       }
     }
     Enums: {

@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
-import { useTransactions } from "@/hooks/useTransactions";
+import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
+import { useSupabaseExpenses } from "@/hooks/useSupabaseExpenses";
+import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
@@ -14,61 +15,58 @@ import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [income, setIncome] = useUserLocalStorage("bdt_income", 0);
-  const [expenses, setExpenses] = useUserLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
-  const [assets, setAssets] = useUserLocalStorage("bdt_assets", DEFAULT_ASSETS);
-  
-  const { getMonthlyActualsByCategory } = useTransactions();
+  const [income, setIncome] = useSupabaseSettings().useIncome();
+  const [assets, setAssets] = useSupabaseSettings().useAssets();
+  const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense } = useSupabaseExpenses();
+  const { getMonthlyActualsByCategory } = useSupabaseTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
+  const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
   const actualLeftover = Math.max(0, (income || 0) - totalActual);
 
   const addExpense = () => {
-    setExpenses([
-      ...expenses,
-      {
-        id: crypto.randomUUID(),
-        name: "New Expense",
-        planned: 0,
-        notes: "",
-        category: "Uncategorized"
-      }
-    ]);
+    addSupabaseExpense({
+      name: "New Expense",
+      amount: 0,
+      category: "Uncategorized",
+      is_income: false,
+    });
   };
 
-  const updateExpense = (id: string, field: keyof Expense, value: string | number) => {
-    setExpenses(expenses.map(expense => 
-      expense.id === id ? { ...expense, [field]: value } : expense
-    ));
+  const updateExpense = (id: string, field: string, value: string | number) => {
+    const updates = { [field]: value };
+    updateSupabaseExpense(id, updates);
   };
 
   const removeExpense = (id: string) => {
-    setExpenses(expenses.filter(expense => expense.id !== id));
+    removeSupabaseExpense(id);
   };
 
   const addAsset = () => {
-    setAssets([
+    const newAssets = [
       ...assets,
       {
         id: crypto.randomUUID(),
         name: "New Asset",
         value: 0
       }
-    ]);
+    ];
+    setAssets(newAssets);
   };
 
-  const updateAsset = (id: string, field: keyof Asset, value: string | number) => {
-    setAssets(assets.map(asset => 
+  const updateAsset = (id: string, field: string, value: string | number) => {
+    const newAssets = assets.map(asset => 
       asset.id === id ? { ...asset, [field]: value } : asset
-    ));
+    );
+    setAssets(newAssets);
   };
 
   const removeAsset = (id: string) => {
-    setAssets(assets.filter(asset => asset.id !== id));
+    const newAssets = assets.filter(asset => asset.id !== id);
+    setAssets(newAssets);
   };
 
   const exportExpenses = () => {
@@ -76,8 +74,8 @@ export const Budget = () => {
       ["name", "planned", "notes", "category"],
       ...expenses.map(expense => [
         expense.name,
-        expense.planned.toString(),
-        expense.notes || "",
+        expense.amount.toString(),
+        "", // notes field doesn't exist in new schema
         expense.category || ""
       ])
     ];
@@ -102,8 +100,14 @@ export const Budget = () => {
       const mapped = mapExpenseCsv(rows);
       
       if (mapped.length) {
-        setExpenses(mapped);
-        // Note: useExpenseGroups will automatically handle group order after import
+        // Clear existing expenses and add new ones
+        expenses.forEach(expense => removeSupabaseExpense(expense.id));
+        mapped.forEach(expense => addSupabaseExpense({
+          name: expense.name,
+          amount: expense.planned || 0,
+          category: expense.category || "Uncategorized",
+          is_income: false,
+        }));
       } else {
         alert("No valid expense data found in the file");
       }
@@ -197,8 +201,45 @@ export const Budget = () => {
         </CardHeader>
         <CardContent>
           <GroupableExpenses
-            expenses={expenses}
-            setExpenses={setExpenses}
+            expenses={expenses.map(e => ({
+              id: e.id,
+              name: e.name,
+              planned: e.amount,
+              notes: "", // notes not available in new schema
+              category: e.category
+            }))}
+            setExpenses={(newExpenses) => {
+              // Handle updating expenses through Supabase
+              expenses.forEach(expense => {
+                const updatedExpense = newExpenses.find(ne => ne.id === expense.id);
+                if (updatedExpense) {
+                  if (updatedExpense.planned !== expense.amount || 
+                      updatedExpense.name !== expense.name || 
+                      updatedExpense.category !== expense.category) {
+                    updateSupabaseExpense(expense.id, {
+                      amount: updatedExpense.planned,
+                      name: updatedExpense.name,
+                      category: updatedExpense.category
+                    });
+                  }
+                } else {
+                  // Expense was removed
+                  removeSupabaseExpense(expense.id);
+                }
+              });
+              
+              // Handle new expenses
+              newExpenses.forEach(newExpense => {
+                if (!expenses.find(e => e.id === newExpense.id)) {
+                  addSupabaseExpense({
+                    name: newExpense.name,
+                    amount: newExpense.planned,
+                    category: newExpense.category,
+                    is_income: false,
+                  });
+                }
+              });
+            }}
             monthlyActuals={monthlyActuals}
           />
           

@@ -117,13 +117,13 @@ export const IncomeReport = () => {
         <>
           {/* Income by Category Chart */}
           <Card className="shadow-royal overflow-hidden">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
                 <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
                 Income by Category
               </CardTitle>
             </CardHeader>
-            <CardContent className="pb-6">
+            <CardContent>
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={incomeByCategory} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>

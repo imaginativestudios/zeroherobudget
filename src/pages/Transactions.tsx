@@ -281,7 +281,7 @@ export const Transactions = () => {
 
       {/* Controls */}
       <Card className="shadow-royal">
-        <CardContent className="pt-6">
+        <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <div className="flex items-center gap-2">

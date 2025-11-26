@@ -124,7 +124,7 @@ export const AvailableForDebtReport = () => {
       {/* Current Month Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground">Monthly Income</CardTitle>
           </CardHeader>
           <CardContent>
@@ -135,7 +135,7 @@ export const AvailableForDebtReport = () => {
         </Card>
         
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground">
               {currentData.hasActualSpending ? "Actual Spending" : "Planned Spending"}
             </CardTitle>
@@ -148,7 +148,7 @@ export const AvailableForDebtReport = () => {
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground">Available for Debt</CardTitle>
           </CardHeader>
           <CardContent>
@@ -164,13 +164,13 @@ export const AvailableForDebtReport = () => {
 
       {/* 12-Month Trend Chart */}
       <Card className="shadow-royal overflow-hidden">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
             <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
             12-Month Available Funds Trend
           </CardTitle>
         </CardHeader>
-        <CardContent className="pb-6">
+        <CardContent>
           {hasAnyTransactions ? (
             <div className="h-80 sm:h-96 lg:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">

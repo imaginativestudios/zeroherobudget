@@ -197,18 +197,18 @@ export function Subscriptions() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="pt-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Subscriptions</h1>
-        <Button onClick={() => setShowForm(true)}>
+        <Button onClick={() => setShowForm(true)} variant="royal">
           <Plus className="h-4 w-4 mr-2" />
           Add Subscription
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex flex-wrap items-center gap-3 p-3 bg-muted/50 rounded-lg border">
         <Select value={selectedMonth} onValueChange={setSelectedMonth}>
           <SelectTrigger className="w-48">
             <SelectValue />

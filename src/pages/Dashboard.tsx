@@ -180,8 +180,14 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Financial Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch">
+      {/* Financial Overview Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground">Financial Overview</h2>
+          <div className="h-px flex-1 bg-border"></div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch">
         <FinancialCard
           title="Monthly Income"
           amount={income}
@@ -227,10 +233,17 @@ export const Dashboard = () => {
           previousAmount={insightData.previousNetWorth}
           insight={insights.netWorth}
         />
+        </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+      {/* Analytics Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground">Analytics</h2>
+          <div className="h-px flex-1 bg-border"></div>
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden">
           <CardHeader>
@@ -383,10 +396,17 @@ export const Dashboard = () => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
 
-      {/* Upcoming Payoffs */}
-      <Card className="shadow-royal">
+      {/* Debt Progress Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground">Debt Progress</h2>
+          <div className="h-px flex-1 bg-border"></div>
+        </div>
+        <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
             <Target className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
@@ -461,6 +481,7 @@ export const Dashboard = () => {
           )}
         </CardContent>
       </Card>
+      </div>
 
       <OptimizeStrategyDialog
         open={optimizeDialogOpen}

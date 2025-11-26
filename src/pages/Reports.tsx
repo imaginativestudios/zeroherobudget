@@ -101,10 +101,10 @@ export const Reports = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="pt-8 space-y-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3 p-3 bg-muted/50 rounded-lg border">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Label className="text-sm font-medium">Month:</Label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>

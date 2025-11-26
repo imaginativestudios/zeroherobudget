@@ -72,6 +72,19 @@ export function setupDemoData(userId: string): void {
   localStorage.setItem(`${userId}_bdt_accounts`, JSON.stringify(DEMO_ACCOUNTS));
   localStorage.setItem(`${userId}_bdt_transactions`, JSON.stringify(DEMO_TRANSACTIONS));
   localStorage.setItem(`${userId}_bdt_strategy`, JSON.stringify("Avalanche"));
+  
+  // Also populate the expenses key for useLocalExpenses hook
+  const expensesForLocalHook = DEMO_EXPENSES.map(expense => ({
+    id: expense.id,
+    name: expense.name,
+    amount: expense.planned,
+    category: expense.category,
+    is_income: false,
+    user_id: userId,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }));
+  localStorage.setItem(`${userId}_expenses`, JSON.stringify(expensesForLocalHook));
 }
 
 // Function to clear demo data
@@ -85,6 +98,7 @@ export function clearDemoData(userId: string): void {
   localStorage.removeItem(`${userId}_bdt_group_order`);
   localStorage.removeItem(`${userId}_bdt_strategy`);
   localStorage.removeItem(`${userId}_bdt_subscriptions`);
+  localStorage.removeItem(`${userId}_expenses`);
 }
 
 // Check if demo data is already set up

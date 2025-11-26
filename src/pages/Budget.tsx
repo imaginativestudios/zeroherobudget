@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constant
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -26,6 +27,51 @@ export const Budget = () => {
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
   const actualLeftover = Math.max(0, (income || 0) - totalActual);
+
+  // Calculate category totals for budget summary
+  const categoryData = useMemo(() => {
+    const categoryMap = new Map<string, { planned: number; actual: number }>();
+    
+    expenses.forEach(expense => {
+      const category = expense.category || "Uncategorized";
+      const current = categoryMap.get(category) || { planned: 0, actual: 0 };
+      current.planned += expense.amount || 0;
+      categoryMap.set(category, current);
+    });
+
+    // Add actual amounts by category
+    expenses.forEach(expense => {
+      const category = expense.category || "Uncategorized";
+      const actualAmount = monthlyActuals[expense.id] || 0;
+      const current = categoryMap.get(category) || { planned: 0, actual: 0 };
+      current.actual += actualAmount;
+      categoryMap.set(category, current);
+    });
+
+    // Convert to array and calculate percentages
+    return Array.from(categoryMap.entries())
+      .map(([name, data]) => ({
+        name,
+        planned: data.planned,
+        actual: data.actual,
+        percentage: totalExpenses > 0 ? ((data.planned / totalExpenses) * 100) : 0,
+        variance: data.actual - data.planned,
+        variancePercent: data.planned > 0 ? (((data.actual - data.planned) / data.planned) * 100) : 0
+      }))
+      .filter(cat => cat.planned > 0)
+      .sort((a, b) => b.planned - a.planned);
+  }, [expenses, monthlyActuals, totalExpenses]);
+
+  const CHART_COLORS = [
+    "hsl(var(--chart-1))",
+    "hsl(var(--chart-2))",
+    "hsl(var(--chart-3))",
+    "hsl(var(--chart-4))",
+    "hsl(var(--chart-5))",
+  ];
+
+  const variance = totalActual - totalExpenses;
+  const budgetUsedPercent = totalExpenses > 0 ? ((totalActual / totalExpenses) * 100) : 0;
 
   const addExpense = () => {
     addSupabaseExpense({
@@ -191,6 +237,157 @@ export const Budget = () => {
               {formatCurrency(income)}
             </span>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Budget Summary Section */}
+      <Card className="shadow-royal">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-3">
+            <TrendingUp className="h-6 w-6 text-chart-1" />
+            Budget Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Summary Statistics */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <div className="text-sm text-muted-foreground mb-1">Total Planned</div>
+              <div className="text-2xl font-bold text-foreground">
+                {formatCurrency(totalExpenses)}
+              </div>
+            </div>
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <div className="text-sm text-muted-foreground mb-1">Total Actual</div>
+              <div className="text-2xl font-bold text-foreground">
+                {formatCurrency(totalActual)}
+              </div>
+            </div>
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <div className="text-sm text-muted-foreground mb-1">Variance</div>
+              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-success' : 'text-destructive'}`}>
+                {variance <= 0 ? <TrendingDown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
+                {formatCurrency(Math.abs(variance))}
+              </div>
+            </div>
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <div className="text-sm text-muted-foreground mb-1">Budget Used</div>
+              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-success' : 'text-destructive'}`}>
+                {budgetUsedPercent.toFixed(1)}%
+              </div>
+            </div>
+          </div>
+
+          {/* Charts */}
+          {categoryData.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Donut Chart - Category Distribution */}
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-muted-foreground">Planned Spending by Category</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      dataKey="planned"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={2}
+                      label={({ percentage }) => `${percentage.toFixed(0)}%`}
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value: number) => formatCurrency(value)}
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--popover))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value) => (
+                        <span className="text-xs text-foreground">{value}</span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Bar Chart - Planned vs Actual */}
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-muted-foreground">Planned vs Actual by Category</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={categoryData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis type="number" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name" 
+                      width={100}
+                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      formatter={(value: number) => formatCurrency(value)}
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--popover))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend 
+                      formatter={(value) => (
+                        <span className="text-xs text-foreground">{value === 'planned' ? 'Planned' : 'Actual'}</span>
+                      )}
+                    />
+                    <Bar dataKey="planned" fill="hsl(var(--chart-1))" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="actual" fill="hsl(var(--chart-2))" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* Category Variance Table */}
+          {categoryData.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">Category Variance</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold text-muted-foreground">Category</th>
+                      <th className="text-right p-2 font-semibold text-muted-foreground">Planned</th>
+                      <th className="text-right p-2 font-semibold text-muted-foreground">Actual</th>
+                      <th className="text-right p-2 font-semibold text-muted-foreground">Variance</th>
+                      <th className="text-right p-2 font-semibold text-muted-foreground">% Diff</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categoryData.map((cat, idx) => (
+                      <tr key={cat.name} className="border-b border-border/50">
+                        <td className="p-2 font-medium text-foreground">{cat.name}</td>
+                        <td className="text-right p-2 text-foreground">{formatCurrency(cat.planned)}</td>
+                        <td className="text-right p-2 text-foreground">{formatCurrency(cat.actual)}</td>
+                        <td className={`text-right p-2 font-semibold ${cat.variance <= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {cat.variance <= 0 ? '-' : '+'}{formatCurrency(Math.abs(cat.variance))}
+                        </td>
+                        <td className={`text-right p-2 font-semibold ${cat.variance <= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {cat.variancePercent > 0 ? '+' : ''}{cat.variancePercent.toFixed(1)}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -62,13 +62,37 @@ export const Budget = () => {
       .sort((a, b) => b.planned - a.planned);
   }, [expenses, monthlyActuals, totalExpenses]);
 
-  const CHART_COLORS = [
+  // Consistent category color mapping for all charts
+  const CATEGORY_COLORS: Record<string, string> = {
+    "Housing": "hsl(var(--chart-1))",
+    "Utilities": "hsl(var(--chart-2))",
+    "Transportation": "hsl(var(--chart-3))",
+    "Food": "hsl(var(--chart-4))",
+    "Insurance & Healthcare": "hsl(var(--chart-5))",
+    "Personal Care": "hsl(var(--chart-6))",
+    "Entertainment": "hsl(var(--chart-7))",
+    "Savings & Investments": "hsl(var(--chart-8))",
+    "Debt Payments": "hsl(var(--chart-9))",
+    "Miscellaneous": "hsl(var(--chart-10))",
+  };
+
+  // Fallback colors for categories not in the mapping
+  const FALLBACK_COLORS = [
     "hsl(var(--chart-1))",
     "hsl(var(--chart-2))",
     "hsl(var(--chart-3))",
     "hsl(var(--chart-4))",
     "hsl(var(--chart-5))",
+    "hsl(var(--chart-6))",
+    "hsl(var(--chart-7))",
+    "hsl(var(--chart-8))",
+    "hsl(var(--chart-9))",
+    "hsl(var(--chart-10))",
   ];
+
+  const getCategoryColor = (categoryName: string, index: number) => {
+    return CATEGORY_COLORS[categoryName] || FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+  };
 
   const variance = totalActual - totalExpenses;
   const budgetUsedPercent = totalExpenses > 0 ? ((totalActual / totalExpenses) * 100) : 0;
@@ -278,81 +302,6 @@ export const Budget = () => {
             </div>
           </div>
 
-          {/* Charts */}
-          {categoryData.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Donut Chart - Category Distribution */}
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-muted-foreground">Planned Spending by Category</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={categoryData}
-                      dataKey="planned"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      label={({ percentage }) => `${percentage.toFixed(0)}%`}
-                    >
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value: number) => formatCurrency(value)}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Legend 
-                      verticalAlign="bottom" 
-                      height={36}
-                      formatter={(value) => (
-                        <span className="text-xs text-foreground">{value}</span>
-                      )}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Bar Chart - Planned vs Actual */}
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-muted-foreground">Planned vs Actual by Category</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={categoryData} layout="vertical" margin={{ left: 10, right: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis type="number" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name" 
-                      width={100}
-                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                    />
-                    <Tooltip 
-                      formatter={(value: number) => formatCurrency(value)}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Legend 
-                      formatter={(value) => (
-                        <span className="text-xs text-foreground">{value === 'planned' ? 'Planned' : 'Actual'}</span>
-                      )}
-                    />
-                    <Bar dataKey="planned" fill="hsl(var(--chart-1))" radius={[0, 4, 4, 0]} />
-                    <Bar dataKey="actual" fill="hsl(var(--chart-2))" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )}
 
           {/* Category Variance Table */}
           {categoryData.length > 0 && (
@@ -390,6 +339,144 @@ export const Budget = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Planned Spending by Category - Donut Chart */}
+      {categoryData.length > 0 && (
+        <Card className="shadow-royal">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center gap-3">
+              <Crown className="h-6 w-6 text-chart-1" />
+              Planned Spending by Category
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  dataKey="planned"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={120}
+                  paddingAngle={2}
+                  label={({ name, percentage }) => `${percentage.toFixed(1)}%`}
+                  labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1 }}
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name, index)} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value: number) => formatCurrency(value)}
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend 
+                  layout="horizontal"
+                  verticalAlign="bottom" 
+                  align="center"
+                  wrapperStyle={{ 
+                    paddingTop: '20px',
+                    maxHeight: '120px',
+                    overflowY: 'auto'
+                  }}
+                  formatter={(value) => (
+                    <span className="text-xs text-foreground truncate max-w-[120px] inline-block">{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Planned vs Actual by Category - Bar Chart */}
+      {categoryData.length > 0 && (
+        <Card className="shadow-royal">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center gap-3">
+              <TrendingUp className="h-6 w-6 text-chart-2" />
+              Planned vs Actual by Category
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={Math.max(400, categoryData.length * 60)}>
+              <BarChart 
+                data={categoryData} 
+                layout="vertical" 
+                margin={{ left: 0, right: 20, top: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  type="number" 
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  width={120}
+                  tick={(props) => {
+                    const { x, y, payload } = props;
+                    const text = payload.value as string;
+                    const truncated = text.length > 18 ? text.substring(0, 15) + '...' : text;
+                    return (
+                      <text 
+                        x={x} 
+                        y={y} 
+                        textAnchor="end" 
+                        fill="hsl(var(--muted-foreground))" 
+                        fontSize={12}
+                        dy={4}
+                      >
+                        {truncated}
+                      </text>
+                    );
+                  }}
+                />
+                <Tooltip 
+                  formatter={(value: number, name: string) => [
+                    formatCurrency(value), 
+                    name === 'planned' ? 'Planned' : 'Actual'
+                  ]}
+                  labelFormatter={(label) => label}
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend 
+                  verticalAlign="top"
+                  height={36}
+                  formatter={(value) => (
+                    <span className="text-sm text-foreground font-medium">
+                      {value === 'planned' ? 'Planned' : 'Actual'}
+                    </span>
+                  )}
+                />
+                <Bar 
+                  dataKey="planned" 
+                  fill="hsl(var(--chart-8))" 
+                  radius={[0, 4, 4, 0]}
+                  name="planned"
+                />
+                <Bar 
+                  dataKey="actual" 
+                  fill="hsl(var(--chart-4))" 
+                  radius={[0, 4, 4, 0]}
+                  name="actual"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Expenses Section */}
       <Card className="shadow-royal">

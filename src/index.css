@@ -60,6 +60,18 @@ All colors MUST be HSL.
     /* Animations */
     --transition-royal: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Budget Category Colors - 10 distinct colors for consistent category theming */
+    --chart-1: 260 70% 50%;   /* Purple - Housing */
+    --chart-2: 200 80% 45%;   /* Blue - Utilities */
+    --chart-3: 160 60% 40%;   /* Teal - Transportation */
+    --chart-4: 35 85% 50%;    /* Gold/Orange - Food */
+    --chart-5: 340 65% 50%;   /* Rose - Insurance & Healthcare */
+    --chart-6: 280 55% 55%;   /* Violet - Personal Care */
+    --chart-7: 45 90% 50%;    /* Yellow - Entertainment */
+    --chart-8: 140 50% 45%;   /* Green - Savings & Investments */
+    --chart-9: 15 75% 50%;    /* Coral - Debt Payments */
+    --chart-10: 220 40% 55%;  /* Slate Blue - Miscellaneous */
+
     --sidebar-background: 260 100% 35%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 45 100% 60%;

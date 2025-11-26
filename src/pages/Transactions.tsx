@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Download, Upload, Search, Trash2, Edit } from "lucide-react";
+import { Calendar, Plus, Download, Upload, Search, Trash2, Edit, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -258,87 +258,31 @@ export const Transactions = () => {
 
   return (
     <div className="space-y-8">
-      <div className="pt-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportTransactions}>
-            <Download className="h-4 w-4" />
-            Export CSV
-          </Button>
-          <Button variant="outline" onClick={() => document.getElementById('import-transactions')?.click()}>
-            <Upload className="h-4 w-4" />
-            Import CSV
-          </Button>
-          <input
-            id="import-transactions"
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={importTransactions}
-          />
-        </div>
-      </div>
-
-      {/* Controls */}
-      <Card className="shadow-royal">
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <Label>Month:</Label>
-                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => {
-                      const date = new Date();
-                      date.setMonth(date.getMonth() - i);
-                      const monthStr = formatDate(date).slice(0, 7);
-                      return (
-                        <SelectItem key={monthStr} value={monthStr}>
-                          {formatMonthDisplay(monthStr)}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Label>Account:</Label>
-                <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Accounts</SelectItem>
-                    {activeAccounts.map(account => (
-                      <SelectItem key={account.id} value={account.id}>
-                        {account.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search transactions..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-48"
-                />
-              </div>
-            </div>
-
+      <div className="pt-8 space-y-4">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
+          
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" onClick={exportTransactions}>
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Export</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => document.getElementById('import-transactions')?.click()}>
+              <Upload className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Import</span>
+            </Button>
+            <input
+              id="import-transactions"
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={importTransactions}
+            />
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
                 <Button variant="royal">
                   <Plus className="h-4 w-4" />
-                  Add Transaction
+                  <span>Add Transaction</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -448,20 +392,73 @@ export const Transactions = () => {
               </DialogContent>
             </Dialog>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+        <div className="flex flex-wrap items-center gap-3 p-3 bg-muted/50 rounded-lg border">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-40 bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 12 }, (_, i) => {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthStr = formatDate(date).slice(0, 7);
+                return (
+                  <SelectItem key={monthStr} value={monthStr}>
+                    {formatMonthDisplay(monthStr)}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+          
+          <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+            <SelectTrigger className="w-40 bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Accounts</SelectItem>
+              {activeAccounts.map(account => (
+                <SelectItem key={account.id} value={account.id}>
+                  {account.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border flex-1 min-w-[200px]">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search transactions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-background border-0 focus-visible:ring-0"
+          />
+        </div>
+      </div>
 
       {/* Summary */}
       <Card className="shadow-royal">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="text-xl">
             {formatMonthDisplay(selectedMonth)} Summary
             {selectedAccount !== 'all' && ` - ${accounts.find(a => a.id === selectedAccount)?.name}`}
-            <span className="text-lg font-bold text-destructive">
-              Total Spent: {formatCurrency(totalSpending)}
-            </span>
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+            <span className="text-muted-foreground font-medium">Total Spent</span>
+            <span className="text-2xl font-bold text-destructive">
+              {formatCurrency(totalSpending)}
+            </span>
+          </div>
+        </CardContent>
       </Card>
 
       {/* Transactions Table */}

@@ -74,47 +74,48 @@ export const FinancialCard = ({
       to && "cursor-pointer hover:translate-y-[-1px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:scale-[1.02]",
       className
     )}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
-          {title}
-        </CardTitle>
-        <Icon className="h-5 w-5 text-accent" />
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <Icon className="h-5 w-5 text-accent flex-shrink-0" />
+          <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
+            {title}
+          </CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="flex-grow space-y-3">
-        <div className="flex items-center justify-between">
-          <div className={cn("text-2xl font-bold min-w-0 truncate", getAmountColor())}>
-            {formatCurrency(amount)}
-          </div>
-          {hasChange && Math.abs(changeAmount) >= 1 && (
+      <CardContent className="flex-grow flex flex-col justify-between">
+        {/* Primary: Amount */}
+        <div className={cn("text-2xl sm:text-3xl font-bold", getAmountColor())}>
+          {formatCurrency(amount)}
+        </div>
+        
+        {/* Secondary: Trend section */}
+        {hasChange && Math.abs(changeAmount) >= 1 && (
+          <div className="flex flex-wrap items-center gap-2 mt-2">
             <Badge variant="outline" className={`${getTrendColor()} border-current animate-scale-in`}>
               <TrendIcon className="h-3 w-3 mr-1" />
               {changePercentage.toFixed(1)}%
             </Badge>
-          )}
-        </div>
-        
-        <div className="space-y-1">
-          {hasChange && Math.abs(changeAmount) >= 1 && (
-            <p className={`text-xs ${getTrendColor()}`}>
+            <span className={`text-xs ${getTrendColor()}`}>
               {isIncrease ? "+" : ""}{formatCurrency(changeAmount)} vs last month
+            </span>
+          </div>
+        )}
+        
+        {/* Tertiary: Insight */}
+        {insight && (
+          <div className="mt-3 p-2 bg-muted/50 rounded-md">
+            <p className="text-xs text-accent font-medium leading-relaxed line-clamp-2">
+              💡 {insight}
             </p>
-          )}
-          
-          {insight && (
-            <div className="flex items-start gap-1">
-              <span className="text-xs">💡</span>
-              <p className="text-xs text-accent font-medium leading-relaxed">
-                {insight}
-              </p>
-            </div>
-          )}
-          
-          {to && (
-            <p className="text-xs text-muted-foreground">
-              View detailed report →
-            </p>
-          )}
-        </div>
+          </div>
+        )}
+        
+        {/* Footer: Link */}
+        {to && (
+          <p className="text-xs text-muted-foreground mt-auto pt-3">
+            View detailed report →
+          </p>
+        )}
       </CardContent>
     </Card>
   );

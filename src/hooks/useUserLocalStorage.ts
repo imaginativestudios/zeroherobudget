@@ -1,38 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from './useAuth';
 
 export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   const { user } = useAuth();
+  const initialValueRef = useRef(initialValue);
   
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (!user) return initialValue;
+    if (!user) return initialValueRef.current;
     
     try {
       const userKey = `${user.id}_${key}`;
       const item = window.localStorage.getItem(userKey);
-      return item ? JSON.parse(item) : initialValue;
+      return item ? JSON.parse(item) : initialValueRef.current;
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
+      return initialValueRef.current;
     }
   });
 
-  // Update stored value when user changes
+  // Update stored value when user changes (but not when initialValue changes)
   useEffect(() => {
     if (!user) {
-      setStoredValue(initialValue);
+      setStoredValue(initialValueRef.current);
       return;
     }
 
     try {
       const userKey = `${user.id}_${key}`;
       const item = window.localStorage.getItem(userKey);
-      setStoredValue(item ? JSON.parse(item) : initialValue);
+      setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
-      setStoredValue(initialValue);
+      setStoredValue(initialValueRef.current);
     }
-  }, [user, key, initialValue]);
+  }, [user, key]); // Removed initialValue from dependencies
 
   const setValue = (value: T) => {
     if (!user) return;

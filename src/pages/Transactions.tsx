@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
-import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useExpenses } from "@/hooks/useLocalSettings";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
@@ -22,7 +22,7 @@ export const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [expenses] = useLocalSettings().useExpenses();
+  const [expenses] = useExpenses();
   
   const { accounts, getActiveAccounts } = useLocalAccounts();
   const activeAccounts = getActiveAccounts();

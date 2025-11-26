@@ -26,13 +26,13 @@ const MOCK_MEMBER = {
 
 export function useMockHouseholds() {
   const [households] = useState([MOCK_HOUSEHOLD]);
-  const [currentHousehold] = useState(MOCK_HOUSEHOLD.id);
+  const [currentHousehold, setCurrentHousehold] = useState(MOCK_HOUSEHOLD.id);
   const [members] = useState([MOCK_MEMBER]);
   const [invitations] = useState([]);
   const [loading] = useState(false);
 
   const createInvitation = async (email: string, role: 'admin' | 'member' | 'viewer') => {
-    return { success: false, error: 'Invitations not available in prototype mode' };
+    return { success: false, error: 'Invitations not available in prototype mode', token: null };
   };
 
   const cancelInvitation = async (invitationId: string) => {
@@ -40,7 +40,7 @@ export function useMockHouseholds() {
   };
 
   const acceptInvitation = async (token: string) => {
-    return { success: false };
+    return { success: false, error: 'Invitations not available in prototype mode' };
   };
 
   const updateMemberRole = async (memberId: string, role: 'admin' | 'member' | 'viewer') => {
@@ -62,6 +62,7 @@ export function useMockHouseholds() {
   return {
     households,
     currentHousehold,
+    setCurrentHousehold,
     members,
     invitations,
     loading,

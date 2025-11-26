@@ -119,7 +119,7 @@ export const Layout = ({ children }: LayoutProps) => {
             {/* User section at bottom */}
             {user && (
               <div className="mt-8 pt-4 border-t border-sidebar-border space-y-3">
-                <div className="text-xs text-muted-foreground mb-2 px-3">
+                <div className="text-xs text-sidebar-foreground/70 mb-2 px-3">
                   Signed in as {user.email}
                 </div>
                 <div className="px-3">

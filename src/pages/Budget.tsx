@@ -13,6 +13,7 @@ import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -93,6 +94,14 @@ export const Budget = () => {
   const getCategoryColor = (categoryName: string, index: number) => {
     return CATEGORY_COLORS[categoryName] || FALLBACK_COLORS[index % FALLBACK_COLORS.length];
   };
+
+  // Prepare legend data for pie chart
+  const pieLegendData = categoryData.map((cat, index) => ({
+    name: cat.name,
+    value: cat.planned,
+    percentage: `${cat.percentage.toFixed(1)}%`,
+    color: getCategoryColor(cat.name, index),
+  }));
 
   const variance = totalActual - totalExpenses;
   const budgetUsedPercent = totalExpenses > 0 ? ((totalActual / totalExpenses) * 100) : 0;
@@ -376,21 +385,9 @@ export const Budget = () => {
                     borderRadius: '8px'
                   }}
                 />
-                <Legend 
-                  layout="horizontal"
-                  verticalAlign="bottom" 
-                  align="center"
-                  wrapperStyle={{ 
-                    paddingTop: '20px',
-                    maxHeight: '120px',
-                    overflowY: 'auto'
-                  }}
-                  formatter={(value) => (
-                    <span className="text-xs text-foreground truncate max-w-[120px] inline-block">{value}</span>
-                  )}
-                />
               </PieChart>
             </ResponsiveContainer>
+            <CustomPieLegend data={pieLegendData} />
           </CardContent>
         </Card>
       )}
@@ -405,6 +402,12 @@ export const Budget = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            <CustomBarLegend
+              items={[
+                { label: "Planned Budget", color: "hsl(var(--chart-8))" },
+                { label: "Actual Spent", color: "hsl(var(--chart-4))" },
+              ]}
+            />
             <ResponsiveContainer width="100%" height={Math.max(400, categoryData.length * 60)}>
               <BarChart 
                 data={categoryData} 
@@ -450,15 +453,6 @@ export const Budget = () => {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
-                />
-                <Legend 
-                  verticalAlign="top"
-                  height={36}
-                  formatter={(value) => (
-                    <span className="text-sm text-foreground font-medium">
-                      {value === 'planned' ? 'Planned' : 'Actual'}
-                    </span>
-                  )}
                 />
                 <Bar 
                   dataKey="planned" 

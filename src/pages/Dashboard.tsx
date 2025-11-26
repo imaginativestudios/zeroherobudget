@@ -181,7 +181,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Financial Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 items-stretch">
         <FinancialCard
           title="Monthly Income"
           amount={income}
@@ -233,13 +233,13 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden">
-          <CardHeader className="pb-4">
+          <CardHeader>
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
               <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
               Spending by Category
             </CardTitle>
           </CardHeader>
-          <CardContent className="pb-6">
+          <CardContent>
             {hasAnyTransactions ? (
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -310,13 +310,13 @@ export const Dashboard = () => {
 
         {/* Debt Payoff Projection */}
         <Card className="shadow-royal overflow-hidden">
-          <CardHeader className="pb-4">
+          <CardHeader>
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
               <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
               Debt Payoff Projection
             </CardTitle>
           </CardHeader>
-          <CardContent className="pb-6">
+          <CardContent>
             {hasAnyTransactions && schedule.timeline.length > 0 ? (
               <>
                 <div className="h-80 sm:h-96 lg:h-[400px]">

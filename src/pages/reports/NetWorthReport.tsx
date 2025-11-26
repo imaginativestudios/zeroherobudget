@@ -114,7 +114,7 @@ export const NetWorthReport = () => {
       {/* Net Worth Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Total Assets
@@ -128,7 +128,7 @@ export const NetWorthReport = () => {
         </Card>
         
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground flex items-center gap-2">
               <TrendingDown className="h-4 w-4" />
               Total Debt
@@ -142,7 +142,7 @@ export const NetWorthReport = () => {
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base text-muted-foreground flex items-center gap-2">
               <Scale className="h-4 w-4" />
               Net Worth
@@ -163,13 +163,13 @@ export const NetWorthReport = () => {
         {/* Asset Composition Chart */}
         {assetComposition.length > 0 && (
           <Card className="shadow-royal overflow-hidden">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
                 <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
                 Asset Composition
               </CardTitle>
             </CardHeader>
-            <CardContent className="pb-6">
+            <CardContent>
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -221,13 +221,13 @@ export const NetWorthReport = () => {
         {/* Net Worth Projection */}
         {leftover > 0 && schedule.timeline.length > 0 && (
           <Card className="shadow-royal overflow-hidden">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
                 <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
                 Net Worth Projection
               </CardTitle>
             </CardHeader>
-            <CardContent className="pb-6">
+            <CardContent>
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={netWorthProjection} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>

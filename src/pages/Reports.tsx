@@ -132,7 +132,7 @@ export const Reports = () => {
         {reportTypes.map((report) => (
           <Link key={report.href} to={report.href}>
             <Card className="shadow-elegant hover:shadow-royal transition-royal cursor-pointer hover:translate-y-[-1px] h-full">
-              <CardHeader className="pb-3">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-base">
                   <report.icon className={`h-5 w-5 ${report.color}`} />
                   {report.title}
@@ -166,13 +166,13 @@ export const Reports = () => {
       )}
       
       <Card className="shadow-royal overflow-hidden">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
             <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
             Planned vs Actual - {formatMonthDisplay(selectedMonth)}
           </CardTitle>
         </CardHeader>
-        <CardContent className="pb-6">
+        <CardContent>
           {hasTransactionData ? (
             <>
               <div className="h-96 sm:h-[450px] lg:h-[500px]">

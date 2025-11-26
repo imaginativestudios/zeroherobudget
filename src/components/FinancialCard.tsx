@@ -70,17 +70,17 @@ export const FinancialCard = ({
 
   const cardContent = (
     <Card className={cn(
-      "shadow-elegant hover:shadow-royal transition-royal animate-fade-in",
+      "h-full flex flex-col shadow-elegant hover:shadow-royal transition-royal animate-fade-in",
       to && "cursor-pointer hover:translate-y-[-1px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:scale-[1.02]",
       className
     )}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
           {title}
         </CardTitle>
         <Icon className="h-5 w-5 text-accent" />
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="flex-grow space-y-3">
         <div className="flex items-center justify-between">
           <div className={cn("text-2xl font-bold min-w-0 truncate", getAmountColor())}>
             {formatCurrency(amount)}

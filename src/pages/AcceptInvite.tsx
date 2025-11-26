@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { useHouseholds } from '@/hooks/useHouseholds';
+import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
 import { useAuth } from '@/hooks/useAuth';
 
 export function AcceptInvite() {

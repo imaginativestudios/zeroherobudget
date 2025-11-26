@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useHouseholds } from '@/hooks/useHouseholds';
+import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
 
 export function HouseholdSelector() {
   const { households, currentHousehold, setCurrentHousehold } = useHouseholds();

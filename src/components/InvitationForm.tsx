@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useHouseholds } from '@/hooks/useHouseholds';
+import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
 import { UserPlus, Copy, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 

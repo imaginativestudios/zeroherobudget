@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useIncome, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
@@ -15,8 +15,8 @@ import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [income, setIncome] = useLocalSettings().useIncome();
-  const [assets, setAssets] = useLocalSettings().useAssets();
+  const [income, setIncome] = useIncome();
+  const [assets, setAssets] = useAssets();
   const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense } = useLocalExpenses();
   const { getMonthlyActualsByCategory } = useLocalTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);

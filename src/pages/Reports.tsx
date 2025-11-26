@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { BudgetVarianceAlert } from "@/components/BudgetVarianceAlert";
 import { ChartInsight } from "@/components/ChartInsight";
-import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useExpenses } from "@/hooks/useLocalSettings";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
@@ -15,7 +15,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cart
 
 export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [expenses] = useLocalSettings().useExpenses();
+  const [expenses] = useExpenses();
   const { getMonthlyActualsByCategory } = useLocalTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 

@@ -8,7 +8,7 @@ import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useIncome, useStrategy, useExpenses, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
@@ -19,11 +19,11 @@ import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 export const Dashboard = () => {
-  const [income] = useLocalSettings().useIncome();
-  const [expenses] = useLocalSettings().useExpenses();
+  const [income] = useIncome();
+  const [expenses] = useExpenses();
   const { debts } = useLocalDebts();
-  const [strategy, setStrategy] = useLocalSettings().useStrategy();
-  const [assets] = useLocalSettings().useAssets();
+  const [strategy, setStrategy] = useStrategy();
+  const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
   const { getTotalMonthlySpend } = useLocalSubscriptions();

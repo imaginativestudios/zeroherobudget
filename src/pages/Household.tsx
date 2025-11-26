@@ -72,7 +72,7 @@ export function Household() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="pt-8 space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Household Management</h1>
@@ -209,7 +209,7 @@ export function Household() {
       )}
 
       {households.length === 0 && (
-        <Card>
+        <Card className="shadow-royal">
           <CardContent className="text-center py-12">
             <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No households found</h3>

@@ -7,16 +7,16 @@ import { Link } from "react-router-dom";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { BudgetVarianceAlert } from "@/components/BudgetVarianceAlert";
 import { ChartInsight } from "@/components/ChartInsight";
-import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
-import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
+import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [expenses] = useSupabaseSettings().useExpenses();
-  const { getMonthlyActualsByCategory } = useSupabaseTransactions();
+  const [expenses] = useLocalSettings().useExpenses();
+  const { getMonthlyActualsByCategory } = useLocalTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 
   const expenseData = useMemo(() => 

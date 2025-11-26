@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
-import { useSupabaseExpenses } from "@/hooks/useSupabaseExpenses";
-import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
+import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useLocalExpenses } from "@/hooks/useLocalExpenses";
+import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
@@ -15,10 +15,10 @@ import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-  const [income, setIncome] = useSupabaseSettings().useIncome();
-  const [assets, setAssets] = useSupabaseSettings().useAssets();
-  const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense } = useSupabaseExpenses();
-  const { getMonthlyActualsByCategory } = useSupabaseTransactions();
+  const [income, setIncome] = useLocalSettings().useIncome();
+  const [assets, setAssets] = useLocalSettings().useAssets();
+  const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense } = useLocalExpenses();
+  const { getMonthlyActualsByCategory } = useLocalTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);

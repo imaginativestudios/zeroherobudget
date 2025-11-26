@@ -5,8 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { ChartInsight } from '@/components/ChartInsight';
 import { DataFreshnessIndicator } from '@/components/DataFreshnessIndicator';
-import { useSupabaseSubscriptions } from '@/hooks/useSupabaseSubscriptions';
-import { useSupabaseAccounts } from '@/hooks/useSupabaseAccounts';
+import { useLocalSubscriptions } from '@/hooks/useLocalSubscriptions';
+import { useLocalAccounts } from '@/hooks/useLocalAccounts';
 import { formatCurrency } from '@/lib/constants';
 import { format, subMonths, startOfMonth } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -16,9 +16,9 @@ export function SubscriptionsReport() {
   const {
     subscriptions,
     getTotalMonthlySpend,
-  } = useSupabaseSubscriptions();
+  } = useLocalSubscriptions();
 
-  const { getActiveAccounts, getAccountById } = useSupabaseAccounts();
+  const { getActiveAccounts, getAccountById } = useLocalAccounts();
   const accounts = getActiveAccounts();
 
   const [selectedMonth, setSelectedMonth] = useState(() => {

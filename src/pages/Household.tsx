@@ -3,7 +3,7 @@ import { Users, UserPlus, Mail, Crown, Shield, Eye, Trash2, X } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useHouseholds } from '@/hooks/useHouseholds';
+import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
 import { HouseholdSelector } from '@/components/HouseholdSelector';
 import { InvitationForm } from '@/components/InvitationForm';
 
@@ -11,7 +11,7 @@ export function Household() {
   const { 
     households, 
     currentHousehold, 
-    householdMembers, 
+    members, 
     invitations, 
     loading,
     getCurrentUserRole,
@@ -23,6 +23,7 @@ export function Household() {
 
   const selectedHousehold = households.find(h => h.id === currentHousehold);
   const userRole = getCurrentUserRole();
+  const householdMembers = members;
 
   if (loading) {
     return (

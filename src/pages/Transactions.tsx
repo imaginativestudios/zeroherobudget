@@ -8,9 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
-import { useSupabaseAccounts } from "@/hooks/useSupabaseAccounts";
-import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
+import { useLocalTransactions } from "@/hooks/useLocalTransactions";
+import { useLocalAccounts } from "@/hooks/useLocalAccounts";
+import { useLocalSettings } from "@/hooks/useLocalSettings";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
@@ -22,9 +22,9 @@ export const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [expenses] = useSupabaseSettings().useExpenses();
+  const [expenses] = useLocalSettings().useExpenses();
   
-  const { accounts, getActiveAccounts } = useSupabaseAccounts();
+  const { accounts, getActiveAccounts } = useLocalAccounts();
   const activeAccounts = getActiveAccounts();
   
   const {
@@ -35,7 +35,7 @@ export const Transactions = () => {
     removeTransaction,
     getTransactionsByMonth: getRawTransactionsByMonth,
     getTotalActualSpending: getRawTotalActualSpending
-  } = useSupabaseTransactions();
+  } = useLocalTransactions();
 
   // Map Supabase transactions to expected format
   const transactions = rawTransactions.map(t => ({
@@ -91,8 +91,8 @@ export const Transactions = () => {
     }));
   };
 
-  const getTotalActualSpending = (month: string, accountId?: string) => {
-    return getRawTotalActualSpending(month, accountId);
+  const getTotalActualSpending = (month: string) => {
+    return getRawTotalActualSpending(month);
   };
 
   const [newTransaction, setNewTransaction] = useState({
@@ -112,7 +112,9 @@ export const Transactions = () => {
     t.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalSpending = getTotalActualSpending(selectedMonth, selectedAccount);
+  const totalSpending = selectedAccount === 'all' 
+    ? getTotalActualSpending(selectedMonth)
+    : monthTransactions.filter(t => t.flow === 'out').reduce((sum, t) => sum + t.amount, 0);
 
   const handleAddTransaction = () => {
     if (!newTransaction.description || newTransaction.amount <= 0) return;
@@ -210,13 +212,17 @@ export const Transactions = () => {
         return;
       }
       
-      const parsedTransactions = mapTransactionCsv(rows, accounts.map(a => ({
-        id: a.id,
-        name: a.name,
-        type: a.type,
-        balance: a.balance,
-        isActive: a.is_active
-      })), expenses);
+      const parsedTransactions = mapTransactionCsv(
+        rows, 
+        accounts.map(a => ({
+          id: a.id,
+          name: a.name,
+          type: a.type as 'checking' | 'savings' | 'credit' | 'cash' | 'investment',
+          balance: a.balance,
+          isActive: a.is_active
+        })), 
+        expenses
+      );
       
       if (parsedTransactions.length === 0) {
         toast.error("No valid transactions found in CSV");

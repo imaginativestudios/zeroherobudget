@@ -8,10 +8,10 @@ import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useSupabaseSettings } from "@/hooks/useSupabaseSettings";
-import { useSupabaseDebts } from "@/hooks/useSupabaseDebts";
-import { useSupabaseSubscriptions } from "@/hooks/useSupabaseSubscriptions";
-import { useSupabaseTransactions } from "@/hooks/useSupabaseTransactions";
+import { useLocalSettings } from "@/hooks/useLocalSettings";
+import { useLocalDebts } from "@/hooks/useLocalDebts";
+import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
+import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useProfile } from "@/hooks/useProfile";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
@@ -19,15 +19,15 @@ import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 export const Dashboard = () => {
-  const [income] = useSupabaseSettings().useIncome();
-  const [expenses] = useSupabaseSettings().useExpenses();
-  const { debts } = useSupabaseDebts();
-  const [strategy, setStrategy] = useSupabaseSettings().useStrategy();
-  const [assets] = useSupabaseSettings().useAssets();
+  const [income] = useLocalSettings().useIncome();
+  const [expenses] = useLocalSettings().useExpenses();
+  const { debts } = useLocalDebts();
+  const [strategy, setStrategy] = useLocalSettings().useStrategy();
+  const [assets] = useLocalSettings().useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
-  const { getTotalMonthlySpend } = useSupabaseSubscriptions();
-  const { transactions } = useSupabaseTransactions();
+  const { getTotalMonthlySpend } = useLocalSubscriptions();
+  const { transactions } = useLocalTransactions();
   const { profile } = useProfile();
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);

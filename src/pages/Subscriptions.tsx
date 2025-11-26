@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { useAccounts } from '@/hooks/useAccounts';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useLocalAccounts } from '@/hooks/useLocalAccounts';
 import { SubscriptionForm } from '@/components/subscriptions/SubscriptionForm';
 import { SubscriptionSuggestionList } from '@/components/subscriptions/SubscriptionSuggestionList';
 import { formatCurrency } from '@/lib/constants';
@@ -25,22 +25,64 @@ import { Subscription, SubscriptionSuggestion } from '@/types/subscriptions';
 import { toast } from '@/hooks/use-toast';
 
 export function Subscriptions() {
-  const {
-    subscriptions,
-    addSubscription,
-    updateSubscription,
-    removeSubscription,
-    cancelSubscription,
-    pauseSubscription,
-    resumeSubscription,
-    getUpcomingRenewals,
-    getTotalMonthlySpend,
-    autoDetectSubscriptionSuggestions,
-    linkTransaction,
-  } = useSubscriptions();
-
-  const { getActiveAccounts } = useAccounts();
+  // Use simple localStorage for subscriptions in prototype mode
+  const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>('subscriptions', []);
+  const { getActiveAccounts } = useLocalAccounts();
   const accounts = getActiveAccounts();
+
+  // Simplified subscription management for prototype
+  const addSubscription = (subscription: Omit<Subscription, 'id' | 'createdAt'>) => {
+    const newSub = { ...subscription, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    setSubscriptions([...subscriptions, newSub]);
+    return newSub;
+  };
+
+  const updateSubscription = (id: string, updates: Partial<Subscription>) => {
+    setSubscriptions(subscriptions.map(s => s.id === id ? { ...s, ...updates } : s));
+  };
+
+  const removeSubscription = (id: string) => {
+    setSubscriptions(subscriptions.filter(s => s.id !== id));
+  };
+
+  const cancelSubscription = (id: string) => {
+    updateSubscription(id, { status: 'canceled' });
+  };
+
+  const pauseSubscription = (id: string) => {
+    updateSubscription(id, { status: 'paused' });
+  };
+
+  const resumeSubscription = (id: string) => {
+    updateSubscription(id, { status: 'active' });
+  };
+
+  const getUpcomingRenewals = (daysAhead: number) => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + daysAhead);
+    return subscriptions.filter(sub => 
+      sub.status === 'active' && 
+      sub.nextCharge && 
+      new Date(sub.nextCharge) <= futureDate
+    );
+  };
+
+  const getTotalMonthlySpend = (accountId?: string) => {
+    return subscriptions
+      .filter(sub => sub.status === 'active' && (!accountId || sub.accountId === accountId))
+      .reduce((total, sub) => {
+        const cycleFactor = sub.cycle === 'yearly' ? 1/12 : 1;
+        return total + (sub.expectedAmount * cycleFactor);
+      }, 0);
+  };
+
+  const autoDetectSubscriptionSuggestions = (): SubscriptionSuggestion[] => {
+    return []; // No suggestions in prototype mode
+  };
+
+  const linkTransaction = (subscriptionId: string, transactionId: string, matchType: string) => {
+    // No-op in prototype mode
+  };
 
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();

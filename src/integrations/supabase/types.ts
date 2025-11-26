@@ -510,14 +510,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      accept_invitation: {
-        Args: { invitation_token: string }
-        Returns: Json
-      }
-      create_default_household: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      accept_invitation: { Args: { invitation_token: string }; Returns: Json }
+      create_default_household: { Args: never; Returns: string }
     }
     Enums: {
       household_role: "owner" | "admin" | "member" | "viewer"

@@ -15,7 +15,6 @@ import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
 import { toCsv, downloadCsv, parseCsv, validateCsvFile, mapTransactionCsv } from "@/lib/csvUtils";
-
 export const Transactions = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [selectedAccount, setSelectedAccount] = useState<string>("all");
@@ -23,10 +22,11 @@ export const Transactions = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [expenses] = useExpenses();
-  
-  const { accounts, getActiveAccounts } = useLocalAccounts();
+  const {
+    accounts,
+    getActiveAccounts
+  } = useLocalAccounts();
   const activeAccounts = getActiveAccounts();
-  
   const {
     transactions: rawTransactions,
     addTransaction: addRawTransaction,
@@ -55,28 +55,25 @@ export const Transactions = () => {
     return addRawTransaction({
       ...transaction,
       account_id: transaction.accountId,
-      expense_id: transaction.expenseId,
+      expense_id: transaction.expenseId
     });
   };
-
   const addTransactionsBulk = (transactions: any[]) => {
     const mappedTransactions = transactions.map(t => ({
       ...t,
       account_id: t.accountId,
-      expense_id: t.expenseId,
+      expense_id: t.expenseId
     }));
     return addRawTransactionsBulk(mappedTransactions);
   };
-
   const updateTransaction = (id: string, updates: any) => {
     const mappedUpdates = {
       ...updates,
       account_id: updates.accountId,
-      expense_id: updates.expenseId,
+      expense_id: updates.expenseId
     };
     return updateRawTransaction(id, mappedUpdates);
   };
-
   const getTransactionsByMonth = (month: string, accountId?: string) => {
     return getRawTransactionsByMonth(month, accountId).map(t => ({
       id: t.id,
@@ -90,11 +87,9 @@ export const Transactions = () => {
       notes: t.notes
     }));
   };
-
   const getTotalActualSpending = (month: string) => {
     return getRawTotalActualSpending(month);
   };
-
   const [newTransaction, setNewTransaction] = useState({
     date: formatDate(new Date()),
     description: "",
@@ -105,25 +100,15 @@ export const Transactions = () => {
     expenseId: "",
     notes: ""
   });
-
   const monthTransactions = getTransactionsByMonth(selectedMonth, selectedAccount);
-  const filteredTransactions = monthTransactions.filter(t =>
-    t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalSpending = selectedAccount === 'all' 
-    ? getTotalActualSpending(selectedMonth)
-    : monthTransactions.filter(t => t.flow === 'out').reduce((sum, t) => sum + t.amount, 0);
-
+  const filteredTransactions = monthTransactions.filter(t => t.description.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase()));
+  const totalSpending = selectedAccount === 'all' ? getTotalActualSpending(selectedMonth) : monthTransactions.filter(t => t.flow === 'out').reduce((sum, t) => sum + t.amount, 0);
   const handleAddTransaction = () => {
     if (!newTransaction.description || newTransaction.amount <= 0) return;
-    
     addTransaction({
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
-    
     setNewTransaction({
       date: formatDate(new Date()),
       description: "",
@@ -136,7 +121,6 @@ export const Transactions = () => {
     });
     setShowAddDialog(false);
   };
-
   const handleEditTransaction = (transaction: Transaction) => {
     setEditingTransaction(transaction);
     setNewTransaction({
@@ -150,15 +134,12 @@ export const Transactions = () => {
       notes: transaction.notes || ""
     });
   };
-
   const handleUpdateTransaction = () => {
     if (!editingTransaction || !newTransaction.description || newTransaction.amount <= 0) return;
-    
     updateTransaction(editingTransaction.id, {
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
-    
     setEditingTransaction(null);
     setNewTransaction({
       date: formatDate(new Date()),
@@ -171,38 +152,20 @@ export const Transactions = () => {
       notes: ""
     });
   };
-
   const exportTransactions = () => {
-    const rows = [
-      ["date", "description", "amount", "category", "account", "flow", "expenseId", "notes"],
-      ...monthTransactions.map(t => [
-        t.date,
-        t.description,
-        t.amount.toString(),
-        t.category,
-        accounts.find(a => a.id === t.accountId)?.name || t.accountId,
-        t.flow,
-        t.expenseId || "",
-        t.notes || ""
-      ])
-    ];
-    const filename = selectedAccount === 'all' 
-      ? `transactions-${selectedMonth}.csv`
-      : `transactions-${selectedMonth}-${accounts.find(a => a.id === selectedAccount)?.name || selectedAccount}.csv`;
+    const rows = [["date", "description", "amount", "category", "account", "flow", "expenseId", "notes"], ...monthTransactions.map(t => [t.date, t.description, t.amount.toString(), t.category, accounts.find(a => a.id === t.accountId)?.name || t.accountId, t.flow, t.expenseId || "", t.notes || ""])];
+    const filename = selectedAccount === 'all' ? `transactions-${selectedMonth}.csv` : `transactions-${selectedMonth}-${accounts.find(a => a.id === selectedAccount)?.name || selectedAccount}.csv`;
     downloadCsv(filename, toCsv(rows));
   };
-
   const importTransactions = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
     const validation = validateCsvFile(file);
     if (!validation.isValid) {
       toast.error(`Import failed: ${validation.error}`);
       event.target.value = "";
       return;
     }
-    
     try {
       const text = await file.text();
       const rows = parseCsv(text);
@@ -211,25 +174,19 @@ export const Transactions = () => {
         event.target.value = "";
         return;
       }
-      
-      const parsedTransactions = mapTransactionCsv(
-        rows, 
-        accounts.map(a => ({
-          id: a.id,
-          name: a.name,
-          type: a.type as 'checking' | 'savings' | 'credit' | 'cash' | 'investment',
-          balance: a.balance,
-          isActive: a.is_active
-        })), 
-        expenses
-      );
-      
+      const parsedTransactions = mapTransactionCsv(rows, accounts.map(a => ({
+        id: a.id,
+        name: a.name,
+        type: a.type as 'checking' | 'savings' | 'credit' | 'cash' | 'investment',
+        balance: a.balance,
+        isActive: a.is_active
+      })), expenses);
       if (parsedTransactions.length === 0) {
         toast.error("No valid transactions found in CSV");
         event.target.value = "";
         return;
       }
-      
+
       // Use bulk import to avoid state update issues
       addTransactionsBulk(parsedTransactions.map(transaction => ({
         date: transaction.date,
@@ -241,23 +198,19 @@ export const Transactions = () => {
         expenseId: transaction.expenseId,
         notes: transaction.notes || ""
       })));
-      
+
       // Find the most recent transaction month and switch to it
       const dates = parsedTransactions.map(t => t.date).sort();
       const mostRecentMonth = dates[dates.length - 1].slice(0, 7);
       setSelectedMonth(mostRecentMonth);
-      
       toast.success(`Successfully imported ${parsedTransactions.length} transactions`);
     } catch (error) {
       toast.error("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);
     }
-    
     event.target.value = "";
   };
-
-  return (
-    <div className="space-y-8">
+  return <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
@@ -271,13 +224,7 @@ export const Transactions = () => {
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Import</span>
             </Button>
-            <input
-              id="import-transactions"
-              type="file"
-              accept=".csv"
-              className="hidden"
-              onChange={importTransactions}
-            />
+            <input id="import-transactions" type="file" accept=".csv" className="hidden" onChange={importTransactions} />
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
                 <Button variant="royal">
@@ -293,51 +240,51 @@ export const Transactions = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Date</Label>
-                      <Input
-                        type="date"
-                        value={newTransaction.date}
-                        onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                      />
+                      <Input type="date" value={newTransaction.date} onChange={e => setNewTransaction({
+                      ...newTransaction,
+                      date: e.target.value
+                    })} />
                     </div>
                     <div className="space-y-2">
                       <Label>Amount</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={newTransaction.amount}
-                        onChange={(e) => setNewTransaction({...newTransaction, amount: parseFloat(e.target.value) || 0})}
-                      />
+                      <Input type="number" step="0.01" value={newTransaction.amount} onChange={e => setNewTransaction({
+                      ...newTransaction,
+                      amount: parseFloat(e.target.value) || 0
+                    })} />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <Label>Description</Label>
-                    <Input
-                      value={newTransaction.description}
-                      onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      placeholder="Transaction description"
-                    />
+                    <Input value={newTransaction.description} onChange={e => setNewTransaction({
+                    ...newTransaction,
+                    description: e.target.value
+                  })} placeholder="Transaction description" />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Account</Label>
-                      <Select value={newTransaction.accountId} onValueChange={(value) => setNewTransaction({...newTransaction, accountId: value})}>
+                      <Select value={newTransaction.accountId} onValueChange={value => setNewTransaction({
+                      ...newTransaction,
+                      accountId: value
+                    })}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select account" />
                         </SelectTrigger>
                         <SelectContent>
-                          {activeAccounts.map(account => (
-                            <SelectItem key={account.id} value={account.id}>
+                          {activeAccounts.map(account => <SelectItem key={account.id} value={account.id}>
                               {account.name}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label>Type</Label>
-                      <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({...newTransaction, flow: value})}>
+                      <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({
+                      ...newTransaction,
+                      flow: value
+                    })}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -352,25 +299,25 @@ export const Transactions = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Category</Label>
-                      <Input
-                        value={newTransaction.category}
-                        onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                        placeholder="Category"
-                      />
+                      <Input value={newTransaction.category} onChange={e => setNewTransaction({
+                      ...newTransaction,
+                      category: e.target.value
+                    })} placeholder="Category" />
                     </div>
                     <div className="space-y-2">
                       <Label>Budget Line (Optional)</Label>
-                      <Select value={newTransaction.expenseId} onValueChange={(value) => setNewTransaction({...newTransaction, expenseId: value})}>
+                      <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
+                      ...newTransaction,
+                      expenseId: value
+                    })}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select budget line" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">None</SelectItem>
-                          {expenses.map(expense => (
-                            <SelectItem key={expense.id} value={expense.id}>
+                          {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
                               {expense.name}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -378,11 +325,10 @@ export const Transactions = () => {
                   
                   <div className="space-y-2">
                     <Label>Notes (Optional)</Label>
-                    <Textarea
-                      value={newTransaction.notes}
-                      onChange={(e) => setNewTransaction({...newTransaction, notes: e.target.value})}
-                      placeholder="Additional notes"
-                    />
+                    <Textarea value={newTransaction.notes} onChange={e => setNewTransaction({
+                    ...newTransaction,
+                    notes: e.target.value
+                  })} placeholder="Additional notes" />
                   </div>
                   
                   <Button onClick={handleAddTransaction} className="w-full">
@@ -397,23 +343,23 @@ export const Transactions = () => {
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="flex flex-wrap items-center gap-3 p-3 bg-muted/50 rounded-lg border">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-40 bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: 12 }, (_, i) => {
-                const date = new Date();
-                date.setMonth(date.getMonth() - i);
-                const monthStr = formatDate(date).slice(0, 7);
-                return (
-                  <SelectItem key={monthStr} value={monthStr}>
+              {Array.from({
+              length: 12
+            }, (_, i) => {
+              const date = new Date();
+              date.setMonth(date.getMonth() - i);
+              const monthStr = formatDate(date).slice(0, 7);
+              return <SelectItem key={monthStr} value={monthStr}>
                     {formatMonthDisplay(monthStr)}
-                  </SelectItem>
-                );
-              })}
+                  </SelectItem>;
+            })}
             </SelectContent>
           </Select>
           
@@ -423,23 +369,16 @@ export const Transactions = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Accounts</SelectItem>
-              {activeAccounts.map(account => (
-                <SelectItem key={account.id} value={account.id}>
+              {activeAccounts.map(account => <SelectItem key={account.id} value={account.id}>
                   {account.name}
-                </SelectItem>
-              ))}
+                </SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         
-        <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border flex-1 min-w-[200px]">
+        <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-primary-foreground">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search transactions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-background border-0 focus-visible:ring-0"
-          />
+          <Input placeholder="Search transactions..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="bg-background border-0 focus-visible:ring-0" />
         </div>
       </div>
 
@@ -467,12 +406,9 @@ export const Transactions = () => {
           <CardTitle>Transactions ({filteredTransactions.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredTransactions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+          {filteredTransactions.length === 0 ? <div className="text-center py-8 text-muted-foreground">
               No transactions found for this month.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
+            </div> : <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
@@ -486,8 +422,7 @@ export const Transactions = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((transaction) => (
-                    <tr key={transaction.id} className="border-b hover:bg-muted/50">
+                  {filteredTransactions.map(transaction => <tr key={transaction.id} className="border-b hover:bg-muted/50">
                       <td className="p-3">{formatDisplayDate(transaction.date)}</td>
                       <td className="p-3 break-anywhere">{transaction.description}</td>
                       <td className="p-3 font-medium">
@@ -498,34 +433,27 @@ export const Transactions = () => {
                       <td className="p-3">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
                       <td className="p-3 break-anywhere">{transaction.category}</td>
                       <td className="p-3">
-                        {transaction.expenseId 
-                          ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown"
-                          : "-"
-                        }
+                        {transaction.expenseId ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown" : "-"}
                       </td>
                       <td className="p-3 text-center">
                         <div className="flex justify-center gap-1">
-                          <Dialog open={editingTransaction?.id === transaction.id} onOpenChange={(open) => {
-                            if (!open) {
-                              setEditingTransaction(null);
-                              setNewTransaction({
-                                date: formatDate(new Date()),
-                                description: "",
-                                amount: 0,
-                                category: "",
-                                accountId: activeAccounts[0]?.id || 'default-checking',
-                                flow: 'out' as 'in' | 'out',
-                                expenseId: "",
-                                notes: ""
-                              });
-                            }
-                          }}>
+                          <Dialog open={editingTransaction?.id === transaction.id} onOpenChange={open => {
+                      if (!open) {
+                        setEditingTransaction(null);
+                        setNewTransaction({
+                          date: formatDate(new Date()),
+                          description: "",
+                          amount: 0,
+                          category: "",
+                          accountId: activeAccounts[0]?.id || 'default-checking',
+                          flow: 'out' as 'in' | 'out',
+                          expenseId: "",
+                          notes: ""
+                        });
+                      }
+                    }}>
                             <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditTransaction(transaction)}
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => handleEditTransaction(transaction)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
                             </DialogTrigger>
@@ -537,51 +465,51 @@ export const Transactions = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="space-y-2">
                                     <Label>Date</Label>
-                                    <Input
-                                      type="date"
-                                      value={newTransaction.date}
-                                      onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                                    />
+                                    <Input type="date" value={newTransaction.date} onChange={e => setNewTransaction({
+                                ...newTransaction,
+                                date: e.target.value
+                              })} />
                                   </div>
                                   <div className="space-y-2">
                                     <Label>Amount</Label>
-                                    <Input
-                                      type="number"
-                                      step="0.01"
-                                      value={newTransaction.amount}
-                                      onChange={(e) => setNewTransaction({...newTransaction, amount: parseFloat(e.target.value) || 0})}
-                                    />
+                                    <Input type="number" step="0.01" value={newTransaction.amount} onChange={e => setNewTransaction({
+                                ...newTransaction,
+                                amount: parseFloat(e.target.value) || 0
+                              })} />
                                   </div>
                                 </div>
 
                                 <div className="space-y-2">
                                   <Label>Description</Label>
-                                  <Input
-                                    value={newTransaction.description}
-                                    onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                                    placeholder="Transaction description"
-                                  />
+                                  <Input value={newTransaction.description} onChange={e => setNewTransaction({
+                              ...newTransaction,
+                              description: e.target.value
+                            })} placeholder="Transaction description" />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="space-y-2">
                                     <Label>Account</Label>
-                                    <Select value={newTransaction.accountId} onValueChange={(value) => setNewTransaction({...newTransaction, accountId: value})}>
+                                    <Select value={newTransaction.accountId} onValueChange={value => setNewTransaction({
+                                ...newTransaction,
+                                accountId: value
+                              })}>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select account" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        {activeAccounts.map(account => (
-                                          <SelectItem key={account.id} value={account.id}>
+                                        {activeAccounts.map(account => <SelectItem key={account.id} value={account.id}>
                                             {account.name}
-                                          </SelectItem>
-                                        ))}
+                                          </SelectItem>)}
                                       </SelectContent>
                                     </Select>
                                   </div>
                                   <div className="space-y-2">
                                     <Label>Type</Label>
-                                    <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({...newTransaction, flow: value})}>
+                                    <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({
+                                ...newTransaction,
+                                flow: value
+                              })}>
                                       <SelectTrigger>
                                         <SelectValue />
                                       </SelectTrigger>
@@ -596,25 +524,25 @@ export const Transactions = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="space-y-2">
                                     <Label>Category</Label>
-                                    <Input
-                                      value={newTransaction.category}
-                                      onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                                      placeholder="Category"
-                                    />
+                                    <Input value={newTransaction.category} onChange={e => setNewTransaction({
+                                ...newTransaction,
+                                category: e.target.value
+                              })} placeholder="Category" />
                                   </div>
                                   <div className="space-y-2">
                                     <Label>Budget Line (Optional)</Label>
-                                    <Select value={newTransaction.expenseId} onValueChange={(value) => setNewTransaction({...newTransaction, expenseId: value})}>
+                                    <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
+                                ...newTransaction,
+                                expenseId: value
+                              })}>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select budget line" />
                                       </SelectTrigger>
                                       <SelectContent>
                                         <SelectItem value="">None</SelectItem>
-                                        {expenses.map(expense => (
-                                          <SelectItem key={expense.id} value={expense.id}>
+                                        {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
                                             {expense.name}
-                                          </SelectItem>
-                                        ))}
+                                          </SelectItem>)}
                                       </SelectContent>
                                     </Select>
                                   </div>
@@ -622,11 +550,10 @@ export const Transactions = () => {
                                 
                                 <div className="space-y-2">
                                   <Label>Notes (Optional)</Label>
-                                  <Textarea
-                                    value={newTransaction.notes}
-                                    onChange={(e) => setNewTransaction({...newTransaction, notes: e.target.value})}
-                                    placeholder="Additional notes"
-                                  />
+                                  <Textarea value={newTransaction.notes} onChange={e => setNewTransaction({
+                              ...newTransaction,
+                              notes: e.target.value
+                            })} placeholder="Additional notes" />
                                 </div>
                                 
                                 <Button onClick={handleUpdateTransaction} className="w-full">
@@ -636,24 +563,16 @@ export const Transactions = () => {
                             </DialogContent>
                           </Dialog>
                           
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeTransaction(transaction.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => removeTransaction(transaction.id)} className="text-destructive hover:text-destructive">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </td>
-                    </tr>
-                  ))}
+                    </tr>)}
                 </tbody>
               </table>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };

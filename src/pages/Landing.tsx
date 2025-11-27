@@ -1,21 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
+import { Logo } from '@/components/Logo';
 import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
 
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const openAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
@@ -58,79 +49,73 @@ export default function Landing() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
-        {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Video Background */}
-          <div className="absolute inset-0 z-0">
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/50 to-accent/60 z-10" />
-            
-            {/* Background Video */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{
-                transform: `translateY(${scrollY * 0.5}px)`,
-                transition: 'transform 0.1s ease-out',
-              }}
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Solid Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
+          {/* Subtle decorative elements for visual depth */}
+          <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        </div>
+        
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Logo - Focal Point */}
+          <div className="mb-8 flex justify-center">
+            <Logo 
+              variant="color" 
+              className="h-24 md:h-32 lg:h-40 w-auto"
+            />
+          </div>
+          
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Transform Debt Into Victory
+          </h1>
+          
+          {/* Subheadline */}
+          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 max-w-3xl mx-auto">
+            Take control of your finances with intelligent budgeting, powerful debt payoff strategies, and real-time household collaboration.
+          </p>
+          
+          {/* CTA Buttons - Grouped by Proximity */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button 
+              size="lg" 
+              variant="gold"
+              className="text-base sm:text-lg px-8 py-6"
+              onClick={() => openAuth('signup')}
             >
-              <source src="https://assets.mixkit.co/videos/preview/mixkit-person-working-on-a-laptop-at-home-4770-large.mp4" type="video/mp4" />
-              {/* Fallback gradient if video doesn't load */}
-              <div className="w-full h-full bg-gradient-to-br from-primary/5 to-accent/5" />
-            </video>
+              Get Started Free
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="text-base sm:text-lg px-8 py-6 border-white/30 text-white hover:bg-white/10 hover:border-white"
+              onClick={() => openAuth('login')}
+            >
+              Sign In
+            </Button>
           </div>
-
-          {/* Hero Content */}
-          <div className="relative z-10 container mx-auto px-6 text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gradient-royal">
-              Transform Debt Into Victory
-            </h1>
-            <p className="text-xl md:text-2xl mb-4 text-foreground/80 max-w-3xl mx-auto">
-              Take control of your financial future with intelligent budgeting, strategic debt payoff plans, and powerful household collaboration tools.
-            </p>
-            <p className="text-lg md:text-xl mb-12 text-muted-foreground max-w-2xl mx-auto">
-              Join thousands crushing their debt and building wealth with data-driven strategies.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                variant="royal"
-                onClick={() => openAuth('signup')}
-                className="text-lg px-8 py-6"
-              >
-                Start Your Journey Free
-                <ArrowRight className="ml-2" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => openAuth('login')}
-                className="text-lg px-8 py-6"
-              >
-                Sign In
-              </Button>
+          
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              <span>Bank-Level Security</span>
             </div>
-
-            <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                <span>Bank-Level Security</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>Free Forever</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <TrendingDown className="w-4 h-4" />
-                <span>Proven Strategies</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <TrendingDown className="h-4 w-4" />
+              <span>Proven Debt Strategies</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span>Free Forever</span>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* Features Section */}
         <section className="py-24 bg-background/80 backdrop-blur-sm">

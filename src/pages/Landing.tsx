@@ -65,11 +65,11 @@ export default function Landing() {
           
           {/* CTA Buttons - Grouped by Proximity */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" variant="gold" className="text-base sm:text-lg px-8 py-6 h-auto text-primary-dark" onClick={() => openAuth('signup')}>
+            <Button size="lg" variant="gold" className="text-base sm:text-lg px-8 h-12 text-primary-dark" onClick={() => openAuth('signup')}>
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 py-6 h-auto border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
+            <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 h-12 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
               Sign In
             </Button>
           </div>

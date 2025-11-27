@@ -1,18 +1,21 @@
 import { useMemo, useState } from "react";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
 import { ChartInsight } from "@/components/ChartInsight";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
+import { AchievementCard } from "@/components/AchievementCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { useIncome, useStrategy, useExpenses, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useProfile } from "@/hooks/useProfile";
+import { useAchievements } from "@/hooks/useAchievements";
 import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
@@ -55,6 +58,17 @@ export const Dashboard = () => {
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
   const netWorth = totalAssets - totalDebt;
   const monthlySubscriptionSpend = getTotalMonthlySpend();
+
+  // Calculate achievement stats
+  const debtsPaidOff = useMemo(() => 
+    debts.filter(d => d.balance === 0).length, [debts]
+  );
+  
+  const { achievements, unlockedCount, totalCount } = useAchievements({
+    totalDebt,
+    debtsPaidOff,
+    totalDebts: debts.length,
+  });
 
   // Get greeting name
   const greetingName = profile?.first_name || profile?.display_name || 'there';
@@ -397,6 +411,40 @@ export const Dashboard = () => {
           </CardContent>
         </Card>
         </div>
+      </div>
+
+      {/* Achievements Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground">Victories & Achievements</h2>
+          <div className="h-px flex-1 bg-border"></div>
+        </div>
+        
+        <Card className="shadow-royal">
+          <CardHeader>
+            <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
+              <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+              Your Progress Milestones
+              <span className="ml-auto text-sm font-normal text-muted-foreground">
+                {unlockedCount} / {totalCount} Unlocked
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {achievements.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {achievements.map(achievement => (
+                  <AchievementCard key={achievement.id} achievement={achievement} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">
+                Start tracking debts to unlock achievements!
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Debt Progress Section */}

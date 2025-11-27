@@ -1,5 +1,6 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import confetti from 'canvas-confetti';
 
 export interface Achievement {
   id: string;
@@ -19,6 +20,8 @@ interface DebtStats {
 
 export function useAchievements(currentStats: DebtStats) {
   const [initialDebt, setInitialDebt] = useLocalStorage<number>('initial-debt-total', 0);
+  const [unlockedIds, setUnlockedIds] = useLocalStorage<string[]>('unlocked-achievements', []);
+  const previousUnlockedRef = useRef<string[]>(unlockedIds);
   
   // Set initial debt if not set and there are debts
   useEffect(() => {
@@ -87,10 +90,78 @@ export function useAchievements(currentStats: DebtStats) {
   const unlockedCount = achievements.filter(a => a.unlocked).length;
   const totalCount = achievements.length;
 
+  // Detect newly unlocked achievements and trigger confetti
+  useEffect(() => {
+    const currentUnlocked = achievements.filter(a => a.unlocked).map(a => a.id);
+    const newlyUnlocked = currentUnlocked.filter(id => !previousUnlockedRef.current.includes(id));
+    
+    if (newlyUnlocked.length > 0) {
+      // Update storage
+      setUnlockedIds(currentUnlocked);
+      
+      // Trigger confetti for each newly unlocked achievement
+      newlyUnlocked.forEach((id, index) => {
+        setTimeout(() => {
+          const achievement = achievements.find(a => a.id === id);
+          
+          // Different confetti patterns based on achievement importance
+          if (achievement?.id === 'freedom') {
+            // Epic confetti for debt freedom
+            const duration = 3000;
+            const end = Date.now() + duration;
+            
+            (function frame() {
+              confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#9b87f5', '#F97316', '#fbbf24']
+              });
+              confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#9b87f5', '#F97316', '#fbbf24']
+              });
+              
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+          } else if (achievement?.id === 'halfway-hero' || achievement?.id === 'three-quarters') {
+            // Medium celebration for major milestones
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: ['#9b87f5', '#F97316', '#fbbf24']
+            });
+          } else {
+            // Standard celebration
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.7 },
+              colors: ['#9b87f5', '#F97316']
+            });
+          }
+        }, index * 300); // Stagger multiple unlocks
+      });
+    }
+    
+    previousUnlockedRef.current = currentUnlocked;
+  }, [achievements, setUnlockedIds]);
+
   return {
     achievements,
     unlockedCount,
     totalCount,
-    resetProgress: () => setInitialDebt(0),
+    resetProgress: () => {
+      setInitialDebt(0);
+      setUnlockedIds([]);
+      previousUnlockedRef.current = [];
+    },
   };
 }

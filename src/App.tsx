@@ -33,6 +33,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
+          <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           
@@ -40,7 +41,6 @@ const App = () => (
           <Route path="/*" element={
             <Layout>
               <Routes>
-                <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/household" element={<Household />} />
                 <Route path="/budgets" element={<Budget />} />

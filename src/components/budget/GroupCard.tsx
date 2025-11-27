@@ -203,34 +203,30 @@ export function GroupCard({
           <AccordionContent className="px-4 pb-4">
             {expenses.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                     <tr className="border-b">
-                       <th className="text-left p-3 font-semibold">Item</th>
-                       <th className="text-left p-3 font-semibold">Planned</th>
-                       <th className="text-left p-3 font-semibold">Actual</th>
-                       <th className="text-center p-3 font-semibold">Actions</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                    <SortableContext
-                      items={expenses.map(e => e.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      {expenses.map((expense) => (
-                        <ExpenseItemRow
-                          key={expense.id}
-                          expense={expense}
-                          actual={monthlyActuals[expense.id] || 0}
-                          availableGroups={availableGroups}
-                          onUpdate={(field, value) => onUpdateExpense(expense.id, field, value)}
-                          onRemove={() => onRemoveExpense(expense.id)}
-                          onMoveToGroup={(groupName) => onMoveToGroup(expense.id, groupName)}
-                        />
-                      ))}
-                    </SortableContext>
-                  </tbody>
-                </table>
+                <div className="w-full">
+                  <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 border-b pb-3 mb-2">
+                    <div className="text-left font-semibold">Item</div>
+                    <div className="text-left font-semibold">Planned</div>
+                    <div className="text-left font-semibold">Actual</div>
+                    <div className="text-center font-semibold">Actions</div>
+                  </div>
+                  <SortableContext
+                    items={expenses.map(e => e.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {expenses.map((expense) => (
+                      <ExpenseItemRow
+                        key={expense.id}
+                        expense={expense}
+                        actual={monthlyActuals[expense.id] || 0}
+                        availableGroups={availableGroups}
+                        onUpdate={(field, value) => onUpdateExpense(expense.id, field, value)}
+                        onRemove={() => onRemoveExpense(expense.id)}
+                        onMoveToGroup={(groupName) => onMoveToGroup(expense.id, groupName)}
+                      />
+                    ))}
+                  </SortableContext>
+                </div>
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">

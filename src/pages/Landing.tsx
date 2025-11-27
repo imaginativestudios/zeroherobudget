@@ -179,7 +179,7 @@ export default function Landing() {
           <div className="container mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-muted-foreground text-sm">
-                © 2024 Monarch Budget. Transform debt into victory.
+                © 2026 Zero Hero. From balances due to a more balanced you.
               </p>
               <div className="flex gap-6 text-sm text-muted-foreground">
                 <button className="hover:text-foreground transition-colors">Privacy</button>

@@ -161,7 +161,7 @@ export const Dashboard = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="pt-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              <span className="leading-tight">Welcome, {greetingName}!</span>
+              <span className="leading-tight">Welcome, debt warrior!</span>
             </h1>
           </div>
           <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">

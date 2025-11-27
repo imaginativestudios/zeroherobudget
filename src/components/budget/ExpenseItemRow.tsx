@@ -44,8 +44,8 @@ export function ExpenseItemRow({
     transform: CSS.Transform.toString(transform),
     transition,
     position: 'relative',
-    zIndex: isDragging ? 10 : 0,
-    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 0 : 10,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   const variance = actual - expense.planned;
@@ -55,11 +55,11 @@ export function ExpenseItemRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 ${isDragging ? 'opacity-50' : ''}`}
+      className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-all duration-200 group"
     >
       <div className="flex items-center gap-2 min-w-0">
         <button
-          className="cursor-grab text-muted-foreground hover:text-foreground flex-shrink-0"
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors duration-200 flex-shrink-0"
           {...attributes}
           {...listeners}
         >
@@ -68,7 +68,7 @@ export function ExpenseItemRow({
         <Input
           value={expense.name}
           onChange={(e) => onUpdate('name', e.target.value)}
-          className="min-w-0"
+          className="min-w-0 transition-all duration-200 group-hover:border-primary/30"
         />
       </div>
       <div>
@@ -77,7 +77,7 @@ export function ExpenseItemRow({
           step="0.01"
           value={expense.planned}
           onChange={(e) => onUpdate('planned', parseFloat(e.target.value) || 0)}
-          className="w-32"
+          className="w-32 transition-all duration-200 group-hover:border-primary/30"
         />
       </div>
       <div>

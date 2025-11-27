@@ -10,12 +10,13 @@ import {
   KeyboardSensor,
   useSensor,
   useSensors,
-  closestCorners,
+  closestCenter,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
   sortableKeyboardCoordinates,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,10 +85,8 @@ export function GroupableExpenses({
       const activeIndex = groupOrder.findIndex(group => `group-${group}` === activeId);
       const overIndex = groupOrder.findIndex(group => `group-${group}` === overId);
       
-      if (activeIndex !== overIndex) {
-        const newOrder = [...groupOrder];
-        const [removed] = newOrder.splice(activeIndex, 1);
-        newOrder.splice(overIndex, 0, removed);
+      if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+        const newOrder = arrayMove(groupOrder, activeIndex, overIndex);
         reorderGroups(newOrder);
       }
     } else if (activeData?.type === "expense") {
@@ -116,12 +115,9 @@ export function GroupableExpenses({
           const activeArrayIndex = newExpenses.findIndex(e => e.id === expense.id);
           const overArrayIndex = newExpenses.findIndex(e => e.id === targetExpense.id);
           
-          if (activeArrayIndex !== overArrayIndex) {
-            // Perform the swap in the original array
-            const [removed] = newExpenses.splice(activeArrayIndex, 1);
-            newExpenses.splice(overArrayIndex, 0, removed);
-            
-            setExpenses(newExpenses);
+          if (activeArrayIndex !== -1 && overArrayIndex !== -1 && activeArrayIndex !== overArrayIndex) {
+            const reordered = arrayMove(newExpenses, activeArrayIndex, overArrayIndex);
+            setExpenses(reordered);
           }
         }
       }
@@ -212,7 +208,7 @@ export function GroupableExpenses({
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >

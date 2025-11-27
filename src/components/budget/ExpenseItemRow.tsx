@@ -52,28 +52,26 @@ export function ExpenseItemRow({
   const variancePercent = expense.planned > 0 ? (variance / expense.planned) * 100 : 0;
 
   return (
-    <tr
+    <div
       ref={setNodeRef}
       style={style}
-      className={`${isDragging ? 'opacity-50' : ''}`}
+      className={`grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 ${isDragging ? 'opacity-50' : ''}`}
     >
-      <td className="p-3 break-anywhere">
-        <div className="flex items-center gap-2">
-          <button
-            className="cursor-grab text-muted-foreground hover:text-foreground"
-            {...attributes}
-            {...listeners}
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
-          <Input
-            value={expense.name}
-            onChange={(e) => onUpdate('name', e.target.value)}
-            className="min-w-0"
-          />
-        </div>
-      </td>
-      <td className="p-3">
+      <div className="flex items-center gap-2 min-w-0">
+        <button
+          className="cursor-grab text-muted-foreground hover:text-foreground flex-shrink-0"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+        <Input
+          value={expense.name}
+          onChange={(e) => onUpdate('name', e.target.value)}
+          className="min-w-0"
+        />
+      </div>
+      <div>
         <Input
           type="number"
           step="0.01"
@@ -81,39 +79,37 @@ export function ExpenseItemRow({
           onChange={(e) => onUpdate('planned', parseFloat(e.target.value) || 0)}
           className="w-32"
         />
-      </td>
-      <td className="p-3">
+      </div>
+      <div>
         <div className="w-32 px-3 py-2 text-sm bg-muted rounded-md">
           {formatCurrency(actual)}
         </div>
-      </td>
-      <td className="p-3">
-        <div className="flex items-center gap-2">
-          <Select
-            value={expense.category || 'Uncategorized'}
-            onValueChange={onMoveToGroup}
-          >
-            <SelectTrigger className="w-32 bg-background z-50">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-background z-50">
-              {availableGroups.map(group => (
-                <SelectItem key={group} value={group}>
-                  {group}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onRemove}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </td>
-    </tr>
+      </div>
+      <div className="flex items-center gap-2 justify-center">
+        <Select
+          value={expense.category || 'Uncategorized'}
+          onValueChange={onMoveToGroup}
+        >
+          <SelectTrigger className="w-32 bg-background z-50">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-background z-50">
+            {availableGroups.map(group => (
+              <SelectItem key={group} value={group}>
+                {group}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 }

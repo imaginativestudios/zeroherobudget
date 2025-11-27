@@ -9,6 +9,7 @@ export interface Achievement {
   description: string;
   icon: string;
   unlocked: boolean;
+  unlockedAt?: string;
   progress?: number;
   maxProgress?: number;
 }
@@ -22,6 +23,7 @@ interface DebtStats {
 export function useAchievements(currentStats: DebtStats) {
   const [initialDebt, setInitialDebt] = useLocalStorage<number>('initial-debt-total', 0);
   const [unlockedIds, setUnlockedIds] = useLocalStorage<string[]>('unlocked-achievements', []);
+  const [unlockTimestamps, setUnlockTimestamps] = useLocalStorage<Record<string, string>>('achievement-timestamps', {});
   const previousUnlockedRef = useRef<string[]>(unlockedIds);
   
   // Set initial debt if not set and there are debts
@@ -41,6 +43,7 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Paid off your first debt',
         icon: '🎯',
         unlocked: currentStats.debtsPaidOff >= 1,
+        unlockedAt: unlockTimestamps['first-blood'],
       },
       {
         id: 'quarter-mark',
@@ -48,6 +51,7 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Reduced total debt by 25%',
         icon: '⚔️',
         unlocked: debtReduction >= 25,
+        unlockedAt: unlockTimestamps['quarter-mark'],
         progress: Math.min(debtReduction, 25),
         maxProgress: 25,
       },
@@ -57,6 +61,7 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Reduced total debt by 50%',
         icon: '🛡️',
         unlocked: debtReduction >= 50,
+        unlockedAt: unlockTimestamps['halfway-hero'],
         progress: Math.min(debtReduction, 50),
         maxProgress: 50,
       },
@@ -66,6 +71,7 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Reduced total debt by 75%',
         icon: '🏆',
         unlocked: debtReduction >= 75,
+        unlockedAt: unlockTimestamps['three-quarters'],
         progress: Math.min(debtReduction, 75),
         maxProgress: 75,
       },
@@ -75,6 +81,7 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Paid off 3 or more debts',
         icon: '⚡',
         unlocked: currentStats.debtsPaidOff >= 3,
+        unlockedAt: unlockTimestamps['debt-slayer'],
         progress: Math.min(currentStats.debtsPaidOff, 3),
         maxProgress: 3,
       },
@@ -84,9 +91,10 @@ export function useAchievements(currentStats: DebtStats) {
         description: 'Eliminated all debts!',
         icon: '👑',
         unlocked: currentStats.totalDebt === 0 && initialDebt > 0,
+        unlockedAt: unlockTimestamps['freedom'],
       },
     ];
-  }, [currentStats, initialDebt]);
+  }, [currentStats, initialDebt, unlockTimestamps]);
 
   const unlockedCount = achievements.filter(a => a.unlocked).length;
   const totalCount = achievements.length;
@@ -97,8 +105,16 @@ export function useAchievements(currentStats: DebtStats) {
     const newlyUnlocked = currentUnlocked.filter(id => !previousUnlockedRef.current.includes(id));
     
     if (newlyUnlocked.length > 0) {
-      // Update storage
+      // Update storage with timestamps
+      const newTimestamps = { ...unlockTimestamps };
+      const now = new Date().toISOString();
+      newlyUnlocked.forEach(id => {
+        if (!newTimestamps[id]) {
+          newTimestamps[id] = now;
+        }
+      });
       setUnlockedIds(currentUnlocked);
+      setUnlockTimestamps(newTimestamps);
       
       // Trigger confetti for each newly unlocked achievement
       newlyUnlocked.forEach((id, index) => {
@@ -156,15 +172,17 @@ export function useAchievements(currentStats: DebtStats) {
     }
     
     previousUnlockedRef.current = currentUnlocked;
-  }, [achievements, setUnlockedIds]);
+  }, [achievements, setUnlockedIds, setUnlockTimestamps, unlockTimestamps]);
 
   return {
     achievements,
     unlockedCount,
     totalCount,
+    initialDebt,
     resetProgress: () => {
       setInitialDebt(0);
       setUnlockedIds([]);
+      setUnlockTimestamps({});
       previousUnlockedRef.current = [];
     },
   };

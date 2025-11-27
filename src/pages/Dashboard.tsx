@@ -443,6 +443,14 @@ export const Dashboard = () => {
                 Start tracking debts to unlock achievements!
               </p>
             )}
+            <div className="mt-6">
+              <Link to="/achievements">
+                <Button variant="outline" className="w-full">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  View All Achievements
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

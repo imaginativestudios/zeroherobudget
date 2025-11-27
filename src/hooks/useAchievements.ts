@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import confetti from 'canvas-confetti';
+import { playAchievementUnlockSound } from '@/lib/soundEffects';
 
 export interface Achievement {
   id: string;
@@ -107,6 +108,7 @@ export function useAchievements(currentStats: DebtStats) {
           // Different confetti patterns based on achievement importance
           if (achievement?.id === 'freedom') {
             // Epic confetti for debt freedom
+            playAchievementUnlockSound('epic');
             const duration = 3000;
             const end = Date.now() + duration;
             
@@ -132,6 +134,7 @@ export function useAchievements(currentStats: DebtStats) {
             }());
           } else if (achievement?.id === 'halfway-hero' || achievement?.id === 'three-quarters') {
             // Medium celebration for major milestones
+            playAchievementUnlockSound('milestone');
             confetti({
               particleCount: 100,
               spread: 70,
@@ -140,6 +143,7 @@ export function useAchievements(currentStats: DebtStats) {
             });
           } else {
             // Standard celebration
+            playAchievementUnlockSound('basic');
             confetti({
               particleCount: 50,
               spread: 60,

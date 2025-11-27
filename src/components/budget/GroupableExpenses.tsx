@@ -54,7 +54,11 @@ export function GroupableExpenses({
   const availableGroups = [...groupOrder];
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before drag starts
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -106,18 +110,18 @@ export function GroupableExpenses({
           moveItemToGroup(expense.id, targetGroup, expenses, setExpenses);
         } else {
           // Reorder within same group
-          const groupExpenses = groupedExpenses[currentGroup];
-          const activeIndex = groupExpenses.findIndex(e => e.id === expense.id);
-          const overIndex = groupExpenses.findIndex(e => e.id === targetExpense.id);
+          const newExpenses = [...expenses];
           
-          if (activeIndex !== overIndex) {
-            const newExpenses = [...expenses];
-            const otherExpenses = newExpenses.filter(e => (e.category || 'Uncategorized') !== currentGroup);
-            const reorderedGroup = [...groupExpenses];
-            const [removed] = reorderedGroup.splice(activeIndex, 1);
-            reorderedGroup.splice(overIndex, 0, removed);
+          // Find the actual indexes in the full expenses array
+          const activeArrayIndex = newExpenses.findIndex(e => e.id === expense.id);
+          const overArrayIndex = newExpenses.findIndex(e => e.id === targetExpense.id);
+          
+          if (activeArrayIndex !== overArrayIndex) {
+            // Perform the swap in the original array
+            const [removed] = newExpenses.splice(activeArrayIndex, 1);
+            newExpenses.splice(overArrayIndex, 0, removed);
             
-            setExpenses([...otherExpenses, ...reorderedGroup]);
+            setExpenses(newExpenses);
           }
         }
       }

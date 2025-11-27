@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
 
 const Auth = () => {
-  // In prototype mode, always redirect to dashboard
-  return <Navigate to="/dashboard" replace />;
+  // Redirect to landing page which has the auth modal
+  return <Navigate to="/" replace />;
 };
 
 export default Auth;

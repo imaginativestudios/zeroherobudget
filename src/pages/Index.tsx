@@ -1,8 +1,7 @@
-import { Navigate } from 'react-router-dom';
+import Landing from './Landing';
 
 const Index = () => {
-  // Always redirect to dashboard in prototype mode
-  return <Navigate to="/dashboard" replace />;
+  return <Landing />;
 };
 
 export default Index;

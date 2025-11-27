@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
@@ -6,6 +6,16 @@ import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard 
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const openAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
@@ -62,6 +72,10 @@ export default function Landing() {
               muted
               playsInline
               className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                transform: `translateY(${scrollY * 0.5}px)`,
+                transition: 'transform 0.1s ease-out',
+              }}
             >
               <source src="https://assets.mixkit.co/videos/preview/mixkit-person-working-on-a-laptop-at-home-4770-large.mp4" type="video/mp4" />
               {/* Fallback gradient if video doesn't load */}

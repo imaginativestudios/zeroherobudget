@@ -25,6 +25,8 @@ import { useExpenseGroups } from "@/hooks/useExpenseGroups";
 import { formatCurrency } from "@/lib/constants";
 import { type Expense } from "@/lib/csvUtils";
 import { GroupCard } from "./GroupCard";
+import { haptics } from "@/lib/haptics";
+import { soundEffects } from "@/lib/soundEffects";
 
 interface GroupableExpensesProps {
   expenses: Expense[];
@@ -67,6 +69,8 @@ export function GroupableExpenses({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+    haptics.light();
+    soundEffects.pickup();
   };
 
   // Get the active item for drag overlay
@@ -89,13 +93,18 @@ export function GroupableExpenses({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (!over) return;
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
 
     const activeId = active.id as string;
     const overId = over.id as string;
 
     const activeData = active.data.current;
     const overData = over.data.current;
+
+    let actionPerformed = false;
 
     if (activeData?.type === "group") {
       // Reordering groups
@@ -105,6 +114,7 @@ export function GroupableExpenses({
       if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
         const newOrder = arrayMove(groupOrder, activeIndex, overIndex);
         reorderGroups(newOrder);
+        actionPerformed = true;
       }
     } else if (activeData?.type === "expense") {
       // Moving expense
@@ -116,6 +126,7 @@ export function GroupableExpenses({
         const targetGroup = overData.groupName;
         if (currentGroup !== targetGroup) {
           moveItemToGroup(expense.id, targetGroup, expenses, setExpenses);
+          actionPerformed = true;
         }
       } else if (overData?.type === "expense") {
         // Reordering within same group or moving to different group
@@ -124,6 +135,7 @@ export function GroupableExpenses({
         
         if (currentGroup !== targetGroup) {
           moveItemToGroup(expense.id, targetGroup, expenses, setExpenses);
+          actionPerformed = true;
         } else {
           // Reorder within same group
           const newExpenses = [...expenses];
@@ -135,9 +147,15 @@ export function GroupableExpenses({
           if (activeArrayIndex !== -1 && overArrayIndex !== -1 && activeArrayIndex !== overArrayIndex) {
             const reordered = arrayMove(newExpenses, activeArrayIndex, overArrayIndex);
             setExpenses(reordered);
+            actionPerformed = true;
           }
         }
       }
+    }
+
+    if (actionPerformed) {
+      haptics.success();
+      soundEffects.drop();
     }
 
     setActiveId(null);

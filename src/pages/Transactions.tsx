@@ -308,13 +308,13 @@ export const Transactions = () => {
                       <Label>Budget Line (Optional)</Label>
                       <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
                       ...newTransaction,
-                      expenseId: value
+                      expenseId: value === "none" ? undefined : value
                     })}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select budget line" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                           {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
                               {expense.name}
                             </SelectItem>)}
@@ -533,13 +533,13 @@ export const Transactions = () => {
                                     <Label>Budget Line (Optional)</Label>
                                     <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
                                 ...newTransaction,
-                                expenseId: value
+                                expenseId: value === "none" ? undefined : value
                               })}>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select budget line" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="">None</SelectItem>
+                                        <SelectItem value="none">None</SelectItem>
                                         {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
                                             {expense.name}
                                           </SelectItem>)}

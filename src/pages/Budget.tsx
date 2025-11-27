@@ -19,7 +19,7 @@ export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
-  const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense } = useLocalExpenses();
+  const { expenses, addExpense: addSupabaseExpense, updateExpense: updateSupabaseExpense, removeExpense: removeSupabaseExpense, setExpensesOrder } = useLocalExpenses();
   const { getMonthlyActualsByCategory } = useLocalTransactions();
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
 
@@ -487,6 +487,18 @@ export const Budget = () => {
               category: e.category
             }))}
             setExpenses={(newExpenses) => {
+              // Check if this is just a reorder operation
+              const newOrder = newExpenses.map(e => e.id);
+              const oldOrder = expenses.map(e => e.id);
+              const isReorder = newOrder.length === oldOrder.length && 
+                                newOrder.every(id => oldOrder.includes(id)) &&
+                                JSON.stringify(newOrder) !== JSON.stringify(oldOrder);
+              
+              if (isReorder) {
+                setExpensesOrder(newOrder);
+                return;
+              }
+
               // Handle updating expenses through Supabase
               expenses.forEach(expense => {
                 const updatedExpense = newExpenses.find(ne => ne.id === expense.id);

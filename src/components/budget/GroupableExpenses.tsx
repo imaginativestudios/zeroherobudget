@@ -69,6 +69,23 @@ export function GroupableExpenses({
     setActiveId(event.active.id as string);
   };
 
+  // Get the active item for drag overlay
+  const getActiveItem = () => {
+    if (!activeId) return null;
+    
+    if (activeId.startsWith('group-')) {
+      const groupName = activeId.replace('group-', '');
+      const groupExpenses = groupedExpenses[groupName] || [];
+      const groupTotal = groupExpenses.reduce((sum, e) => sum + (e.planned || 0), 0);
+      return { type: 'group', groupName, count: groupExpenses.length, total: groupTotal };
+    } else {
+      const expense = expenses.find(e => e.id === activeId);
+      return expense ? { type: 'expense', expense } : null;
+    }
+  };
+
+  const activeItem = getActiveItem();
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -236,13 +253,38 @@ export function GroupableExpenses({
         </SortableContext>
 
         <DragOverlay>
-          {activeId ? (
-            <div className="bg-card border border-border rounded-lg p-4 shadow-lg">
-              <div className="font-semibold">
-                {activeId.startsWith('group-') ? activeId.replace('group-', '') : 'Moving item...'}
-              </div>
+          {activeItem && (
+            <div className="opacity-90 rotate-3 scale-105 transition-transform animate-fade-in">
+              {activeItem.type === 'group' ? (
+                <div className="bg-gradient-to-br from-primary/10 to-chart-1/10 border-2 border-primary/50 rounded-lg p-4 shadow-2xl backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-lg text-foreground">{activeItem.groupName}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {activeItem.count} {activeItem.count === 1 ? 'item' : 'items'}
+                    </div>
+                  </div>
+                  <div className="text-sm font-semibold text-primary mt-2">
+                    {formatCurrency(activeItem.total)}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-gradient-to-br from-background to-muted border-2 border-primary/50 rounded-lg shadow-2xl backdrop-blur-sm">
+                  <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center p-3">
+                    <div className="font-medium text-foreground truncate pr-2">
+                      {activeItem.expense.name}
+                    </div>
+                    <div className="text-sm font-semibold text-primary whitespace-nowrap">
+                      {formatCurrency(activeItem.expense.planned || 0)}
+                    </div>
+                    <div className="text-sm text-muted-foreground whitespace-nowrap">
+                      {formatCurrency(monthlyActuals[activeItem.expense.id] || 0)}
+                    </div>
+                    <div className="w-32"></div>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : null}
+          )}
         </DragOverlay>
       </DndContext>
 

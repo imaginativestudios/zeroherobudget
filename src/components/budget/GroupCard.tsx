@@ -72,7 +72,8 @@ export function GroupCard({
     transform: CSS.Transform.toString(transform),
     transition,
     position: "relative",
-    zIndex: isDragging ? 10 : 0,
+    zIndex: isDragging ? 0 : 10,
+    opacity: isDragging ? 0.4 : 1,
   };
 
   const plannedTotal = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
@@ -106,7 +107,7 @@ export function GroupCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`border border-border rounded-lg bg-card ${isDragging ? 'opacity-50' : ''}`}
+      className="border border-border rounded-lg bg-card transition-all duration-200 hover:shadow-lg hover:border-primary/30"
     >
       <Accordion type="single" collapsible defaultValue={`group-${groupName}`}>
         <AccordionItem value={`group-${groupName}`} className="border-none">
@@ -114,7 +115,7 @@ export function GroupCard({
             <div className="flex items-center justify-between w-full mr-4">
               <div className="flex items-center gap-3 min-w-0">
                 <button
-                  className="cursor-grab text-muted-foreground hover:text-foreground"
+                  className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors duration-200"
                   {...attributes}
                   {...listeners}
                 >

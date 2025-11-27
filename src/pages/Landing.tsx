@@ -52,11 +52,21 @@ export default function Landing() {
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           {/* Video Background */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
-            {/* Placeholder for video - can be replaced with actual video URL */}
-            <div className="w-full h-full bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
-              <div className="text-6xl opacity-20">💰</div>
-            </div>
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/50 to-accent/60 z-10" />
+            
+            {/* Background Video */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-person-working-on-a-laptop-at-home-4770-large.mp4" type="video/mp4" />
+              {/* Fallback gradient if video doesn't load */}
+              <div className="w-full h-full bg-gradient-to-br from-primary/5 to-accent/5" />
+            </video>
           </div>
 
           {/* Hero Content */}

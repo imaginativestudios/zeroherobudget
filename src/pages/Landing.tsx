@@ -92,7 +92,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline"
-              className="text-base sm:text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/20 hover:border-white"
+              className="text-base sm:text-lg px-8 py-6 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white"
               onClick={() => openAuth('login')}
             >
               Sign In

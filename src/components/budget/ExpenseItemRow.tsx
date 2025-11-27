@@ -1,6 +1,7 @@
 import { GripVertical, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type { CSSProperties } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,9 +40,12 @@ export function ExpenseItemRow({
     }
   });
 
-  const style = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
+    position: 'relative',
+    zIndex: isDragging ? 10 : 0,
+    opacity: isDragging ? 0.8 : 1,
   };
 
   const variance = actual - expense.planned;

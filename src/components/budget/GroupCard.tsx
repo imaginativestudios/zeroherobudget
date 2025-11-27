@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { GripVertical, Plus, MoreHorizontal, Edit, Trash2, Check, X } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -67,9 +68,11 @@ export function GroupCard({
     }
   });
 
-  const style = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
+    position: "relative",
+    zIndex: isDragging ? 10 : 0,
   };
 
   const plannedTotal = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);

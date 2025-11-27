@@ -59,4 +59,38 @@ export const soundEffects = {
     playTone(900, 0.05, 0.06);
     setTimeout(() => playTone(1200, 0.05, 0.06), 50);
   },
+
+  /**
+   * Achievement unlock sounds - subtle and pleasant
+   */
+  achievementBasic: () => {
+    // Basic achievement - simple pleasant ding
+    playTone(784, 0.15, 0.04);
+    setTimeout(() => playTone(1047, 0.2, 0.04), 60);
+  },
+
+  achievementMilestone: () => {
+    // Milestone achievement - bright ascending notes
+    playTone(659, 0.18, 0.05);
+    setTimeout(() => playTone(784, 0.18, 0.05), 80);
+    setTimeout(() => playTone(988, 0.22, 0.05), 160);
+  },
+
+  achievementEpic: () => {
+    // Epic achievement - ascending triumphant chord
+    playTone(523, 0.25, 0.06);
+    setTimeout(() => playTone(659, 0.25, 0.06), 100);
+    setTimeout(() => playTone(784, 0.25, 0.06), 200);
+    setTimeout(() => playTone(1047, 0.3, 0.06), 300);
+  },
+};
+
+export const playAchievementUnlockSound = (level: 'basic' | 'milestone' | 'epic' = 'basic') => {
+  if (level === 'epic') {
+    soundEffects.achievementEpic();
+  } else if (level === 'milestone') {
+    soundEffects.achievementMilestone();
+  } else {
+    soundEffects.achievementBasic();
+  }
 };

@@ -92,7 +92,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline"
-              className="text-base sm:text-lg px-8 py-6 border-white/30 text-white hover:bg-white/10 hover:border-white"
+              className="text-base sm:text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/20 hover:border-white"
               onClick={() => openAuth('login')}
             >
               Sign In
@@ -111,7 +111,7 @@ export default function Landing() {
             </div>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span>Free Forever</span>
+              <span>Add family members at no extra cost</span>
             </div>
           </div>
         </div>

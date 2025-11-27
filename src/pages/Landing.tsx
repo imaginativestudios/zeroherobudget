@@ -3,51 +3,39 @@ import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
 import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
-
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
-
   const openAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
     setAuthModalOpen(true);
   };
-
-  const features = [
-    {
-      icon: TrendingDown,
-      title: 'Smart Debt Strategy',
-      description: 'Choose between Snowball and Avalanche methods to eliminate debt faster with data-driven insights.',
-    },
-    {
-      icon: Target,
-      title: 'Budget Mastery',
-      description: 'Track every dollar with intelligent categorization and visual progress tracking across 10 household categories.',
-    },
-    {
-      icon: CreditCard,
-      title: 'Subscription Control',
-      description: 'Automatically detect and manage recurring subscriptions to cut unnecessary spending.',
-    },
-    {
-      icon: Users,
-      title: 'Household Collaboration',
-      description: 'Manage finances together with role-based access and shared household budgets.',
-    },
-    {
-      icon: BarChart3,
-      title: 'Visual Analytics',
-      description: 'Beautiful charts and reports that make understanding your financial health effortless.',
-    },
-    {
-      icon: Shield,
-      title: 'Secure & Private',
-      description: 'Bank-level security with encrypted data storage and complete privacy protection.',
-    },
-  ];
-
-  return (
-    <>
+  const features = [{
+    icon: TrendingDown,
+    title: 'Smart Debt Strategy',
+    description: 'Choose between Snowball and Avalanche methods to eliminate debt faster with data-driven insights.'
+  }, {
+    icon: Target,
+    title: 'Budget Mastery',
+    description: 'Track every dollar with intelligent categorization and visual progress tracking across 10 household categories.'
+  }, {
+    icon: CreditCard,
+    title: 'Subscription Control',
+    description: 'Automatically detect and manage recurring subscriptions to cut unnecessary spending.'
+  }, {
+    icon: Users,
+    title: 'Household Collaboration',
+    description: 'Manage finances together with role-based access and shared household budgets.'
+  }, {
+    icon: BarChart3,
+    title: 'Visual Analytics',
+    description: 'Beautiful charts and reports that make understanding your financial health effortless.'
+  }, {
+    icon: Shield,
+    title: 'Secure & Private',
+    description: 'Bank-level security with encrypted data storage and complete privacy protection.'
+  }];
+  return <>
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -62,10 +50,7 @@ export default function Landing() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Logo - Focal Point */}
           <div className="mb-8 flex justify-center">
-            <Logo 
-              variant="color" 
-              className="h-24 md:h-32 lg:h-40 w-auto"
-            />
+            <Logo variant="color" className="h-24 md:h-32 lg:h-40 w-auto" />
           </div>
           
           {/* Headline */}
@@ -80,21 +65,11 @@ export default function Landing() {
           
           {/* CTA Buttons - Grouped by Proximity */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              size="lg" 
-              variant="gold"
-              className="text-base sm:text-lg px-8 py-6"
-              onClick={() => openAuth('signup')}
-            >
+            <Button size="lg" variant="gold" className="text-base sm:text-lg px-8 py-6" onClick={() => openAuth('signup')}>
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-base sm:text-lg px-8 py-6 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white"
-              onClick={() => openAuth('login')}
-            >
+            <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 py-6 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
               Sign In
             </Button>
           </div>
@@ -111,7 +86,7 @@ export default function Landing() {
             </div>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span>Add family members at no extra cost</span>
+              <span>Add family members for free </span>
             </div>
           </div>
         </div>
@@ -130,11 +105,7 @@ export default function Landing() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-card border border-border rounded-lg p-8 hover:shadow-royal transition-all duration-300 hover:scale-105"
-                >
+              {features.map((feature, idx) => <div key={idx} className="bg-card border border-border rounded-lg p-8 hover:shadow-royal transition-all duration-300 hover:scale-105">
                   <feature.icon className="w-12 h-12 text-primary mb-4" />
                   <h3 className="text-xl font-semibold mb-3 text-card-foreground">
                     {feature.title}
@@ -142,8 +113,7 @@ export default function Landing() {
                   <p className="text-muted-foreground">
                     {feature.description}
                   </p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -171,13 +141,13 @@ export default function Landing() {
                   </div>
                 </div>
                 {/* To add actual video, replace above with:
-                <iframe 
+                 <iframe 
                   src="YOUR_VIDEO_URL" 
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                />
-                */}
+                 />
+                 */}
               </div>
             </div>
           </div>
@@ -193,12 +163,7 @@ export default function Landing() {
               Join thousands who've transformed their financial lives. Start your journey to debt freedom today.
             </p>
             
-            <Button 
-              size="lg" 
-              variant="gold"
-              onClick={() => openAuth('signup')}
-              className="text-lg px-8 py-6"
-            >
+            <Button size="lg" variant="gold" onClick={() => openAuth('signup')} className="text-lg px-8 py-6">
               Get Started Free
               <ArrowRight className="ml-2" />
             </Button>
@@ -226,11 +191,6 @@ export default function Landing() {
         </footer>
       </div>
 
-      <AuthModal 
-        open={authModalOpen} 
-        onOpenChange={setAuthModalOpen}
-        defaultMode={authMode}
-      />
-    </>
-  );
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} defaultMode={authMode} />
+    </>;
 }

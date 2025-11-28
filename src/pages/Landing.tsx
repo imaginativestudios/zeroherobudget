@@ -93,28 +93,156 @@ export default function Landing() {
         </div>
       </section>
 
-        {/* Features Section */}
+        {/* Testimonials Section */}
         <section className="py-24 bg-background/80 backdrop-blur-sm">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Everything You Need to Win
+                Real Stories, Real Results
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Powerful features designed to simplify your financial journey and accelerate your path to freedom.
+                Join thousands who have transformed their financial lives and conquered their debt.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, idx) => <div key={idx} className="bg-card border border-border rounded-lg p-8 hover:shadow-royal transition-all duration-300 hover:scale-105">
-                  <feature.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="text-xl font-semibold mb-3 text-card-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </div>)}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {/* Testimonial 1 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "In just 18 months, I paid off $32,000 in credit card debt using the snowball method. Zero Hero kept me motivated with achievement milestones and made budgeting actually enjoyable!"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-primary font-semibold">SJ</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">Sarah Johnson</p>
+                    <p className="text-sm text-muted-foreground">Paid off $32K in debt</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 2 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "The household collaboration feature changed everything for us. My wife and I finally got on the same page with our finances and eliminated $54K together. Highly recommend!"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                    <span className="text-accent font-semibold">MC</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">Michael Chen</p>
+                    <p className="text-sm text-muted-foreground">Eliminated $54K as a couple</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "The subscription tracker alone saved me $240/month! I had no idea I was paying for so many services I didn't use. This app pays for itself instantly."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-primary font-semibold">ER</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">Emily Rodriguez</p>
+                    <p className="text-sm text-muted-foreground">Saved $240/month</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 4 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "I've tried every budgeting app out there. Zero Hero is the only one that actually helped me become debt-free. The visual progress tracking kept me going during tough months."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                    <span className="text-accent font-semibold">DW</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">David Williams</p>
+                    <p className="text-sm text-muted-foreground">Achieved debt freedom</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 5 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "The avalanche method visualization showed me exactly how much interest I was saving. Paid off $78K in student loans in 4 years. I couldn't have done it without this app!"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-primary font-semibold">AP</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">Aisha Patel</p>
+                    <p className="text-sm text-muted-foreground">Paid off $78K student loans</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 6 */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-card-foreground mb-6 leading-relaxed">
+                  "Zero Hero makes financial planning fun with the achievement system. My teenage son is even interested in learning about budgeting now. A true game-changer for our family."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                    <span className="text-accent font-semibold">JT</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-card-foreground">James Thompson</p>
+                    <p className="text-sm text-muted-foreground">Family financial success</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

@@ -50,7 +50,7 @@ export default function Landing() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Logo - Focal Point */}
           <div className="mb-8 flex justify-center">
-            <Logo variant="color" className="h-24 md:h-32 lg:h-40 w-auto" />
+            <Logo className="h-24 md:h-32 lg:h-40 w-auto" />
           </div>
           
           {/* Headline */}

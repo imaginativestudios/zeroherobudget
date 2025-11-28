@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
-import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
+import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard, PiggyBank, Trophy } from 'lucide-react';
+import dashboardScreenshot from '@/assets/dashboard-screenshot.png';
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
@@ -118,36 +119,89 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Demo/Video Section */}
+        {/* App Showcase Section */}
         <section className="py-24 bg-gradient-subtle">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                See It In Action
+                Everything You Need to Conquer Debt
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Watch how easy it is to track budgets, manage debt, and achieve your financial goals.
+                A complete financial command center designed to help you track, manage, and eliminate debt.
               </p>
             </div>
 
-            <div className="max-w-5xl mx-auto">
-              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-elegant border border-border bg-card">
-                {/* Placeholder for demo video */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
-                  <div className="text-center">
-                    <BarChart3 className="w-24 h-24 text-primary mx-auto mb-4 opacity-50" />
-                    <p className="text-muted-foreground text-lg">Demo video placeholder</p>
-                    <p className="text-sm text-muted-foreground mt-2">Add your video URL to showcase the app</p>
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+              {/* Screenshot */}
+              <div className="order-2 lg:order-1">
+                <img 
+                  src={dashboardScreenshot} 
+                  alt="Zero Hero Dashboard Interface" 
+                  className="rounded-2xl shadow-elegant border border-border"
+                />
+              </div>
+
+              {/* Feature Bullets */}
+              <div className="order-1 lg:order-2 space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Real-Time Financial Overview</h3>
+                    <p className="text-muted-foreground">Track income, expenses, net worth, and available funds for debt payments at a glance.</p>
                   </div>
                 </div>
-                {/* To add actual video, replace above with:
-                 <iframe 
-                  src="YOUR_VIDEO_URL" 
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                 />
-                 */}
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <PiggyBank className="w-6 h-6 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Smart Budget Management</h3>
+                    <p className="text-muted-foreground">Organize expenses by category, compare planned vs. actual spending, and stay on track with visual insights.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <TrendingDown className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Debt Payoff Strategies</h3>
+                    <p className="text-muted-foreground">Choose between snowball and avalanche methods, visualize your progress, and celebrate milestones.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <CreditCard className="w-6 h-6 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Subscription Tracking</h3>
+                    <p className="text-muted-foreground">Monitor recurring payments, identify opportunities to save, and take control of monthly subscriptions.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Achievement Milestones</h3>
+                    <p className="text-muted-foreground">Unlock achievements as you pay off debts and hit financial goals—celebrate every victory along the way.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">Household Collaboration</h3>
+                    <p className="text-muted-foreground">Invite family members to collaborate on budgets and financial goals—manage finances together.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

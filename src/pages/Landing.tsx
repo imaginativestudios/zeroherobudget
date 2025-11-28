@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
-import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard, PiggyBank, Trophy } from 'lucide-react';
-import dashboardScreenshot from '@/assets/dashboard-screenshot.png';
+import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
@@ -93,243 +92,62 @@ export default function Landing() {
         </div>
       </section>
 
-        {/* Testimonials Section */}
+        {/* Features Section */}
         <section className="py-24 bg-background/80 backdrop-blur-sm">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Real Stories, Real Results
+                Everything You Need to Win
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Join thousands who have transformed their financial lives and conquered their debt.
+                Powerful features designed to simplify your financial journey and accelerate your path to freedom.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {/* Testimonial 1 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "In just 18 months, I paid off $32,000 in credit card debt using the snowball method. Zero Hero kept me motivated with achievement milestones and made budgeting actually enjoyable!"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-primary font-semibold">SJ</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">Sarah Johnson</p>
-                    <p className="text-sm text-muted-foreground">Paid off $32K in debt</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 2 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "The household collaboration feature changed everything for us. My wife and I finally got on the same page with our finances and eliminated $54K together. Highly recommend!"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <span className="text-accent font-semibold">MC</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">Michael Chen</p>
-                    <p className="text-sm text-muted-foreground">Eliminated $54K as a couple</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 3 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "The subscription tracker alone saved me $240/month! I had no idea I was paying for so many services I didn't use. This app pays for itself instantly."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-primary font-semibold">ER</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">Emily Rodriguez</p>
-                    <p className="text-sm text-muted-foreground">Saved $240/month</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 4 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "I've tried every budgeting app out there. Zero Hero is the only one that actually helped me become debt-free. The visual progress tracking kept me going during tough months."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <span className="text-accent font-semibold">DW</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">David Williams</p>
-                    <p className="text-sm text-muted-foreground">Achieved debt freedom</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 5 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "The avalanche method visualization showed me exactly how much interest I was saving. Paid off $78K in student loans in 4 years. I couldn't have done it without this app!"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-primary font-semibold">AP</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">Aisha Patel</p>
-                    <p className="text-sm text-muted-foreground">Paid off $78K student loans</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 6 */}
-              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-elegant transition-all duration-300">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-accent fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-card-foreground mb-6 leading-relaxed">
-                  "Zero Hero makes financial planning fun with the achievement system. My teenage son is even interested in learning about budgeting now. A true game-changer for our family."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <span className="text-accent font-semibold">JT</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-card-foreground">James Thompson</p>
-                    <p className="text-sm text-muted-foreground">Family financial success</p>
-                  </div>
-                </div>
-              </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, idx) => <div key={idx} className="bg-card border border-border rounded-lg p-8 hover:shadow-royal transition-all duration-300 hover:scale-105">
+                  <feature.icon className="w-12 h-12 text-primary mb-4" />
+                  <h3 className="text-xl font-semibold mb-3 text-card-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </div>)}
             </div>
           </div>
         </section>
 
-        {/* App Showcase Section */}
+        {/* Demo/Video Section */}
         <section className="py-24 bg-gradient-subtle">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Everything You Need to Conquer Debt
+                See It In Action
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                A complete financial command center designed to help you track, manage, and eliminate debt.
+                Watch how easy it is to track budgets, manage debt, and achieve your financial goals.
               </p>
             </div>
 
-            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-              {/* Screenshot */}
-              <div className="order-2 lg:order-1">
-                <img 
-                  src={dashboardScreenshot} 
-                  alt="Zero Hero Dashboard Interface" 
-                  className="rounded-2xl shadow-elegant border border-border"
-                />
-              </div>
-
-              {/* Feature Bullets */}
-              <div className="order-1 lg:order-2 space-y-6">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Real-Time Financial Overview</h3>
-                    <p className="text-muted-foreground">Track income, expenses, net worth, and available funds for debt payments at a glance.</p>
+            <div className="max-w-5xl mx-auto">
+              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-elegant border border-border bg-card">
+                {/* Placeholder for demo video */}
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+                  <div className="text-center">
+                    <BarChart3 className="w-24 h-24 text-primary mx-auto mb-4 opacity-50" />
+                    <p className="text-muted-foreground text-lg">Demo video placeholder</p>
+                    <p className="text-sm text-muted-foreground mt-2">Add your video URL to showcase the app</p>
                   </div>
                 </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <PiggyBank className="w-6 h-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Smart Budget Management</h3>
-                    <p className="text-muted-foreground">Organize expenses by category, compare planned vs. actual spending, and stay on track with visual insights.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <TrendingDown className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Debt Payoff Strategies</h3>
-                    <p className="text-muted-foreground">Choose between snowball and avalanche methods, visualize your progress, and celebrate milestones.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <CreditCard className="w-6 h-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Subscription Tracking</h3>
-                    <p className="text-muted-foreground">Monitor recurring payments, identify opportunities to save, and take control of monthly subscriptions.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Achievement Milestones</h3>
-                    <p className="text-muted-foreground">Unlock achievements as you pay off debts and hit financial goals—celebrate every victory along the way.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Users className="w-6 h-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">Household Collaboration</h3>
-                    <p className="text-muted-foreground">Invite family members to collaborate on budgets and financial goals—manage finances together.</p>
-                  </div>
-                </div>
+                {/* To add actual video, replace above with:
+                 <iframe 
+                  src="YOUR_VIDEO_URL" 
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                 />
+                 */}
               </div>
             </div>
           </div>

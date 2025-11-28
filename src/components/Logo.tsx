@@ -9,22 +9,14 @@ interface LogoProps {
 }
 
 export const Logo = ({ className, alt = "Zero Hero logo", variant = "white", src }: LogoProps) => {
-  const COLOR_SRC = "/lovable-uploads/4796e673-8c5d-43ec-91a3-a9fa9fdcb2f1.png";
-  const WHITE_SRC_PRIMARY = "/lovable-uploads/dada87df-83e8-4d64-b92c-a2668a7a608f.png"; // may not exist
-  const baseFallbacks = variant === "white"
-    ? [WHITE_SRC_PRIMARY, "/logo-white.png", COLOR_SRC, "/logo-color.png"]
-    : [COLOR_SRC, "/logo-color.png"];
-  const FALLBACKS = src ? [src, ...baseFallbacks] : baseFallbacks;
-
-  const [srcIndex, setSrcIndex] = useState(0);
-  const currentSrc = FALLBACKS[srcIndex] ?? COLOR_SRC;
+  const LOGO_SRC = "/lovable-uploads/4796e673-8c5d-43ec-91a3-a9fa9fdcb2f1.png";
+  const currentSrc = src || LOGO_SRC;
 
   return (
     <img
       src={currentSrc}
       alt={alt}
       className={cn("block h-auto w-auto", className)}
-      onError={() => setSrcIndex((i) => (i < FALLBACKS.length - 1 ? i + 1 : i))}
     />
   );
 };

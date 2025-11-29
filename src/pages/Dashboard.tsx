@@ -6,6 +6,7 @@ import { ChartInsight } from "@/components/ChartInsight";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { AchievementCard } from "@/components/AchievementCard";
+import { TipOfTheDay } from "@/components/TipOfTheDay";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -193,6 +194,9 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Tip of the Day */}
+      <TipOfTheDay />
 
       {/* Financial Overview Section */}
       <div className="space-y-4">

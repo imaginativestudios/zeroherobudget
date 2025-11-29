@@ -1,16 +1,18 @@
 import { useState, useMemo } from "react";
-import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown } from "lucide-react";
+import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
-import { simulatePayoff } from "@/lib/debtCalculations";
+import { simulatePayoff, getDetailedPaymentSchedule } from "@/lib/debtCalculations";
 import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } from "@/lib/csvUtils";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
+import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
@@ -24,6 +26,11 @@ export const DebtSnowball = () => {
 
   const schedule = useMemo(() => 
     simulatePayoff(debts, leftover, strategy as "Snowball" | "Avalanche"), 
+    [debts, leftover, strategy]
+  );
+
+  const detailedSchedule = useMemo(() => 
+    getDetailedPaymentSchedule(debts, leftover, strategy as "Snowball" | "Avalanche"),
     [debts, leftover, strategy]
   );
 
@@ -124,8 +131,21 @@ export const DebtSnowball = () => {
         </div>
       </div>
 
-      {/* Strategy Selection */}
-      <Card className="shadow-royal">
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsTrigger value="overview">
+            <Crown className="h-4 w-4 mr-2" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="schedule">
+            <Calendar className="h-4 w-4 mr-2" />
+            Payment Schedule
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-8 mt-8">
+          {/* Strategy Selection */}
+          <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <Target className="h-6 w-6 text-accent" />
@@ -316,6 +336,15 @@ export const DebtSnowball = () => {
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="schedule" className="mt-8">
+          <PaymentScheduleTable 
+            schedule={detailedSchedule} 
+            strategy={strategy as "Snowball" | "Avalanche"}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

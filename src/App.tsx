@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { DemoDataInitializer } from "@/components/DemoDataInitializer";
+import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
@@ -67,6 +68,7 @@ const App = () => (
             </Layout>
           } />
         </Routes>
+        <ChatbotWidget />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

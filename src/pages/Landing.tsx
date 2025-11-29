@@ -189,7 +189,9 @@ export default function Landing() {
                 <Link to="/terms" className="hover:text-foreground transition-colors">
                   Terms
                 </Link>
-                <button className="hover:text-foreground transition-colors">Support</button>
+                <Link to="/help" className="hover:text-foreground transition-colors">
+                  Support
+                </Link>
               </div>
             </div>
           </div>

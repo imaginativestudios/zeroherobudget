@@ -60,6 +60,7 @@ export const Layout = ({ children }: LayoutProps) => {
             aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-navigation"
+            data-tour="mobile-menu-button"
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </Button>

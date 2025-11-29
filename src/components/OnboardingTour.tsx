@@ -4,7 +4,89 @@ import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const getTourSteps = (isMobile: boolean): Step[] => [
+const getMobileTourSteps = (): Step[] => [
+  {
+    target: 'body',
+    content: (
+      <div className="space-y-2">
+        <h2 className="text-lg font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
+        <p className="text-sm text-muted-foreground">
+          Quick tour of the essentials. Tap Next to continue.
+        </p>
+      </div>
+    ),
+    placement: 'center',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour="nav-sidebar"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Main Menu</h3>
+        <p className="text-sm text-muted-foreground">
+          Tap here to access all your financial tools.
+        </p>
+      </div>
+    ),
+    placement: 'bottom',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour="financial-overview"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Your Financial Snapshot</h3>
+        <p className="text-sm text-muted-foreground">
+          Key metrics at a glance - income, expenses, and net worth.
+        </p>
+      </div>
+    ),
+    placement: 'bottom',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour="nav-budgets"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Budget Tracking</h3>
+        <p className="text-sm text-muted-foreground">
+          Track spending across 10 categories. Tap to see details.
+        </p>
+      </div>
+    ),
+    placement: 'bottom',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour="nav-debts"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Debt Payoff</h3>
+        <p className="text-sm text-muted-foreground">
+          Choose Snowball or Avalanche strategies to eliminate debt faster.
+        </p>
+      </div>
+    ),
+    placement: 'bottom',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour="chatbot-widget"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">AI Assistant</h3>
+        <p className="text-sm text-muted-foreground">
+          Need help? Tap here to chat with our AI assistant anytime.
+        </p>
+      </div>
+    ),
+    placement: 'top',
+    disableBeacon: true,
+    isFixed: true,
+  },
+];
+
+const getDesktopTourSteps = (): Step[] => [
   {
     target: 'body',
     content: (
@@ -28,7 +110,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -54,7 +136,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -67,7 +149,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -80,7 +162,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -93,7 +175,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -106,7 +188,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -119,7 +201,7 @@ const getTourSteps = (isMobile: boolean): Step[] => [
         </p>
       </div>
     ),
-    placement: isMobile ? 'bottom' : 'right',
+    placement: 'right',
     disableBeacon: true,
   },
   {
@@ -170,7 +252,7 @@ export const OnboardingTour = () => {
 
   return (
     <Joyride
-      steps={getTourSteps(isMobile)}
+      steps={isMobile ? getMobileTourSteps() : getDesktopTourSteps()}
       run={isRunning}
       stepIndex={stepIndex}
       continuous
@@ -190,19 +272,24 @@ export const OnboardingTour = () => {
         buttonNext: {
           backgroundColor: 'hsl(39, 100%, 57%)',
           color: 'hsl(262, 83%, 28%)',
-          fontSize: 14,
+          fontSize: isMobile ? 16 : 14,
           fontWeight: 600,
           borderRadius: 8,
-          padding: '10px 20px',
+          padding: isMobile ? '12px 24px' : '10px 20px',
+          minHeight: isMobile ? 44 : 'auto',
         },
         buttonBack: {
           color: 'hsl(var(--muted-foreground))',
-          fontSize: 14,
+          fontSize: isMobile ? 16 : 14,
           marginRight: 10,
+          minHeight: isMobile ? 44 : 'auto',
+          padding: isMobile ? '12px 16px' : '10px 12px',
         },
         buttonSkip: {
           color: 'hsl(var(--muted-foreground))',
-          fontSize: 14,
+          fontSize: isMobile ? 16 : 14,
+          minHeight: isMobile ? 44 : 'auto',
+          padding: isMobile ? '12px 16px' : '10px 12px',
         },
         tooltip: {
           borderRadius: 12,

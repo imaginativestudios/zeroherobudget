@@ -14,8 +14,9 @@ type Message = {
 const QUICK_SUGGESTIONS = [
   "What is Zero Hero?",
   "How do I set up a budget?",
-  "What debt strategies are available?",
-  "Is my data secure?",
+  "What's the 50/30/20 rule?",
+  "Should I use snowball or avalanche?",
+  "How much emergency fund do I need?",
 ];
 
 export const ChatbotWidget = () => {

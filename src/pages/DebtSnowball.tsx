@@ -112,7 +112,7 @@ export const DebtSnowball = () => {
   return (
     <div className="space-y-8">
       <div className="pt-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Debt Snowball Strategy</h1>
+        <h1 className="text-3xl font-bold text-foreground">Attack Your Debt</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportDebts}>
             <Download className="h-4 w-4" />
@@ -132,21 +132,39 @@ export const DebtSnowball = () => {
         </div>
       </div>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-xl">
-            <TabsTrigger value="overview">
-              <Crown className="h-4 w-4 mr-2" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="schedule">
-              <Calendar className="h-4 w-4 mr-2" />
-              Payment Schedule
-            </TabsTrigger>
-            <TabsTrigger value="compare">
-              <Scale className="h-4 w-4 mr-2" />
-              Compare Strategies
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="flex flex-wrap gap-2 bg-transparent p-0 h-auto">
+          <TabsTrigger 
+            value="overview"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
+                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
+                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+          >
+            <Crown className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger 
+            value="schedule"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
+                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
+                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+          >
+            <Calendar className="h-4 w-4" />
+            Payment Schedule
+          </TabsTrigger>
+          <TabsTrigger 
+            value="compare"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
+                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
+                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+          >
+            <Scale className="h-4 w-4" />
+            Compare Strategies
+          </TabsTrigger>
+        </TabsList>
 
         <TabsContent value="overview" className="space-y-8 mt-8">
           {/* Strategy Selection */}

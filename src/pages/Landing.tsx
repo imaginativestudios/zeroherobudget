@@ -186,7 +186,9 @@ export default function Landing() {
                 <Link to="/privacy" className="hover:text-foreground transition-colors">
                   Privacy
                 </Link>
-                <button className="hover:text-foreground transition-colors">Terms</button>
+                <Link to="/terms" className="hover:text-foreground transition-colors">
+                  Terms
+                </Link>
                 <button className="hover:text-foreground transition-colors">Support</button>
               </div>
             </div>

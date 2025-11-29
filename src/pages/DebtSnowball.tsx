@@ -133,39 +133,45 @@ export const DebtSnowball = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-muted p-1 gap-1">
+        <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto">
           <TabsTrigger 
             value="overview"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md transition-all cursor-pointer
-                       text-muted-foreground font-medium
-                       hover:text-foreground hover:bg-muted-foreground/10
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                       bg-background text-foreground/70 font-medium
+                       border-r border-border last:border-r-0
+                       hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                       data-[state=active]:bg-background data-[state=active]:text-foreground 
-                       data-[state=active]:shadow-sm data-[state=active]:font-semibold"
+                       transition-all cursor-pointer
+                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Crown className="h-4 w-4" />
             Overview
           </TabsTrigger>
           <TabsTrigger 
             value="schedule"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md transition-all cursor-pointer
-                       text-muted-foreground font-medium
-                       hover:text-foreground hover:bg-muted-foreground/10
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                       bg-background text-foreground/70 font-medium
+                       border-r border-border last:border-r-0
+                       hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                       data-[state=active]:bg-background data-[state=active]:text-foreground 
-                       data-[state=active]:shadow-sm data-[state=active]:font-semibold"
+                       transition-all cursor-pointer
+                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Calendar className="h-4 w-4" />
             Payment Schedule
           </TabsTrigger>
           <TabsTrigger 
             value="compare"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md transition-all cursor-pointer
-                       text-muted-foreground font-medium
-                       hover:text-foreground hover:bg-muted-foreground/10
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                       bg-background text-foreground/70 font-medium
+                       border-r border-border last:border-r-0
+                       hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                       data-[state=active]:bg-background data-[state=active]:text-foreground 
-                       data-[state=active]:shadow-sm data-[state=active]:font-semibold"
+                       transition-all cursor-pointer
+                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Scale className="h-4 w-4" />
             Compare Strategies

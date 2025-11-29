@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-const tourSteps: Step[] = [
+const getTourSteps = (isMobile: boolean): Step[] => [
   {
     target: 'body',
     content: (
@@ -27,7 +28,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -53,7 +54,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -66,7 +67,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -79,7 +80,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -92,7 +93,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -105,7 +106,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -118,7 +119,7 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'right',
+    placement: isMobile ? 'bottom' : 'right',
     disableBeacon: true,
   },
   {
@@ -141,6 +142,7 @@ const tourSteps: Step[] = [
 export const OnboardingTour = () => {
   const { hasSeenTour, isRunning, stepIndex, startTour, completeTour, skipTour, setStepIndex } = useOnboardingTour();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   // Auto-start tour for first-time users on dashboard
   useEffect(() => {
@@ -168,7 +170,7 @@ export const OnboardingTour = () => {
 
   return (
     <Joyride
-      steps={tourSteps}
+      steps={getTourSteps(isMobile)}
       run={isRunning}
       stepIndex={stepIndex}
       continuous
@@ -183,7 +185,7 @@ export const OnboardingTour = () => {
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
           zIndex: 10000,
-          width: 400,
+          width: isMobile ? 'auto' : 400,
         },
         buttonNext: {
           backgroundColor: 'hsl(39, 100%, 57%)',
@@ -204,8 +206,10 @@ export const OnboardingTour = () => {
         },
         tooltip: {
           borderRadius: 12,
-          padding: 20,
+          padding: isMobile ? 16 : 20,
           boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
+          maxWidth: isMobile ? 'calc(100vw - 32px)' : 400,
+          margin: isMobile ? '0 16px' : 0,
         },
         tooltipContainer: {
           textAlign: 'left',
@@ -224,9 +228,19 @@ export const OnboardingTour = () => {
         next: 'Next',
         skip: 'Skip tour',
       }}
-      disableScrolling={false}
-      scrollToFirstStep
-      scrollOffset={100}
+      disableScrolling={isMobile}
+      scrollToFirstStep={!isMobile}
+      scrollOffset={isMobile ? 20 : 100}
+      spotlightPadding={isMobile ? 5 : 10}
+      disableOverlayClose={!isMobile}
+      floaterProps={{
+        disableAnimation: isMobile,
+        styles: {
+          floater: {
+            filter: 'none',
+          }
+        }
+      }}
     />
   );
 };

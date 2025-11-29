@@ -342,8 +342,8 @@ export const Transactions = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-40 bg-background">
@@ -376,7 +376,7 @@ export const Transactions = () => {
           </Select>
         </div>
         
-        <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-primary-foreground">
+        <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-muted/50">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search transactions..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="bg-background border-0 focus-visible:ring-0" />
         </div>

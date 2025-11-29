@@ -205,7 +205,7 @@ export const Dashboard = () => {
           <h2 className="text-lg font-semibold text-muted-foreground">Financial Overview</h2>
           <div className="h-px flex-1 bg-border"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch" data-tour="financial-overview">
         <FinancialCard
           title="Monthly Income"
           amount={income}
@@ -261,18 +261,18 @@ export const Dashboard = () => {
           <h2 className="text-lg font-semibold text-muted-foreground">Analytics</h2>
           <div className="h-px flex-1 bg-border"></div>
         </div>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
         {/* Spending by Category Chart */}
-        <Card className="shadow-royal overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-              <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+        <Card className="shadow-royal overflow-hidden h-full">
+          <CardHeader className="p-4 sm:p-5">
+            <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-accent" />
               Spending by Category
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 pt-0">
             {hasAnyTransactions ? (
-              <div className="h-80 sm:h-96 lg:h-[400px]">
+              <div className="h-[350px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <defs>
@@ -340,17 +340,17 @@ export const Dashboard = () => {
         </Card>
 
         {/* Debt Payoff Projection */}
-        <Card className="shadow-royal overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-              <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+        <Card className="shadow-royal overflow-hidden h-full">
+          <CardHeader className="p-4 sm:p-5">
+            <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
+              <TrendingDown className="h-5 w-5 text-accent" />
               Debt Payoff Projection
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 pt-0">
             {hasAnyTransactions && schedule.timeline.length > 0 ? (
               <>
-                <div className="h-80 sm:h-96 lg:h-[400px]">
+                <div className="h-[350px] sm:h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
                       <defs>

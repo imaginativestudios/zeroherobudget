@@ -169,6 +169,17 @@ All colors MUST be HSL.
   .gap-responsive {
     gap: clamp(0.5rem, 2vw, 1.5rem);
   }
+
+  /* Consistent mobile padding for cards and containers */
+  .p-card {
+    padding: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .p-card {
+      padding: 1.25rem;
+    }
+  }
 }
 
 @layer components {
@@ -245,5 +256,17 @@ All colors MUST be HSL.
     @supports not (background-clip: text) {
       color: hsl(var(--primary));
     }
+  }
+
+  /* Responsive card standardization */
+  .card-consistent {
+    width: 100%;
+    min-height: 180px;
+  }
+
+  /* Ensure all cards in grids stretch to fill available space */
+  .grid > .card-consistent,
+  .grid > * > .card-consistent {
+    height: 100%;
   }
 }

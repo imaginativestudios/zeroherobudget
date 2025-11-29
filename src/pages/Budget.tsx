@@ -185,7 +185,7 @@ export const Budget = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                 <SelectTrigger className="w-44 bg-background">
@@ -207,7 +207,7 @@ export const Budget = () => {
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-2 p-3 rounded-lg border bg-primary-foreground">
+            <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
               <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-background">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Export</span>
@@ -250,7 +250,7 @@ export const Budget = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Summary Statistics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg border">
               <div className="text-sm text-muted-foreground mb-1">Total Planned</div>
               <div className="text-2xl font-bold text-foreground">
@@ -314,13 +314,13 @@ export const Budget = () => {
 
       {/* Planned Spending by Category - Donut Chart */}
       {categoryData.length > 0 && <Card className="shadow-royal">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-3">
-              <Crown className="h-6 w-6 text-chart-1" />
+          <CardHeader className="p-4 sm:p-5">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Crown className="h-5 w-5 text-chart-1" />
               Planned Spending by Category
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 pt-0">
             <ResponsiveContainer width="100%" height={400}>
               <PieChart>
                 <Pie data={categoryData} dataKey="planned" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} label={({
@@ -345,13 +345,13 @@ export const Budget = () => {
 
       {/* Planned vs Actual by Category - Bar Chart */}
       {categoryData.length > 0 && <Card className="shadow-royal">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-3">
-              <TrendingUp className="h-6 w-6 text-chart-2" />
+          <CardHeader className="p-4 sm:p-5">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-chart-2" />
               Planned vs Actual by Category
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-5 pt-0">
             <CustomBarLegend items={[{
           label: "Planned Budget",
           color: "hsl(var(--chart-8))"

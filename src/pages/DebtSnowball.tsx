@@ -214,11 +214,11 @@ export const DebtSnowball = () => {
 
       {/* Debt Management */}
       <Card className="shadow-royal">
-        <CardHeader>
-          <CardTitle className="text-xl">Debt Management</CardTitle>
+        <CardHeader className="p-4 sm:p-5">
+          <CardTitle className="text-base sm:text-lg">Debt Management</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <CardContent className="p-4 sm:p-5 pt-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {debts.map((debt) => {
               const progressPercentage = debt._orig 
                 ? ((debt._orig - debt.balance) / debt._orig) * 100 
@@ -324,16 +324,16 @@ export const DebtSnowball = () => {
 
       {/* Timeline Chart */}
       <Card className="shadow-royal">
-        <CardHeader>
-          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-            <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+        <CardHeader className="p-4 sm:p-5">
+          <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
+            <TrendingDown className="h-5 w-5 text-accent" />
             Total Debt Balance Over Time
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5 pt-0">
           {transactions.length > 0 ? (
             <>
-              <div className="h-80">
+              <div className="h-[350px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={schedule.timeline} margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" />

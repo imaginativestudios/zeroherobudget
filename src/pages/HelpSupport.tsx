@@ -169,9 +169,9 @@ const HelpSupport = () => {
                   <Compass className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                   <div className="space-y-3 flex-1">
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">New to Zero Hero?</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Interactive Tour</h4>
                       <p className="text-sm text-muted-foreground">
-                        Take our interactive tour to learn about all the features and how to navigate the app.
+                        Take our interactive tour to learn about all the features and how to navigate the app. Perfect for new users or if you want a refresher!
                       </p>
                     </div>
                     <Button 
@@ -181,7 +181,7 @@ const HelpSupport = () => {
                       className="gap-2"
                     >
                       <Compass className="h-4 w-4" />
-                      Take the Tour
+                      Restart Tour
                     </Button>
                   </div>
                 </div>

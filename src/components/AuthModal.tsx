@@ -105,9 +105,33 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
         </DialogHeader>
 
         <Tabs defaultValue={defaultMode} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
+            <TabsTrigger 
+              value="login"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                         bg-background text-foreground/70 font-medium
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Login
+            </TabsTrigger>
+            <TabsTrigger 
+              value="signup"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                         bg-background text-foreground/70 font-medium
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Sign Up
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">

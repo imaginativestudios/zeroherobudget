@@ -91,13 +91,13 @@ export const NetWorthReport = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="pt-8 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link to="/">
+          <Link to="/reports">
             <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
+            Back to Reports
           </Link>
         </Button>
         <div>

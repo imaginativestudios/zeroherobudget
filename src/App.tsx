@@ -16,6 +16,7 @@ import { Reports } from "@/pages/Reports";
 import { Household } from "@/pages/Household";
 import { Achievements } from "@/pages/Achievements";
 import { AcceptInvite } from "@/pages/AcceptInvite";
+import FinancialTips from "@/pages/FinancialTips";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
@@ -56,6 +57,7 @@ const App = () => (
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/achievements" element={<Achievements />} />
+                <Route path="/learn" element={<FinancialTips />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/reports/income" element={<IncomeReport />} />
                 <Route path="/reports/expenses" element={<Reports />} />

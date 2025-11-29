@@ -109,6 +109,129 @@ For additional help or questions not covered here:
 - Visit our Help & Support page: /help
 `;
 
+const FINANCIAL_KNOWLEDGE = `
+# Financial Wisdom Knowledge Base
+
+## Emergency Fund Fundamentals
+
+**Why 3-6 months of expenses?**
+An emergency fund covers unexpected job loss, medical bills, or major repairs without going into debt. This cushion provides peace of mind and financial stability. Start with $1,000, then work toward 3-6 months of essential expenses.
+
+**Where to keep it:**
+Store your emergency fund in a high-yield savings account (4-5% APY) that's easily accessible but separate from checking. Online banks like Marcus, Ally, and American Express offer competitive rates with no minimums.
+
+**Building it slowly:**
+Even saving $25-50 per paycheck adds up. Automate transfers on payday—treat savings like a non-negotiable bill. Small consistent contributions beat irregular large deposits.
+
+## The 50/30/20 Rule
+
+Popularized by Elizabeth Warren, this simple budgeting framework allocates:
+- **50% to Needs:** Housing, utilities, food, insurance, minimum debt payments
+- **30% to Wants:** Entertainment, dining out, hobbies, subscriptions
+- **20% to Savings & Debt:** Emergency fund, retirement, extra debt payments
+
+**Modification for aggressive debt payoff:** Consider 50/20/30 to accelerate progress while maintaining balance.
+
+## Debt Payoff Strategies
+
+**Debt Snowball (Dave Ramsey method):**
+Pay smallest balances first regardless of interest rate. Quick wins provide psychological motivation and momentum. Best for those needing encouragement and visible progress.
+
+**Debt Avalanche (Mathematically optimal):**
+Pay highest interest rates first to minimize total interest paid. Saves the most money long-term. Best for disciplined individuals focused on maximum efficiency.
+
+**Hybrid approach:**
+Start with snowball for initial motivation, switch to avalanche once momentum builds. Combines psychological benefits with mathematical optimization.
+
+**What to avoid:**
+Never use payday loans (300%+ APR), rent-to-own schemes, or high-interest store cards. Build emergency fund to avoid these predatory traps.
+
+## Credit Score Factors
+
+Your score (300-850) breaks down as:
+- **Payment history (35%):** Always pay on time—set up autopay
+- **Credit utilization (30%):** Keep balances below 30% of limits, ideally below 10%
+- **Length of history (15%):** Don't close old accounts
+- **Credit mix (10%):** Mix of credit types helps slightly
+- **New inquiries (10%):** Limit new credit applications
+
+**Quick improvements:**
+Request credit limit increases to lower utilization ratio instantly. Dispute errors on credit reports—bureaus must investigate within 30 days. Monitor free through AnnualCreditReport.com and credit card services.
+
+## Smart Saving Strategies
+
+**Automate everything:**
+Set up automatic transfers on payday before you see the money. Removes willpower from equation. Even $25 per paycheck builds the habit and adds up over time.
+
+**High-yield savings accounts:**
+Traditional banks pay under 0.5%. Online banks offer 4-5% APY—that's free money for being smart about where you park cash. Every dollar works harder.
+
+**Sinking funds:**
+Create mini-savings for predictable irregular expenses: car repairs, insurance premiums, holiday gifts. Divide annual costs by 12 for monthly contributions. Eliminates financial stress from "expected surprises."
+
+**Pay yourself first:**
+Before paying bills or discretionary spending, automatically transfer money to savings. This prioritizes your financial future—you adjust spending around what remains.
+
+## Investing Basics
+
+**Start early with compound interest:**
+$100/month from age 25 to 65 at 8% returns = $265,000. Wait until 35 = only $122,000. Time is your biggest advantage. Even small regular contributions leverage compounding powerfully.
+
+**Employer 401(k) match:**
+This is free money—prioritize contributing enough to capture full match before other investing. Typical match: 50% of first 6% you contribute = instant 50% return.
+
+**Index funds vs. individual stocks:**
+Index funds provide instant diversification across hundreds of companies with minimal fees (0.03-0.20%). Most investors beat the market less than 10% of the time. Simple portfolio: 70% total stock market index, 30% total bond market, rebalanced annually.
+
+**Power of compound interest:**
+Einstein called it the "eighth wonder." $10,000 at 8% becomes $46,610 in 20 years without adding another dollar. Your returns generate their own returns exponentially.
+
+## Common Financial Mistakes
+
+**Lifestyle inflation:**
+When income increases, expenses often rise proportionally. Combat by committing 50% of raises to savings before adjusting lifestyle. Live like you got a 50% raise, save the other 50%.
+
+**No emergency fund:**
+Without savings, every unexpected expense becomes a crisis requiring high-interest debt. This creates vicious cycles. Your emergency fund is financial insurance—essential even if you hope to never use it.
+
+**Ignoring retirement:**
+Social Security replaces only ~40% of pre-retirement income. Waiting means missing decades of compound growth. Aim to save 15% of gross income for retirement including employer match. Starting in your 20s, even modestly, far exceeds large contributions starting in your 40s.
+
+**Not tracking spending:**
+You can't improve what you don't measure. Track expenses for one month to identify leaks. Most people are shocked by subscription accumulation and small daily purchases that add up.
+
+## Financial Milestones to Celebrate
+
+**First $1,000 saved:**
+Breaks the paycheck-to-paycheck cycle. Small buffer against surprises. Proves you can build wealth—harder than it seems.
+
+**Debt-free (except mortgage):**
+Eliminating consumer debt frees cash flow for wealth building. Former debt payments can now fund investments. Many find this transformative. Don't inflate lifestyle immediately—redirect payments to savings.
+
+**3-month emergency fund:**
+Covers most short-term setbacks. Significantly reduces financial anxiety. Keep building toward 6 months.
+
+**6-month emergency fund:**
+True financial stability. Can weather most storms: job loss, medical issues, major repairs. Once fully funded, redirect contributions to wealth-building investments.
+
+**Positive net worth:**
+Assets exceed liabilities. Psychological milestone showing you're building wealth, not just servicing debt.
+
+## Additional Wisdom
+
+**Good debt vs. bad debt:**
+Good debt builds assets or earning potential with reasonable rates (mortgages, student loans). Bad debt funds consumption without creating value (high-interest credit cards, payday loans). Prioritize paying off anything above 8% interest rate.
+
+**Tax-advantaged accounts:**
+401(k), IRA, HSA provide tax benefits that supercharge wealth building. Contribute to these before taxable investment accounts. HSA is triple tax-advantaged if used for medical expenses.
+
+**Insurance needs:**
+Health, auto, renter's/homeowner's insurance protect against catastrophic losses. Term life insurance if others depend on your income. Skip unnecessary warranties and insurance on items you could replace out-of-pocket.
+
+**Negotiation saves thousands:**
+Negotiate salary, credit card interest rates, medical bills, cable/internet, and insurance premiums. A single successful salary negotiation can add $100,000+ over a career. Most people never ask.
+`;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -134,17 +257,19 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `You are Zero Hero's friendly support assistant. Your role is to help users with questions about Zero Hero, a financial management app.
+    const systemPrompt = `You are Zero Hero's friendly assistant. You help users with:
+1. Questions about the Zero Hero app (features, how-to, troubleshooting)
+2. General personal finance advice and best practices
 
-Answer questions using ONLY the FAQ knowledge provided below. Keep responses concise (under 150 words), friendly, and helpful. Use bullet points for lists when appropriate.
+Use the knowledge bases provided below to answer questions. Keep responses concise (under 150 words), friendly, and actionable. Use bullet points for clarity.
 
-If a question is outside the FAQ scope or you're unsure, politely suggest:
-1. Visiting the Help & Support page at /help for comprehensive guides
-2. Contacting support@zerohero.com for personalized assistance
+For app questions, reference the FAQ. For financial advice, cite general best practices without giving specific investment recommendations. For complex personal situations, suggest consulting a licensed financial professional.
 
-Be encouraging and supportive - remember that users are on a journey to financial freedom!
+Be encouraging and supportive - users are on a journey to financial freedom!
 
-${FAQ_KNOWLEDGE}`;
+${FAQ_KNOWLEDGE}
+
+${FINANCIAL_KNOWLEDGE}`;
 
     console.log("Calling Lovable AI with google/gemini-2.5-flash model");
 

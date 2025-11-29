@@ -130,11 +130,34 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'tab-fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(8px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'tab-scale-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.98)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'tab-fade-in': 'tab-fade-in 0.25s ease-out',
+				'tab-scale-in': 'tab-scale-in 0.2s ease-out',
+				'tab-enter': 'tab-fade-in 0.25s ease-out, tab-scale-in 0.2s ease-out'
 			}
 		}
 	},

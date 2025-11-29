@@ -11,7 +11,7 @@ const getMobileTourSteps = (): Step[] => [
       <div className="space-y-2">
         <h2 className="text-lg font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
         <p className="text-sm text-muted-foreground">
-          Quick tour of the essentials. Tap Next to continue.
+          Let's show you around. Tap Next to continue.
         </p>
       </div>
     ),
@@ -19,12 +19,12 @@ const getMobileTourSteps = (): Step[] => [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="nav-sidebar"]',
+    target: '[data-tour="mobile-menu-button"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Main Menu</h3>
+        <h3 className="text-base font-semibold text-foreground">Navigation Menu</h3>
         <p className="text-sm text-muted-foreground">
-          Tap here to access all your financial tools.
+          Tap this menu button to access Budgets, Debts, Transactions, Reports, and more.
         </p>
       </div>
     ),
@@ -35,48 +35,22 @@ const getMobileTourSteps = (): Step[] => [
     target: '[data-tour="financial-overview"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Your Financial Snapshot</h3>
+        <h3 className="text-base font-semibold text-foreground">Your Financial Overview</h3>
         <p className="text-sm text-muted-foreground">
-          Key metrics at a glance - income, expenses, and net worth.
+          Track key metrics: income, expenses, subscriptions, debt payoff funds, and net worth.
         </p>
       </div>
     ),
-    placement: 'bottom',
-    disableBeacon: true,
-  },
-  {
-    target: '[data-tour="nav-budgets"]',
-    content: (
-      <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Budget Tracking</h3>
-        <p className="text-sm text-muted-foreground">
-          Track spending across 10 categories. Tap to see details.
-        </p>
-      </div>
-    ),
-    placement: 'bottom',
-    disableBeacon: true,
-  },
-  {
-    target: '[data-tour="nav-debts"]',
-    content: (
-      <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Debt Payoff</h3>
-        <p className="text-sm text-muted-foreground">
-          Choose Snowball or Avalanche strategies to eliminate debt faster.
-        </p>
-      </div>
-    ),
-    placement: 'bottom',
+    placement: 'top',
     disableBeacon: true,
   },
   {
     target: '[data-tour="chatbot-widget"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">AI Assistant</h3>
+        <h3 className="text-base font-semibold text-foreground">AI Financial Assistant</h3>
         <p className="text-sm text-muted-foreground">
-          Need help? Tap here to chat with our AI assistant anytime.
+          Tap here anytime to ask questions about budgeting, debt strategies, and financial tips.
         </p>
       </div>
     ),

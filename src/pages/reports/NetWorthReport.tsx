@@ -1,13 +1,16 @@
 import { useMemo } from "react";
-import { Scale, ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
+import { Scale, ArrowLeft, TrendingUp, TrendingDown, Download, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_ASSETS, SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { exportNetWorthCSV, exportNetWorthPDF } from '@/lib/reportExports';
+import { toast } from 'sonner';
 
 export const NetWorthReport = () => {
   const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
@@ -90,25 +93,63 @@ export const NetWorthReport = () => {
     "hsl(var(--chart-4))"
   ];
 
+  const handleExport = (format: 'csv' | 'pdf') => {
+    const exportData = {
+      assets: assets.map(a => ({ name: a.name, amount: a.value })),
+      debts: debts.map(d => ({ name: d.name, amount: d.balance })),
+      totalAssets,
+      totalDebts: totalDebt,
+      netWorth
+    };
+
+    if (format === 'csv') {
+      exportNetWorthCSV(exportData);
+      toast.success('Net worth report exported as CSV');
+    } else {
+      exportNetWorthPDF(exportData);
+      toast.success('Net worth report exported as PDF');
+    }
+  };
+
   return (
     <div className="pt-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/reports">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Reports
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
-            <Scale className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-            Net Worth Report
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Current financial position and projected growth
-          </p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/reports">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Reports
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+              <Scale className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
+              Net Worth Report
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Current financial position and projected growth
+            </p>
+          </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleExport('csv')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport('pdf')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Net Worth Summary */}

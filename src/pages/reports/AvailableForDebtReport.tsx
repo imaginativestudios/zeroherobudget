@@ -1,14 +1,17 @@
 import { useMemo, useState } from "react";
-import { Target, ArrowLeft, TrendingUp } from "lucide-react";
+import { Target, ArrowLeft, TrendingUp, Download, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ComposedChart, Bar } from 'recharts';
+import { exportDebtReportCSV, exportDebtReportPDF } from '@/lib/reportExports';
+import { toast } from 'sonner';
 
 const formatMonthDisplay = (monthStr: string) => {
   const [year, month] = monthStr.split('-');
@@ -74,25 +77,62 @@ export const AvailableForDebtReport = () => {
     [monthlyData, income]
   );
 
+  const handleExport = (format: 'csv' | 'pdf') => {
+    const exportData = {
+      currentMonth: formatMonthDisplay(selectedMonth),
+      totalIncome: currentData.income,
+      totalExpenses: currentData.hasActualSpending ? currentData.actualSpending : currentData.plannedSpending,
+      availableForDebt: currentData.hasActualSpending ? currentData.available : currentData.plannedAvailable
+    };
+
+    if (format === 'csv') {
+      exportDebtReportCSV(exportData);
+      toast.success('Available for debt report exported as CSV');
+    } else {
+      exportDebtReportPDF(exportData);
+      toast.success('Available for debt report exported as PDF');
+    }
+  };
+
   return (
     <div className="pt-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/reports">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Reports
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
-            <Target className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-            Available for Debt Report
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Track funds available for debt payments over time
-          </p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/reports">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Reports
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+              <Target className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
+              Available for Debt Report
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Track funds available for debt payments over time
+            </p>
+          </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleExport('csv')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport('pdf')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Month Selector */}

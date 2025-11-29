@@ -12,7 +12,10 @@ import { useLocalAccounts } from '@/hooks/useLocalAccounts';
 import { formatCurrency } from '@/lib/constants';
 import { format, subMonths, startOfMonth } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { CreditCard, ArrowLeft } from 'lucide-react';
+import { CreditCard, ArrowLeft, Download, FileText } from 'lucide-react';
+import { exportSubscriptionsCSV, exportSubscriptionsPDF } from '@/lib/reportExports';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 export function SubscriptionsReport() {
   const {
@@ -114,25 +117,68 @@ export function SubscriptionsReport() {
     .filter(s => s.is_active)
     .reduce((sum, s) => sum + s.monthlyEquivalent, 0);
 
+  const handleExport = (format: 'csv' | 'pdf') => {
+    const exportData = {
+      subscriptions: subscriptionTable.map(sub => ({
+        name: sub.name,
+        amount: sub.amount,
+        billingCycle: sub.billing_cycle,
+        monthlyEquivalent: sub.monthlyEquivalent,
+        nextBillingDate: sub.next_billing_date || undefined,
+        status: sub.is_active ? 'Active' : 'Inactive'
+      })),
+      totalMonthlyCommitment,
+      activeCount: subscriptionTable.filter(s => s.is_active).length
+    };
+
+    if (format === 'csv') {
+      exportSubscriptionsCSV(exportData);
+      toast.success('Subscriptions report exported as CSV');
+    } else {
+      exportSubscriptionsPDF(exportData);
+      toast.success('Subscriptions report exported as PDF');
+    }
+  };
+
   return (
     <div className="pt-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/reports">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Reports
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
-            <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-            Subscription Report
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Track and manage your recurring subscriptions
-          </p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/reports">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Reports
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+              <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
+              Subscription Report
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Track and manage your recurring subscriptions
+            </p>
+          </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleExport('csv')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport('pdf')}>
+              <FileText className="h-4 w-4 mr-2" />
+              Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Filters */}

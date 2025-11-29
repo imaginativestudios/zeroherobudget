@@ -201,7 +201,7 @@ export const Dashboard = () => {
           <h2 className="text-lg font-semibold text-muted-foreground">Financial Overview</h2>
           <div className="h-px flex-1 bg-border"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
         <FinancialCard
           title="Monthly Income"
           amount={income}

@@ -1,5 +1,4 @@
-
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass } from "lucide-react";
 import { Link, useLocation, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -7,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { DemoDataButton } from "./DemoDataButton";
 import { Logo } from "./Logo";
+import { OnboardingTour } from "./OnboardingTour";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const { signOut, user, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { resetTour } = useOnboardingTour();
 
   // Removed auth-gating for prototype mode
 
@@ -81,6 +83,7 @@ export const Layout = ({ children }: LayoutProps) => {
         )}
         id="mobile-navigation"
         aria-label="Main navigation"
+        data-tour="nav-sidebar"
       >
         <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full" role="navigation" aria-label="Primary navigation">
           <div className="p-4 lg:p-6">
@@ -96,6 +99,15 @@ export const Layout = ({ children }: LayoutProps) => {
             <ul className="space-y-2">
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.href;
+                // Map href to data-tour attribute for navigation items
+                const tourId = item.href === '/budgets' ? 'nav-budgets'
+                  : item.href === '/debts' ? 'nav-debts'
+                  : item.href === '/transactions' ? 'nav-transactions'
+                  : item.href === '/subscriptions' ? 'nav-subscriptions'
+                  : item.href === '/achievements' ? 'nav-achievements'
+                  : item.href === '/reports' ? 'nav-reports'
+                  : undefined;
+                
                 return (
                   <li key={item.name}>
                     <Link
@@ -108,6 +120,7 @@ export const Layout = ({ children }: LayoutProps) => {
                           : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                       )}
                       aria-current={isActive ? "page" : undefined}
+                      data-tour={tourId}
                     >
                       <item.icon className="h-5 w-5" aria-hidden="true" />
                       <span className="font-medium truncate">{item.name}</span>
@@ -123,8 +136,17 @@ export const Layout = ({ children }: LayoutProps) => {
                 <div className="text-xs text-sidebar-foreground/70 mb-2 px-3">
                   Signed in as {user.email}
                 </div>
-                <div className="px-3">
+                <div className="px-3 space-y-2">
                   <DemoDataButton />
+                  <Button
+                    onClick={resetTour}
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                  >
+                    <Compass className="h-4 w-4" />
+                    Take a Tour
+                  </Button>
                 </div>
                 <Button
                   onClick={signOut}
@@ -154,6 +176,9 @@ export const Layout = ({ children }: LayoutProps) => {
       >
         {children}
       </main>
+      
+      {/* Onboarding Tour */}
+      <OnboardingTour />
     </div>
   );
 };

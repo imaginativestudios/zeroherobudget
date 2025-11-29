@@ -39,7 +39,7 @@ export const DemoDataButton = () => {
       onClick={handleRefreshDemo}
       variant="outline"
       size="sm"
-      className="gap-2"
+      className="w-full gap-2"
     >
       <RefreshCw className="h-4 w-4" />
       Refresh Demo Data

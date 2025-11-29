@@ -18,6 +18,7 @@ import {
   Download,
   RefreshCw,
   Eye,
+  Compass,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,13 +27,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 
 const HelpSupport = () => {
+  const { resetTour } = useOnboardingTour();
+  
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  };
+
+  const handleTakeTour = () => {
+    resetTour();
+    // Navigate to dashboard where tour will start
+    window.location.href = '/dashboard';
   };
 
   return (
@@ -152,6 +162,29 @@ const HelpSupport = () => {
                 <p className="text-muted-foreground ml-10">
                   Visit the Household page to invite family members or partners. They'll receive an email invitation to join your household and collaborate on your shared financial goals.
                 </p>
+              </div>
+
+              <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Compass className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
+                  <div className="space-y-3 flex-1">
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">New to Zero Hero?</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Take our interactive tour to learn about all the features and how to navigate the app.
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={handleTakeTour}
+                      variant="default"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Compass className="h-4 w-4" />
+                      Take the Tour
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

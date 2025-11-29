@@ -131,8 +131,10 @@ const tourSteps: Step[] = [
         </p>
       </div>
     ),
-    placement: 'left',
+    placement: 'top-start',
     disableBeacon: true,
+    isFixed: true,
+    disableScrolling: true,
   },
 ];
 

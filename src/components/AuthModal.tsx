@@ -98,7 +98,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Welcome to Monarch Budget</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
           <DialogDescription className="text-center">
             Start your journey to financial freedom
           </DialogDescription>

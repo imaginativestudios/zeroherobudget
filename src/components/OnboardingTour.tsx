@@ -297,6 +297,7 @@ export const OnboardingTour = () => {
           boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
           maxWidth: isMobile ? 'calc(100vw - 32px)' : 400,
           margin: isMobile ? '0 16px' : 0,
+          width: isMobile ? 'calc(100vw - 32px)' : 'auto',
         },
         tooltipContainer: {
           textAlign: 'left',
@@ -306,6 +307,32 @@ export const OnboardingTour = () => {
         },
         spotlight: {
           borderRadius: 8,
+        },
+        overlay: {
+          mixBlendMode: 'normal',
+        },
+      }}
+      floaterProps={{
+        disableAnimation: isMobile,
+        styles: {
+          floater: {
+            filter: 'none',
+            zIndex: 10000,
+          },
+          arrow: {
+            length: isMobile ? 8 : 10,
+            spread: isMobile ? 12 : 16,
+          },
+        },
+        options: {
+          preventOverflow: {
+            boundariesElement: 'viewport',
+            padding: isMobile ? 16 : 10,
+          },
+          flip: {
+            enabled: true,
+            behavior: ['bottom', 'top', 'right', 'left'],
+          },
         },
       }}
       locale={{
@@ -320,14 +347,6 @@ export const OnboardingTour = () => {
       scrollOffset={isMobile ? 20 : 100}
       spotlightPadding={isMobile ? 5 : 10}
       disableOverlayClose={!isMobile}
-      floaterProps={{
-        disableAnimation: isMobile,
-        styles: {
-          floater: {
-            filter: 'none',
-          }
-        }
-      }}
     />
   );
 };

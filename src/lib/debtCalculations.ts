@@ -28,6 +28,43 @@ export interface PayoffResult {
   }>;
 }
 
+export interface MonthlyDebtPayment {
+  debtId: string;
+  debtName: string;
+  debtType: string;
+  startingBalance: number;
+  interest: number;
+  minimumPayment: number;
+  extraPayment: number;
+  totalPayment: number;
+  principal: number;
+  endingBalance: number;
+  isPaidOff: boolean;
+}
+
+export interface MonthlyScheduleEntry {
+  month: number;
+  label: string;
+  payments: MonthlyDebtPayment[];
+  totals: {
+    totalPayment: number;
+    totalInterest: number;
+    totalPrincipal: number;
+    remainingBalance: number;
+  };
+  debtsPaidOffThisMonth: string[];
+}
+
+export interface DetailedPaymentSchedule {
+  months: MonthlyScheduleEntry[];
+  summary: {
+    totalMonths: number;
+    totalInterest: number;
+    totalPaid: number;
+    debtFreeDate: string;
+  };
+}
+
 export function simulatePayoff(
   rawDebts: DebtItem[],
   extraBudget: number,
@@ -151,4 +188,165 @@ export function simulatePayoff(
   });
 
   return { timeline, totalInterest, perDebt };
+}
+
+export function getDetailedPaymentSchedule(
+  rawDebts: DebtItem[],
+  extraBudget: number,
+  strategy: "Snowball" | "Avalanche" = "Snowball",
+  monthsLimit: number = 600
+): DetailedPaymentSchedule {
+  const leftover = Math.max(0, extraBudget || 0);
+  
+  const debts = rawDebts.map(d => ({
+    ...d,
+    balance: Math.max(0, d.balance || 0),
+    apr: Math.max(0, d.apr || 0),
+    min: Math.max(0, d.min || 0),
+    _interestAccrued: 0,
+    _monthsToZero: null as number | null,
+    _orig: d._orig ?? Math.max(0, d.balance || 0)
+  })).filter(d => d.balance > 0);
+
+  if (!debts.length) {
+    return { 
+      months: [], 
+      summary: { 
+        totalMonths: 0, 
+        totalInterest: 0, 
+        totalPaid: 0, 
+        debtFreeDate: '—' 
+      } 
+    };
+  }
+
+  let month = 0;
+  let totalInterest = 0;
+  let totalPaid = 0;
+  const months: MonthlyScheduleEntry[] = [];
+  const today = new Date();
+
+  const sortFunction = strategy === "Avalanche" 
+    ? (a: typeof debts[0], b: typeof debts[0]) => b.apr - a.apr || a.balance - b.balance
+    : (a: typeof debts[0], b: typeof debts[0]) => a.balance - b.balance || b.apr - a.apr;
+
+  const getActiveDebts = () => debts.filter(d => d.balance > 0).sort(sortFunction);
+
+  while (month < monthsLimit) {
+    const activeDebts = getActiveDebts();
+    if (!activeDebts.length) break;
+
+    const monthlyPayments: MonthlyDebtPayment[] = [];
+    const debtsPaidOffThisMonth: string[] = [];
+
+    // Calculate interest for all active debts
+    const interestMap = new Map<string, number>();
+    for (const debt of activeDebts) {
+      const monthlyInterest = debt.balance * (debt.apr / 100 / 12);
+      interestMap.set(debt.id, monthlyInterest);
+      totalInterest += monthlyInterest;
+      debt._interestAccrued += monthlyInterest;
+    }
+
+    // Calculate minimum payments
+    const minimumMap = new Map<string, number>();
+    for (const debt of activeDebts) {
+      const totalDue = debt.balance + (interestMap.get(debt.id) || 0);
+      minimumMap.set(debt.id, Math.min(debt.min, totalDue));
+    }
+
+    // Distribute extra payment using debt strategy
+    let extraRemaining = leftover;
+    const extraPayments = new Map<string, number>();
+    
+    for (const debt of activeDebts) {
+      extraPayments.set(debt.id, 0);
+    }
+
+    for (const debt of activeDebts) {
+      if (extraRemaining <= 0) break;
+      
+      const afterMinimum = debt.balance + (interestMap.get(debt.id) || 0) - (minimumMap.get(debt.id) || 0);
+      if (afterMinimum <= 0) continue;
+      
+      const payment = Math.min(extraRemaining, afterMinimum);
+      extraPayments.set(debt.id, payment);
+      extraRemaining -= payment;
+    }
+
+    // Apply all payments and record details
+    let monthTotalPayment = 0;
+    let monthTotalInterest = 0;
+    let monthTotalPrincipal = 0;
+
+    for (const debt of activeDebts) {
+      const startingBalance = debt.balance;
+      const interest = interestMap.get(debt.id) || 0;
+      const minimum = minimumMap.get(debt.id) || 0;
+      const extra = extraPayments.get(debt.id) || 0;
+      const totalPayment = minimum + extra;
+      const principal = totalPayment - interest;
+      
+      const newBalance = debt.balance + interest - totalPayment;
+      debt.balance = Math.max(0, newBalance);
+
+      const isPaidOff = debt.balance <= 0.01;
+      if (isPaidOff && debt._monthsToZero === null) {
+        debt._monthsToZero = month + 1;
+        debtsPaidOffThisMonth.push(debt.name);
+      }
+
+      monthlyPayments.push({
+        debtId: debt.id,
+        debtName: debt.name,
+        debtType: debt.type || 'debt',
+        startingBalance,
+        interest,
+        minimumPayment: minimum,
+        extraPayment: extra,
+        totalPayment,
+        principal,
+        endingBalance: debt.balance,
+        isPaidOff
+      });
+
+      monthTotalPayment += totalPayment;
+      monthTotalInterest += interest;
+      monthTotalPrincipal += principal;
+      totalPaid += totalPayment;
+    }
+
+    const labelDate = new Date(today.getFullYear(), today.getMonth() + month, 1);
+    const label = labelDate.toLocaleString(undefined, { month: "short", year: "numeric" });
+    const remainingBalance = debts.reduce((sum, debt) => sum + debt.balance, 0);
+
+    months.push({
+      month: month + 1,
+      label,
+      payments: monthlyPayments,
+      totals: {
+        totalPayment: monthTotalPayment,
+        totalInterest: monthTotalInterest,
+        totalPrincipal: monthTotalPrincipal,
+        remainingBalance
+      },
+      debtsPaidOffThisMonth
+    });
+
+    if (remainingBalance <= 0.01) break;
+    month++;
+  }
+
+  const lastMonth = months[months.length - 1];
+  const debtFreeDate = lastMonth ? lastMonth.label : '—';
+
+  return {
+    months,
+    summary: {
+      totalMonths: months.length,
+      totalInterest,
+      totalPaid,
+      debtFreeDate
+    }
+  };
 }

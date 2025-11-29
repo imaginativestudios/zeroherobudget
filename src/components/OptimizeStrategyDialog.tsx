@@ -85,11 +85,59 @@ export const OptimizeStrategyDialog = ({
         </DialogHeader>
 
         <Tabs defaultValue="comparison" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="comparison">Compare</TabsTrigger>
-            <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
-            <TabsTrigger value="goals">Goals</TabsTrigger>
-            <TabsTrigger value="quickwins">Quick Wins</TabsTrigger>
+          <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
+            <TabsTrigger 
+              value="comparison"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-3 
+                         bg-background text-foreground/70 font-medium text-sm
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Compare
+            </TabsTrigger>
+            <TabsTrigger 
+              value="scenarios"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-3 
+                         bg-background text-foreground/70 font-medium text-sm
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Scenarios
+            </TabsTrigger>
+            <TabsTrigger 
+              value="goals"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-3 
+                         bg-background text-foreground/70 font-medium text-sm
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Goals
+            </TabsTrigger>
+            <TabsTrigger 
+              value="quickwins"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-3 
+                         bg-background text-foreground/70 font-medium text-sm
+                         border-r border-border last:border-r-0
+                         hover:bg-muted hover:text-foreground
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                         transition-all cursor-pointer
+                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
+              Quick Wins
+            </TabsTrigger>
           </TabsList>
 
           {/* Strategy Comparison */}

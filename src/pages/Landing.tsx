@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
@@ -182,7 +183,9 @@ export default function Landing() {
                 © 2026 Zero Hero. From balances due to a more balanced you.
               </p>
               <div className="flex gap-6 text-sm text-muted-foreground">
-                <button className="hover:text-foreground transition-colors">Privacy</button>
+                <Link to="/privacy" className="hover:text-foreground transition-colors">
+                  Privacy
+                </Link>
                 <button className="hover:text-foreground transition-colors">Terms</button>
                 <button className="hover:text-foreground transition-colors">Support</button>
               </div>

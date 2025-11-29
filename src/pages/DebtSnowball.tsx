@@ -133,33 +133,27 @@ export const DebtSnowball = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="flex flex-wrap gap-2 bg-transparent p-0 h-auto">
+        <TabsList className="inline-flex h-11 items-center justify-center rounded-lg bg-muted p-1">
           <TabsTrigger 
             value="overview"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
-                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
-                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
-                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md transition-all
+                       data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
             <Crown className="h-4 w-4" />
             Overview
           </TabsTrigger>
           <TabsTrigger 
             value="schedule"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
-                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
-                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
-                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md transition-all
+                       data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
             <Calendar className="h-4 w-4" />
             Payment Schedule
           </TabsTrigger>
           <TabsTrigger 
             value="compare"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card shadow-sm 
-                       hover:bg-muted hover:shadow-md hover:scale-[1.02] transition-all
-                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
-                       data-[state=active]:border-primary data-[state=active]:shadow-lg"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md transition-all
+                       data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
             <Scale className="h-4 w-4" />
             Compare Strategies

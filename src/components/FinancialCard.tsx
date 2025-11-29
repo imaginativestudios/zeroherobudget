@@ -74,17 +74,17 @@ export const FinancialCard = ({
       to && "cursor-pointer hover:translate-y-[-1px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:scale-[1.02]",
       className
     )}>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 p-4 sm:p-5">
         <div className="flex items-center gap-2">
-          <Icon className="h-5 w-5 text-accent flex-shrink-0" />
-          <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0" />
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
             {title}
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col justify-between">
+      <CardContent className="flex-grow flex flex-col justify-between p-4 sm:p-5 pt-0">
         {/* Primary: Amount */}
-        <div className={cn("text-2xl sm:text-3xl font-bold", getAmountColor())}>
+        <div className={cn("text-xl sm:text-2xl font-bold", getAmountColor())}>
           {formatCurrency(amount)}
         </div>
         

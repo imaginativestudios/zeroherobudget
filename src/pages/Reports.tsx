@@ -88,7 +88,7 @@ export const Reports = () => {
   return <div className="pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Label className="text-sm font-medium">Month:</Label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
@@ -112,16 +112,16 @@ export const Reports = () => {
       </div>
 
       {/* Report Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
         {reportTypes.map(report => <Link key={report.href} to={report.href}>
             <Card className="shadow-elegant hover:shadow-royal transition-royal cursor-pointer hover:translate-y-[-1px] h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-base">
-                  <report.icon className={`h-5 w-5 ${report.color}`} />
+              <CardHeader className="p-4 sm:p-5">
+                <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                  <report.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${report.color}`} />
                   {report.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-5 pt-0">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {report.description}
                 </p>
@@ -143,15 +143,15 @@ export const Reports = () => {
         </div>}
       
       <Card className="shadow-royal overflow-hidden">
-        <CardHeader>
-          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-            <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+        <CardHeader className="p-4 sm:p-5">
+          <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-accent" />
             Planned vs Actual - {formatMonthDisplay(selectedMonth)}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5 pt-0">
           {hasTransactionData ? <>
-              <div className="h-96 sm:h-[450px] lg:h-[500px]">
+              <div className="h-[350px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={expenseData} margin={{
                 left: 20,

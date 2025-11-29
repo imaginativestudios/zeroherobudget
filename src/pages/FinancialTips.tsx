@@ -3,12 +3,6 @@ import { Lightbulb, Search, TrendingUp, DollarSign, Target, CreditCard, PiggyBan
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { allFinancialTips } from "@/lib/financialTips";
 
 type TipCategory = {
@@ -125,46 +119,45 @@ export default function FinancialTips() {
         </CardContent>
       </Card>
 
-      {/* Categories Grid */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Categories with Individual Tip Cards */}
+      <div className="space-y-8">
         {filteredCategories.map((category) => (
-          <Card key={category.id} className="h-full">
-            <CardHeader>
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                  <category.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <CardTitle className="text-xl">{category.title}</CardTitle>
-                  <CardDescription className="mt-1">{category.description}</CardDescription>
-                </div>
+          <div key={category.id} className="space-y-4">
+            {/* Category Section Header */}
+            <div className="flex items-center gap-3 pt-4 first:pt-0">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <category.icon className="h-5 w-5 text-primary" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                {category.tips.map((tip, index) => (
-                  <AccordionItem key={index} value={`${category.id}-${index}`}>
-                    <AccordionTrigger className="text-left hover:no-underline">
-                      <span className="font-medium">{tip.title}</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {tip.content}
-                      </p>
-                      {tip.proTip && (
-                        <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
-                          <Badge variant="secondary" className="mb-2">Pro Tip</Badge>
-                          <p className="text-sm text-foreground">
-                            {tip.proTip}
-                          </p>
-                        </div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
+              <div>
+                <h2 className="text-xl font-semibold">{category.title}</h2>
+                <p className="text-sm text-muted-foreground">{category.description}</p>
+              </div>
+            </div>
+            
+            {/* Individual Tip Cards Grid */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {category.tips.map((tip, index) => (
+                <Card key={index} className="h-full flex flex-col">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">{tip.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1 space-y-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {tip.content}
+                    </p>
+                    {tip.proTip && (
+                      <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
+                        <Badge variant="secondary" className="mb-2">Pro Tip</Badge>
+                        <p className="text-sm text-foreground">
+                          {tip.proTip}
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
 

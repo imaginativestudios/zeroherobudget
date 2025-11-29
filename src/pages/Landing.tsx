@@ -38,24 +38,8 @@ export default function Landing() {
   }];
   return <>
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
-      {/* Sticky Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary-dark backdrop-blur-sm border-b border-primary/20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo className="h-10 w-auto" />
-            <Button 
-              variant="outline" 
-              className="border-white text-white hover:bg-white/20 hover:text-white"
-              onClick={() => openAuth('login')}
-            >
-              Sign In
-            </Button>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Solid Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
           {/* Subtle decorative elements for visual depth */}

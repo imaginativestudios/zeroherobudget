@@ -134,26 +134,35 @@ export default function FinancialTips() {
               </div>
             </div>
             
-            {/* Individual Tip Cards Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Individual Tip Cards - Horizontal Layout */}
+            <div className="space-y-4">
               {category.tips.map((tip, index) => (
-                <Card key={index} className="h-full flex flex-col">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">{tip.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-1 space-y-3">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {tip.content}
-                    </p>
-                    {tip.proTip && (
-                      <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
-                        <Badge variant="secondary" className="mb-2">Pro Tip</Badge>
+                <Card key={index} className="overflow-hidden">
+                  <div className="flex flex-col lg:flex-row">
+                    {/* Title Section - Left */}
+                    <div className="lg:w-1/4 p-5 bg-primary/5 border-b lg:border-b-0 lg:border-r border-border flex items-center">
+                      <CardTitle className="text-lg font-semibold">{tip.title}</CardTitle>
+                    </div>
+                    
+                    {/* Content Section - Middle */}
+                    <div className="lg:w-1/2 p-5 flex items-center">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {tip.content}
+                      </p>
+                    </div>
+                    
+                    {/* Pro Tip Section - Right */}
+                    {tip.proTip ? (
+                      <div className="lg:w-1/4 p-5 bg-accent/10 border-t lg:border-t-0 lg:border-l border-accent/20 flex flex-col justify-center">
+                        <Badge variant="secondary" className="mb-2 w-fit">Pro Tip</Badge>
                         <p className="text-sm text-foreground">
                           {tip.proTip}
                         </p>
                       </div>
+                    ) : (
+                      <div className="lg:w-1/4" />
                     )}
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>

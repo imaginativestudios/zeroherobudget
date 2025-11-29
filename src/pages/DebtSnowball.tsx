@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar } from "lucide-react";
+import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } 
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
+import { StrategyComparison } from "@/components/debt/StrategyComparison";
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
@@ -131,17 +132,21 @@ export const DebtSnowball = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
-          <TabsTrigger value="overview">
-            <Crown className="h-4 w-4 mr-2" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="schedule">
-            <Calendar className="h-4 w-4 mr-2" />
-            Payment Schedule
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 max-w-xl">
+            <TabsTrigger value="overview">
+              <Crown className="h-4 w-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="schedule">
+              <Calendar className="h-4 w-4 mr-2" />
+              Payment Schedule
+            </TabsTrigger>
+            <TabsTrigger value="compare">
+              <Scale className="h-4 w-4 mr-2" />
+              Compare Strategies
+            </TabsTrigger>
+          </TabsList>
 
         <TabsContent value="overview" className="space-y-8 mt-8">
           {/* Strategy Selection */}
@@ -338,12 +343,21 @@ export const DebtSnowball = () => {
       </Card>
         </TabsContent>
 
-        <TabsContent value="schedule" className="mt-8">
-          <PaymentScheduleTable 
-            schedule={detailedSchedule} 
-            strategy={strategy as "Snowball" | "Avalanche"}
-          />
-        </TabsContent>
+          <TabsContent value="schedule" className="mt-8">
+            <PaymentScheduleTable 
+              schedule={detailedSchedule} 
+              strategy={strategy as "Snowball" | "Avalanche"}
+            />
+          </TabsContent>
+
+          <TabsContent value="compare" className="mt-8">
+            <StrategyComparison
+              debts={debts}
+              extraBudget={leftover}
+              currentStrategy={strategy as "Snowball" | "Avalanche"}
+              onStrategyChange={(newStrategy) => setStrategy(newStrategy)}
+            />
+          </TabsContent>
       </Tabs>
     </div>
   );

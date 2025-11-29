@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lightbulb, Search, TrendingUp, DollarSign, Target, CreditCard, PiggyBank, AlertTriangle, Award } from "lucide-react";
+import { Lightbulb, Search, TrendingUp, DollarSign, Target, CreditCard, PiggyBank, AlertTriangle, Award, Info } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -185,11 +185,14 @@ export default function FinancialTips() {
       {/* Attribution Footer */}
       <Card className="bg-muted/50">
         <CardContent className="py-6">
-          <p className="text-sm text-muted-foreground text-center">
-            These tips synthesize widely-accepted financial principles from experts including Dave Ramsey, Elizabeth Warren, Ramit Sethi, 
-            and guidance from NerdWallet, Investopedia, and the Consumer Financial Protection Bureau (CFPB). 
-            This information is educational and not personalized financial advice. For complex situations, consult a financial professional.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Info className="h-5 w-5 text-muted-foreground shrink-0" />
+            <p className="text-sm text-muted-foreground text-center sm:text-left">
+              These tips synthesize widely-accepted financial principles from experts including Dave Ramsey, Elizabeth Warren, Ramit Sethi, 
+              and guidance from NerdWallet, Investopedia, and the Consumer Financial Protection Bureau (CFPB). 
+              This information is educational and not personalized financial advice. For complex situations, consult a financial professional.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

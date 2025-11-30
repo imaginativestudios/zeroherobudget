@@ -19,7 +19,7 @@ export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
-  
+
   // Critical: Load expenses first (needed for budget display)
   const {
     expenses,
@@ -29,13 +29,12 @@ export const Budget = () => {
     removeExpense: removeSupabaseExpense,
     setExpensesOrder
   } = useLocalExpenses('critical');
-  
+
   // Secondary: Load transactions for actuals comparison
   const {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
-  
   const isCriticalLoading = isLoadingExpenses;
   const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
@@ -195,7 +194,7 @@ export const Budget = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                 <SelectTrigger className="w-44 bg-background">
@@ -217,7 +216,7 @@ export const Budget = () => {
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
+            <div className="flex items-center gap-2 p-3 rounded-lg border bg-primary-foreground">
               <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-background">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Export</span>
@@ -323,10 +322,7 @@ export const Budget = () => {
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {isSecondaryLoading ? (
-        <ChartCardSkeleton />
-      ) : (
-        categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Crown className="h-5 w-5 text-chart-1" />
@@ -354,14 +350,10 @@ export const Budget = () => {
             </ResponsiveContainer>
             <CustomPieLegend data={pieLegendData} />
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {isSecondaryLoading ? (
-        <ChartCardSkeleton />
-      ) : (
-        categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-chart-2" />
@@ -410,8 +402,7 @@ export const Budget = () => {
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Expenses Section */}
       <Card className="shadow-royal">

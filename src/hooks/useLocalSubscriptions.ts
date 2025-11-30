@@ -16,7 +16,7 @@ export interface Subscription {
 }
 
 export function useLocalSubscriptions() {
-  const [subscriptions, setSubscriptions] = useUserLocalStorage<Subscription[]>('subscriptions', []);
+  const [subscriptions, setSubscriptions, isLoading] = useUserLocalStorage<Subscription[]>('subscriptions', []);
 
   const addSubscription = (subscription: Omit<Subscription, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     const newSubscription: Subscription = {
@@ -54,7 +54,7 @@ export function useLocalSubscriptions() {
 
   return {
     subscriptions,
-    isLoading: false,
+    isLoading,
     addSubscription,
     updateSubscription,
     removeSubscription,

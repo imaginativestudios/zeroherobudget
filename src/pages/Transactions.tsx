@@ -24,7 +24,9 @@ export const Transactions = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [expenses] = useExpenses();
-  const { recordCategorization } = useTransactionCategorization();
+  const {
+    recordCategorization
+  } = useTransactionCategorization();
   const {
     accounts,
     getActiveAccounts
@@ -112,15 +114,11 @@ export const Transactions = () => {
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
-    
+
     // Record manual categorization for learning
-    recordCategorization(
-      newTransaction.description,
-      null, // No AI suggestion for manual entry
-      newTransaction.category,
-      newTransaction.amount
-    );
-    
+    recordCategorization(newTransaction.description, null,
+    // No AI suggestion for manual entry
+    newTransaction.category, newTransaction.amount);
     setNewTransaction({
       date: formatDate(new Date()),
       description: "",
@@ -152,17 +150,13 @@ export const Transactions = () => {
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
-    
+
     // Record categorization update for learning (only if category changed)
     if (editingTransaction.category !== newTransaction.category) {
-      recordCategorization(
-        newTransaction.description,
-        null, // No AI suggestion for manual edit
-        newTransaction.category,
-        newTransaction.amount
-      );
+      recordCategorization(newTransaction.description, null,
+      // No AI suggestion for manual edit
+      newTransaction.category, newTransaction.amount);
     }
-    
     setEditingTransaction(null);
     setNewTransaction({
       date: formatDate(new Date()),
@@ -347,15 +341,10 @@ export const Transactions = () => {
                   </div>
                   
                   {/* AI Category Suggestion */}
-                  <CategorySuggestion
-                    description={newTransaction.description}
-                    amount={newTransaction.amount}
-                    currentCategory={newTransaction.category}
-                    onSuggestionAccepted={(category) => setNewTransaction({
-                      ...newTransaction,
-                      category
-                    })}
-                  />
+                  <CategorySuggestion description={newTransaction.description} amount={newTransaction.amount} currentCategory={newTransaction.category} onSuggestionAccepted={category => setNewTransaction({
+                  ...newTransaction,
+                  category
+                })} />
                   
                   <div className="space-y-2">
                     <Label>Notes (Optional)</Label>
@@ -377,7 +366,7 @@ export const Transactions = () => {
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-40 bg-background">
@@ -410,7 +399,7 @@ export const Transactions = () => {
           </Select>
         </div>
         
-        <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-muted/50">
+        <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-primary-foreground">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search transactions..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="bg-background border-0 focus-visible:ring-0" />
         </div>
@@ -583,15 +572,10 @@ export const Transactions = () => {
                                 </div>
                                 
                                 {/* AI Category Suggestion */}
-                                <CategorySuggestion
-                                  description={newTransaction.description}
-                                  amount={newTransaction.amount}
-                                  currentCategory={newTransaction.category}
-                                  onSuggestionAccepted={(category) => setNewTransaction({
-                                    ...newTransaction,
-                                    category
-                                  })}
-                                />
+                                <CategorySuggestion description={newTransaction.description} amount={newTransaction.amount} currentCategory={newTransaction.category} onSuggestionAccepted={category => setNewTransaction({
+                            ...newTransaction,
+                            category
+                          })} />
                                 
                                 <div className="space-y-2">
                                   <Label>Notes (Optional)</Label>

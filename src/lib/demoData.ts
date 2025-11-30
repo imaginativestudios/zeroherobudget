@@ -1,6 +1,7 @@
 import { Expense, Debt, Asset } from './csvUtils';
 import { Account, Transaction } from '@/types/transactions';
 import { DEMO_EXPENSES, DEMO_DEBTS, DEMO_ASSETS } from './constants';
+import { ConnectedInstitution, LinkedAccount } from '@/types/bankConnections';
 
 export const DEMO_INCOME = 8500;
 
@@ -63,6 +64,68 @@ export const DEMO_TRANSACTIONS: Transaction[] = [
   { id: "t29", date: "2025-01-01", description: "401k Contribution", amount: 600, category: "Savings & Investments", accountId: "demo-checking", flow: "out", expenseId: "e32" },
 ];
 
+export const DEMO_CONNECTED_INSTITUTIONS: ConnectedInstitution[] = [
+  {
+    id: "demo-inst-chase",
+    name: "Chase",
+    logo: "🏦",
+    primaryColor: "#117ACA",
+    connectionStatus: "connected",
+    lastSync: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 minutes ago
+    itemId: "item_demo_chase_12345",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(), // 30 days ago
+  },
+  {
+    id: "demo-inst-boa",
+    name: "Bank of America",
+    logo: "🏛️",
+    primaryColor: "#E31837",
+    connectionStatus: "connected",
+    lastSync: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
+    itemId: "item_demo_boa_67890",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 45).toISOString(), // 45 days ago
+  },
+];
+
+export const DEMO_LINKED_ACCOUNTS: LinkedAccount[] = [
+  {
+    id: "demo-linked-chase-checking",
+    institutionId: "demo-inst-chase",
+    name: "Chase Checking",
+    type: "checking",
+    balance: 3245.67,
+    isActive: true,
+    mask: "4829",
+    officialName: "Chase Total Checking Account",
+    subtype: "checking",
+    lastUpdated: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+  },
+  {
+    id: "demo-linked-chase-credit",
+    institutionId: "demo-inst-chase",
+    name: "Chase Freedom",
+    type: "credit_card",
+    balance: -1247.32,
+    isActive: true,
+    mask: "8742",
+    officialName: "Chase Freedom Unlimited Credit Card",
+    subtype: "credit",
+    lastUpdated: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+  },
+  {
+    id: "demo-linked-boa-savings",
+    institutionId: "demo-inst-boa",
+    name: "BofA Savings",
+    type: "savings",
+    balance: 8920.15,
+    isActive: true,
+    mask: "3391",
+    officialName: "Bank of America Advantage Savings",
+    subtype: "savings",
+    lastUpdated: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+  },
+];
+
 // Function to set up demo data in localStorage
 export function setupDemoData(userId: string): void {
   localStorage.setItem(`${userId}_bdt_income`, JSON.stringify(DEMO_INCOME));
@@ -72,6 +135,8 @@ export function setupDemoData(userId: string): void {
   localStorage.setItem(`${userId}_bdt_accounts`, JSON.stringify(DEMO_ACCOUNTS));
   localStorage.setItem(`${userId}_bdt_transactions`, JSON.stringify(DEMO_TRANSACTIONS));
   localStorage.setItem(`${userId}_bdt_strategy`, JSON.stringify("Avalanche"));
+  localStorage.setItem(`${userId}_connected_institutions`, JSON.stringify(DEMO_CONNECTED_INSTITUTIONS));
+  localStorage.setItem(`${userId}_linked_accounts`, JSON.stringify(DEMO_LINKED_ACCOUNTS));
   
   // Also populate the expenses key for useLocalExpenses hook
   const expensesForLocalHook = DEMO_EXPENSES.map(expense => ({
@@ -99,6 +164,8 @@ export function clearDemoData(userId: string): void {
   localStorage.removeItem(`${userId}_bdt_strategy`);
   localStorage.removeItem(`${userId}_bdt_subscriptions`);
   localStorage.removeItem(`${userId}_expenses`);
+  localStorage.removeItem(`${userId}_connected_institutions`);
+  localStorage.removeItem(`${userId}_linked_accounts`);
 }
 
 // Check if demo data is already set up

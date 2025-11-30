@@ -9,7 +9,9 @@ import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ComposedChart, Bar } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ComposedChart, Bar } from 'recharts';
+import { CustomComposedLegend } from "@/components/charts/CustomChartLegend";
+import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { exportDebtReportCSV, exportDebtReportPDF } from '@/lib/reportExports';
 import { toast } from 'sonner';
 
@@ -212,62 +214,57 @@ export const AvailableForDebtReport = () => {
         </CardHeader>
         <CardContent>
           {hasAnyTransactions ? (
-            <div className="h-80 sm:h-96 lg:h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={monthlyData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                  <XAxis 
-                    dataKey="month" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tick={{ fill: "hsl(var(--muted-foreground))" }}
-                  />
-                  <YAxis 
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tick={{ fill: "hsl(var(--muted-foreground))" }}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => [formatCurrency(Number(value)), name]}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                      fontSize: "14px"
-                    }}
-                  />
-                  <Legend 
-                    wrapperStyle={{
-                      fontSize: "12px",
-                      color: "hsl(var(--foreground))"
-                    }}
-                  />
-                  <Bar 
-                    dataKey="income" 
-                    name="Income" 
-                    fill="hsl(var(--primary) / 0.3)" 
-                    stroke="hsl(var(--primary))"
-                  />
-                  <Bar 
-                    dataKey="spending" 
-                    name="Spending" 
-                    fill="hsl(var(--destructive) / 0.3)" 
-                    stroke="hsl(var(--destructive))"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="available" 
-                    name="Available for Debt" 
-                    strokeWidth={3} 
-                    dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, fill: "hsl(var(--accent))", strokeWidth: 2 }}
-                    stroke="hsl(var(--accent))"
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
+            <>
+              <CustomComposedLegend items={[
+                { label: "Income", color: "hsl(var(--primary))", type: "bar" },
+                { label: "Spending", color: "hsl(var(--destructive))", type: "bar" },
+                { label: "Available for Debt", color: "hsl(var(--accent))", type: "line" }
+              ]} />
+              <div className="h-80 sm:h-96 lg:h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={monthlyData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tick={{ fill: "hsl(var(--muted-foreground))" }}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tick={{ fill: "hsl(var(--muted-foreground))" }}
+                    />
+                    <Tooltip 
+                      formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                      contentStyle={STANDARD_TOOLTIP_STYLE}
+                    />
+                    <Bar 
+                      dataKey="income" 
+                      name="Income" 
+                      fill="hsl(var(--primary) / 0.3)" 
+                      stroke="hsl(var(--primary))"
+                    />
+                    <Bar 
+                      dataKey="spending" 
+                      name="Spending" 
+                      fill="hsl(var(--destructive) / 0.3)" 
+                      stroke="hsl(var(--destructive))"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="available" 
+                      name="Available for Debt" 
+                      strokeWidth={3} 
+                      dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: "hsl(var(--accent))", strokeWidth: 2 }}
+                      stroke="hsl(var(--accent))"
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </>
           ) : (
             <EmptyChartNotice 
               title="No Transaction Data" 

@@ -26,6 +26,8 @@ import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
+import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 
 export const Dashboard = () => {
   const [income] = useIncome();
@@ -183,16 +185,15 @@ export const Dashboard = () => {
     return "You're making good progress on your debt payoff journey!";
   }, [debts, leftover]);
 
-  const colors = [
-    "hsl(var(--primary))",
-    "hsl(var(--primary) / 0.8)",
-    "hsl(var(--accent))",
-    "hsl(var(--accent) / 0.8)",
-    "hsl(var(--destructive))",
-    "hsl(var(--destructive) / 0.8)",
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))"
-  ];
+  // Prepare legend data for pie chart
+  const pieLegendData = useMemo(() => 
+    spendingByCategory.map((cat, index) => ({
+      name: cat.name,
+      value: cat.value,
+      percentage: totalExpenses > 0 ? `${((cat.value / totalExpenses) * 100).toFixed(1)}%` : '0%',
+      color: CHART_COLORS[index % CHART_COLORS.length]
+    })), [spendingByCategory, totalExpenses]
+  );
 
   const customLabel = (entry: any) => {
     const RADIAN = Math.PI / 180;
@@ -378,61 +379,49 @@ export const Dashboard = () => {
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             {hasAnyTransactions ? (
-              <div className="h-[350px] sm:h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <defs>
-                      <linearGradient id="pieGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" />
-                        <stop offset="100%" stopColor="hsl(var(--primary) / 0.8)" />
-                      </linearGradient>
-                      <linearGradient id="pieGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="hsl(var(--accent))" />
-                        <stop offset="100%" stopColor="hsl(var(--accent) / 0.8)" />
-                      </linearGradient>
-                    </defs>
-                    <Pie
-                      data={spendingByCategory}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius="75%"
-                      innerRadius="30%"
-                      stroke="hsl(var(--background))"
-                      strokeWidth={2}
-                      label={false}
-                    >
-                      {spendingByCategory.map((_, index) => (
-                        <Cell 
-                          key={index} 
-                          fill={colors[index % colors.length]}
-                          className="drop-shadow-sm hover:brightness-110 transition-all duration-300"
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value) => formatCurrency(Number(value))}
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                        fontSize: "14px"
-                      }}
-                    />
-                    <Legend 
-                      verticalAlign="bottom" 
-                      height={36}
-                      iconType="circle"
-                      wrapperStyle={{
-                        fontSize: "12px",
-                        color: "hsl(var(--foreground))"
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              <>
+                <div className="h-[350px] sm:h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <defs>
+                        <linearGradient id="pieGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="hsl(var(--primary))" />
+                          <stop offset="100%" stopColor="hsl(var(--primary) / 0.8)" />
+                        </linearGradient>
+                        <linearGradient id="pieGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="hsl(var(--accent))" />
+                          <stop offset="100%" stopColor="hsl(var(--accent) / 0.8)" />
+                        </linearGradient>
+                      </defs>
+                      <Pie
+                        data={spendingByCategory}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="75%"
+                        innerRadius="30%"
+                        stroke="hsl(var(--background))"
+                        strokeWidth={2}
+                        label={false}
+                      >
+                        {spendingByCategory.map((_, index) => (
+                          <Cell 
+                            key={index} 
+                            fill={CHART_COLORS[index % CHART_COLORS.length]}
+                            className="drop-shadow-sm hover:brightness-110 transition-all duration-300"
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        formatter={currencyFormatter}
+                        contentStyle={STANDARD_TOOLTIP_STYLE}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <CustomPieLegend data={pieLegendData} />
+              </>
             ) : (
               <EmptyChartNotice />
             )}
@@ -456,6 +445,7 @@ export const Dashboard = () => {
           <CardContent className="p-4 sm:p-5 pt-0">
             {hasAnyTransactions && schedule.timeline.length > 0 ? (
               <>
+                <CustomLineLegend items={[{ label: "Total Balance", color: "hsl(var(--primary))" }]} />
                 <div className="h-[350px] sm:h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={schedule.timeline} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
@@ -483,20 +473,8 @@ export const Dashboard = () => {
                         tick={{ fill: "hsl(var(--muted-foreground))" }}
                       />
                       <Tooltip 
-                        formatter={(value) => formatCurrency(Number(value))}
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--popover))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                          boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                          fontSize: "14px"
-                        }}
-                      />
-                      <Legend 
-                        wrapperStyle={{
-                          fontSize: "12px",
-                          color: "hsl(var(--foreground))"
-                        }}
+                        formatter={currencyFormatter}
+                        contentStyle={STANDARD_TOOLTIP_STYLE}
                       />
                       <Line 
                         type="monotone" 

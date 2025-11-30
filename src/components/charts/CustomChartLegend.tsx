@@ -65,3 +65,61 @@ export const CustomBarLegend = ({ items }: BarLegendProps) => {
     </div>
   );
 };
+
+interface LineLegendItem {
+  label: string;
+  color: string;
+}
+
+interface LineLegendProps {
+  items: LineLegendItem[];
+}
+
+export const CustomLineLegend = ({ items }: LineLegendProps) => {
+  return (
+    <div className="flex items-center justify-center gap-6 mb-4 pb-2">
+      {items.map((item) => (
+        <div key={item.label} className="flex items-center gap-2">
+          <div
+            className="w-8 h-1 rounded-full shadow-sm"
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="font-medium text-sm text-foreground">{item.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface ComposedLegendItem {
+  label: string;
+  color: string;
+  type: 'line' | 'bar' | 'area';
+}
+
+interface ComposedLegendProps {
+  items: ComposedLegendItem[];
+}
+
+export const CustomComposedLegend = ({ items }: ComposedLegendProps) => {
+  return (
+    <div className="flex items-center justify-center gap-6 mb-4 pb-2">
+      {items.map((item) => (
+        <div key={item.label} className="flex items-center gap-2">
+          {item.type === 'line' ? (
+            <div
+              className="w-8 h-1 rounded-full shadow-sm"
+              style={{ backgroundColor: item.color }}
+            />
+          ) : (
+            <div
+              className="w-4 h-4 rounded-sm shadow-sm"
+              style={{ backgroundColor: item.color }}
+            />
+          )}
+          <span className="font-medium text-sm text-foreground">{item.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+};

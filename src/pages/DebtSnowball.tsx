@@ -10,7 +10,9 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff, getDetailedPaymentSchedule } from "@/lib/debtCalculations";
 import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } from "@/lib/csvUtils";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { CustomLineLegend } from "@/components/charts/CustomChartLegend";
+import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
@@ -333,14 +335,23 @@ export const DebtSnowball = () => {
         <CardContent className="p-4 sm:p-5 pt-0">
           {transactions.length > 0 ? (
             <>
+              <CustomLineLegend items={[{ label: "Total Debt Balance", color: "hsl(var(--primary))" }]} />
               <div className="h-[350px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={schedule.timeline} margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                    <Legend />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                    <XAxis 
+                      dataKey="label" 
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      formatter={currencyFormatter}
+                      contentStyle={STANDARD_TOOLTIP_STYLE}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="totalBalance" 

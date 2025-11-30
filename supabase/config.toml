@@ -2,3 +2,6 @@ project_id = "ukpejgrghpewwdfztryg"
 
 [functions.faq-chat]
 verify_jwt = false
+
+[functions.categorize-transaction]
+verify_jwt = false

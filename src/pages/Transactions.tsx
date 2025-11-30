@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CategorySuggestion } from "@/components/transactions/CategorySuggestion";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useExpenses } from "@/hooks/useLocalSettings";
@@ -323,6 +324,17 @@ export const Transactions = () => {
                     </div>
                   </div>
                   
+                  {/* AI Category Suggestion */}
+                  <CategorySuggestion
+                    description={newTransaction.description}
+                    amount={newTransaction.amount}
+                    currentCategory={newTransaction.category}
+                    onSuggestionAccepted={(category) => setNewTransaction({
+                      ...newTransaction,
+                      category
+                    })}
+                  />
+                  
                   <div className="space-y-2">
                     <Label>Notes (Optional)</Label>
                     <Textarea value={newTransaction.notes} onChange={e => setNewTransaction({
@@ -547,6 +559,17 @@ export const Transactions = () => {
                                     </Select>
                                   </div>
                                 </div>
+                                
+                                {/* AI Category Suggestion */}
+                                <CategorySuggestion
+                                  description={newTransaction.description}
+                                  amount={newTransaction.amount}
+                                  currentCategory={newTransaction.category}
+                                  onSuggestionAccepted={(category) => setNewTransaction({
+                                    ...newTransaction,
+                                    category
+                                  })}
+                                />
                                 
                                 <div className="space-y-2">
                                   <Label>Notes (Optional)</Label>

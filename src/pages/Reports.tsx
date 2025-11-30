@@ -138,7 +138,13 @@ export const Reports = () => {
 
       {/* Budget Variance Alerts */}
       {varianceAlerts.length > 0 && <div className="space-y-3 animate-fade-in">
-          <h2 className="text-lg font-semibold">Budget Variance Alerts</h2>
+          <div className="flex items-center gap-3">
+            <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+            <h2 className={`text-lg font-semibold transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+              Budget Variance Alerts {isSecondaryLoading && <span className="text-xs ml-2 text-muted-foreground">Loading...</span>}
+            </h2>
+            <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          </div>
           <div className="grid gap-3">
             {varianceAlerts.map(({
           expense,

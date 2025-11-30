@@ -86,12 +86,46 @@ export const DEMO_TRANSACTIONS: Transaction[] = [
   { id: "t68", date: "2025-01-09", description: "Amazon - Books", amount: 34.98, category: "Entertainment", accountId: "demo-credit", flow: "out", expenseId: "e29" },
   { id: "t69", date: "2025-01-04", description: "Veterinary Clinic", amount: 125.00, category: "Miscellaneous", accountId: "demo-checking", flow: "out", expenseId: "e37" },
   
-  // December history for better data visualization
+  // December 2024 - Full month history
   { id: "t70", date: "2024-12-20", description: "Netflix", amount: 15.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
   { id: "t71", date: "2024-12-20", description: "Spotify", amount: 10.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
   { id: "t72", date: "2024-12-18", description: "Whole Foods", amount: 142.67, category: "Food", accountId: "demo-checking", flow: "out", expenseId: "e17" },
   { id: "t73", date: "2024-12-15", description: "Electric Bill - PG&E", amount: 138.22, category: "Utilities", accountId: "demo-checking", flow: "out", expenseId: "e6" },
-  { id: "t74", date: "2024-12-10", description: "Amazon Prime", amount: 14.99, category: "Miscellaneous", accountId: "demo-checking", flow: "out", expenseId: "e38" },
+  { id: "t74", date: "2024-12-14", description: "Verizon Wireless", amount: 120.00, category: "Utilities", accountId: "demo-checking", flow: "out", expenseId: "e11" },
+  { id: "t75", date: "2024-12-12", description: "Shell Gas Station", amount: 61.30, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e13" },
+  { id: "t76", date: "2024-12-10", description: "Amazon Prime", amount: 14.99, category: "Miscellaneous", accountId: "demo-checking", flow: "out", expenseId: "e38" },
+  { id: "t77", date: "2024-12-08", description: "Apple iCloud+", amount: 9.99, category: "Utilities", accountId: "demo-credit", flow: "out", expenseId: "e11" },
+  { id: "t78", date: "2024-12-05", description: "Honda Finance", amount: 450, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e12" },
+  { id: "t79", date: "2024-12-05", description: "Student Loan Payment", amount: 350, category: "Debt Payments", accountId: "demo-checking", flow: "out", expenseId: "e34" },
+  { id: "t80", date: "2024-12-01", description: "Mortgage Payment", amount: 1800, category: "Housing", accountId: "demo-checking", flow: "out", expenseId: "e1" },
+  { id: "t81", date: "2024-12-01", description: "Transfer to Emergency Fund", amount: 500, category: "Savings & Investments", accountId: "demo-checking", flow: "out", expenseId: "e31" },
+  
+  // November 2024
+  { id: "t82", date: "2024-11-28", description: "Target - Black Friday", amount: 284.52, category: "Miscellaneous", accountId: "demo-credit", flow: "out" },
+  { id: "t83", date: "2024-11-27", description: "Thanksgiving Dinner", amount: 156.78, category: "Food", accountId: "demo-checking", flow: "out", expenseId: "e17" },
+  { id: "t84", date: "2024-11-22", description: "Shell Gas Station", amount: 59.45, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e13" },
+  { id: "t85", date: "2024-11-20", description: "Netflix", amount: 15.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
+  { id: "t86", date: "2024-11-20", description: "Spotify", amount: 10.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
+  { id: "t87", date: "2024-11-15", description: "Paycheck - Acme Corp", amount: 4250, category: "Salary", accountId: "demo-checking", flow: "in" },
+  { id: "t88", date: "2024-11-15", description: "Electric Bill - PG&E", amount: 132.88, category: "Utilities", accountId: "demo-checking", flow: "out", expenseId: "e6" },
+  { id: "t89", date: "2024-11-10", description: "Comcast Internet", amount: 75.00, category: "Utilities", accountId: "demo-checking", flow: "out", expenseId: "e10" },
+  { id: "t90", date: "2024-11-05", description: "Honda Finance", amount: 450, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e12" },
+  { id: "t91", date: "2024-11-01", description: "Paycheck - Acme Corp", amount: 4250, category: "Salary", accountId: "demo-checking", flow: "in" },
+  { id: "t92", date: "2024-11-01", description: "Mortgage Payment", amount: 1800, category: "Housing", accountId: "demo-checking", flow: "out", expenseId: "e1" },
+  
+  // October 2024
+  { id: "t93", date: "2024-10-31", description: "Halloween Decorations", amount: 67.32, category: "Miscellaneous", accountId: "demo-checking", flow: "out" },
+  { id: "t94", date: "2024-10-25", description: "Costco", amount: 198.45, category: "Food", accountId: "demo-checking", flow: "out", expenseId: "e17" },
+  { id: "t95", date: "2024-10-20", description: "Netflix", amount: 15.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
+  { id: "t96", date: "2024-10-20", description: "Spotify", amount: 10.99, category: "Entertainment", accountId: "demo-checking", flow: "out", expenseId: "e28" },
+  { id: "t97", date: "2024-10-18", description: "Shell Gas Station", amount: 64.20, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e13" },
+  { id: "t98", date: "2024-10-15", description: "Paycheck - Acme Corp", amount: 4250, category: "Salary", accountId: "demo-checking", flow: "in" },
+  { id: "t99", date: "2024-10-15", description: "Electric Bill - PG&E", amount: 128.55, category: "Utilities", accountId: "demo-checking", flow: "out", expenseId: "e6" },
+  { id: "t100", date: "2024-10-10", description: "Adobe Creative Cloud", amount: 54.99, category: "Miscellaneous", accountId: "demo-credit", flow: "out", expenseId: "e38" },
+  { id: "t101", date: "2024-10-05", description: "Honda Finance", amount: 450, category: "Transportation", accountId: "demo-checking", flow: "out", expenseId: "e12" },
+  { id: "t102", date: "2024-10-05", description: "Credit Card Payment", amount: 200, category: "Debt Payments", accountId: "demo-checking", flow: "out", expenseId: "e35" },
+  { id: "t103", date: "2024-10-01", description: "Paycheck - Acme Corp", amount: 4250, category: "Salary", accountId: "demo-checking", flow: "in" },
+  { id: "t104", date: "2024-10-01", description: "Mortgage Payment", amount: 1800, category: "Housing", accountId: "demo-checking", flow: "out", expenseId: "e1" },
 ];
 
 export const DEMO_CONNECTED_INSTITUTIONS: ConnectedInstitution[] = [

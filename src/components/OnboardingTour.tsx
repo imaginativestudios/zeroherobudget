@@ -24,6 +24,7 @@ const getMobileTabletTourSteps = (): Step[] => [
     placement: 'center',
     disableBeacon: true,
     isFixed: true,
+    disableOverlay: true,
     data: { menuState: 'closed' },
   },
   {

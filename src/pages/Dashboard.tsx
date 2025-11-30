@@ -27,16 +27,24 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, Ca
 export const Dashboard = () => {
   const [income] = useIncome();
   const [expenses, , isLoadingExpenses] = useExpenses();
-  const { debts, isLoading: isLoadingDebts } = useLocalDebts();
+  
+  // Critical data loads first
+  const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
+  const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
+  
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
-  const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions();
-  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions();
+  // Secondary data (transactions for charts) loads after
+  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
   const { profile } = useProfile();
 
-  const isLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions || isLoadingTransactions;
+  // Critical data loading state (for main cards)
+  const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
+  
+  // Secondary data loading state (for charts)
+  const isSecondaryLoading = isLoadingTransactions;
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
@@ -210,7 +218,7 @@ export const Dashboard = () => {
           <div className="h-px flex-1 bg-border"></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch" data-tour="financial-overview">
-        {isLoading ? (
+        {isCriticalLoading ? (
           <>
             <FinancialCardSkeleton />
             <FinancialCardSkeleton />
@@ -278,7 +286,7 @@ export const Dashboard = () => {
           <div className="h-px flex-1 bg-border"></div>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
-        {isLoading ? (
+        {isSecondaryLoading ? (
           <>
             <ChartCardSkeleton />
             <ChartCardSkeleton />

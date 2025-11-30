@@ -1,4 +1,6 @@
 import { useUserLocalStorage } from './useUserLocalStorage';
+import { usePriorityLocalStorage } from './usePriorityLocalStorage';
+import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
 import { v4 as uuidv4 } from 'uuid';
 import { format, startOfMonth, endOfMonth, parseISO } from 'date-fns';
 
@@ -22,8 +24,10 @@ export interface MonthlyActuals {
   [expenseId: string]: number;
 }
 
-export function useLocalTransactions() {
-  const [transactions, setTransactions, isLoading] = useUserLocalStorage<Transaction[]>('transactions', []);
+export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secondary') {
+  const loadState = useProgressiveLoad();
+  const shouldLoad = useShouldLoad(priority, loadState);
+  const [transactions, setTransactions, isLoading] = usePriorityLocalStorage<Transaction[]>('transactions', [], priority, shouldLoad);
 
   const addTransaction = async (transaction: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     const newTransaction: Transaction = {

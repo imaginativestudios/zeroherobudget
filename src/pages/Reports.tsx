@@ -16,12 +16,14 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cart
 export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [expenses] = useExpenses();
+  
+  // Secondary: Load transactions for chart data
   const {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
-  } = useLocalTransactions();
+  } = useLocalTransactions('secondary');
   
-  const isLoading = isLoadingTransactions;
+  const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
   const expenseData = useMemo(() => expenses.map(expense => ({
     name: expense.name.length > 15 ? expense.name.substring(0, 15) + '...' : expense.name,
@@ -146,7 +148,7 @@ export const Reports = () => {
           </div>
         </div>}
       
-      {isLoading ? (
+      {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
         <Card className="shadow-royal overflow-hidden">

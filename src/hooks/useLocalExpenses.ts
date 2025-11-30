@@ -1,4 +1,6 @@
 import { useUserLocalStorage } from './useUserLocalStorage';
+import { usePriorityLocalStorage } from './usePriorityLocalStorage';
+import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Expense {
@@ -14,8 +16,10 @@ export interface Expense {
   sort_order: number;
 }
 
-export function useLocalExpenses() {
-  const [expenses, setExpenses, isLoading] = useUserLocalStorage<Expense[]>('expenses', []);
+export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical') {
+  const loadState = useProgressiveLoad();
+  const shouldLoad = useShouldLoad(priority, loadState);
+  const [expenses, setExpenses, isLoading] = usePriorityLocalStorage<Expense[]>('expenses', [], priority, shouldLoad);
 
   // Sort expenses by sort_order
   const sortedExpenses = [...expenses].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));

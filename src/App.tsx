@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { DemoDataInitializer } from "@/components/DemoDataInitializer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
+import { OnboardingTourProvider } from "@/contexts/OnboardingTourContext";
 import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
@@ -34,10 +35,11 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <DemoDataInitializer />
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+      <OnboardingTourProvider>
+        <DemoDataInitializer />
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Index />} />
@@ -74,6 +76,7 @@ const App = () => (
         </Routes>
         <ChatbotWidget />
       </BrowserRouter>
+      </OnboardingTourProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

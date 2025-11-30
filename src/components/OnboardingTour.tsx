@@ -3,10 +3,11 @@ import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileOnboardingCarousel } from './MobileOnboardingCarousel';
 
 const getMobileTourSteps = (): Step[] => [
   {
-    target: 'body',
+    target: '[data-tour="welcome-area"]',
     content: (
       <div className="space-y-2">
         <h2 className="text-lg font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
@@ -15,8 +16,9 @@ const getMobileTourSteps = (): Step[] => [
         </p>
       </div>
     ),
-    placement: 'center',
+    placement: 'bottom',
     disableBeacon: true,
+    disableOverlay: true,
   },
   {
     target: '[data-tour="mobile-menu-button"]',
@@ -62,7 +64,7 @@ const getMobileTourSteps = (): Step[] => [
 
 const getDesktopTourSteps = (): Step[] => [
   {
-    target: 'body',
+    target: '[data-tour="welcome-area"]',
     content: (
       <div className="space-y-3">
         <h2 className="text-xl font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
@@ -71,8 +73,9 @@ const getDesktopTourSteps = (): Step[] => [
         </p>
       </div>
     ),
-    placement: 'center',
+    placement: 'bottom',
     disableBeacon: true,
+    disableOverlay: true,
   },
   {
     target: '[data-tour="nav-sidebar"]',
@@ -224,9 +227,21 @@ export const OnboardingTour = () => {
     }
   };
 
+  // Render mobile carousel for mobile devices
+  if (isMobile) {
+    return (
+      <MobileOnboardingCarousel
+        isOpen={isRunning}
+        onComplete={completeTour}
+        onSkip={skipTour}
+      />
+    );
+  }
+
+  // Render desktop Joyride tour for desktop devices
   return (
     <Joyride
-      steps={isMobile ? getMobileTourSteps() : getDesktopTourSteps()}
+      steps={getDesktopTourSteps()}
       run={isRunning}
       stepIndex={stepIndex}
       continuous
@@ -240,38 +255,35 @@ export const OnboardingTour = () => {
           backgroundColor: 'hsl(var(--card))',
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
-          zIndex: 10000,
-          width: isMobile ? 'auto' : 400,
+          zIndex: 10001,
+          width: 400,
         },
         buttonNext: {
           backgroundColor: 'hsl(39, 100%, 57%)',
           color: 'hsl(262, 83%, 28%)',
-          fontSize: isMobile ? 16 : 14,
+          fontSize: 14,
           fontWeight: 600,
           borderRadius: 8,
-          padding: isMobile ? '12px 24px' : '10px 20px',
-          minHeight: isMobile ? 44 : 'auto',
+          padding: '10px 20px',
         },
         buttonBack: {
           color: 'hsl(var(--muted-foreground))',
-          fontSize: isMobile ? 16 : 14,
+          fontSize: 14,
           marginRight: 10,
-          minHeight: isMobile ? 44 : 'auto',
-          padding: isMobile ? '12px 16px' : '10px 12px',
+          padding: '10px 12px',
         },
         buttonSkip: {
           color: 'hsl(var(--muted-foreground))',
-          fontSize: isMobile ? 16 : 14,
-          minHeight: isMobile ? 44 : 'auto',
-          padding: isMobile ? '12px 16px' : '10px 12px',
+          fontSize: 14,
+          padding: '10px 12px',
         },
         tooltip: {
           borderRadius: 12,
-          padding: isMobile ? 16 : 20,
+          padding: 20,
           boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
-          maxWidth: isMobile ? 'calc(100vw - 32px)' : 400,
-          margin: isMobile ? '0 16px' : 0,
-          width: isMobile ? 'calc(100vw - 32px)' : 'auto',
+          maxWidth: 400,
+          position: 'relative',
+          zIndex: 10001,
         },
         tooltipContainer: {
           textAlign: 'left',
@@ -287,21 +299,20 @@ export const OnboardingTour = () => {
         },
       }}
       floaterProps={{
-        disableAnimation: isMobile,
         styles: {
           floater: {
             filter: 'none',
-            zIndex: 10000,
+            zIndex: 10001,
           },
           arrow: {
-            length: isMobile ? 8 : 10,
-            spread: isMobile ? 12 : 16,
+            length: 10,
+            spread: 16,
           },
         },
         options: {
           preventOverflow: {
             boundariesElement: 'viewport',
-            padding: isMobile ? 16 : 10,
+            padding: 10,
           },
           flip: {
             enabled: true,
@@ -316,11 +327,10 @@ export const OnboardingTour = () => {
         next: 'Next',
         skip: 'Skip tour',
       }}
-      disableScrolling={isMobile}
-      scrollToFirstStep={!isMobile}
-      scrollOffset={isMobile ? 20 : 100}
-      spotlightPadding={isMobile ? 5 : 10}
-      disableOverlayClose={!isMobile}
+      scrollToFirstStep={true}
+      scrollOffset={100}
+      spotlightPadding={10}
+      disableOverlayClose={false}
     />
   );
 };

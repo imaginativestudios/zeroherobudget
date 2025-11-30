@@ -218,7 +218,7 @@ export const Dashboard = () => {
   return (
     <div className="space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4" data-tour="welcome-area">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="pt-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">

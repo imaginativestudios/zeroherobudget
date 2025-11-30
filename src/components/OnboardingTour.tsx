@@ -24,7 +24,6 @@ const getMobileTabletTourSteps = (): Step[] => [
     placement: 'center',
     disableBeacon: true,
     isFixed: true,
-    disableOverlay: true,
     data: { menuState: 'closed' },
   },
   {
@@ -324,7 +323,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
           spotlightShadow: '0 0 0 4px rgba(255, 190, 60, 0.5)',
-          zIndex: 10001,
+          zIndex: 10000,
           width: tooltipWidth,
         },
         buttonNext: {
@@ -352,7 +351,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
           boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
           maxWidth: tooltipWidth,
           position: 'relative',
-          zIndex: 10001,
+          zIndex: 10002,
         },
         tooltipContainer: {
           textAlign: 'left',
@@ -368,7 +367,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
         styles: {
           floater: {
             filter: 'none',
-            zIndex: 10001,
+            zIndex: 10002,
           },
           arrow: {
             length: 10,

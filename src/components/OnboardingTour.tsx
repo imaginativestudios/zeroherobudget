@@ -18,7 +18,6 @@ const getMobileTourSteps = (): Step[] => [
     ),
     placement: 'bottom',
     disableBeacon: true,
-    disableOverlay: true,
   },
   {
     target: '[data-tour="mobile-menu-button"]',
@@ -75,7 +74,6 @@ const getDesktopTourSteps = (): Step[] => [
     ),
     placement: 'bottom',
     disableBeacon: true,
-    disableOverlay: true,
   },
   {
     target: '[data-tour="nav-sidebar"]',
@@ -306,8 +304,13 @@ export const OnboardingTour = () => {
         },
         spotlight: {
           borderRadius: 8,
+          backgroundColor: 'transparent',
+        },
+        spotlightLegacy: {
+          backgroundColor: 'transparent',
         },
         overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
           mixBlendMode: 'normal',
         },
       }}
@@ -343,6 +346,7 @@ export const OnboardingTour = () => {
       scrollToFirstStep={true}
       scrollOffset={100}
       spotlightPadding={10}
+      spotlightClicks={true}
       disableOverlayClose={false}
     />
   );

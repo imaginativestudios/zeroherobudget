@@ -316,6 +316,7 @@ export const OnboardingTour = () => {
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.6)',
           mixBlendMode: 'normal',
+          zIndex: 9999,
         },
       }}
       floaterProps={{

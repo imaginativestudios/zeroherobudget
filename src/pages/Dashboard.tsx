@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
 import { useBankConnections } from "@/hooks/useBankConnections";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { FinancialCardSkeleton } from "@/components/FinancialCardSkeleton";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { ChartInsight } from "@/components/ChartInsight";
@@ -36,15 +38,41 @@ export const Dashboard = () => {
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
+  const [isSyncingAll, setIsSyncingAll] = useState(false);
+  const { toast } = useToast();
 
   // Secondary data (transactions for charts) loads after
   const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
   const { profile } = useProfile();
   
   // Bank connection data
-  const { institutions, linkedAccounts, getConnectionStatus } = useBankConnections();
+  const { institutions, linkedAccounts, getConnectionStatus, refreshConnection } = useBankConnections();
   const bankConnectionStatus = getConnectionStatus();
   const isSyncing = institutions.some(inst => inst.connectionStatus === 'syncing');
+  
+  const handleSyncAll = async () => {
+    if (institutions.length === 0 || isSyncingAll) return;
+    
+    setIsSyncingAll(true);
+    toast({
+      title: "Syncing accounts...",
+      description: `Refreshing ${institutions.length} connected bank${institutions.length !== 1 ? 's' : ''}`,
+    });
+    
+    // Trigger refresh for all institutions
+    institutions.forEach(inst => {
+      refreshConnection(inst.id);
+    });
+    
+    // Wait for sync to complete (2 seconds per our mock implementation)
+    setTimeout(() => {
+      setIsSyncingAll(false);
+      toast({
+        title: "Sync complete",
+        description: "All bank accounts have been updated",
+      });
+    }, 2500);
+  };
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
@@ -197,7 +225,21 @@ export const Dashboard = () => {
               <span className="leading-tight">Welcome, debt warrior!</span>
             </h1>
           </div>
-          <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
+          <div className="w-full sm:w-auto flex gap-2 justify-center sm:justify-end mt-4 sm:mt-0">
+            {institutions.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="gap-2"
+                onClick={handleSyncAll}
+                disabled={isSyncingAll || isSyncing}
+              >
+                <RefreshCw className={cn("h-4 w-4", (isSyncingAll || isSyncing) && "animate-spin")} />
+                <span className="text-sm sm:text-base">
+                  {isSyncingAll || isSyncing ? "Syncing..." : "Sync Banks"}
+                </span>
+              </Button>
+            )}
             <Button 
               variant="default" 
               size="lg" 

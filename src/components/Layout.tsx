@@ -294,7 +294,10 @@ export const Layout = ({ children }: LayoutProps) => {
       </main>
       
       {/* Onboarding Tour */}
-      <OnboardingTour />
+      <OnboardingTour 
+        setMobileMenuOpen={setIsMobileMenuOpen}
+        isMobileMenuOpen={isMobileMenuOpen}
+      />
       
       {/* Keyboard Shortcuts Dialog */}
       <KeyboardShortcutsDialog

@@ -2,10 +2,15 @@ import { useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsTabletOrMobile } from '@/hooks/useIsTabletOrMobile';
 import { MobileOnboardingCarousel } from './MobileOnboardingCarousel';
 
-const getMobileTourSteps = (): Step[] => [
+interface OnboardingTourProps {
+  setMobileMenuOpen: (open: boolean) => void;
+  isMobileMenuOpen: boolean;
+}
+
+const getMobileTabletTourSteps = (): Step[] => [
   {
     target: 'body',
     content: (
@@ -18,6 +23,7 @@ const getMobileTourSteps = (): Step[] => [
     ),
     placement: 'center',
     disableBeacon: true,
+    data: { menuState: 'closed' },
   },
   {
     target: '[data-tour="mobile-menu-button"]',
@@ -25,12 +31,55 @@ const getMobileTourSteps = (): Step[] => [
       <div className="space-y-2">
         <h3 className="text-base font-semibold text-foreground">Navigation Menu</h3>
         <p className="text-sm text-muted-foreground">
-          Tap this menu button to access Budgets, Debts, Transactions, Reports, and more.
+          Tap this menu button to access all your financial tools.
         </p>
       </div>
     ),
     placement: 'bottom',
     disableBeacon: true,
+    data: { menuState: 'closed' },
+  },
+  {
+    target: '[data-tour="nav-sidebar"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Navigation Sidebar</h3>
+        <p className="text-sm text-muted-foreground">
+          Access Budgets, Debts, Transactions, Subscriptions, Reports, and more from here.
+        </p>
+      </div>
+    ),
+    placement: 'right',
+    disableBeacon: true,
+    data: { menuState: 'open' },
+  },
+  {
+    target: '[data-tour="nav-budgets"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Budget Management</h3>
+        <p className="text-sm text-muted-foreground">
+          Track planned vs. actual spending across household categories.
+        </p>
+      </div>
+    ),
+    placement: 'right',
+    disableBeacon: true,
+    data: { menuState: 'open' },
+  },
+  {
+    target: '[data-tour="nav-debts"]',
+    content: (
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-foreground">Debt Payoff Strategies</h3>
+        <p className="text-sm text-muted-foreground">
+          Choose Snowball or Avalanche strategy and see payoff timelines.
+        </p>
+      </div>
+    ),
+    placement: 'right',
+    disableBeacon: true,
+    data: { menuState: 'open' },
   },
   {
     target: '[data-tour="financial-overview"]',
@@ -44,6 +93,7 @@ const getMobileTourSteps = (): Step[] => [
     ),
     placement: 'top',
     disableBeacon: true,
+    data: { menuState: 'closed' },
   },
   {
     target: '[data-tour="chatbot-widget"]',
@@ -58,6 +108,7 @@ const getMobileTourSteps = (): Step[] => [
     placement: 'top',
     disableBeacon: true,
     isFixed: true,
+    data: { menuState: 'closed' },
   },
 ];
 
@@ -196,11 +247,11 @@ const getDesktopTourSteps = (): Step[] => [
   },
 ];
 
-export const OnboardingTour = () => {
+export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: OnboardingTourProps) => {
   const { hasSeenTour, isRunning, stepIndex, startTour, completeTour, skipTour, setStepIndex } = useOnboardingTour();
   const location = useLocation();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const isTabletOrMobile = useIsTabletOrMobile();
 
   // Redirect to dashboard when tour starts from another page
   useEffect(() => {
@@ -225,9 +276,17 @@ export const OnboardingTour = () => {
   }
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, index, type, action } = data;
+    const { status, index, type, action, step } = data;
+
+    // Control menu state based on step data
+    if (type === 'step:before' && step?.data?.menuState) {
+      setMobileMenuOpen(step.data.menuState === 'open');
+    }
 
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
+      // Close menu when tour ends
+      setMobileMenuOpen(false);
+      
       if (status === STATUS.FINISHED) {
         completeTour();
       } else {
@@ -242,21 +301,13 @@ export const OnboardingTour = () => {
     }
   };
 
-  // Render mobile carousel for mobile devices
-  if (isMobile) {
-    return (
-      <MobileOnboardingCarousel
-        isOpen={isRunning}
-        onComplete={completeTour}
-        onSkip={skipTour}
-      />
-    );
-  }
+  // Use Joyride for all devices now (with responsive steps)
+  const steps = isTabletOrMobile ? getMobileTabletTourSteps() : getDesktopTourSteps();
+  const tooltipWidth = isTabletOrMobile ? 280 : 400;
 
-  // Render desktop Joyride tour for desktop devices
   return (
     <Joyride
-      steps={getDesktopTourSteps()}
+      steps={steps}
       run={isRunning}
       stepIndex={stepIndex}
       continuous
@@ -271,7 +322,7 @@ export const OnboardingTour = () => {
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
           zIndex: 10001,
-          width: 400,
+          width: tooltipWidth,
         },
         buttonNext: {
           backgroundColor: 'hsl(39, 100%, 57%)',
@@ -294,9 +345,9 @@ export const OnboardingTour = () => {
         },
         tooltip: {
           borderRadius: 12,
-          padding: 20,
+          padding: isTabletOrMobile ? 16 : 20,
           boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
-          maxWidth: 400,
+          maxWidth: tooltipWidth,
           position: 'relative',
           zIndex: 10001,
         },
@@ -308,10 +359,7 @@ export const OnboardingTour = () => {
         },
         spotlight: {
           borderRadius: 8,
-          backgroundColor: 'transparent',
-        },
-        spotlightLegacy: {
-          backgroundColor: 'transparent',
+          boxShadow: '0 0 0 4px rgba(255, 190, 60, 0.5)',
         },
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.6)',

@@ -7,7 +7,7 @@ import { MobileOnboardingCarousel } from './MobileOnboardingCarousel';
 
 const getMobileTourSteps = (): Step[] => [
   {
-    target: '[data-tour="welcome-area"]',
+    target: 'body',
     content: (
       <div className="space-y-2">
         <h2 className="text-lg font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
@@ -16,9 +16,8 @@ const getMobileTourSteps = (): Step[] => [
         </p>
       </div>
     ),
-    placement: 'bottom',
+    placement: 'center',
     disableBeacon: true,
-    disableOverlay: true,
   },
   {
     target: '[data-tour="mobile-menu-button"]',
@@ -64,7 +63,7 @@ const getMobileTourSteps = (): Step[] => [
 
 const getDesktopTourSteps = (): Step[] => [
   {
-    target: '[data-tour="welcome-area"]',
+    target: 'body',
     content: (
       <div className="space-y-3">
         <h2 className="text-xl font-bold text-foreground">Welcome to Zero Hero! 🎉</h2>
@@ -73,9 +72,8 @@ const getDesktopTourSteps = (): Step[] => [
         </p>
       </div>
     ),
-    placement: 'bottom',
+    placement: 'center',
     disableBeacon: true,
-    disableOverlay: true,
   },
   {
     target: '[data-tour="nav-sidebar"]',
@@ -227,7 +225,7 @@ export const OnboardingTour = () => {
   }
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, index, type } = data;
+    const { status, index, type, action } = data;
 
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
       if (status === STATUS.FINISHED) {
@@ -236,7 +234,11 @@ export const OnboardingTour = () => {
         skipTour();
       }
     } else if (type === 'step:after') {
-      setStepIndex(index + 1);
+      if (action === 'prev') {
+        setStepIndex(index - 1);
+      } else if (action === 'next') {
+        setStepIndex(index + 1);
+      }
     }
   };
 

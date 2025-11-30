@@ -70,21 +70,23 @@ export const FinancialCard = ({
 
   const cardContent = (
     <Card className={cn(
-      "h-full flex flex-col shadow-elegant hover:shadow-royal transition-royal animate-fade-in",
-      to && "cursor-pointer hover:translate-y-[-1px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:scale-[1.02]",
+      "h-full flex flex-col shadow-elegant transition-all duration-300 ease-out animate-fade-in",
+      to && "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      to && "hover:shadow-royal hover:-translate-y-1 hover:scale-[1.02]",
+      "active:scale-[0.98] active:translate-y-0",
       className
     )}>
       <CardHeader className="pb-2 p-4 sm:p-5">
-        <div className="flex items-center gap-2">
-          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0" />
+        <div className="flex items-center gap-2 transition-transform duration-200 group-hover:scale-105">
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
             {title}
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col justify-between p-4 sm:p-5 pt-0">
+      <CardContent className="flex-grow flex flex-col justify-between p-4 sm:p-5 pt-0 transition-all duration-200">
         {/* Primary: Amount */}
-        <div className={cn("text-xl sm:text-2xl font-bold", getAmountColor())}>
+        <div className={cn("text-xl sm:text-2xl font-bold transition-all duration-200 group-hover:scale-105", getAmountColor())}>
           {formatCurrency(amount)}
         </div>
         
@@ -112,7 +114,7 @@ export const FinancialCard = ({
         
         {/* Footer: Link */}
         {to && (
-          <p className="text-xs text-muted-foreground mt-auto pt-3">
+          <p className="text-xs text-muted-foreground mt-auto pt-3 transition-all duration-200 group-hover:text-accent group-hover:translate-x-1">
             View detailed report →
           </p>
         )}
@@ -122,11 +124,11 @@ export const FinancialCard = ({
 
   if (to) {
     return (
-      <Link to={to} className="block">
+      <Link to={to} className="block group">
         {cardContent}
       </Link>
     );
   }
 
-  return cardContent;
+  return <div className="group">{cardContent}</div>;
 };

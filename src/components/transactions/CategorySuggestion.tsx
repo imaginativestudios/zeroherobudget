@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTransactionCategorization } from '@/hooks/useTransactionCategorization';
 
 interface CategorySuggestionProps {
   description: string;
@@ -21,6 +22,7 @@ export const CategorySuggestion = ({
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const { toast } = useToast();
+  const { recordCategorization } = useTransactionCategorization();
 
   const getSuggestion = async () => {
     if (!description || description.length < 3) {
@@ -70,6 +72,10 @@ export const CategorySuggestion = ({
   const acceptSuggestion = () => {
     if (suggestion) {
       onSuggestionAccepted(suggestion);
+      
+      // Record that user accepted the AI suggestion
+      recordCategorization(description, suggestion, suggestion, amount);
+      
       setSuggestion(null);
       toast({
         title: "Category applied",

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.56.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -34,6 +35,33 @@ serve(async (req) => {
       );
     }
 
+    // Get authorization header for authenticated requests
+    const authHeader = req.headers.get('authorization');
+    
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader ?? '' } }
+    });
+
+    // Query user's categorization history for similar transactions
+    let historicalContext = "";
+    if (authHeader) {
+      const { data: history } = await supabase
+        .from('transaction_categorization_history')
+        .select('transaction_description, user_selected_category')
+        .ilike('transaction_description', `%${description.split(' ')[0]}%`)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (history && history.length > 0) {
+        historicalContext = `\n\nUser's past categorization patterns for similar transactions:\n${
+          history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
+        }`;
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY is not configured");
@@ -59,7 +87,7 @@ Examples:
 - "CVS Pharmacy" → Insurance & Healthcare
 - "Target" → Personal Care (if small amount) or Miscellaneous
 - "Starbucks" → Food
-- "ATM Withdrawal" → Miscellaneous`;
+- "ATM Withdrawal" → Miscellaneous${historicalContext}`;
 
     const userPrompt = amount 
       ? `Transaction: "${description}", Amount: $${amount.toFixed(2)}`

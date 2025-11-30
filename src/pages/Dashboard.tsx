@@ -294,7 +294,7 @@ export const Dashboard = () => {
         ) : (
           <>
         {/* Spending by Category Chart */}
-        <Card className="shadow-royal overflow-hidden h-full">
+        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-accent" />
@@ -371,7 +371,7 @@ export const Dashboard = () => {
         </Card>
 
         {/* Debt Payoff Projection */}
-        <Card className="shadow-royal overflow-hidden h-full">
+        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-accent" />
@@ -458,7 +458,7 @@ export const Dashboard = () => {
           <div className="h-px flex-1 bg-border"></div>
         </div>
         
-        <Card className="shadow-royal">
+        <Card className="shadow-royal animate-fade-in">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
               <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />

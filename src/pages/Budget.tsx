@@ -326,7 +326,7 @@ export const Budget = () => {
       {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
-        categoryData.length > 0 && <Card className="shadow-royal">
+        categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Crown className="h-5 w-5 text-chart-1" />
@@ -361,7 +361,7 @@ export const Budget = () => {
       {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
-        categoryData.length > 0 && <Card className="shadow-royal">
+        categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-chart-2" />

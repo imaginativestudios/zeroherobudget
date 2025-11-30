@@ -1,6 +1,6 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Building2 } from "lucide-react";
-import { Link, useLocation, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Building2, Keyboard } from "lucide-react";
+import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,9 @@ import { Logo } from "./Logo";
 import { OnboardingTour } from "./OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useKeyboardShortcuts, ShortcutConfig } from "@/hooks/useKeyboardShortcuts";
+import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
+import { toast } from "@/hooks/use-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,13 +32,111 @@ const navigationItems = [
 
 export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { signOut, user, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const { resetTour } = useOnboardingTour();
 
   // Removed auth-gating for prototype mode
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  // Define keyboard shortcuts with config for the help dialog
+  const shortcutConfigs: ShortcutConfig[] = useMemo(() => [
+    { key: "1", ctrl: true, description: "Go to Dashboard", category: "Navigation" },
+    { key: "2", ctrl: true, description: "Go to Household", category: "Navigation" },
+    { key: "3", ctrl: true, description: "Go to Budgets", category: "Navigation" },
+    { key: "4", ctrl: true, description: "Go to Debts", category: "Navigation" },
+    { key: "5", ctrl: true, description: "Go to Transactions", category: "Navigation" },
+    { key: "6", ctrl: true, description: "Go to Subscriptions", category: "Navigation" },
+    { key: "7", ctrl: true, description: "Go to Bank Connections", category: "Navigation" },
+    { key: "8", ctrl: true, description: "Go to Achievements", category: "Navigation" },
+    { key: "9", ctrl: true, description: "Go to Financial Tips", category: "Navigation" },
+    { key: "0", ctrl: true, description: "Go to Reports", category: "Navigation" },
+    { key: "/", ctrl: true, description: "Show keyboard shortcuts", category: "Help" },
+  ], []);
+
+  // Define keyboard shortcuts with actions
+  const shortcuts = useMemo(() => [
+    {
+      ...shortcutConfigs[0],
+      action: () => {
+        navigate("/dashboard");
+        toast({ title: "Navigated to Dashboard" });
+      },
+    },
+    {
+      ...shortcutConfigs[1],
+      action: () => {
+        navigate("/household");
+        toast({ title: "Navigated to Household" });
+      },
+    },
+    {
+      ...shortcutConfigs[2],
+      action: () => {
+        navigate("/budgets");
+        toast({ title: "Navigated to Budgets" });
+      },
+    },
+    {
+      ...shortcutConfigs[3],
+      action: () => {
+        navigate("/debts");
+        toast({ title: "Navigated to Debts" });
+      },
+    },
+    {
+      ...shortcutConfigs[4],
+      action: () => {
+        navigate("/transactions");
+        toast({ title: "Navigated to Transactions" });
+      },
+    },
+    {
+      ...shortcutConfigs[5],
+      action: () => {
+        navigate("/subscriptions");
+        toast({ title: "Navigated to Subscriptions" });
+      },
+    },
+    {
+      ...shortcutConfigs[6],
+      action: () => {
+        navigate("/bank-connections");
+        toast({ title: "Navigated to Bank Connections" });
+      },
+    },
+    {
+      ...shortcutConfigs[7],
+      action: () => {
+        navigate("/achievements");
+        toast({ title: "Navigated to Achievements" });
+      },
+    },
+    {
+      ...shortcutConfigs[8],
+      action: () => {
+        navigate("/learn");
+        toast({ title: "Navigated to Financial Tips" });
+      },
+    },
+    {
+      ...shortcutConfigs[9],
+      action: () => {
+        navigate("/reports");
+        toast({ title: "Navigated to Reports" });
+      },
+    },
+    {
+      ...shortcutConfigs[10],
+      action: () => setShowShortcutsDialog(true),
+    },
+  ], [navigate, shortcutConfigs]);
+
+  // Enable keyboard shortcuts
+  useKeyboardShortcuts(shortcuts);
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -152,6 +253,15 @@ export const Layout = ({ children }: LayoutProps) => {
                       <Compass className="h-4 w-4" />
                       Take a Tour
                     </Button>
+                    <Button
+                      onClick={() => setShowShortcutsDialog(true)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-2"
+                    >
+                      <Keyboard className="h-4 w-4" />
+                      Shortcuts
+                    </Button>
                   </div>
                   <Button
                     onClick={signOut}
@@ -185,6 +295,13 @@ export const Layout = ({ children }: LayoutProps) => {
       
       {/* Onboarding Tour */}
       <OnboardingTour />
+      
+      {/* Keyboard Shortcuts Dialog */}
+      <KeyboardShortcutsDialog
+        open={showShortcutsDialog}
+        onOpenChange={setShowShortcutsDialog}
+        shortcuts={shortcutConfigs}
+      />
     </div>
   );
 };

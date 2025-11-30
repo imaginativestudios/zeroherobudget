@@ -12,6 +12,7 @@ import { CategorySuggestion } from "@/components/transactions/CategorySuggestion
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useExpenses } from "@/hooks/useLocalSettings";
+import { useTransactionCategorization } from "@/hooks/useTransactionCategorization";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
@@ -23,6 +24,7 @@ export const Transactions = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [expenses] = useExpenses();
+  const { recordCategorization } = useTransactionCategorization();
   const {
     accounts,
     getActiveAccounts
@@ -110,6 +112,15 @@ export const Transactions = () => {
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
+    
+    // Record manual categorization for learning
+    recordCategorization(
+      newTransaction.description,
+      null, // No AI suggestion for manual entry
+      newTransaction.category,
+      newTransaction.amount
+    );
+    
     setNewTransaction({
       date: formatDate(new Date()),
       description: "",
@@ -141,6 +152,17 @@ export const Transactions = () => {
       ...newTransaction,
       expenseId: newTransaction.expenseId || undefined
     });
+    
+    // Record categorization update for learning (only if category changed)
+    if (editingTransaction.category !== newTransaction.category) {
+      recordCategorization(
+        newTransaction.description,
+        null, // No AI suggestion for manual edit
+        newTransaction.category,
+        newTransaction.amount
+      );
+    }
+    
     setEditingTransaction(null);
     setNewTransaction({
       date: formatDate(new Date()),

@@ -404,6 +404,39 @@ export type Database = {
           },
         ]
       }
+      transaction_categorization_history: {
+        Row: {
+          ai_suggested_category: string | null
+          created_at: string
+          household_id: string | null
+          id: string
+          transaction_amount: number | null
+          transaction_description: string
+          user_id: string
+          user_selected_category: string
+        }
+        Insert: {
+          ai_suggested_category?: string | null
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          transaction_amount?: number | null
+          transaction_description: string
+          user_id?: string
+          user_selected_category: string
+        }
+        Update: {
+          ai_suggested_category?: string | null
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          transaction_amount?: number | null
+          transaction_description?: string
+          user_id?: string
+          user_selected_category?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           account_id: string | null

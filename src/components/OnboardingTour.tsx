@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileOnboardingCarousel } from './MobileOnboardingCarousel';
 
@@ -201,7 +201,15 @@ const getDesktopTourSteps = (): Step[] => [
 export const OnboardingTour = () => {
   const { hasSeenTour, isRunning, stepIndex, startTour, completeTour, skipTour, setStepIndex } = useOnboardingTour();
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Redirect to dashboard when tour starts from another page
+  useEffect(() => {
+    if (isRunning && location.pathname !== '/dashboard') {
+      navigate('/dashboard');
+    }
+  }, [isRunning, location.pathname, navigate]);
 
   // Auto-start tour for first-time users on dashboard
   useEffect(() => {
@@ -212,6 +220,11 @@ export const OnboardingTour = () => {
       return () => clearTimeout(timer);
     }
   }, [hasSeenTour, location.pathname, isRunning, startTour]);
+
+  // Only render the tour when on dashboard to prevent targeting non-existent elements
+  if (location.pathname !== '/dashboard') {
+    return null;
+  }
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, index, type } = data;

@@ -321,6 +321,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
           backgroundColor: 'hsl(var(--card))',
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
+          spotlightShadow: '0 0 0 4px rgba(255, 190, 60, 0.5)',
           zIndex: 10001,
           width: tooltipWidth,
         },
@@ -359,12 +360,6 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
         },
         spotlight: {
           borderRadius: 8,
-          boxShadow: '0 0 0 4px rgba(255, 190, 60, 0.5)',
-        },
-        overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
-          mixBlendMode: 'normal',
-          zIndex: 9999,
         },
       }}
       floaterProps={{

@@ -281,9 +281,11 @@ export const Dashboard = () => {
       {/* Analytics Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border"></div>
-          <h2 className="text-lg font-semibold text-muted-foreground">Analytics</h2>
-          <div className="h-px flex-1 bg-border"></div>
+          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-lg font-semibold text-muted-foreground transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+            Analytics {isSecondaryLoading && <span className="text-xs ml-2">Loading...</span>}
+          </h2>
+          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
         {isSecondaryLoading ? (
@@ -453,9 +455,11 @@ export const Dashboard = () => {
       {/* Achievements Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border"></div>
-          <h2 className="text-lg font-semibold text-muted-foreground">Victories & Achievements</h2>
-          <div className="h-px flex-1 bg-border"></div>
+          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-lg font-semibold text-muted-foreground transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+            Victories & Achievements
+          </h2>
+          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         
         <Card className="shadow-royal animate-fade-in">

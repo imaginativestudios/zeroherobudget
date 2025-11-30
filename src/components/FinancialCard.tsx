@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LucideIcon, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { LucideIcon, TrendingUp, TrendingDown, Minus, RefreshCw, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
 
 interface FinancialCardProps {
   title: string;
@@ -13,6 +14,11 @@ interface FinancialCardProps {
   to?: string;
   previousAmount?: number;
   insight?: string;
+  syncStatus?: {
+    isSyncing: boolean;
+    lastSync: string | null;
+    connectedBanks: number;
+  };
 }
 
 export const FinancialCard = ({ 
@@ -23,7 +29,8 @@ export const FinancialCard = ({
   className,
   to,
   previousAmount,
-  insight
+  insight,
+  syncStatus
 }: FinancialCardProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -77,11 +84,23 @@ export const FinancialCard = ({
       className
     )}>
       <CardHeader className="pb-2 p-4 sm:p-5">
-        <div className="flex items-center gap-2 transition-transform duration-200 group-hover:scale-105">
-          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
-          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
-            {title}
-          </CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 transition-transform duration-200 group-hover:scale-105 min-w-0 flex-1">
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
+              {title}
+            </CardTitle>
+          </div>
+          {syncStatus && syncStatus.connectedBanks > 0 && (
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {syncStatus.isSyncing ? (
+                <RefreshCw className="h-3 w-3 text-blue-500 animate-spin" />
+              ) : (
+                <Building2 className="h-3 w-3 text-green-500" />
+              )}
+              <span className="text-xs text-muted-foreground">{syncStatus.connectedBanks}</span>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-between p-4 sm:p-5 pt-0 transition-all duration-200">
@@ -103,8 +122,17 @@ export const FinancialCard = ({
           </div>
         )}
         
-        {/* Tertiary: Insight */}
-        {insight && (
+        {/* Tertiary: Insight or Sync Status */}
+        {syncStatus && syncStatus.lastSync && (
+          <div className="mt-3 p-2 bg-muted/50 rounded-md border border-border/50">
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <RefreshCw className={cn("h-3 w-3", syncStatus.isSyncing && "animate-spin text-blue-500")} />
+              {syncStatus.isSyncing ? "Syncing..." : `Updated ${formatDistanceToNow(new Date(syncStatus.lastSync), { addSuffix: true })}`}
+            </p>
+          </div>
+        )}
+        
+        {!syncStatus && insight && (
           <div className="mt-3 p-2 bg-muted/50 rounded-md">
             <p className="text-xs text-accent font-medium leading-relaxed line-clamp-2">
               💡 {insight}

@@ -18,6 +18,7 @@ const getMobileTourSteps = (): Step[] => [
     ),
     placement: 'bottom',
     disableBeacon: true,
+    disableOverlay: true,
   },
   {
     target: '[data-tour="mobile-menu-button"]',
@@ -74,6 +75,7 @@ const getDesktopTourSteps = (): Step[] => [
     ),
     placement: 'bottom',
     disableBeacon: true,
+    disableOverlay: true,
   },
   {
     target: '[data-tour="nav-sidebar"]',

@@ -15,6 +15,7 @@ import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expe
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
+import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
@@ -83,25 +84,7 @@ export const Budget = () => {
     })).filter(cat => cat.planned > 0).sort((a, b) => b.planned - a.planned);
   }, [expenses, monthlyActuals, totalExpenses]);
 
-  // Consistent category color mapping for all charts
-  const CATEGORY_COLORS: Record<string, string> = {
-    "Housing": "hsl(var(--chart-1))",
-    "Utilities": "hsl(var(--chart-2))",
-    "Transportation": "hsl(var(--chart-3))",
-    "Food": "hsl(var(--chart-4))",
-    "Insurance & Healthcare": "hsl(var(--chart-5))",
-    "Personal Care": "hsl(var(--chart-6))",
-    "Entertainment": "hsl(var(--chart-7))",
-    "Savings & Investments": "hsl(var(--chart-8))",
-    "Debt Payments": "hsl(var(--chart-9))",
-    "Miscellaneous": "hsl(var(--chart-10))"
-  };
-
-  // Fallback colors for categories not in the mapping
-  const FALLBACK_COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))", "hsl(var(--chart-6))", "hsl(var(--chart-7))", "hsl(var(--chart-8))", "hsl(var(--chart-9))", "hsl(var(--chart-10))"];
-  const getCategoryColor = (categoryName: string, index: number) => {
-    return CATEGORY_COLORS[categoryName] || FALLBACK_COLORS[index % FALLBACK_COLORS.length];
-  };
+  // Category colors imported from shared config
 
   // Prepare legend data for pie chart
   const pieLegendData = categoryData.map((cat, index) => ({
@@ -341,11 +324,7 @@ export const Budget = () => {
             }}>
                   {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name, index)} />)}
                 </Pie>
-                <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{
-              backgroundColor: 'hsl(var(--popover))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '8px'
-            }} />
+                <Tooltip formatter={currencyFormatter} contentStyle={STANDARD_TOOLTIP_STYLE} />
               </PieChart>
             </ResponsiveContainer>
             <CustomPieLegend data={pieLegendData} />
@@ -392,11 +371,11 @@ export const Budget = () => {
                         {truncated}
                       </text>;
             }} />
-                <Tooltip formatter={(value: number, name: string) => [formatCurrency(value), name === 'planned' ? 'Planned' : 'Actual']} labelFormatter={label => label} contentStyle={{
-              backgroundColor: 'hsl(var(--popover))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '8px'
-            }} />
+                <Tooltip 
+                  formatter={(value: number, name: string) => [formatCurrency(value), name === 'planned' ? 'Planned' : 'Actual']} 
+                  labelFormatter={label => label} 
+                  contentStyle={STANDARD_TOOLTIP_STYLE} 
+                />
                 <Bar dataKey="planned" fill="hsl(var(--chart-8))" radius={[0, 4, 4, 0]} name="planned" />
                 <Bar dataKey="actual" fill="hsl(var(--chart-4))" radius={[0, 4, 4, 0]} name="actual" />
               </BarChart>

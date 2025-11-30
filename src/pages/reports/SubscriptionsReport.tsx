@@ -12,6 +12,8 @@ import { useLocalAccounts } from '@/hooks/useLocalAccounts';
 import { formatCurrency } from '@/lib/constants';
 import { format, subMonths, startOfMonth } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { CustomBarLegend, CustomPieLegend } from "@/components/charts/CustomChartLegend";
+import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { CreditCard, ArrowLeft, Download, FileText } from 'lucide-react';
 import { exportSubscriptionsCSV, exportSubscriptionsPDF } from '@/lib/reportExports';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -66,7 +68,8 @@ export function SubscriptionsReport() {
   const pieData = currentMonthSpend.map((spend, index) => ({
     name: spend.subscriptionName,
     value: spend.totalSpent,
-    color: `hsl(var(--chart-${(index % 5) + 1}))`,
+    percentage: totalCurrentMonth > 0 ? `${((spend.totalSpent / totalCurrentMonth) * 100).toFixed(1)}%` : '0%',
+    color: CHART_COLORS[index % CHART_COLORS.length],
   }));
 
   // Get all active subscriptions with monthly equivalents
@@ -86,7 +89,6 @@ export function SubscriptionsReport() {
       .sort((a, b) => b.monthlyEquivalent - a.monthlyEquivalent);
   }, [subscriptions, selectedAccountId]);
 
-  // Generate insights
   const subscriptionInsight = useMemo(() => {
     const activeCount = subscriptions.filter(s => s.is_active).length;
     const totalMonthly = getTotalMonthlySpend();
@@ -96,8 +98,6 @@ export function SubscriptionsReport() {
     if (totalMonthly > 200) return `Your monthly subscription commitment is ${formatCurrency(totalMonthly)}. Look for optimization opportunities.`;
     return `You're managing ${activeCount} subscriptions effectively.`;
   }, [subscriptions, getTotalMonthlySpend]);
-
-  const colors = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -269,26 +269,22 @@ export function SubscriptionsReport() {
             <CardTitle>6-Month Spending Trend</CardTitle>
           </CardHeader>
           <CardContent>
+            <CustomBarLegend items={[{ label: "Monthly Spending", color: "hsl(var(--primary))" }]} />
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                   <XAxis 
                     dataKey="month" 
-                    className="text-xs fill-muted-foreground"
+                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
                   />
                   <YAxis 
-                    className="text-xs fill-muted-foreground"
+                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
                     tickFormatter={(value) => `$${value}`}
                   />
                   <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), 'Spent']}
-                    labelClassName="text-foreground"
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '6px'
-                    }}
+                    formatter={currencyFormatter}
+                    contentStyle={STANDARD_TOOLTIP_STYLE}
                   />
                   <Bar 
                     dataKey="amount" 
@@ -310,35 +306,34 @@ export function SubscriptionsReport() {
           </CardHeader>
           <CardContent>
             {pieData.length > 0 ? (
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({ name, percent }) => percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ''}
-                      labelLine={false}
-                    >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value: number) => [formatCurrency(value), 'Spent']}
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--background))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '6px'
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              <>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={120}
+                        paddingAngle={2}
+                        dataKey="value"
+                        label={({ name, percent }) => percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ''}
+                        labelLine={false}
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={currencyFormatter}
+                        contentStyle={STANDARD_TOOLTIP_STYLE}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <CustomPieLegend data={pieData} />
+              </>
             ) : (
               <div className="h-80 flex items-center justify-center text-muted-foreground">
                 No subscription charges found for this month

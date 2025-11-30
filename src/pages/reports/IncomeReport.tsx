@@ -9,7 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useTransactions } from "@/hooks/useTransactions";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { formatCurrency } from "@/lib/constants";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { CustomBarLegend } from "@/components/charts/CustomChartLegend";
+import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { exportIncomeReportCSV, exportIncomeReportPDF } from '@/lib/reportExports';
 import { toast } from 'sonner';
 
@@ -168,6 +170,7 @@ export const IncomeReport = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <CustomBarLegend items={[{ label: "Income", color: "hsl(var(--primary))" }]} />
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={incomeByCategory} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
@@ -185,14 +188,8 @@ export const IncomeReport = () => {
                       tick={{ fill: "hsl(var(--muted-foreground))" }}
                     />
                     <Tooltip 
-                      formatter={(value) => formatCurrency(Number(value))}
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                        fontSize: "14px"
-                      }}
+                      formatter={currencyFormatter}
+                      contentStyle={STANDARD_TOOLTIP_STYLE}
                     />
                     <Bar 
                       dataKey="value" 

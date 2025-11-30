@@ -6,6 +6,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar
 } from "recharts";
+import { CustomLineLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
+import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { 
   TrendingDown, Calendar, DollarSign, Award, 
   Snowflake, Flame, CheckCircle2, Clock
@@ -302,28 +304,25 @@ export function StrategyComparison({
           <CardDescription>Compare how each strategy reduces your total debt over time</CardDescription>
         </CardHeader>
         <CardContent>
+          <CustomLineLegend items={[
+            { label: "Snowball", color: "hsl(var(--chart-1))" },
+            { label: "Avalanche", color: "hsl(var(--chart-4))" }
+          ]} />
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
               <XAxis 
                 dataKey="label" 
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
               />
               <YAxis 
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip
-                formatter={(value: number) => [`$${value.toFixed(2)}`, ""]}
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px'
-                }}
+                formatter={currencyFormatter}
+                contentStyle={STANDARD_TOOLTIP_STYLE}
               />
-              <Legend />
               <Line
                 type="monotone"
                 dataKey="snowball"
@@ -412,28 +411,35 @@ export function StrategyComparison({
           <CardDescription>Compare the total amount you'll pay (principal + interest)</CardDescription>
         </CardHeader>
         <CardContent>
+          <CustomBarLegend items={[
+            { label: "Snowball", color: "hsl(var(--chart-1))" },
+            { label: "Avalanche", color: "hsl(var(--chart-4))" }
+          ]} />
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={costData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
               <XAxis 
                 dataKey="name" 
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
               />
               <YAxis 
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip
-                formatter={(value: number) => [`$${value.toFixed(2)}`, ""]}
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px'
-                }}
+                formatter={currencyFormatter}
+                contentStyle={STANDARD_TOOLTIP_STYLE}
               />
-              <Legend />
-              <Bar dataKey="Snowball" fill="hsl(var(--chart-1))" name="Snowball Total" />
-              <Bar dataKey="Avalanche" fill="hsl(var(--chart-4))" name="Avalanche Total" />
+              <Bar 
+                dataKey="Snowball" 
+                fill="hsl(var(--chart-1))"
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar 
+                dataKey="Avalanche" 
+                fill="hsl(var(--chart-4))"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
           <div className="mt-4 grid grid-cols-2 gap-4 text-center">

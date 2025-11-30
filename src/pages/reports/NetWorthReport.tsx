@@ -8,7 +8,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { DEFAULT_ASSETS, SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
+import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { exportNetWorthCSV, exportNetWorthPDF } from '@/lib/reportExports';
 import { toast } from 'sonner';
 
@@ -82,16 +84,15 @@ export const NetWorthReport = () => {
     ];
   }, [schedule, netWorth, totalAssets, totalDebt]);
 
-  const colors = [
-    "hsl(var(--primary))",
-    "hsl(var(--primary) / 0.8)",
-    "hsl(var(--accent))",
-    "hsl(var(--accent) / 0.8)",
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))",
-    "hsl(var(--chart-3))",
-    "hsl(var(--chart-4))"
-  ];
+  // Prepare legend data for pie chart
+  const pieLegendData = useMemo(() => 
+    assetComposition.map((asset, index) => ({
+      name: asset.name,
+      value: asset.value,
+      percentage: totalAssets > 0 ? `${((asset.value / totalAssets) * 100).toFixed(1)}%` : '0%',
+      color: CHART_COLORS[index % CHART_COLORS.length]
+    })), [assetComposition, totalAssets]
+  );
 
   const handleExport = (format: 'csv' | 'pdf') => {
     const exportData = {
@@ -228,33 +229,19 @@ export const NetWorthReport = () => {
                       {assetComposition.map((_, index) => (
                         <Cell 
                           key={index} 
-                          fill={colors[index % colors.length]}
+                          fill={CHART_COLORS[index % CHART_COLORS.length]}
                           className="drop-shadow-sm hover:brightness-110 transition-all duration-300"
                         />
                       ))}
                     </Pie>
                     <Tooltip 
-                      formatter={(value) => formatCurrency(Number(value))}
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                        fontSize: "14px"
-                      }}
-                    />
-                    <Legend 
-                      verticalAlign="bottom" 
-                      height={36}
-                      iconType="circle"
-                      wrapperStyle={{
-                        fontSize: "12px",
-                        color: "hsl(var(--foreground))"
-                      }}
+                      formatter={currencyFormatter}
+                      contentStyle={STANDARD_TOOLTIP_STYLE}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+              <CustomPieLegend data={pieLegendData} />
             </CardContent>
           </Card>
         )}
@@ -269,6 +256,7 @@ export const NetWorthReport = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <CustomLineLegend items={[{ label: "Net Worth", color: "hsl(var(--primary))" }]} />
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={netWorthProjection} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
@@ -287,14 +275,8 @@ export const NetWorthReport = () => {
                       tick={{ fill: "hsl(var(--muted-foreground))" }}
                     />
                     <Tooltip 
-                      formatter={(value) => formatCurrency(Number(value))}
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
-                        fontSize: "14px"
-                      }}
+                      formatter={currencyFormatter}
+                      contentStyle={STANDARD_TOOLTIP_STYLE}
                     />
                     <Line 
                       type="monotone" 

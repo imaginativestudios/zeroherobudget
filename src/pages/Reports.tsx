@@ -16,13 +16,12 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cart
 export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [expenses] = useExpenses();
-  
+
   // Secondary: Load transactions for chart data
   const {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
-  
   const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
   const expenseData = useMemo(() => expenses.map(expense => ({
@@ -94,7 +93,7 @@ export const Reports = () => {
   return <div className="pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Label className="text-sm font-medium">Month:</Label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
@@ -154,10 +153,7 @@ export const Reports = () => {
           </div>
         </div>}
       
-      {isSecondaryLoading ? (
-        <ChartCardSkeleton />
-      ) : (
-        <Card className="shadow-royal overflow-hidden animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : <Card className="shadow-royal overflow-hidden animate-fade-in">
         <CardHeader className="p-4 sm:p-5">
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-accent" />
@@ -215,7 +211,6 @@ export const Reports = () => {
               </div>
             </> : <EmptyChartNotice />}
         </CardContent>
-      </Card>
-      )}
+      </Card>}
     </div>;
 };

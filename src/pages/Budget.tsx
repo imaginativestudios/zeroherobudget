@@ -19,6 +19,8 @@ export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
+  
+  // Critical: Load expenses first (needed for budget display)
   const {
     expenses,
     isLoading: isLoadingExpenses,
@@ -26,13 +28,16 @@ export const Budget = () => {
     updateExpense: updateSupabaseExpense,
     removeExpense: removeSupabaseExpense,
     setExpensesOrder
-  } = useLocalExpenses();
+  } = useLocalExpenses('critical');
+  
+  // Secondary: Load transactions for actuals comparison
   const {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
-  } = useLocalTransactions();
+  } = useLocalTransactions('secondary');
   
-  const isLoading = isLoadingExpenses || isLoadingTransactions;
+  const isCriticalLoading = isLoadingExpenses;
+  const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
@@ -318,7 +323,7 @@ export const Budget = () => {
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {isLoading ? (
+      {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
         categoryData.length > 0 && <Card className="shadow-royal">
@@ -353,7 +358,7 @@ export const Budget = () => {
       )}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {isLoading ? (
+      {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
         categoryData.length > 0 && <Card className="shadow-royal">

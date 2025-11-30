@@ -1,4 +1,6 @@
 import { useUserLocalStorage } from './useUserLocalStorage';
+import { usePriorityLocalStorage } from './usePriorityLocalStorage';
+import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Subscription {
@@ -15,8 +17,10 @@ export interface Subscription {
   updated_at: string;
 }
 
-export function useLocalSubscriptions() {
-  const [subscriptions, setSubscriptions, isLoading] = useUserLocalStorage<Subscription[]>('subscriptions', []);
+export function useLocalSubscriptions(priority: 'critical' | 'secondary' = 'critical') {
+  const loadState = useProgressiveLoad();
+  const shouldLoad = useShouldLoad(priority, loadState);
+  const [subscriptions, setSubscriptions, isLoading] = usePriorityLocalStorage<Subscription[]>('subscriptions', [], priority, shouldLoad);
 
   const addSubscription = (subscription: Omit<Subscription, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     const newSubscription: Subscription = {

@@ -8,6 +8,7 @@ import { DemoDataButton } from "./DemoDataButton";
 import { Logo } from "./Logo";
 import { OnboardingTour } from "./OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -88,81 +89,83 @@ export const Layout = ({ children }: LayoutProps) => {
         aria-label="Main navigation"
         data-tour="nav-sidebar"
       >
-        <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full" role="navigation" aria-label="Primary navigation">
-          <div className="p-4 lg:p-6">
-            {/* Desktop Header */}
-            <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
-              <Logo className="h-8 w-auto" />
-              <span className="sr-only">Zero Hero</span>
-            </Link>
-            
-            {/* Mobile padding for header */}
-            <div className="lg:hidden mb-4 mt-16" />
-            
-            <ul className="space-y-2">
-              {navigationItems.map((item) => {
-                const isActive = location.pathname === item.href;
-                // Map href to data-tour attribute for navigation items
-                const tourId = item.href === '/budgets' ? 'nav-budgets'
-                  : item.href === '/debts' ? 'nav-debts'
-                  : item.href === '/transactions' ? 'nav-transactions'
-                  : item.href === '/subscriptions' ? 'nav-subscriptions'
-                  : item.href === '/achievements' ? 'nav-achievements'
-                  : item.href === '/reports' ? 'nav-reports'
-                  : undefined;
-                
-                return (
-                  <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
-                        isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-                      )}
-                      aria-current={isActive ? "page" : undefined}
-                      data-tour={tourId}
-                    >
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                      <span className="font-medium truncate">{item.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+        <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
+          <ScrollArea className="flex-1">
+            <div className="p-4 lg:p-6">
+              {/* Desktop Header */}
+              <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
+                <Logo className="h-8 w-auto" />
+                <span className="sr-only">Zero Hero</span>
+              </Link>
+              
+              {/* Mobile padding for header */}
+              <div className="lg:hidden mb-4 mt-16" />
+              
+              <ul className="space-y-2">
+                {navigationItems.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  // Map href to data-tour attribute for navigation items
+                  const tourId = item.href === '/budgets' ? 'nav-budgets'
+                    : item.href === '/debts' ? 'nav-debts'
+                    : item.href === '/transactions' ? 'nav-transactions'
+                    : item.href === '/subscriptions' ? 'nav-subscriptions'
+                    : item.href === '/achievements' ? 'nav-achievements'
+                    : item.href === '/reports' ? 'nav-reports'
+                    : undefined;
+                  
+                  return (
+                    <li key={item.name}>
+                      <Link
+                        to={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                        )}
+                        aria-current={isActive ? "page" : undefined}
+                        data-tour={tourId}
+                      >
+                        <item.icon className="h-5 w-5" aria-hidden="true" />
+                        <span className="font-medium truncate">{item.name}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
 
-            {/* User section at bottom */}
-            {user && (
-              <div className="mt-8 pt-4 border-t border-sidebar-border space-y-3">
-                <div className="text-xs text-sidebar-foreground/70 mb-2 px-3">
-                  Signed in as {user.email}
-                </div>
-                <div className="px-3 space-y-2">
-                  <DemoDataButton />
+              {/* User section at bottom */}
+              {user && (
+                <div className="mt-8 pt-4 border-t border-sidebar-border space-y-3">
+                  <div className="text-xs text-sidebar-foreground/70 mb-2 px-3">
+                    Signed in as {user.email}
+                  </div>
+                  <div className="px-3 space-y-2">
+                    <DemoDataButton />
+                    <Button
+                      onClick={resetTour}
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-2"
+                    >
+                      <Compass className="h-4 w-4" />
+                      Take a Tour
+                    </Button>
+                  </div>
                   <Button
-                    onClick={resetTour}
-                    variant="outline"
+                    onClick={signOut}
+                    variant="ghost"
                     size="sm"
-                    className="w-full gap-2"
+                    className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
                   >
-                    <Compass className="h-4 w-4" />
-                    Take a Tour
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
                   </Button>
                 </div>
-                <Button
-                  onClick={signOut}
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          </ScrollArea>
         </nav>
       </div>
 

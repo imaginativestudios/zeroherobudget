@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
@@ -20,14 +21,18 @@ export const Budget = () => {
   const [assets, setAssets] = useAssets();
   const {
     expenses,
+    isLoading: isLoadingExpenses,
     addExpense: addSupabaseExpense,
     updateExpense: updateSupabaseExpense,
     removeExpense: removeSupabaseExpense,
     setExpensesOrder
   } = useLocalExpenses();
   const {
-    getMonthlyActualsByCategory
+    getMonthlyActualsByCategory,
+    isLoading: isLoadingTransactions
   } = useLocalTransactions();
+  
+  const isLoading = isLoadingExpenses || isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
@@ -313,7 +318,10 @@ export const Budget = () => {
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {categoryData.length > 0 && <Card className="shadow-royal">
+      {isLoading ? (
+        <ChartCardSkeleton />
+      ) : (
+        categoryData.length > 0 && <Card className="shadow-royal">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Crown className="h-5 w-5 text-chart-1" />
@@ -341,10 +349,14 @@ export const Budget = () => {
             </ResponsiveContainer>
             <CustomPieLegend data={pieLegendData} />
           </CardContent>
-        </Card>}
+        </Card>
+      )}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {categoryData.length > 0 && <Card className="shadow-royal">
+      {isLoading ? (
+        <ChartCardSkeleton />
+      ) : (
+        categoryData.length > 0 && <Card className="shadow-royal">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-chart-2" />
@@ -393,7 +405,8 @@ export const Budget = () => {
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>}
+        </Card>
+      )}
 
       {/* Expenses Section */}
       <Card className="shadow-royal">

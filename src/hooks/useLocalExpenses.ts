@@ -15,7 +15,7 @@ export interface Expense {
 }
 
 export function useLocalExpenses() {
-  const [expenses, setExpenses] = useUserLocalStorage<Expense[]>('expenses', []);
+  const [expenses, setExpenses, isLoading] = useUserLocalStorage<Expense[]>('expenses', []);
 
   // Sort expenses by sort_order
   const sortedExpenses = [...expenses].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
@@ -58,7 +58,7 @@ export function useLocalExpenses() {
 
   return {
     expenses: sortedExpenses,
-    isLoading: false,
+    isLoading,
     addExpense,
     updateExpense,
     removeExpense,

@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
+import { FinancialCardSkeleton } from "@/components/FinancialCardSkeleton";
+import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { ChartInsight } from "@/components/ChartInsight";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
@@ -24,15 +26,17 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, Ca
 
 export const Dashboard = () => {
   const [income] = useIncome();
-  const [expenses] = useExpenses();
-  const { debts } = useLocalDebts();
+  const [expenses, , isLoadingExpenses] = useExpenses();
+  const { debts, isLoading: isLoadingDebts } = useLocalDebts();
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
 
-  const { getTotalMonthlySpend } = useLocalSubscriptions();
-  const { transactions } = useLocalTransactions();
+  const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions();
+  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions();
   const { profile } = useProfile();
+
+  const isLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions || isLoadingTransactions;
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
@@ -206,51 +210,63 @@ export const Dashboard = () => {
           <div className="h-px flex-1 bg-border"></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch" data-tour="financial-overview">
-        <FinancialCard
-          title="Monthly Income"
-          amount={income}
-          icon={DollarSign}
-          trend="up"
-          to="/reports/income"
-          previousAmount={insightData.previousIncome}
-          insight={insights.income}
-        />
-        <FinancialCard
-          title="Planned Expenses"
-          amount={totalExpenses}
-          icon={TrendingUp}
-          trend="neutral"
-          to="/reports/expenses"
-          previousAmount={insightData.previousExpenses}
-          insight={insights.expenses}
-        />
-        <FinancialCard
-          title="Subscriptions"
-          amount={monthlySubscriptionSpend}
-          icon={CreditCard}
-          trend="neutral"
-          to="/subscriptions"
-          previousAmount={insightData.previousSubscriptions}
-          insight={insights.subscriptions}
-        />
-        <FinancialCard
-          title="Available for Debt"
-          amount={leftover}
-          icon={Target}
-          trend="up"
-          to="/reports/available"
-          previousAmount={insightData.previousAvailableForDebt}
-          insight={insights.availableForDebt}
-        />
-        <FinancialCard
-          title="Net Worth"
-          amount={netWorth}
-          icon={AlertTriangle}
-          trend={netWorth >= 0 ? "up" : "down"}
-          to="/reports/net-worth"
-          previousAmount={insightData.previousNetWorth}
-          insight={insights.netWorth}
-        />
+        {isLoading ? (
+          <>
+            <FinancialCardSkeleton />
+            <FinancialCardSkeleton />
+            <FinancialCardSkeleton />
+            <FinancialCardSkeleton />
+            <FinancialCardSkeleton />
+          </>
+        ) : (
+          <>
+            <FinancialCard
+              title="Monthly Income"
+              amount={income}
+              icon={DollarSign}
+              trend="up"
+              to="/reports/income"
+              previousAmount={insightData.previousIncome}
+              insight={insights.income}
+            />
+            <FinancialCard
+              title="Planned Expenses"
+              amount={totalExpenses}
+              icon={TrendingUp}
+              trend="neutral"
+              to="/reports/expenses"
+              previousAmount={insightData.previousExpenses}
+              insight={insights.expenses}
+            />
+            <FinancialCard
+              title="Subscriptions"
+              amount={monthlySubscriptionSpend}
+              icon={CreditCard}
+              trend="neutral"
+              to="/subscriptions"
+              previousAmount={insightData.previousSubscriptions}
+              insight={insights.subscriptions}
+            />
+            <FinancialCard
+              title="Available for Debt"
+              amount={leftover}
+              icon={Target}
+              trend="up"
+              to="/reports/available"
+              previousAmount={insightData.previousAvailableForDebt}
+              insight={insights.availableForDebt}
+            />
+            <FinancialCard
+              title="Net Worth"
+              amount={netWorth}
+              icon={AlertTriangle}
+              trend={netWorth >= 0 ? "up" : "down"}
+              to="/reports/net-worth"
+              previousAmount={insightData.previousNetWorth}
+              insight={insights.netWorth}
+            />
+          </>
+        )}
         </div>
       </div>
 
@@ -262,6 +278,13 @@ export const Dashboard = () => {
           <div className="h-px flex-1 bg-border"></div>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        {isLoading ? (
+          <>
+            <ChartCardSkeleton />
+            <ChartCardSkeleton />
+          </>
+        ) : (
+          <>
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden h-full">
           <CardHeader className="p-4 sm:p-5">
@@ -414,6 +437,8 @@ export const Dashboard = () => {
             )}
           </CardContent>
         </Card>
+          </>
+        )}
         </div>
       </div>
 

@@ -23,7 +23,7 @@ export interface MonthlyActuals {
 }
 
 export function useLocalTransactions() {
-  const [transactions, setTransactions] = useUserLocalStorage<Transaction[]>('transactions', []);
+  const [transactions, setTransactions, isLoading] = useUserLocalStorage<Transaction[]>('transactions', []);
 
   const addTransaction = async (transaction: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     const newTransaction: Transaction = {
@@ -117,7 +117,7 @@ export function useLocalTransactions() {
 
   return {
     transactions,
-    isLoading: false,
+    isLoading,
     addTransaction,
     addTransactionsBulk,
     updateTransaction,

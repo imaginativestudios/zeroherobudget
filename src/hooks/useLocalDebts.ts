@@ -15,7 +15,7 @@ export interface Debt {
 }
 
 export function useLocalDebts() {
-  const [debts, setDebts] = useUserLocalStorage<Debt[]>('debts', []);
+  const [debts, setDebts, isLoading] = useUserLocalStorage<Debt[]>('debts', []);
 
   const addDebt = (debt: Omit<Debt, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     const newDebt: Debt = {
@@ -44,7 +44,7 @@ export function useLocalDebts() {
 
   return {
     debts,
-    isLoading: false,
+    isLoading,
     addDebt,
     updateDebt,
     removeDebt,

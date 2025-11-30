@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { BudgetVarianceAlert } from "@/components/BudgetVarianceAlert";
 import { ChartInsight } from "@/components/ChartInsight";
+import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useExpenses } from "@/hooks/useLocalSettings";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -16,8 +17,11 @@ export const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [expenses] = useExpenses();
   const {
-    getMonthlyActualsByCategory
+    getMonthlyActualsByCategory,
+    isLoading: isLoadingTransactions
   } = useLocalTransactions();
+  
+  const isLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
   const expenseData = useMemo(() => expenses.map(expense => ({
     name: expense.name.length > 15 ? expense.name.substring(0, 15) + '...' : expense.name,
@@ -142,7 +146,10 @@ export const Reports = () => {
           </div>
         </div>}
       
-      <Card className="shadow-royal overflow-hidden">
+      {isLoading ? (
+        <ChartCardSkeleton />
+      ) : (
+        <Card className="shadow-royal overflow-hidden">
         <CardHeader className="p-4 sm:p-5">
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-accent" />
@@ -201,5 +208,6 @@ export const Reports = () => {
             </> : <EmptyChartNotice />}
         </CardContent>
       </Card>
+      )}
     </div>;
 };

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FinancialCard } from "@/components/FinancialCard";
+import { useBankConnections } from "@/hooks/useBankConnections";
 import { FinancialCardSkeleton } from "@/components/FinancialCardSkeleton";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { ChartInsight } from "@/components/ChartInsight";
@@ -39,6 +40,11 @@ export const Dashboard = () => {
   // Secondary data (transactions for charts) loads after
   const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
   const { profile } = useProfile();
+  
+  // Bank connection data
+  const { institutions, linkedAccounts, getConnectionStatus } = useBankConnections();
+  const bankConnectionStatus = getConnectionStatus();
+  const isSyncing = institutions.some(inst => inst.connectionStatus === 'syncing');
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
@@ -236,6 +242,11 @@ export const Dashboard = () => {
               to="/reports/income"
               previousAmount={insightData.previousIncome}
               insight={insights.income}
+              syncStatus={linkedAccounts.length > 0 ? {
+                isSyncing,
+                lastSync: bankConnectionStatus.lastSync,
+                connectedBanks: bankConnectionStatus.connectedInstitutions,
+              } : undefined}
             />
             <FinancialCard
               title="Planned Expenses"
@@ -245,6 +256,11 @@ export const Dashboard = () => {
               to="/reports/expenses"
               previousAmount={insightData.previousExpenses}
               insight={insights.expenses}
+              syncStatus={linkedAccounts.length > 0 ? {
+                isSyncing,
+                lastSync: bankConnectionStatus.lastSync,
+                connectedBanks: bankConnectionStatus.connectedInstitutions,
+              } : undefined}
             />
             <FinancialCard
               title="Subscriptions"
@@ -254,6 +270,11 @@ export const Dashboard = () => {
               to="/subscriptions"
               previousAmount={insightData.previousSubscriptions}
               insight={insights.subscriptions}
+              syncStatus={linkedAccounts.length > 0 ? {
+                isSyncing,
+                lastSync: bankConnectionStatus.lastSync,
+                connectedBanks: bankConnectionStatus.connectedInstitutions,
+              } : undefined}
             />
             <FinancialCard
               title="Available for Debt"
@@ -263,6 +284,11 @@ export const Dashboard = () => {
               to="/reports/available"
               previousAmount={insightData.previousAvailableForDebt}
               insight={insights.availableForDebt}
+              syncStatus={linkedAccounts.length > 0 ? {
+                isSyncing,
+                lastSync: bankConnectionStatus.lastSync,
+                connectedBanks: bankConnectionStatus.connectedInstitutions,
+              } : undefined}
             />
             <FinancialCard
               title="Net Worth"
@@ -272,6 +298,11 @@ export const Dashboard = () => {
               to="/reports/net-worth"
               previousAmount={insightData.previousNetWorth}
               insight={insights.netWorth}
+              syncStatus={linkedAccounts.length > 0 ? {
+                isSyncing,
+                lastSync: bankConnectionStatus.lastSync,
+                connectedBanks: bankConnectionStatus.connectedInstitutions,
+              } : undefined}
             />
           </>
         )}

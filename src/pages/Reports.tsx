@@ -137,7 +137,7 @@ export const Reports = () => {
       </div>
 
       {/* Budget Variance Alerts */}
-      {varianceAlerts.length > 0 && <div className="space-y-3">
+      {varianceAlerts.length > 0 && <div className="space-y-3 animate-fade-in">
           <h2 className="text-lg font-semibold">Budget Variance Alerts</h2>
           <div className="grid gap-3">
             {varianceAlerts.map(({
@@ -151,7 +151,7 @@ export const Reports = () => {
       {isSecondaryLoading ? (
         <ChartCardSkeleton />
       ) : (
-        <Card className="shadow-royal overflow-hidden">
+        <Card className="shadow-royal overflow-hidden animate-fade-in">
         <CardHeader className="p-4 sm:p-5">
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-accent" />

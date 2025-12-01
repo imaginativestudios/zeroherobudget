@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const audienceId = Deno.env.get("RESEND_AUDIENCE_ID");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -78,6 +79,20 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     console.log("Welcome email sent successfully:", emailResponse);
+
+    // Add contact to Resend Audience
+    if (audienceId) {
+      try {
+        const audienceResponse = await resend.contacts.create({
+          email: email,
+          audienceId: audienceId,
+        });
+        console.log("Contact added to audience:", audienceResponse);
+      } catch (audienceError: any) {
+        // Log but don't fail the request if audience addition fails
+        console.error("Failed to add contact to audience:", audienceError);
+      }
+    }
 
     return new Response(
       JSON.stringify({ 

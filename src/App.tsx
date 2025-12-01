@@ -25,6 +25,7 @@ import { NetWorthReport } from "@/pages/reports/NetWorthReport";
 import { SubscriptionsReport } from "@/pages/reports/SubscriptionsReport";
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -43,6 +44,7 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Index />} />
+          <Route path="/demo" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

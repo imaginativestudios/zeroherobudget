@@ -23,9 +23,11 @@ import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
 import { SubscriptionsReport } from "@/pages/reports/SubscriptionsReport";
-import Auth from "./pages/Auth";
-import Index from "./pages/Index";
+import ComingSoon from "./pages/ComingSoon";
 import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
+import AdminLogin from "./pages/AdminLogin";
+import AdminWaitlist from "./pages/AdminWaitlist";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -43,13 +45,17 @@ const App = () => (
         <BrowserRouter>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<ComingSoon />} />
           <Route path="/demo" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/help" element={<HelpSupport />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/waitlist" element={<AdminWaitlist />} />
           
           {/* Protected routes with layout */}
           <Route path="/*" element={

@@ -1,8 +1,14 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const audienceId = Deno.env.get("RESEND_AUDIENCE_ID");
+
+// Initialize Supabase client with service role key for database writes
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,6 +39,35 @@ const handler = async (req: Request): Promise<Response> => {
           headers: { "Content-Type": "application/json", ...corsHeaders },
         }
       );
+    }
+
+    // Get IP address and user agent for tracking
+    const ipAddress = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const userAgent = req.headers.get("user-agent") || "unknown";
+
+    // Insert into database (upsert to handle duplicates gracefully)
+    const { data: signupData, error: dbError } = await supabase
+      .from("waitlist_signups")
+      .upsert(
+        { 
+          email, 
+          source: "coming_soon",
+          ip_address: ipAddress,
+          user_agent: userAgent
+        },
+        { 
+          onConflict: "email",
+          ignoreDuplicates: true 
+        }
+      )
+      .select()
+      .single();
+
+    if (dbError && dbError.code !== "23505") { // Ignore duplicate key errors
+      console.error("Database error:", dbError);
+      // Continue even if DB insert fails - still send email
+    } else {
+      console.log("Signup saved to database:", signupData);
     }
 
     // Send welcome email

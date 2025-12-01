@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Mail, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const ComingSoon = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !email.includes("@")) {
@@ -21,18 +23,40 @@ const ComingSoon = () => {
       return;
     }
 
-    // Store email in localStorage (can be connected to a real service later)
-    const existingEmails = JSON.parse(localStorage.getItem("coming_soon_emails") || "[]");
-    if (!existingEmails.includes(email)) {
-      existingEmails.push(email);
-      localStorage.setItem("coming_soon_emails", JSON.stringify(existingEmails));
-    }
+    setIsLoading(true);
 
-    setSubmitted(true);
-    toast({
-      title: "Thanks for your interest!",
-      description: "We'll notify you when Zero Hero launches.",
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke('subscribe-waitlist', {
+        body: { email }
+      });
+
+      if (error) throw error;
+
+      console.log("Subscription successful:", data);
+
+      setSubmitted(true);
+      toast({
+        title: "You're on the list! 🎉",
+        description: "Check your email for a confirmation message.",
+      });
+    } catch (error: any) {
+      console.error("Error subscribing to waitlist:", error);
+      
+      // Fallback to localStorage if edge function fails
+      const existingEmails = JSON.parse(localStorage.getItem("coming_soon_emails") || "[]");
+      if (!existingEmails.includes(email)) {
+        existingEmails.push(email);
+        localStorage.setItem("coming_soon_emails", JSON.stringify(existingEmails));
+      }
+
+      setSubmitted(true);
+      toast({
+        title: "Thanks for your interest!",
+        description: "We'll notify you when Zero Hero launches.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -78,9 +102,10 @@ const ComingSoon = () => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="h-12 bg-accent hover:bg-accent-dark text-accent-foreground font-semibold shadow-lg"
+                  disabled={isLoading}
+                  className="h-12 bg-accent hover:bg-accent-dark text-accent-foreground font-semibold shadow-lg disabled:opacity-50"
                 >
-                  Notify Me
+                  {isLoading ? "Subscribing..." : "Notify Me"}
                 </Button>
               </div>
               <p className="text-xs text-primary-foreground/70">

@@ -1,7 +1,7 @@
-import Landing from './Landing';
+import ComingSoon from './ComingSoon';
 
 const Index = () => {
-  return <Landing />;
+  return <ComingSoon />;
 };
 
 export default Index;

@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { Resend } from "npm:resend@4.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import React from "npm:react@18.3.1";
+import { renderAsync } from "npm:@react-email/components@0.0.22";
+import { WaitlistWelcomeEmail } from "./_templates/waitlist-welcome.tsx";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const audienceId = Deno.env.get("RESEND_AUDIENCE_ID");
@@ -70,47 +73,17 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Signup saved to database:", signupData);
     }
 
+    // Render React Email template
+    const emailHtml = await renderAsync(
+      React.createElement(WaitlistWelcomeEmail, { email })
+    );
+
     // Send welcome email
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <onboarding@resend.dev>",
       to: [email],
-      subject: "Welcome to the Zero Hero Waitlist! 🎉",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #7E22CE; text-align: center;">Welcome to Zero Hero!</h1>
-          
-          <p style="font-size: 16px; line-height: 1.6;">
-            Thank you for your interest in Zero Hero! We're excited to have you on our waitlist.
-          </p>
-          
-          <p style="font-size: 16px; line-height: 1.6;">
-            Zero Hero is being built to help you <strong>transform debt into victory</strong> through:
-          </p>
-          
-          <ul style="font-size: 16px; line-height: 1.8;">
-            <li>Smart debt payoff strategies (Snowball & Avalanche methods)</li>
-            <li>Budget tracking and spending visualization</li>
-            <li>Subscription management to reduce recurring expenses</li>
-            <li>Household collaboration for shared financial goals</li>
-            <li>Progress tracking with achievements and insights</li>
-          </ul>
-          
-          <p style="font-size: 16px; line-height: 1.6;">
-            We'll notify you as soon as Zero Hero launches. Get ready to take control of your financial future!
-          </p>
-          
-          <p style="font-size: 16px; line-height: 1.6; margin-top: 30px;">
-            Best regards,<br>
-            <strong>The Zero Hero Team</strong>
-          </p>
-          
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-          
-          <p style="font-size: 12px; color: #6b7280; text-align: center;">
-            From balances due to a more balanced you.
-          </p>
-        </div>
-      `,
+      subject: "Welcome to Zero Hero - You're on the List!",
+      html: emailHtml,
     });
 
     console.log("Welcome email sent successfully:", emailResponse);

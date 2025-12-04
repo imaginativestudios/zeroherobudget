@@ -29,11 +29,11 @@ All colors MUST be HSL.
     --muted: 175 15% 95%;
     --muted-foreground: 175 10% 40%; /* Improved contrast from 45% to 40% */
 
-    --accent: 35 85% 45%; /* Improved contrast: darker, less saturated yellow-orange */
+    --accent: 16 85% 52%; /* Coral - complementary to teal */
     --accent-foreground: 0 0% 100%; /* White text on accent backgrounds */
     
-    --accent-light: 35 85% 55%; /* Lighter variant */
-    --accent-dark: 35 85% 35%; /* Darker variant for better contrast */
+    --accent-light: 16 80% 60%; /* Lighter coral variant */
+    --accent-dark: 16 85% 42%; /* Darker coral for hover states */
 
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;
@@ -64,7 +64,7 @@ All colors MUST be HSL.
     --chart-1: 280 70% 50%;   /* Indigo - Housing */
     --chart-2: 200 80% 45%;   /* Blue - Utilities */
     --chart-3: 160 60% 40%;   /* Teal - Transportation */
-    --chart-4: 35 85% 50%;    /* Gold/Orange - Food */
+    --chart-4: 45 90% 48%;    /* Amber - Food */
     --chart-5: 340 65% 50%;   /* Rose - Insurance & Healthcare */
     --chart-6: 280 55% 55%;   /* Violet - Personal Care */
     --chart-7: 45 90% 50%;    /* Yellow - Entertainment */
@@ -74,12 +74,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 175 77% 26%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 45 100% 60%;
+    --sidebar-primary: 16 85% 58%;
     --sidebar-primary-foreground: 175 15% 8%;
     --sidebar-accent: 175 65% 35%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 175 80% 20%;
-    --sidebar-ring: 45 100% 60%;
+    --sidebar-ring: 16 85% 58%;
   }
 
   .dark {

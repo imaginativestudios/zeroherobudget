@@ -8,13 +8,13 @@
       }
 
       .st1 {
-        stroke: #e9573f;
+        stroke: #e8a317;
         stroke-miterlimit: 10;
         stroke-width: 7px;
       }
 
       .st1, .st2 {
-        fill: #e9573f;
+        fill: #e8a317;
       }
 
       .st3 {

@@ -317,18 +317,18 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: 'hsl(262, 83%, 58%)',
+          primaryColor: 'hsl(175, 77%, 26%)',
           textColor: 'hsl(var(--foreground))',
           backgroundColor: 'hsl(var(--card))',
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
-          spotlightShadow: '0 0 0 4px rgba(255, 190, 60, 0.5)',
+          spotlightShadow: '0 0 0 4px rgba(233, 87, 63, 0.5)',
           zIndex: 10000,
           width: tooltipWidth,
         },
         buttonNext: {
-          backgroundColor: 'hsl(39, 100%, 57%)',
-          color: 'hsl(262, 83%, 28%)',
+          backgroundColor: 'hsl(16, 85%, 52%)',
+          color: 'hsl(175, 80%, 18%)',
           fontSize: 14,
           fontWeight: 600,
           borderRadius: 8,

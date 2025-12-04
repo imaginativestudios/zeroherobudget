@@ -134,14 +134,14 @@ export function useAchievements(currentStats: DebtStats) {
                 angle: 60,
                 spread: 55,
                 origin: { x: 0 },
-                colors: ['#0f766e', '#e9573f', '#fbbf24']
+                colors: ['#0f766e', '#e8a317', '#fbbf24']
               });
               confetti({
                 particleCount: 5,
                 angle: 120,
                 spread: 55,
                 origin: { x: 1 },
-                colors: ['#0f766e', '#e9573f', '#fbbf24']
+                colors: ['#0f766e', '#e8a317', '#fbbf24']
               });
               
               if (Date.now() < end) {
@@ -155,7 +155,7 @@ export function useAchievements(currentStats: DebtStats) {
               particleCount: 100,
               spread: 70,
               origin: { y: 0.6 },
-              colors: ['#0f766e', '#e9573f', '#fbbf24']
+              colors: ['#0f766e', '#e8a317', '#fbbf24']
             });
           } else {
             // Standard celebration
@@ -164,7 +164,7 @@ export function useAchievements(currentStats: DebtStats) {
               particleCount: 50,
               spread: 60,
               origin: { y: 0.7 },
-              colors: ['#0f766e', '#e9573f']
+              colors: ['#0f766e', '#e8a317']
             });
           }
         }, index * 300); // Stagger multiple unlocks

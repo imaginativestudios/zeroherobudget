@@ -1,6 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,8 +23,8 @@ All colors MUST be HSL.
     --popover: 0 0% 89%;
     --popover-foreground: 0 0% 9%;
 
-    --primary: 161 93% 30%;
-    --primary-foreground: 151 80% 95%;
+    --primary: 20 90% 48%;
+    --primary-foreground: 33 100% 96%;
 
     --primary-light: 260 100% 55%;
     --primary-dark: 260 100% 25%;
@@ -32,8 +35,8 @@ All colors MUST be HSL.
     --muted: 0 0% 63%;
     --muted-foreground: 0 0% 9%; /* Improved contrast from 45% to 40% */
 
-    --accent: 166 76% 96%; /* Improved contrast: darker, less saturated yellow-orange */
-    --accent-foreground: 173 80% 40%; /* White text on accent backgrounds */
+    --accent: 47 100% 96%; /* Improved contrast: darker, less saturated yellow-orange */
+    --accent-foreground: 37 92% 50%; /* White text on accent backgrounds */
 
     --accent-light: 35 85% 55%; /* Lighter variant */
     --accent-dark: 35 85% 35%; /* Darker variant for better contrast */
@@ -46,7 +49,7 @@ All colors MUST be HSL.
 
     --border: 0 0% 83%; /* Improved contrast from 88% to 82% */
     --input: 0 0% 83%; /* Improved contrast from 92% to 88% */
-    --ring: 161 93% 30%;
+    --ring: 20 90% 48%;
 
     --radius: 0.75rem;
 
@@ -64,10 +67,10 @@ All colors MUST be HSL.
     --transition-royal: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Budget Category Colors - 10 distinct colors for consistent category theming */
-    --chart-1: 158 64% 51%;   /* Purple - Housing */
-    --chart-2: 141 69% 58%;   /* Blue - Utilities */
-    --chart-3: 172 66% 50%;   /* Teal - Transportation */
-    --chart-4: 82 77% 55%;    /* Gold/Orange - Food */
+    --chart-1: 27 95% 60%;   /* Purple - Housing */
+    --chart-2: 43 96% 56%;   /* Blue - Utilities */
+    --chart-3: 47 95% 53%;   /* Teal - Transportation */
+    --chart-4: 24 94% 53%;    /* Gold/Orange - Food */
     --chart-5: 0 0% 45%;   /* Rose - Insurance & Healthcare */
     --chart-6: 280 55% 55%;   /* Violet - Personal Care */
     --chart-7: 45 90% 50%;    /* Yellow - Entertainment */
@@ -77,16 +80,16 @@ All colors MUST be HSL.
 
     --sidebar-background: 260 100% 35%;
     --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 161 93% 30%;
-    --sidebar-primary-foreground: 151 80% 95%;
+    --sidebar-primary: 20 90% 48%;
+    --sidebar-primary-foreground: 33 100% 96%;
     --sidebar-accent: 0 0% 32%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 83%;
-    --sidebar-ring: 161 93% 30%;
+    --sidebar-ring: 20 90% 48%;
     --sidebar: 0 0% 98%;
-    --font-sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-sans: 'Roboto', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-serif: 'Libre Caslon Text', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
     --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
     --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
@@ -109,8 +112,8 @@ All colors MUST be HSL.
     --popover: 0 0% 25%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 158 64% 51%;
-    --primary-foreground: 165 91% 9%;
+    --primary: 27 95% 60%;
+    --primary-foreground: 12 81% 14%;
 
     --secondary: 0 0% 45%;
     --secondary-foreground: 0 0% 98%;
@@ -118,27 +121,27 @@ All colors MUST be HSL.
     --muted: 0 0% 45%;
     --muted-foreground: 0 0% 98%;
 
-    --accent: 178 84% 10%;
-    --accent-foreground: 172 66% 50%;
+    --accent: 20 91% 14%;
+    --accent-foreground: 43 96% 56%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 85% 97%;
 
     --border: 0 0% 32%;
     --input: 0 0% 32%;
-    --ring: 158 64% 51%;
+    --ring: 27 95% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 158 64% 51%;
-    --sidebar-primary-foreground: 165 91% 9%;
-    --sidebar-accent: 172 66% 50%;
-    --sidebar-accent-foreground: 178 84% 10%;
+    --sidebar-primary: 27 95% 60%;
+    --sidebar-primary-foreground: 12 81% 14%;
+    --sidebar-accent: 43 96% 56%;
+    --sidebar-accent-foreground: 20 91% 14%;
     --sidebar-border: 0 0% 32%;
-    --sidebar-ring: 158 64% 51%;
-    --chart-1: 156 71% 66%;
-    --chart-2: 141 76% 73%;
-    --chart-3: 170 76% 64%;
-    --chart-4: 81 84% 67%;
+    --sidebar-ring: 27 95% 60%;
+    --chart-1: 30 97% 72%;
+    --chart-2: 45 96% 64%;
+    --chart-3: 48 96% 76%;
+    --chart-4: 27 95% 60%;
     --chart-5: 0 0% 45%;
     --sidebar: 0 0% 14%;
     --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);

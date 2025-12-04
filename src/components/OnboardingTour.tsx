@@ -327,7 +327,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
           width: tooltipWidth,
         },
         buttonNext: {
-          backgroundColor: 'hsl(42, 85%, 50%)',
+          backgroundColor: 'hsl(42, 85%, 43%)',
           color: 'hsl(175, 80%, 18%)',
           fontSize: 14,
           fontWeight: 600,

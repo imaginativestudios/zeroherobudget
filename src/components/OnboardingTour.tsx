@@ -348,7 +348,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
         tooltip: {
           borderRadius: 12,
           padding: isTabletOrMobile ? 16 : 20,
-          boxShadow: '0 10px 40px -10px rgba(131, 56, 236, 0.3)',
+          boxShadow: '0 10px 40px -10px rgba(15, 118, 110, 0.3)',
           maxWidth: tooltipWidth,
           position: 'relative',
           zIndex: 10002,

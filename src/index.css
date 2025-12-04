@@ -29,11 +29,11 @@ All colors MUST be HSL.
     --muted: 175 15% 95%;
     --muted-foreground: 175 10% 40%; /* Improved contrast from 45% to 40% */
 
-    --accent: 16 85% 52%; /* Coral - complementary to teal */
-    --accent-foreground: 0 0% 100%; /* White text on accent backgrounds */
+    --accent: 42 85% 50%; /* Warm Amber - harmonious with teal */
+    --accent-foreground: 175 80% 18%; /* Dark teal text on accent backgrounds */
     
-    --accent-light: 16 80% 60%; /* Lighter coral variant */
-    --accent-dark: 16 85% 42%; /* Darker coral for hover states */
+    --accent-light: 42 80% 60%; /* Lighter amber variant */
+    --accent-dark: 42 85% 40%; /* Darker amber for hover states */
 
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;
@@ -74,12 +74,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 175 77% 26%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 16 85% 58%;
+    --sidebar-primary: 42 85% 55%;
     --sidebar-primary-foreground: 175 15% 8%;
     --sidebar-accent: 175 65% 35%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 175 80% 20%;
-    --sidebar-ring: 16 85% 58%;
+    --sidebar-ring: 42 85% 55%;
   }
 
   .dark {

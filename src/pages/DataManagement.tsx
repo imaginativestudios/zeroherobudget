@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2 } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2, Clock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -9,7 +9,7 @@ import { DataImportWizard } from '@/components/import/DataImportWizard';
 import { RestoreBackupDialog } from '@/components/backup/RestoreBackupDialog';
 import { ClearDataDialog } from '@/components/backup/ClearDataDialog';
 import { ImportType } from '@/lib/importUtils';
-import { createBackup, downloadBackup, gatherUserData } from '@/lib/dataBackup';
+import { createBackup, downloadBackup, getLastBackupTimestamp } from '@/lib/dataBackup';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { toCsv, downloadCsv } from '@/lib/csvUtils';
@@ -17,6 +17,7 @@ import { useLocalTransactions } from '@/hooks/useLocalTransactions';
 import { useLocalExpenses } from '@/hooks/useLocalExpenses';
 import { useLocalDebts } from '@/hooks/useLocalDebts';
 import { useLocalSubscriptions } from '@/hooks/useLocalSubscriptions';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function DataManagement() {
   const { user } = useAuth();
@@ -26,6 +27,14 @@ export default function DataManagement() {
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [selectedImportType, setSelectedImportType] = useState<ImportType>('transactions');
+  const [lastBackup, setLastBackup] = useState<string | null>(null);
+
+  // Load last backup timestamp
+  useEffect(() => {
+    if (user) {
+      setLastBackup(getLastBackupTimestamp(user.id));
+    }
+  }, [user]);
 
   // Load data for stats and CSV export
   const { transactions } = useLocalTransactions();
@@ -59,7 +68,8 @@ export default function DataManagement() {
 
     try {
       const backup = createBackup(user.id);
-      downloadBackup(backup);
+      downloadBackup(backup, user.id);
+      setLastBackup(new Date().toISOString());
       toast({
         title: 'Backup Created',
         description: `Downloaded backup with ${totalItems} items.`,
@@ -297,10 +307,20 @@ export default function DataManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-3">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
                   {totalItems} total items
                 </Badge>
+                {lastBackup ? (
+                  <Badge variant="outline" className="text-xs flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    Last backup: {formatDistanceToNow(new Date(lastBackup), { addSuffix: true })}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-xs text-muted-foreground">
+                    No backups yet
+                  </Badge>
+                )}
               </div>
               <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
                 <Download className="h-4 w-4 mr-2" />

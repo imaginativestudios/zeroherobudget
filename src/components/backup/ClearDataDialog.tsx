@@ -41,7 +41,7 @@ export function ClearDataDialog({
     
     try {
       const backup = createBackup(user.id);
-      downloadBackup(backup);
+      downloadBackup(backup, user.id);
       toast({
         title: 'Backup Created',
         description: 'Your data has been backed up before clearing.',

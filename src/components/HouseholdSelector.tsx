@@ -22,7 +22,7 @@ export function HouseholdSelector() {
     return (
       <Button variant="outline" className="w-[200px] justify-start">
         <div className="flex items-center gap-2">
-          <Home className="h-4 w-4" />
+          <Home className="h-4 w-4" aria-hidden="true" />
           <span className="truncate">
             {selectedHousehold?.name || households[0]?.name}
           </span>
@@ -37,12 +37,12 @@ export function HouseholdSelector() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-[200px] justify-between">
           <div className="flex items-center gap-2">
-            <Home className="h-4 w-4" />
+            <Home className="h-4 w-4" aria-hidden="true" />
             <span className="truncate">
               {selectedHousehold?.name || 'Select Household'}
             </span>
           </div>
-          <ChevronDown className="h-4 w-4 shrink-0" />
+          <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[200px]">
@@ -52,7 +52,7 @@ export function HouseholdSelector() {
             onClick={() => setCurrentHousehold(household.id)}
             className="flex items-center gap-2"
           >
-            <Users className="h-4 w-4" />
+            <Users className="h-4 w-4" aria-hidden="true" />
             <span className="truncate">{household.name}</span>
           </DropdownMenuItem>
         ))}

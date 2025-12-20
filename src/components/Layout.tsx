@@ -153,7 +153,6 @@ export const Layout = ({ children }: LayoutProps) => {
         <div className="flex items-center justify-between p-4">
           <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
             <Logo className="h-6 sm:h-7 w-auto" />
-            <span className="sr-only">Zero Hero</span>
           </Link>
           <Button
             variant="ghost"
@@ -196,7 +195,6 @@ export const Layout = ({ children }: LayoutProps) => {
               {/* Desktop Header */}
               <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
                 <Logo className="h-8 w-auto" />
-                <span className="sr-only">Zero Hero</span>
               </Link>
               
               {/* Mobile padding for header */}
@@ -250,7 +248,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       size="sm"
                       className="w-full gap-2"
                     >
-                      <Compass className="h-4 w-4" />
+                      <Compass className="h-4 w-4" aria-hidden="true" />
                       Take a Tour
                     </Button>
                     <Button
@@ -259,7 +257,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       size="sm"
                       className="w-full gap-2"
                     >
-                      <Keyboard className="h-4 w-4" />
+                      <Keyboard className="h-4 w-4" aria-hidden="true" />
                       Shortcuts
                     </Button>
                   </div>
@@ -269,7 +267,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     size="sm"
                     className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
                   >
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                     Sign Out
                   </Button>
                 </div>

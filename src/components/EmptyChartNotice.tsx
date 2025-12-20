@@ -13,7 +13,7 @@ export const EmptyChartNotice = ({
 }: EmptyChartNoticeProps) => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-      <BarChart3 className="h-16 w-16 text-muted-foreground/40 mb-4" />
+      <BarChart3 className="h-16 w-16 text-muted-foreground/40 mb-4" aria-hidden="true" />
       <h3 className="text-lg font-semibold mb-2 text-muted-foreground">
         {title}
       </h3>
@@ -22,7 +22,7 @@ export const EmptyChartNotice = ({
       </p>
       <Button asChild>
         <Link to="/transactions" className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+          <Plus className="h-4 w-4" aria-hidden="true" />
           Add Transactions
         </Link>
       </Button>

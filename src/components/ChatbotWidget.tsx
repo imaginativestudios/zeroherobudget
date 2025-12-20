@@ -205,6 +205,10 @@ export const ChatbotWidget = () => {
     <div className="fixed bottom-4 right-4 z-50" data-tour="chatbot-widget">
       {/* Chat Panel */}
       <div
+        id="chat-panel"
+        role="dialog"
+        aria-label="Zero Hero Assistant chat"
+        aria-hidden={!isOpen}
         className={cn(
           "absolute bottom-16 right-0 w-[90vw] max-w-[380px] transition-all duration-300 ease-in-out origin-bottom-right",
           isOpen
@@ -216,21 +220,22 @@ export const ChatbotWidget = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-white" />
-              <h3 className="font-semibold text-white">Zero Hero Assistant</h3>
+              <MessageCircle className="h-5 w-5 text-white" aria-hidden="true" />
+              <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
             </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
               className="h-8 w-8 text-white hover:bg-white/20"
+              aria-label="Close chat"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 
           {/* Messages Area */}
-          <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+          <ScrollArea className="flex-1 p-4" ref={scrollRef} aria-live="polite" aria-atomic="false">
             {messages.length === 0 ? (
               <div className="space-y-4">
                 <div className="bg-muted/50 rounded-lg p-4">
@@ -272,8 +277,8 @@ export const ChatbotWidget = () => {
                       )}
                     >
                       {message.content || (
-                        <div className="flex items-center gap-2">
-                          <Loader2 className="h-3 w-3 animate-spin" />
+                        <div className="flex items-center gap-2" role="status" aria-label="Loading response">
+                          <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
                           <span className="text-xs text-muted-foreground">Thinking...</span>
                         </div>
                       )}
@@ -293,17 +298,19 @@ export const ChatbotWidget = () => {
                 placeholder="Ask a question..."
                 disabled={isStreaming}
                 className="flex-1"
+                aria-label="Type your message"
               />
               <Button
                 type="submit"
                 size="icon"
                 disabled={!inputValue.trim() || isStreaming}
                 className="shrink-0"
+                aria-label={isStreaming ? "Sending message" : "Send message"}
               >
                 {isStreaming ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4" aria-hidden="true" />
                 )}
               </Button>
             </div>
@@ -316,11 +323,14 @@ export const ChatbotWidget = () => {
         onClick={() => setIsOpen(!isOpen)}
         size="icon"
         className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
+        aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
+        aria-expanded={isOpen}
+        aria-controls="chat-panel"
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-white" />
+          <X className="h-6 w-6 text-white" aria-hidden="true" />
         ) : (
-          <MessageCircle className="h-6 w-6 text-white" />
+          <MessageCircle className="h-6 w-6 text-white" aria-hidden="true" />
         )}
       </Button>
     </div>

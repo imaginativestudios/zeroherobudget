@@ -86,7 +86,7 @@ export const FinancialCard = ({
       <CardHeader className="pb-2 p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 transition-transform duration-200 group-hover:scale-105 min-w-0 flex-1">
-            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" aria-hidden="true" />
             <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
               {title}
             </CardTitle>
@@ -94,9 +94,9 @@ export const FinancialCard = ({
           {syncStatus && syncStatus.connectedBanks > 0 && (
             <div className="flex items-center gap-1 flex-shrink-0">
               {syncStatus.isSyncing ? (
-                <RefreshCw className="h-3 w-3 text-blue-500 animate-spin" />
+                <RefreshCw className="h-3 w-3 text-blue-500 animate-spin" aria-hidden="true" />
               ) : (
-                <Building2 className="h-3 w-3 text-green-500" />
+                <Building2 className="h-3 w-3 text-green-500" aria-hidden="true" />
               )}
               <span className="text-xs text-muted-foreground">{syncStatus.connectedBanks}</span>
             </div>
@@ -113,7 +113,7 @@ export const FinancialCard = ({
         {hasChange && Math.abs(changeAmount) >= 1 && (
           <div className="flex flex-wrap items-center gap-2 mt-2">
             <Badge variant="outline" className={`${getTrendColor()} border-current animate-scale-in`}>
-              <TrendIcon className="h-3 w-3 mr-1" />
+              <TrendIcon className="h-3 w-3 mr-1" aria-hidden="true" />
               {changePercentage.toFixed(1)}%
             </Badge>
             <span className={`text-xs ${getTrendColor()}`}>
@@ -126,7 +126,7 @@ export const FinancialCard = ({
         {syncStatus && syncStatus.lastSync && (
           <div className="mt-3 p-2 bg-muted/50 rounded-md border border-border/50">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <RefreshCw className={cn("h-3 w-3", syncStatus.isSyncing && "animate-spin text-blue-500")} />
+              <RefreshCw className={cn("h-3 w-3", syncStatus.isSyncing && "animate-spin text-blue-500")} aria-hidden="true" />
               {syncStatus.isSyncing ? "Syncing..." : `Updated ${formatDistanceToNow(new Date(syncStatus.lastSync), { addSuffix: true })}`}
             </p>
           </div>

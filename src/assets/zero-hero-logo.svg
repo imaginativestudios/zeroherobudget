@@ -8,7 +8,7 @@
       }
 
       .st1 {
-        stroke: #e8a317;
+        stroke: #DC2626;
         stroke-miterlimit: 10;
         stroke-width: 7px;
       }

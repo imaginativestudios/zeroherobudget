@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2, Clock } from 'lucide-react';
+import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2, Clock, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -17,7 +17,7 @@ import { useLocalTransactions } from '@/hooks/useLocalTransactions';
 import { useLocalExpenses } from '@/hooks/useLocalExpenses';
 import { useLocalDebts } from '@/hooks/useLocalDebts';
 import { useLocalSubscriptions } from '@/hooks/useLocalSubscriptions';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, differenceInDays } from 'date-fns';
 
 export default function DataManagement() {
   const { user } = useAuth();
@@ -307,25 +307,50 @@ export default function DataManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  {totalItems} total items
-                </Badge>
-                {lastBackup ? (
-                  <Badge variant="outline" className="text-xs flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    Last backup: {formatDistanceToNow(new Date(lastBackup), { addSuffix: true })}
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-xs text-muted-foreground">
-                    No backups yet
-                  </Badge>
-                )}
-              </div>
-              <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
-                <Download className="h-4 w-4 mr-2" />
-                Download Backup
-              </Button>
+              {(() => {
+                const isStale = lastBackup && differenceInDays(new Date(), new Date(lastBackup)) >= 7;
+                const needsBackup = !lastBackup && totalItems > 0;
+                
+                return (
+                  <>
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {totalItems} total items
+                      </Badge>
+                      {lastBackup ? (
+                        <Badge 
+                          variant={isStale ? "destructive" : "outline"} 
+                          className={`text-xs flex items-center gap-1 ${isStale ? '' : ''}`}
+                        >
+                          {isStale && <AlertTriangle className="h-3 w-3" />}
+                          <Clock className="h-3 w-3" />
+                          {isStale ? 'Backup overdue: ' : 'Last backup: '}
+                          {formatDistanceToNow(new Date(lastBackup), { addSuffix: true })}
+                        </Badge>
+                      ) : (
+                        <Badge variant={needsBackup ? "destructive" : "outline"} className="text-xs flex items-center gap-1">
+                          {needsBackup && <AlertTriangle className="h-3 w-3" />}
+                          No backups yet
+                        </Badge>
+                      )}
+                    </div>
+                    {(isStale || needsBackup) && (
+                      <Alert className="mb-3 py-2 border-destructive/50 bg-destructive/5">
+                        <AlertTriangle className="h-3 w-3 text-destructive" />
+                        <AlertDescription className="text-xs text-destructive">
+                          {needsBackup 
+                            ? "You have data but no backup. Create one to protect your data."
+                            : "Your backup is over 7 days old. Consider creating a fresh backup."}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Backup
+                    </Button>
+                  </>
+                );
+              })()}
             </CardContent>
           </Card>
 

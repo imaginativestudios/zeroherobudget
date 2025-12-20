@@ -48,6 +48,7 @@ export function useLocalDebts(priority: 'critical' | 'secondary' = 'critical') {
 
   return {
     debts,
+    setDebts,
     isLoading,
     addDebt,
     updateDebt,

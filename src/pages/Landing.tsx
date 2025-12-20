@@ -60,7 +60,7 @@ export default function Landing() {
           </h1>
           
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
             Take control of your finances with intelligent budgeting, powerful debt payoff strategies, and real-time household collaboration.
           </p>
           
@@ -76,7 +76,7 @@ export default function Landing() {
           </div>
           
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+          <div className="flex flex-wrap justify-center gap-6 text-white text-sm">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" aria-hidden="true" />
               <span>Bank-Level Security</span>
@@ -160,7 +160,7 @@ export default function Landing() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Ready to Take Control?
             </h2>
-            <p className="text-xl mb-12 opacity-90 max-w-2xl mx-auto">
+            <p className="text-xl mb-12 text-white max-w-2xl mx-auto">
               Join thousands who've transformed their financial lives. Start your journey to debt freedom today.
             </p>
             
@@ -169,7 +169,7 @@ export default function Landing() {
               <ArrowRight className="ml-2" aria-hidden="true" />
             </Button>
 
-            <p className="mt-8 text-sm opacity-75">
+            <p className="mt-8 text-sm text-white">
               No credit card required • Free forever • Cancel anytime
             </p>
           </div>

@@ -36,15 +36,15 @@ export function Household() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
-        return <Crown className="h-4 w-4 text-yellow-500" />;
+        return <Crown className="h-4 w-4 text-accent" aria-hidden="true" />;
       case 'admin':
-        return <Shield className="h-4 w-4 text-blue-500" />;
+        return <Shield className="h-4 w-4 text-primary" aria-hidden="true" />;
       case 'member':
-        return <Users className="h-4 w-4 text-green-500" />;
+        return <Users className="h-4 w-4 text-success" aria-hidden="true" />;
       case 'viewer':
-        return <Eye className="h-4 w-4 text-gray-500" />;
+        return <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />;
       default:
-        return <Users className="h-4 w-4" />;
+        return <Users className="h-4 w-4" aria-hidden="true" />;
     }
   };
 
@@ -92,7 +92,7 @@ export function Household() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+                <Users className="h-5 w-5" aria-hidden="true" />
                 Members ({householdMembers.length})
               </CardTitle>
               <CardDescription>
@@ -141,7 +141,7 @@ export function Household() {
                           onClick={() => handleRemoveMember(member.id)}
                           className="text-destructive hover:text-destructive"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       )}
                     </div>
@@ -155,7 +155,7 @@ export function Household() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
+                <Mail className="h-5 w-5" aria-hidden="true" />
                 Pending Invitations ({invitations.length})
               </CardTitle>
               <CardDescription>
@@ -175,7 +175,7 @@ export function Household() {
                       className="flex items-center gap-3 p-3 border rounded-lg"
                     >
                       <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                        <UserPlus className="h-4 w-4" />
+                        <UserPlus className="h-4 w-4" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium truncate">{invitation.email}</p>
@@ -195,7 +195,7 @@ export function Household() {
                             onClick={() => handleCancelInvitation(invitation.id)}
                             className="text-destructive hover:text-destructive"
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         )}
                       </div>
@@ -211,7 +211,7 @@ export function Household() {
       {households.length === 0 && (
         <Card className="shadow-royal">
           <CardContent className="text-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-lg font-semibold mb-2">No households found</h3>
             <p className="text-muted-foreground mb-4">
               It looks like you don't belong to any households yet.

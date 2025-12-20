@@ -100,7 +100,7 @@ export const MobileOnboardingCarousel = ({ isOpen, onComplete, onSkip }: MobileO
                     </h2>
 
                     {/* Description */}
-                    <p className="text-base text-white/90 leading-relaxed px-4 max-w-sm">
+                    <p className="text-base text-white leading-relaxed px-4 max-w-sm">
                       {slide.description}
                     </p>
                   </div>

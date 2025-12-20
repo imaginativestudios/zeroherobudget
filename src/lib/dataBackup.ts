@@ -93,7 +93,7 @@ export function createBackup(userId: string): BackupData {
 }
 
 // Download backup as JSON file
-export function downloadBackup(backup: BackupData): void {
+export function downloadBackup(backup: BackupData, userId?: string): void {
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -108,6 +108,21 @@ export function downloadBackup(backup: BackupData): void {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+
+  // Save last backup timestamp
+  if (userId) {
+    saveLastBackupTimestamp(userId);
+  }
+}
+
+// Save last backup timestamp
+export function saveLastBackupTimestamp(userId: string): void {
+  localStorage.setItem(getUserKey(userId, 'last_backup'), new Date().toISOString());
+}
+
+// Get last backup timestamp
+export function getLastBackupTimestamp(userId: string): string | null {
+  return localStorage.getItem(getUserKey(userId, 'last_backup'));
 }
 
 // Validate backup file structure

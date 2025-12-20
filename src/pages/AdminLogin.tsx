@@ -72,7 +72,7 @@ const AdminLogin = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" role="alert" aria-live="assertive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}

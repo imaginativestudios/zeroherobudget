@@ -263,7 +263,7 @@ export const OptimizeStrategyDialog = ({
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
-                  <Label>Extra Monthly Payment: {formatCurrency(extraPayment)}</Label>
+                  <Label id="extra-payment-label">Extra Monthly Payment: {formatCurrency(extraPayment)}</Label>
                   <Slider
                     value={[extraPayment]}
                     onValueChange={(value) => setExtraPayment(value[0])}
@@ -271,6 +271,8 @@ export const OptimizeStrategyDialog = ({
                     min={0}
                     step={50}
                     className="w-full"
+                    aria-labelledby="extra-payment-label"
+                    aria-valuetext={`${formatCurrency(extraPayment)} extra monthly payment`}
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>$0</span>

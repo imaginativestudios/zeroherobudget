@@ -332,6 +332,60 @@ export function clearDemoData(userId: string): void {
   localStorage.removeItem(`${userId}_achievements`);
 }
 
+export interface ClearDataOptions {
+  transactions?: boolean;
+  expenses?: boolean;
+  debts?: boolean;
+  subscriptions?: boolean;
+  accounts?: boolean;
+  settings?: boolean;
+}
+
+export function clearSelectiveData(userId: string, options: ClearDataOptions): number {
+  let clearedCount = 0;
+  
+  if (options.transactions) {
+    localStorage.removeItem(`${userId}_bdt_transactions`);
+    localStorage.removeItem(`${userId}_transactions`);
+    clearedCount++;
+  }
+  
+  if (options.expenses) {
+    localStorage.removeItem(`${userId}_bdt_expenses`);
+    localStorage.removeItem(`${userId}_expenses`);
+    localStorage.removeItem(`${userId}_bdt_group_order`);
+    clearedCount++;
+  }
+  
+  if (options.debts) {
+    localStorage.removeItem(`${userId}_bdt_debts`);
+    localStorage.removeItem(`${userId}_debts`);
+    clearedCount++;
+  }
+  
+  if (options.subscriptions) {
+    localStorage.removeItem(`${userId}_bdt_subscriptions`);
+    localStorage.removeItem(`${userId}_subscriptions`);
+    clearedCount++;
+  }
+  
+  if (options.accounts) {
+    localStorage.removeItem(`${userId}_bdt_accounts`);
+    localStorage.removeItem(`${userId}_accounts`);
+    clearedCount++;
+  }
+  
+  if (options.settings) {
+    localStorage.removeItem(`${userId}_bdt_income`);
+    localStorage.removeItem(`${userId}_bdt_assets`);
+    localStorage.removeItem(`${userId}_bdt_strategy`);
+    localStorage.removeItem(`${userId}_achievements`);
+    clearedCount++;
+  }
+  
+  return clearedCount;
+}
+
 // Check if demo data is already set up
 export function isDemoDataSetup(userId: string): boolean {
   const storedIncome = localStorage.getItem(`${userId}_bdt_income`);

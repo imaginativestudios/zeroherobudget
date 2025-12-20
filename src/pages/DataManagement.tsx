@@ -435,6 +435,7 @@ export default function DataManagement() {
         onOpenChange={setClearDialogOpen}
         onClearComplete={() => {}}
         totalItems={totalItems}
+        dataStats={dataStats}
       />
     </div>
   );

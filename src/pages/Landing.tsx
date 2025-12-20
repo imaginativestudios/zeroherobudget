@@ -33,8 +33,8 @@ export default function Landing() {
     description: 'Beautiful charts and reports that make understanding your financial health effortless.'
   }, {
     icon: Shield,
-    title: 'Secure & Private',
-    description: 'Bank-level security with encrypted data storage and complete privacy protection.'
+    title: 'Local-First Privacy',
+    description: 'Your data stays on your device. No cloud storage, no third-party access—complete control over your finances.'
   }];
   return <>
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
@@ -79,7 +79,7 @@ export default function Landing() {
           <div className="flex flex-wrap justify-center gap-6 text-white text-sm">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" aria-hidden="true" />
-              <span>Bank-Level Security</span>
+              <span>Local-First Privacy</span>
             </div>
             <div className="flex items-center gap-2">
               <TrendingDown className="h-4 w-4" aria-hidden="true" />
@@ -87,7 +87,7 @@ export default function Landing() {
             </div>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" aria-hidden="true" />
-              <span>Add family members for free </span>
+              <span>Add family members for free</span>
             </div>
           </div>
         </div>

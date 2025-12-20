@@ -8,7 +8,7 @@
       }
 
       .st1 {
-        stroke: #DC2626;
+        stroke: #B91C1C;
         stroke-miterlimit: 10;
         stroke-width: 7px;
       }
@@ -22,7 +22,7 @@
       }
 
       .st4 {
-        fill: #DC2626;
+        fill: #B91C1C;
       }
     </style>
   </defs>

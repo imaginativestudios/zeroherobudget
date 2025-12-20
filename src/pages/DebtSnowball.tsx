@@ -116,12 +116,12 @@ export const DebtSnowball = () => {
       <div className="pt-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-foreground">Attack Your Debt</h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={exportDebts}>
-            <Download className="h-4 w-4" />
+          <Button variant="outline" onClick={exportDebts} aria-label="Export debts to CSV">
+            <Download className="h-4 w-4" aria-hidden="true" />
             Export CSV
           </Button>
-          <Button variant="outline" onClick={() => document.getElementById('import-debt-file')?.click()}>
-            <Upload className="h-4 w-4" />
+          <Button variant="outline" onClick={() => document.getElementById('import-debt-file')?.click()} aria-label="Import debts from CSV">
+            <Upload className="h-4 w-4" aria-hidden="true" />
             Import CSV
           </Button>
           <input
@@ -147,7 +147,7 @@ export const DebtSnowball = () => {
                        data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
-            <Crown className="h-4 w-4" />
+            <Crown className="h-4 w-4" aria-hidden="true" />
             Overview
           </TabsTrigger>
           <TabsTrigger 
@@ -161,7 +161,7 @@ export const DebtSnowball = () => {
                        data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4" aria-hidden="true" />
             Payment Schedule
           </TabsTrigger>
           <TabsTrigger 
@@ -175,7 +175,7 @@ export const DebtSnowball = () => {
                        data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
-            <Scale className="h-4 w-4" />
+            <Scale className="h-4 w-4" aria-hidden="true" />
             Compare Strategies
           </TabsTrigger>
         </TabsList>
@@ -185,7 +185,7 @@ export const DebtSnowball = () => {
           <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
-            <Target className="h-6 w-6 text-accent" />
+            <Target className="h-6 w-6 text-accent" aria-hidden="true" />
             Payoff Strategy
           </CardTitle>
         </CardHeader>
@@ -255,8 +255,9 @@ export const DebtSnowball = () => {
                       size="sm"
                       onClick={() => removeDebt(debt.id)}
                       className="text-destructive hover:text-destructive"
+                      aria-label={`Remove ${debt.name}`}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
 
@@ -270,8 +271,9 @@ export const DebtSnowball = () => {
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="text-xs text-muted-foreground">Balance</label>
+                      <label htmlFor={`balance-${debt.id}`} className="text-xs text-muted-foreground">Balance</label>
                       <Input
+                        id={`balance-${debt.id}`}
                         type="number"
                         step="0.01"
                         value={debt.balance}
@@ -279,8 +281,9 @@ export const DebtSnowball = () => {
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground">APR (%)</label>
+                      <label htmlFor={`apr-${debt.id}`} className="text-xs text-muted-foreground">APR (%)</label>
                       <Input
+                        id={`apr-${debt.id}`}
                         type="number"
                         step="0.01"
                         value={debt.apr}
@@ -288,8 +291,9 @@ export const DebtSnowball = () => {
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground">Min Payment</label>
+                      <label htmlFor={`min-${debt.id}`} className="text-xs text-muted-foreground">Min Payment</label>
                       <Input
+                        id={`min-${debt.id}`}
                         type="number"
                         step="0.01"
                         value={debt.min}
@@ -313,11 +317,11 @@ export const DebtSnowball = () => {
 
           <div className="flex gap-3">
             <Button onClick={() => addDebt("card")} variant="royal">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               Add Credit Card
             </Button>
             <Button onClick={() => addDebt("loan")} variant="royal">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               Add Loan
             </Button>
           </div>
@@ -328,7 +332,7 @@ export const DebtSnowball = () => {
       <Card className="shadow-royal">
         <CardHeader className="p-4 sm:p-5">
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
-            <TrendingDown className="h-5 w-5 text-accent" />
+            <TrendingDown className="h-5 w-5 text-accent" aria-hidden="true" />
             Total Debt Balance Over Time
           </CardTitle>
         </CardHeader>

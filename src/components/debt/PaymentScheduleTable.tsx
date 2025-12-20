@@ -103,7 +103,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+              <Calendar className="h-4 w-4" aria-hidden="true" />
               Debt Free Date
             </CardTitle>
           </CardHeader>
@@ -124,8 +124,8 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
             Collapse All
           </Button>
         </div>
-        <Button variant="outline" size="sm" onClick={exportSchedule}>
-          <Download className="h-4 w-4" />
+        <Button variant="outline" size="sm" onClick={exportSchedule} aria-label="Export payment schedule to CSV">
+          <Download className="h-4 w-4" aria-hidden="true" />
           Export Schedule
         </Button>
       </div>
@@ -148,15 +148,15 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                          <ChevronUp className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                          <ChevronDown className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                         )}
                         <CardTitle className="text-base font-semibold">
                           {monthData.label}
                           {hasPaidOff && (
                             <span className="ml-3 text-sm font-normal text-accent flex items-center gap-1.5">
-                              <CheckCircle2 className="h-4 w-4" />
+                              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                               {monthData.debtsPaidOffThisMonth.join(", ")} PAID OFF!
                             </span>
                           )}
@@ -177,15 +177,15 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                 <CollapsibleContent>
                   <CardContent className="pt-0">
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                      <table className="w-full text-sm" role="table" aria-label={`Payment details for ${monthData.label}`}>
                         <thead>
                           <tr className="border-b border-border">
-                            <th className="text-left py-2 px-2 font-medium text-muted-foreground">Debt</th>
-                            <th className="text-right py-2 px-2 font-medium text-muted-foreground hidden sm:table-cell">Start</th>
-                            <th className="text-right py-2 px-2 font-medium text-muted-foreground">Interest</th>
-                            <th className="text-right py-2 px-2 font-medium text-muted-foreground">Payment</th>
-                            <th className="text-right py-2 px-2 font-medium text-muted-foreground hidden md:table-cell">Principal</th>
-                            <th className="text-right py-2 px-2 font-medium text-muted-foreground">End</th>
+                            <th scope="col" className="text-left py-2 px-2 font-medium text-muted-foreground">Debt</th>
+                            <th scope="col" className="text-right py-2 px-2 font-medium text-muted-foreground hidden sm:table-cell">Start</th>
+                            <th scope="col" className="text-right py-2 px-2 font-medium text-muted-foreground">Interest</th>
+                            <th scope="col" className="text-right py-2 px-2 font-medium text-muted-foreground">Payment</th>
+                            <th scope="col" className="text-right py-2 px-2 font-medium text-muted-foreground hidden md:table-cell">Principal</th>
+                            <th scope="col" className="text-right py-2 px-2 font-medium text-muted-foreground">End</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -199,7 +199,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                               <td className="py-2 px-2">
                                 <div className="flex items-center gap-2">
                                   {payment.isPaidOff && (
-                                    <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                                    <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" aria-hidden="true" />
                                   )}
                                   <span className={payment.isPaidOff ? "text-accent font-medium" : ""}>
                                     {payment.debtName}

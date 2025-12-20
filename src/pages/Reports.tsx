@@ -94,7 +94,7 @@ export const Reports = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
         <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Label className="text-sm font-medium">Month:</Label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-40">
@@ -122,7 +122,7 @@ export const Reports = () => {
             <Card className="shadow-elegant hover:shadow-royal transition-royal cursor-pointer hover:translate-y-[-1px] h-full">
               <CardHeader className="p-4 sm:p-5">
                 <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-                  <report.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${report.color}`} />
+                  <report.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${report.color}`} aria-hidden="true" />
                   {report.title}
                 </CardTitle>
               </CardHeader>
@@ -156,7 +156,7 @@ export const Reports = () => {
       {isSecondaryLoading ? <ChartCardSkeleton /> : <Card className="shadow-royal overflow-hidden animate-fade-in">
         <CardHeader className="p-4 sm:p-5">
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-accent" />
+            <BarChart3 className="h-5 w-5 text-accent" aria-hidden="true" />
             Planned vs Actual - {formatMonthDisplay(selectedMonth)}
           </CardTitle>
         </CardHeader>

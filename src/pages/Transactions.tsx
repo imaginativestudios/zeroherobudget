@@ -233,19 +233,19 @@ export const Transactions = () => {
           <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
           
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={exportTransactions}>
-              <Download className="h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={exportTransactions} aria-label="Export transactions to CSV">
+              <Download className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline ml-2">Export</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => document.getElementById('import-transactions')?.click()}>
-              <Upload className="h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={() => document.getElementById('import-transactions')?.click()} aria-label="Import transactions from CSV">
+              <Upload className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline ml-2">Import</span>
             </Button>
             <input id="import-transactions" type="file" accept=".csv" className="hidden" onChange={importTransactions} />
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
                 <Button variant="royal">
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4" aria-hidden="true" />
                   <span>Add Transaction</span>
                 </Button>
               </DialogTrigger>
@@ -256,15 +256,15 @@ export const Transactions = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Date</Label>
-                      <Input type="date" value={newTransaction.date} onChange={e => setNewTransaction({
+                      <Label htmlFor="transaction-date">Date</Label>
+                      <Input id="transaction-date" type="date" value={newTransaction.date} onChange={e => setNewTransaction({
                       ...newTransaction,
                       date: e.target.value
                     })} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Amount</Label>
-                      <Input type="number" step="0.01" value={newTransaction.amount} onChange={e => setNewTransaction({
+                      <Label htmlFor="transaction-amount">Amount</Label>
+                      <Input id="transaction-amount" type="number" step="0.01" value={newTransaction.amount} onChange={e => setNewTransaction({
                       ...newTransaction,
                       amount: parseFloat(e.target.value) || 0
                     })} />
@@ -272,8 +272,8 @@ export const Transactions = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Input value={newTransaction.description} onChange={e => setNewTransaction({
+                    <Label htmlFor="transaction-description">Description</Label>
+                    <Input id="transaction-description" value={newTransaction.description} onChange={e => setNewTransaction({
                     ...newTransaction,
                     description: e.target.value
                   })} placeholder="Transaction description" />
@@ -281,12 +281,12 @@ export const Transactions = () => {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Account</Label>
+                      <Label htmlFor="transaction-account">Account</Label>
                       <Select value={newTransaction.accountId} onValueChange={value => setNewTransaction({
                       ...newTransaction,
                       accountId: value
                     })}>
-                        <SelectTrigger>
+                        <SelectTrigger id="transaction-account">
                           <SelectValue placeholder="Select account" />
                         </SelectTrigger>
                         <SelectContent>
@@ -297,12 +297,12 @@ export const Transactions = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Type</Label>
+                      <Label htmlFor="transaction-type">Type</Label>
                       <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({
                       ...newTransaction,
                       flow: value
                     })}>
-                        <SelectTrigger>
+                        <SelectTrigger id="transaction-type">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -315,19 +315,19 @@ export const Transactions = () => {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Category</Label>
-                      <Input value={newTransaction.category} onChange={e => setNewTransaction({
+                      <Label htmlFor="transaction-category">Category</Label>
+                      <Input id="transaction-category" value={newTransaction.category} onChange={e => setNewTransaction({
                       ...newTransaction,
                       category: e.target.value
                     })} placeholder="Category" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Budget Line (Optional)</Label>
+                      <Label htmlFor="transaction-budget-line">Budget Line (Optional)</Label>
                       <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
                       ...newTransaction,
                       expenseId: value === "none" ? undefined : value
                     })}>
-                        <SelectTrigger>
+                        <SelectTrigger id="transaction-budget-line">
                           <SelectValue placeholder="Select budget line" />
                         </SelectTrigger>
                         <SelectContent>
@@ -347,8 +347,8 @@ export const Transactions = () => {
                 })} />
                   
                   <div className="space-y-2">
-                    <Label>Notes (Optional)</Label>
-                    <Textarea value={newTransaction.notes} onChange={e => setNewTransaction({
+                    <Label htmlFor="transaction-notes">Notes (Optional)</Label>
+                    <Textarea id="transaction-notes" value={newTransaction.notes} onChange={e => setNewTransaction({
                     ...newTransaction,
                     notes: e.target.value
                   })} placeholder="Additional notes" />
@@ -367,7 +367,7 @@ export const Transactions = () => {
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-40 bg-background">
               <SelectValue />
@@ -400,7 +400,7 @@ export const Transactions = () => {
         </div>
         
         <div className="flex items-center gap-2 p-3 rounded-lg border flex-1 min-w-[200px] bg-primary-foreground">
-          <Search className="h-4 w-4 text-muted-foreground" />
+          <Search className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Input placeholder="Search transactions..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="bg-background border-0 focus-visible:ring-0" />
         </div>
       </div>

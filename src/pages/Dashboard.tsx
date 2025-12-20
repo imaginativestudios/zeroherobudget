@@ -235,7 +235,7 @@ export const Dashboard = () => {
                 onClick={handleSyncAll}
                 disabled={isSyncingAll || isSyncing}
               >
-                <RefreshCw className={cn("h-4 w-4", (isSyncingAll || isSyncing) && "animate-spin")} />
+                <RefreshCw className={cn("h-4 w-4", (isSyncingAll || isSyncing) && "animate-spin")} aria-hidden="true" />
                 <span className="text-sm sm:text-base">
                   {isSyncingAll || isSyncing ? "Syncing..." : "Sync Banks"}
                 </span>
@@ -248,7 +248,7 @@ export const Dashboard = () => {
               asChild
             >
               <Link to="/reports">
-                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
                 <span className="text-sm sm:text-base">View Reports</span>
               </Link>
             </Button>
@@ -373,7 +373,7 @@ export const Dashboard = () => {
         <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-accent" />
+              <BarChart3 className="h-5 w-5 text-accent" aria-hidden="true" />
               Spending by Category
             </CardTitle>
           </CardHeader>

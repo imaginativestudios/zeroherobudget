@@ -68,7 +68,7 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" variant="gold" className="text-base sm:text-lg px-8 h-12 text-primary-dark" onClick={() => openAuth('signup')}>
               Get Started Free
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
             </Button>
             <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 h-12 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
               Sign In
@@ -78,15 +78,15 @@ export default function Landing() {
           {/* Trust Badges */}
           <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
             <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
+              <Shield className="h-4 w-4" aria-hidden="true" />
               <span>Bank-Level Security</span>
             </div>
             <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4" />
+              <TrendingDown className="h-4 w-4" aria-hidden="true" />
               <span>Proven Debt Strategies</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
+              <Users className="h-4 w-4" aria-hidden="true" />
               <span>Add family members for free </span>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function Landing() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, idx) => <div key={idx} className="bg-card border border-border rounded-lg p-8 hover:shadow-royal transition-all duration-300 hover:scale-105">
-                  <feature.icon className="w-12 h-12 text-primary mb-4" />
+                  <feature.icon className="w-12 h-12 text-primary mb-4" aria-hidden="true" />
                   <h3 className="text-xl font-semibold mb-3 text-card-foreground">
                     {feature.title}
                   </h3>
@@ -136,7 +136,7 @@ export default function Landing() {
                 {/* Placeholder for demo video */}
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
                   <div className="text-center">
-                    <BarChart3 className="w-24 h-24 text-primary mx-auto mb-4 opacity-50" />
+                    <BarChart3 className="w-24 h-24 text-primary mx-auto mb-4 opacity-50" aria-hidden="true" />
                     <p className="text-muted-foreground text-lg">Demo video placeholder</p>
                     <p className="text-sm text-muted-foreground mt-2">Add your video URL to showcase the app</p>
                   </div>
@@ -166,7 +166,7 @@ export default function Landing() {
             
             <Button size="lg" variant="gold" onClick={() => openAuth('signup')} className="text-lg px-8 py-6">
               Get Started Free
-              <ArrowRight className="ml-2" />
+              <ArrowRight className="ml-2" aria-hidden="true" />
             </Button>
 
             <p className="mt-8 text-sm opacity-75">

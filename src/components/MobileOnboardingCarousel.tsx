@@ -116,12 +116,13 @@ export const MobileOnboardingCarousel = ({ isOpen, onComplete, onSkip }: MobileO
             <button
               key={index}
               onClick={() => scrollTo(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary ${
                 index === currentIndex 
                   ? 'w-8 bg-white' 
                   : 'w-2 bg-white/40 hover:bg-white/60'
               }`}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={`Go to slide ${index + 1} of ${slides.length}`}
+              aria-current={index === currentIndex ? 'true' : undefined}
             />
           ))}
         </div>

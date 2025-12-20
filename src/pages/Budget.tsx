@@ -223,9 +223,17 @@ export const Budget = () => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <label className="text-muted-foreground font-medium">Income Amount:</label>
-            <Input type="number" step="0.01" value={income} onChange={e => setIncome(parseFloat(e.target.value) || 0)} className="w-48" />
-            <span className="text-2xl font-bold text-success">
+            <label htmlFor="income-amount" className="text-muted-foreground font-medium">Income Amount:</label>
+            <Input 
+              id="income-amount"
+              type="number" 
+              step="0.01" 
+              value={income} 
+              onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
+              className="w-48"
+              aria-describedby="income-display"
+            />
+            <span id="income-display" className="text-2xl font-bold text-success" aria-live="polite">
               {formatCurrency(income)}
             </span>
           </div>

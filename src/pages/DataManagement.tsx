@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle } from 'lucide-react';
+import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DataImportWizard } from '@/components/import/DataImportWizard';
 import { RestoreBackupDialog } from '@/components/backup/RestoreBackupDialog';
+import { ClearDataDialog } from '@/components/backup/ClearDataDialog';
 import { ImportType } from '@/lib/importUtils';
 import { createBackup, downloadBackup, gatherUserData } from '@/lib/dataBackup';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +24,7 @@ export default function DataManagement() {
   
   const [importWizardOpen, setImportWizardOpen] = useState(false);
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [selectedImportType, setSelectedImportType] = useState<ImportType>('transactions');
 
   // Load data for stats and CSV export
@@ -333,6 +335,41 @@ export default function DataManagement() {
         </div>
       </div>
 
+      <Separator />
+
+      {/* Danger Zone */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Trash2 className="h-5 w-5 text-destructive" />
+          <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Permanently delete all your data. This action cannot be undone.
+        </p>
+
+        <Card className="border-destructive/30">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="font-medium text-sm">Clear All Data</p>
+                <p className="text-xs text-muted-foreground">
+                  Delete all transactions, budget items, debts, and subscriptions
+                </p>
+              </div>
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={() => setClearDialogOpen(true)}
+                disabled={totalItems === 0}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear Data
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Import Wizard Modal */}
       <DataImportWizard
         open={importWizardOpen}
@@ -345,6 +382,14 @@ export default function DataManagement() {
         open={restoreDialogOpen}
         onOpenChange={setRestoreDialogOpen}
         onRestoreComplete={() => {}}
+      />
+
+      {/* Clear Data Dialog */}
+      <ClearDataDialog
+        open={clearDialogOpen}
+        onOpenChange={setClearDialogOpen}
+        onClearComplete={() => {}}
+        totalItems={totalItems}
       />
     </div>
   );

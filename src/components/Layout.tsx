@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Building2, Keyboard } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,6 @@ const navigationItems = [
   { name: "Debts", href: "/debts", icon: Target },
   { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Subscriptions", href: "/subscriptions", icon: CreditCard },
-  { name: "Bank Connections", href: "/bank-connections", icon: Building2 },
   { name: "Achievements", href: "/achievements", icon: Trophy },
   { name: "Financial Tips", href: "/learn", icon: Lightbulb },
   { name: "Reports", href: "/reports", icon: TrendingDown },
@@ -50,10 +49,9 @@ export const Layout = ({ children }: LayoutProps) => {
     { key: "4", ctrl: true, description: "Go to Debts", category: "Navigation" },
     { key: "5", ctrl: true, description: "Go to Transactions", category: "Navigation" },
     { key: "6", ctrl: true, description: "Go to Subscriptions", category: "Navigation" },
-    { key: "7", ctrl: true, description: "Go to Bank Connections", category: "Navigation" },
-    { key: "8", ctrl: true, description: "Go to Achievements", category: "Navigation" },
-    { key: "9", ctrl: true, description: "Go to Financial Tips", category: "Navigation" },
-    { key: "0", ctrl: true, description: "Go to Reports", category: "Navigation" },
+    { key: "7", ctrl: true, description: "Go to Achievements", category: "Navigation" },
+    { key: "8", ctrl: true, description: "Go to Financial Tips", category: "Navigation" },
+    { key: "9", ctrl: true, description: "Go to Reports", category: "Navigation" },
     { key: "/", ctrl: true, description: "Show keyboard shortcuts", category: "Help" },
   ], []);
 
@@ -104,33 +102,26 @@ export const Layout = ({ children }: LayoutProps) => {
     {
       ...shortcutConfigs[6],
       action: () => {
-        navigate("/bank-connections");
-        toast({ title: "Navigated to Bank Connections" });
-      },
-    },
-    {
-      ...shortcutConfigs[7],
-      action: () => {
         navigate("/achievements");
         toast({ title: "Navigated to Achievements" });
       },
     },
     {
-      ...shortcutConfigs[8],
+      ...shortcutConfigs[7],
       action: () => {
         navigate("/learn");
         toast({ title: "Navigated to Financial Tips" });
       },
     },
     {
-      ...shortcutConfigs[9],
+      ...shortcutConfigs[8],
       action: () => {
         navigate("/reports");
         toast({ title: "Navigated to Reports" });
       },
     },
     {
-      ...shortcutConfigs[10],
+      ...shortcutConfigs[9],
       action: () => setShowShortcutsDialog(true),
     },
   ], [navigate, shortcutConfigs]);

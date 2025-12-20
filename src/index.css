@@ -40,6 +40,9 @@ All colors MUST be HSL.
 
     --success: 175 80% 22%; /* Teal instead of purple */
     --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 40%; /* Orange-amber for warnings - WCAG AA compliant */
+    --warning-foreground: 0 0% 100%;
 
     --border: 175 15% 82%; /* Improved contrast from 88% to 82% */
     --input: 175 15% 88%; /* Improved contrast from 92% to 88% */

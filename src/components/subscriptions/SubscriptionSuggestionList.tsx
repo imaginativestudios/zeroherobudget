@@ -22,7 +22,7 @@ export function SubscriptionSuggestionList({
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 0.8) return 'bg-success/10 text-success';
-    if (confidence >= 0.6) return 'bg-warning/10 text-warning';
+    if (confidence >= 0.6) return 'bg-warning/10 text-warning-foreground';
     return 'bg-muted text-muted-foreground';
   };
 

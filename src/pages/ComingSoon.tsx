@@ -79,7 +79,7 @@ const ComingSoon = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight">
               Transform Debt Into Victory
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/90 max-w-xl mx-auto">
+            <p className="text-lg md:text-xl text-primary-foreground max-w-xl mx-auto">
               We're building something amazing to help you achieve financial freedom. Get notified when we launch.
             </p>
           </div>
@@ -89,7 +89,7 @@ const ComingSoon = () => {
             <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
                   <Input
                     type="email"
                     placeholder="Enter your email"
@@ -108,7 +108,7 @@ const ComingSoon = () => {
                   {isLoading ? "Subscribing..." : "Notify Me"}
                 </Button>
               </div>
-              <p className="text-xs text-primary-foreground/70">
+              <p className="text-xs text-primary-foreground">
                 We'll never share your email. Unsubscribe anytime.
               </p>
             </form>
@@ -116,11 +116,11 @@ const ComingSoon = () => {
             <div className="max-w-md mx-auto p-6 rounded-lg bg-background/10 backdrop-blur-sm border border-background/20">
               <div className="flex items-center justify-center gap-3 text-primary-foreground">
                 <div className="flex items-center justify-center w-10 h-10 rounded-full bg-accent/20">
-                  <Check className="h-6 w-6 text-accent" />
+                  <Check className="h-6 w-6 text-accent" aria-hidden="true" />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold">You're on the list!</p>
-                  <p className="text-sm text-primary-foreground/80">We'll be in touch soon.</p>
+                  <p className="text-sm text-primary-foreground">We'll be in touch soon.</p>
                 </div>
               </div>
             </div>
@@ -130,15 +130,15 @@ const ComingSoon = () => {
           <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             <div className="p-4 rounded-lg bg-background/5 backdrop-blur-sm border border-background/10">
               <h3 className="font-semibold text-primary-foreground mb-2">Smart Debt Strategies</h3>
-              <p className="text-sm text-primary-foreground/80">Snowball & Avalanche methods</p>
+              <p className="text-sm text-primary-foreground">Snowball & Avalanche methods</p>
             </div>
             <div className="p-4 rounded-lg bg-background/5 backdrop-blur-sm border border-background/10">
               <h3 className="font-semibold text-primary-foreground mb-2">Budget Tracking</h3>
-              <p className="text-sm text-primary-foreground/80">Visualize your spending</p>
+              <p className="text-sm text-primary-foreground">Visualize your spending</p>
             </div>
             <div className="p-4 rounded-lg bg-background/5 backdrop-blur-sm border border-background/10">
               <h3 className="font-semibold text-primary-foreground mb-2">Progress Insights</h3>
-              <p className="text-sm text-primary-foreground/80">Track your financial journey</p>
+              <p className="text-sm text-primary-foreground">Track your financial journey</p>
             </div>
           </div>
         </div>

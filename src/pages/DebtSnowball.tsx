@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { toast } from "sonner";
 import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -88,7 +89,7 @@ export const DebtSnowball = () => {
     // Validate file before processing
     const validation = validateCsvFile(file);
     if (!validation.isValid) {
-      alert(`Import failed: ${validation.error}`);
+      toast.error(`Import failed: ${validation.error}`);
       event.target.value = "";
       return;
     }
@@ -100,11 +101,12 @@ export const DebtSnowball = () => {
       
       if (mapped.length) {
         setDebts(mapped);
+        toast.success(`Successfully imported ${mapped.length} debts`);
       } else {
-        alert("No valid debt data found in the file");
+        toast.error("No valid debt data found in the file");
       }
     } catch (error) {
-      alert("Failed to import file. Please check the format and try again.");
+      toast.error("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);
     }
     

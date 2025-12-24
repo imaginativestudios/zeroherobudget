@@ -4,114 +4,144 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useLocalSubscriptions, Subscription } from '@/hooks/useLocalSubscriptions';
 import { useLocalAccounts } from '@/hooks/useLocalAccounts';
 import { SubscriptionForm } from '@/components/subscriptions/SubscriptionForm';
 import { SubscriptionSuggestionList } from '@/components/subscriptions/SubscriptionSuggestionList';
 import { formatCurrency } from '@/lib/constants';
 import { format } from 'date-fns';
 import { Plus, CreditCard, Calendar, ExternalLink, Pause, Play, X, Edit, AlertCircle } from 'lucide-react';
-import { Subscription, SubscriptionSuggestion } from '@/types/subscriptions';
+import { SubscriptionSuggestion } from '@/types/subscriptions';
 import { toast } from '@/hooks/use-toast';
+
+// Adapt local subscription format to form format
+interface FormSubscription {
+  id: string;
+  name: string;
+  merchantKeywords: string[];
+  expectedAmount: number;
+  cycle: 'monthly' | 'yearly';
+  tolerance: number;
+  nextCharge: string;
+  accountId: string;
+  category: string;
+  manageUrl?: string;
+  status: 'active' | 'paused' | 'canceled';
+  createdAt: string;
+}
+
+function toFormSubscription(sub: Subscription): FormSubscription {
+  return {
+    id: sub.id,
+    name: sub.name,
+    merchantKeywords: [],
+    expectedAmount: sub.amount,
+    cycle: sub.billing_cycle === 'yearly' ? 'yearly' : 'monthly',
+    tolerance: 1.0,
+    nextCharge: sub.next_billing_date || '',
+    accountId: sub.household_id || '',
+    category: sub.category || 'Subscriptions',
+    status: sub.is_active ? 'active' : 'canceled',
+    createdAt: sub.created_at,
+  };
+}
+
+function fromFormData(data: Omit<FormSubscription, 'id' | 'createdAt'>): Omit<Subscription, 'id' | 'user_id' | 'created_at' | 'updated_at'> {
+  return {
+    name: data.name,
+    amount: data.expectedAmount,
+    billing_cycle: data.cycle,
+    category: data.category,
+    next_billing_date: data.nextCharge,
+    is_active: data.status === 'active',
+    household_id: data.accountId || undefined,
+  };
+}
+
 export function Subscriptions() {
-  // Use simple localStorage for subscriptions in prototype mode
-  const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>('subscriptions', []);
   const {
-    getActiveAccounts
-  } = useLocalAccounts();
+    subscriptions,
+    addSubscription,
+    updateSubscription,
+    removeSubscription,
+    getTotalMonthlySpend,
+  } = useLocalSubscriptions();
+  
+  const { getActiveAccounts } = useLocalAccounts();
   const accounts = getActiveAccounts();
 
-  // Simplified subscription management for prototype
-  const addSubscription = (subscription: Omit<Subscription, 'id' | 'createdAt'>) => {
-    const newSub = {
-      ...subscription,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString()
-    };
-    setSubscriptions([...subscriptions, newSub]);
-    return newSub;
-  };
-  const updateSubscription = (id: string, updates: Partial<Subscription>) => {
-    setSubscriptions(subscriptions.map(s => s.id === id ? {
-      ...s,
-      ...updates
-    } : s));
-  };
-  const removeSubscription = (id: string) => {
-    setSubscriptions(subscriptions.filter(s => s.id !== id));
-  };
-  const cancelSubscription = (id: string) => {
-    updateSubscription(id, {
-      status: 'canceled'
-    });
-  };
+  // Convert to form format for display
+  const formattedSubscriptions = useMemo(() => 
+    subscriptions.map(toFormSubscription), 
+    [subscriptions]
+  );
+
   const pauseSubscription = (id: string) => {
-    updateSubscription(id, {
-      status: 'paused'
-    });
+    updateSubscription(id, { is_active: false });
   };
+
   const resumeSubscription = (id: string) => {
-    updateSubscription(id, {
-      status: 'active'
-    });
+    updateSubscription(id, { is_active: true });
   };
+
+  const cancelSubscription = (id: string) => {
+    updateSubscription(id, { is_active: false });
+  };
+
   const getUpcomingRenewals = (daysAhead: number) => {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + daysAhead);
-    return subscriptions.filter(sub => sub.status === 'active' && sub.nextCharge && new Date(sub.nextCharge) <= futureDate);
+    return formattedSubscriptions.filter(sub => 
+      sub.status === 'active' && 
+      sub.nextCharge && 
+      new Date(sub.nextCharge) <= futureDate
+    );
   };
-  const getTotalMonthlySpend = (accountId?: string) => {
-    return subscriptions.filter(sub => sub.status === 'active' && (!accountId || sub.accountId === accountId)).reduce((total, sub) => {
-      const cycleFactor = sub.cycle === 'yearly' ? 1 / 12 : 1;
-      return total + sub.expectedAmount * cycleFactor;
-    }, 0);
-  };
-  const autoDetectSubscriptionSuggestions = (): SubscriptionSuggestion[] => {
-    return []; // No suggestions in prototype mode
-  };
-  const linkTransaction = (subscriptionId: string, transactionId: string, matchType: string) => {
-    // No-op in prototype mode
-  };
+
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
   const [selectedAccountId, setSelectedAccountId] = useState<string>('all');
   const [showForm, setShowForm] = useState(false);
-  const [editingSubscription, setEditingSubscription] = useState<Subscription | undefined>();
+  const [editingSubscription, setEditingSubscription] = useState<FormSubscription | undefined>();
   const [ignoredSuggestions, setIgnoredSuggestions] = useState<Set<string>>(new Set());
 
   // Get filtered subscriptions
   const filteredSubscriptions = useMemo(() => {
-    return subscriptions.filter(sub => {
+    return formattedSubscriptions.filter(sub => {
       if (selectedAccountId !== 'all' && sub.accountId !== selectedAccountId) {
         return false;
       }
       return true;
     });
-  }, [subscriptions, selectedAccountId]);
+  }, [formattedSubscriptions, selectedAccountId]);
 
   // Get active subscriptions
   const activeSubscriptions = filteredSubscriptions.filter(s => s.status === 'active');
 
   // Get upcoming renewals
-  const upcomingRenewals = getUpcomingRenewals(14).filter(sub => selectedAccountId === 'all' || sub.accountId === selectedAccountId);
+  const upcomingRenewals = getUpcomingRenewals(14).filter(sub => 
+    selectedAccountId === 'all' || sub.accountId === selectedAccountId
+  );
 
   // Get monthly spend
-  const monthlySpend = getTotalMonthlySpend(selectedAccountId === 'all' ? undefined : selectedAccountId);
+  const monthlySpend = getTotalMonthlySpend();
 
-  // Get suggestions (filtered by ignored)
-  const suggestions = autoDetectSubscriptionSuggestions().filter(s => !ignoredSuggestions.has(s.id)).filter(s => selectedAccountId === 'all' || s.accountId === selectedAccountId);
-  const handleAddSubscription = (subscriptionData: Omit<Subscription, 'id' | 'createdAt'>) => {
-    addSubscription(subscriptionData);
+  // No suggestions in local-only mode
+  const suggestions: SubscriptionSuggestion[] = [];
+
+  const handleAddSubscription = (subscriptionData: Omit<FormSubscription, 'id' | 'createdAt'>) => {
+    addSubscription(fromFormData(subscriptionData));
     toast({
       title: "Subscription Added",
       description: `${subscriptionData.name} has been added to your subscriptions.`
     });
   };
-  const handleEditSubscription = (subscriptionData: Omit<Subscription, 'id' | 'createdAt'>) => {
+
+  const handleEditSubscription = (subscriptionData: Omit<FormSubscription, 'id' | 'createdAt'>) => {
     if (editingSubscription) {
-      updateSubscription(editingSubscription.id, subscriptionData);
+      updateSubscription(editingSubscription.id, fromFormData(subscriptionData));
       setEditingSubscription(undefined);
       toast({
         title: "Subscription Updated",
@@ -119,36 +149,15 @@ export function Subscriptions() {
       });
     }
   };
+
   const handleAcceptSuggestion = (suggestion: SubscriptionSuggestion) => {
-    const subscriptionData: Omit<Subscription, 'id' | 'createdAt'> = {
-      name: suggestion.merchantName,
-      merchantKeywords: suggestion.merchantKeywords,
-      expectedAmount: suggestion.expectedAmount,
-      cycle: suggestion.cycle,
-      tolerance: 1.0,
-      nextCharge: new Date().toISOString().split('T')[0],
-      // Will be updated when linking transactions
-      accountId: suggestion.accountId,
-      category: 'Subscriptions',
-      status: 'active'
-    };
-    const newSubscription = addSubscription(subscriptionData);
-
-    // Link matching transactions
-    suggestion.matchingTransactions.forEach(transactionId => {
-      linkTransaction(newSubscription.id, transactionId, 'keyword');
-    });
-
-    // Hide this suggestion
-    setIgnoredSuggestions(prev => new Set([...prev, suggestion.id]));
-    toast({
-      title: "Subscription Added",
-      description: `${suggestion.merchantName} has been added and linked to ${suggestion.matchingTransactions.length} transactions.`
-    });
+    // No-op in local-only mode
   };
+
   const handleIgnoreSuggestion = (suggestionId: string) => {
     setIgnoredSuggestions(prev => new Set([...prev, suggestionId]));
   };
+
   const handleManageSubscription = (manageUrl?: string) => {
     if (manageUrl) {
       window.open(manageUrl, '_blank');
@@ -160,6 +169,7 @@ export function Subscriptions() {
       });
     }
   };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -172,7 +182,9 @@ export function Subscriptions() {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  return <div className="pt-8 space-y-6">
+
+  return (
+    <div className="pt-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Subscriptions</h1>
@@ -189,17 +201,17 @@ export function Subscriptions() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Array.from({
-            length: 12
-          }, (_, i) => {
-            const date = new Date();
-            date.setMonth(date.getMonth() - i);
-            const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            const label = format(date, 'MMMM yyyy');
-            return <SelectItem key={value} value={value}>
+            {Array.from({ length: 12 }, (_, i) => {
+              const date = new Date();
+              date.setMonth(date.getMonth() - i);
+              const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+              const label = format(date, 'MMMM yyyy');
+              return (
+                <SelectItem key={value} value={value}>
                   {label}
-                </SelectItem>;
-          })}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
 
@@ -209,9 +221,11 @@ export function Subscriptions() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Accounts</SelectItem>
-            {accounts.map(account => <SelectItem key={account.id} value={account.id}>
+            {accounts.map(account => (
+              <SelectItem key={account.id} value={account.id}>
                 {account.name}
-              </SelectItem>)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -239,7 +253,7 @@ export function Subscriptions() {
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{activeSubscriptions.length}</div>
             <p className="text-xs text-muted-foreground">
-              {subscriptions.filter(s => s.status === 'paused').length} paused, {subscriptions.filter(s => s.status === 'canceled').length} canceled
+              {formattedSubscriptions.filter(s => s.status === 'paused').length} paused, {formattedSubscriptions.filter(s => s.status === 'canceled').length} canceled
             </p>
           </CardContent>
         </Card>
@@ -259,10 +273,17 @@ export function Subscriptions() {
       </div>
 
       {/* Suggestions */}
-      {suggestions.length > 0 && <SubscriptionSuggestionList suggestions={suggestions} onAccept={handleAcceptSuggestion} onIgnore={handleIgnoreSuggestion} />}
+      {suggestions.length > 0 && (
+        <SubscriptionSuggestionList 
+          suggestions={suggestions} 
+          onAccept={handleAcceptSuggestion} 
+          onIgnore={handleIgnoreSuggestion} 
+        />
+      )}
 
       {/* Upcoming Renewals */}
-      {upcomingRenewals.length > 0 && <Card>
+      {upcomingRenewals.length > 0 && (
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-warning" aria-hidden="true" />
@@ -271,7 +292,8 @@ export function Subscriptions() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {upcomingRenewals.map(subscription => <div key={subscription.id} className="flex items-center justify-between p-3 border rounded-lg">
+              {upcomingRenewals.map(subscription => (
+                <div key={subscription.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">{subscription.name}</div>
                     <div className="text-sm text-muted-foreground">
@@ -279,17 +301,21 @@ export function Subscriptions() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {subscription.manageUrl && <Button size="sm" variant="outline" onClick={() => handleManageSubscription(subscription.manageUrl)}>
+                    {subscription.manageUrl && (
+                      <Button size="sm" variant="outline" onClick={() => handleManageSubscription(subscription.manageUrl)}>
                         Manage
-                      </Button>}
+                      </Button>
+                    )}
                     <Button size="sm" variant="outline" onClick={() => cancelSubscription(subscription.id)}>
                       Mark Canceled
                     </Button>
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </CardContent>
-        </Card>}
+        </Card>
+      )}
 
       {/* Subscriptions Table */}
       <Card>
@@ -297,9 +323,12 @@ export function Subscriptions() {
           <CardTitle>All Subscriptions</CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredSubscriptions.length === 0 ? <div className="text-center py-8 text-muted-foreground">
-              No subscriptions found. Add one or check our suggestions above.
-            </div> : <Table>
+          {filteredSubscriptions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No subscriptions found. Add one to start tracking.
+            </div>
+          ) : (
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Service</TableHead>
@@ -311,11 +340,14 @@ export function Subscriptions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSubscriptions.map(subscription => <TableRow key={subscription.id}>
+                {filteredSubscriptions.map(subscription => (
+                  <TableRow key={subscription.id}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{subscription.name}</div>
-                        {subscription.category !== 'Subscriptions' && <div className="text-xs text-muted-foreground">{subscription.category}</div>}
+                        {subscription.category !== 'Subscriptions' && (
+                          <div className="text-xs text-muted-foreground">{subscription.category}</div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>{formatCurrency(subscription.expectedAmount)}</TableCell>
@@ -326,36 +358,54 @@ export function Subscriptions() {
                     <TableCell>{getStatusBadge(subscription.status)}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => {
-                    setEditingSubscription(subscription);
-                    setShowForm(true);
-                  }}>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => {
+                            setEditingSubscription(subscription);
+                            setShowForm(true);
+                          }}
+                        >
                           <Edit className="h-4 w-4" aria-hidden="true" />
                         </Button>
-                        {subscription.manageUrl && <Button size="sm" variant="ghost" onClick={() => handleManageSubscription(subscription.manageUrl)}>
+                        {subscription.manageUrl && (
+                          <Button size="sm" variant="ghost" onClick={() => handleManageSubscription(subscription.manageUrl)}>
                             <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                          </Button>}
-                        {subscription.status === 'active' && <Button size="sm" variant="ghost" onClick={() => pauseSubscription(subscription.id)}>
+                          </Button>
+                        )}
+                        {subscription.status === 'active' && (
+                          <Button size="sm" variant="ghost" onClick={() => pauseSubscription(subscription.id)}>
                             <Pause className="h-4 w-4" aria-hidden="true" />
-                          </Button>}
-                        {subscription.status === 'paused' && <Button size="sm" variant="ghost" onClick={() => resumeSubscription(subscription.id)}>
+                          </Button>
+                        )}
+                        {subscription.status === 'paused' && (
+                          <Button size="sm" variant="ghost" onClick={() => resumeSubscription(subscription.id)}>
                             <Play className="h-4 w-4" aria-hidden="true" />
-                          </Button>}
+                          </Button>
+                        )}
                         <Button size="sm" variant="ghost" onClick={() => removeSubscription(subscription.id)}>
                           <X className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </TableCell>
-                  </TableRow>)}
+                  </TableRow>
+                ))}
               </TableBody>
-            </Table>}
+            </Table>
+          )}
         </CardContent>
       </Card>
 
       {/* Form Dialog */}
-      <SubscriptionForm open={showForm} onOpenChange={open => {
-      setShowForm(open);
-      if (!open) setEditingSubscription(undefined);
-    }} subscription={editingSubscription} onSave={editingSubscription ? handleEditSubscription : handleAddSubscription} />
-    </div>;
+      <SubscriptionForm 
+        open={showForm} 
+        onOpenChange={open => {
+          setShowForm(open);
+          if (!open) setEditingSubscription(undefined);
+        }} 
+        subscription={editingSubscription as any} 
+        onSave={(editingSubscription ? handleEditSubscription : handleAddSubscription) as any} 
+      />
+    </div>
+  );
 }

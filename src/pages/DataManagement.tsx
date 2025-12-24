@@ -168,18 +168,37 @@ export default function DataManagement() {
         </p>
       </div>
 
-      {/* Privacy Notice */}
-      <Card className="bg-primary/5 border-primary/20">
-        <CardContent className="p-4 flex items-start gap-3">
-          <Shield className="h-5 w-5 text-primary mt-0.5" aria-hidden="true" />
-          <div className="flex-1">
-            <p className="font-medium text-sm">Your Data Stays Local</p>
-            <p className="text-sm text-muted-foreground">
-              All your financial data is stored securely on your device. Nothing is sent to external servers.{' '}
-              <a href="/data-privacy" className="text-primary hover:underline">
-                Learn how this works →
+      {/* Privacy Promise Card */}
+      <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4">
+            <div className="p-3 rounded-full bg-primary/10">
+              <Shield className="h-8 w-8 text-primary" aria-hidden="true" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <h3 className="text-lg font-semibold">Privacy-First by Design</h3>
+              <p className="text-muted-foreground">
+                Your financial data never leaves your device. We don't have servers storing your information, 
+                and we can't see your transactions, debts, or budget. This means you're in complete control.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" /> No cloud storage
+                </Badge>
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" /> No tracking
+                </Badge>
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" /> Works offline
+                </Badge>
+              </div>
+              <a 
+                href="/data-privacy" 
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2"
+              >
+                Learn more about how your data is protected →
               </a>
-            </p>
+            </div>
           </div>
         </CardContent>
       </Card>

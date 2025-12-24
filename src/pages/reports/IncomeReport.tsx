@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useTransactions } from "@/hooks/useTransactions";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useLocalTransactions } from "@/hooks/useLocalTransactions";
+import { useIncome } from "@/hooks/useLocalSettings";
 import { formatCurrency } from "@/lib/constants";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { CustomBarLegend } from "@/components/charts/CustomChartLegend";
@@ -26,8 +26,8 @@ const formatMonthDisplay = (monthStr: string) => {
 export const IncomeReport = () => {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [income] = useLocalStorage("bdt_income", 18254);
-  const { getTransactionsByMonth } = useTransactions();
+  const [income] = useIncome();
+  const { getTransactionsByMonth } = useLocalTransactions();
 
   const monthTransactions = useMemo(() => 
     getTransactionsByMonth(selectedMonth).filter(t => t.flow === 'in'),

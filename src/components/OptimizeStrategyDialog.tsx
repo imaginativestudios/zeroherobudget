@@ -369,7 +369,7 @@ export const OptimizeStrategyDialog = ({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5" />
+                  <Lightbulb className="h-5 w-5 fill-current" />
                   Quick Wins & Momentum Builders
                 </CardTitle>
               </CardHeader>
@@ -404,7 +404,7 @@ export const OptimizeStrategyDialog = ({
                   </div>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    <Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-50 fill-current" />
                     <p>No quick wins available with current payment amounts.</p>
                     <p className="text-sm mt-2">Try increasing your extra payment to create opportunities.</p>
                   </div>

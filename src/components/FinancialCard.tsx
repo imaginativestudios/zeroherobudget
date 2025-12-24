@@ -134,7 +134,7 @@ export const FinancialCard = ({
         
         {!syncStatus && insight && (
           <div className="mt-3 p-2 bg-muted/50 rounded-md">
-            <p className="text-xs text-accent font-medium leading-relaxed line-clamp-2">
+            <p className="text-xs text-accent-dark font-medium leading-relaxed line-clamp-2">
               💡 {insight}
             </p>
           </div>

@@ -155,7 +155,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                         <CardTitle className="text-base font-semibold">
                           {monthData.label}
                           {hasPaidOff && (
-                            <span className="ml-3 text-sm font-normal text-accent flex items-center gap-1.5">
+                            <span className="ml-3 text-sm font-normal text-accent-dark flex items-center gap-1.5">
                               <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                               {monthData.debtsPaidOffThisMonth.join(", ")} PAID OFF!
                             </span>
@@ -201,7 +201,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                                   {payment.isPaidOff && (
                                     <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" aria-hidden="true" />
                                   )}
-                                  <span className={payment.isPaidOff ? "text-accent font-medium" : ""}>
+                                  <span className={payment.isPaidOff ? "text-accent-dark font-medium" : ""}>
                                     {payment.debtName}
                                   </span>
                                 </div>
@@ -215,7 +215,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                               <td className="text-right py-2 px-2 font-semibold">
                                 {formatCurrency(payment.totalPayment)}
                                 {payment.extraPayment > 0 && (
-                                  <span className="block text-xs text-accent">
+                                  <span className="block text-xs text-accent-dark">
                                     +{formatCurrency(payment.extraPayment)} extra
                                   </span>
                                 )}
@@ -225,7 +225,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
                               </td>
                               <td className="text-right py-2 px-2 font-medium">
                                 {payment.isPaidOff ? (
-                                  <span className="text-accent">$0.00</span>
+                                  <span className="text-accent-dark">$0.00</span>
                                 ) : (
                                   formatCurrency(payment.endingBalance)
                                 )}

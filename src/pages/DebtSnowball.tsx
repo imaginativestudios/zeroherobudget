@@ -208,7 +208,7 @@ export const DebtSnowball = () => {
               </Button>
             </div>
             <div className="text-muted-foreground">
-              Extra Budget Available: <span className="font-bold text-accent">{formatCurrency(leftover)}</span>
+              Extra Budget Available: <span className="font-bold text-accent-dark">{formatCurrency(leftover)}</span>
             </div>
           </div>
         </CardContent>
@@ -243,7 +243,7 @@ export const DebtSnowball = () => {
                         {payoffInfo?.payoffLabel && (
                           <>
                             <span>•</span>
-                            <span className="font-semibold text-accent">
+                            <span className="font-semibold text-accent-dark">
                               Payoff: {payoffInfo.payoffLabel}
                             </span>
                           </>

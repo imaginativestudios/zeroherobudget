@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -252,6 +252,13 @@ export const Layout = ({ children }: LayoutProps) => {
                       <Keyboard className="h-4 w-4" aria-hidden="true" />
                       Shortcuts
                     </Button>
+                    <Link
+                      to="/data-privacy"
+                      className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"
+                    >
+                      <Shield className="h-4 w-4" aria-hidden="true" />
+                      Your Privacy
+                    </Link>
                   </div>
                   <Button
                     onClick={signOut}

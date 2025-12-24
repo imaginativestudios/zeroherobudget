@@ -11,6 +11,8 @@ import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { AchievementCard } from "@/components/AchievementCard";
 import { TipOfTheDay } from "@/components/TipOfTheDay";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
+import { PrivacyBadge } from "@/components/PrivacyBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -210,6 +212,9 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Privacy Notice for first-time users */}
+      <PrivacyNotice />
 
       {/* Tip of the Day */}
       <TipOfTheDay />

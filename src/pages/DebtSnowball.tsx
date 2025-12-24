@@ -187,7 +187,7 @@ export const DebtSnowball = () => {
           <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
-            <Target className="h-6 w-6 text-accent" aria-hidden="true" />
+            <Target className="h-5 w-5 text-accent" aria-hidden="true" />
             Payoff Strategy
           </CardTitle>
         </CardHeader>

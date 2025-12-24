@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { toast } from "sonner";
 import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,7 +145,7 @@ export const Budget = () => {
     // Validate file before processing
     const validation = validateCsvFile(file);
     if (!validation.isValid) {
-      alert(`Import failed: ${validation.error}`);
+      toast.error(`Import failed: ${validation.error}`);
       event.target.value = "";
       return;
     }
@@ -161,11 +162,12 @@ export const Budget = () => {
           category: expense.category || "Uncategorized",
           is_income: false
         }));
+        toast.success(`Successfully imported ${mapped.length} expenses`);
       } else {
-        alert("No valid expense data found in the file");
+        toast.error("No valid expense data found in the file");
       }
     } catch (error) {
-      alert("Failed to import file. Please check the format and try again.");
+      toast.error("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);
     }
     event.target.value = "";

@@ -335,14 +335,14 @@ export default function DataManagement() {
                       )}
                     </div>
                     {(isStale || needsBackup) && (
-                      <Alert className="mb-3 py-2 border-destructive/50 bg-destructive/5 [&>svg]:top-2.5">
-                        <AlertTriangle className="h-4 w-4 text-destructive" aria-hidden="true" />
-                        <AlertDescription className="text-xs text-destructive">
+                      <div className="mb-3 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                        <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+                        <p className="text-xs text-destructive leading-relaxed">
                           {needsBackup 
                             ? "You have data but no backup. Create one to protect your data."
                             : "Your backup is over 7 days old. Consider creating a fresh backup."}
-                        </AlertDescription>
-                      </Alert>
+                        </p>
+                      </div>
                     )}
                     <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
                       <Download className="h-4 w-4" aria-hidden="true" />
@@ -365,12 +365,12 @@ export default function DataManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Alert className="mb-3 py-2 [&>svg]:top-2.5">
-                <AlertCircle className="h-4 w-4" aria-hidden="true" />
-                <AlertDescription className="text-xs">
+              <div className="mb-3 flex items-start gap-2.5 rounded-lg border border-border bg-muted/50 p-3">
+                <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Restoring may overwrite existing data
-                </AlertDescription>
-              </Alert>
+                </p>
+              </div>
               <Button variant="outline" onClick={() => setRestoreDialogOpen(true)} className="w-full">
                 <Upload className="h-4 w-4" aria-hidden="true" />
                 Restore from Backup

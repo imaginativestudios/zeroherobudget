@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { AlertCircle, AlertTriangle, CheckCircle, Info, type LucideIcon } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Info, Lightbulb, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const inlineAlertVariants = cva(
@@ -13,6 +13,7 @@ const inlineAlertVariants = cva(
         warning: "border-amber-500/30 bg-amber-500/5",
         success: "border-green-500/30 bg-green-500/5",
         info: "border-blue-500/30 bg-blue-500/5",
+        tip: "border-accent/30 bg-accent/5",
       },
       size: {
         sm: "p-2.5 gap-2",
@@ -36,6 +37,7 @@ const iconVariants = cva(
         warning: "text-amber-600 dark:text-amber-500",
         success: "text-green-600 dark:text-green-500",
         info: "text-blue-600 dark:text-blue-500",
+        tip: "text-accent fill-accent",
       },
     },
     defaultVariants: {
@@ -54,6 +56,7 @@ const textVariants = cva(
         warning: "text-amber-700 dark:text-amber-400",
         success: "text-green-700 dark:text-green-400",
         info: "text-blue-700 dark:text-blue-400",
+        tip: "text-foreground",
       },
     },
     defaultVariants: {
@@ -68,6 +71,7 @@ const defaultIcons: Record<string, LucideIcon> = {
   warning: AlertTriangle,
   success: CheckCircle,
   info: Info,
+  tip: Lightbulb,
 };
 
 export interface InlineAlertProps

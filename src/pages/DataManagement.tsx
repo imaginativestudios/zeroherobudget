@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, AlertCircle, Trash2, Clock, AlertTriangle } from 'lucide-react';
+import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, Trash2, Clock, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InlineAlert } from '@/components/ui/inline-alert';
 import { DataImportWizard } from '@/components/import/DataImportWizard';
 import { RestoreBackupDialog } from '@/components/backup/RestoreBackupDialog';
 import { ClearDataDialog } from '@/components/backup/ClearDataDialog';
@@ -335,14 +335,11 @@ export default function DataManagement() {
                       )}
                     </div>
                     {(isStale || needsBackup) && (
-                      <div className="mb-3 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
-                        <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
-                        <p className="text-xs text-destructive leading-relaxed">
-                          {needsBackup 
-                            ? "You have data but no backup. Create one to protect your data."
-                            : "Your backup is over 7 days old. Consider creating a fresh backup."}
-                        </p>
-                      </div>
+                      <InlineAlert variant="destructive" className="mb-3">
+                        {needsBackup 
+                          ? "You have data but no backup. Create one to protect your data."
+                          : "Your backup is over 7 days old. Consider creating a fresh backup."}
+                      </InlineAlert>
                     )}
                     <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
                       <Download className="h-4 w-4" aria-hidden="true" />
@@ -365,12 +362,9 @@ export default function DataManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-3 flex items-start gap-2.5 rounded-lg border border-border bg-muted/50 p-3">
-                <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" aria-hidden="true" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Restoring may overwrite existing data
-                </p>
-              </div>
+              <InlineAlert className="mb-3">
+                Restoring may overwrite existing data
+              </InlineAlert>
               <Button variant="outline" onClick={() => setRestoreDialogOpen(true)} className="w-full">
                 <Upload className="h-4 w-4" aria-hidden="true" />
                 Restore from Backup

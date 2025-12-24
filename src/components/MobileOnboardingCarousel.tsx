@@ -21,7 +21,7 @@ const slides = [
     icon: DollarSign,
     title: "Track Everything",
     description: "Monitor your income, expenses, and subscriptions all in one place. Know exactly where your money goes.",
-    color: "text-accent",
+    color: "text-accent-dark",
   },
   {
     icon: TrendingDown,

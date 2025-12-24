@@ -291,7 +291,7 @@ export const OptimizeStrategyDialog = ({
                     <div className="text-sm text-muted-foreground">Months to Freedom</div>
                   </div>
                   <div className="text-center p-4 bg-accent/5 rounded-lg">
-                    <div className="text-2xl font-bold text-accent">
+                    <div className="text-2xl font-bold text-accent-dark">
                       {formatCurrency(snowballResult.totalInterest)}
                     </div>
                     <div className="text-sm text-muted-foreground">Total Interest</div>

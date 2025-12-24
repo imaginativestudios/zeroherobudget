@@ -29,11 +29,11 @@ All colors MUST be HSL.
     --muted: 175 15% 95%;
     --muted-foreground: 175 10% 40%; /* Improved contrast from 45% to 40% */
 
-    --accent: 350 96% 76%; /* Coral/Salmon - lightened one shade */
+    --accent: 32 88% 65%; /* Sandy Orange #F4A259 */
     --accent-foreground: 175 80% 18%; /* Dark teal text on accent backgrounds */
     
-    --accent-light: 350 96% 83%; /* Lighter coral variant */
-    --accent-dark: 350 80% 63%; /* Darker coral for hover states */
+    --accent-light: 32 90% 75%; /* Lighter sandy orange variant */
+    --accent-dark: 32 85% 45%; /* Darker orange for hover states & text on white - WCAG AA compliant */
 
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;
@@ -77,12 +77,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 175 77% 26%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 350 96% 76%; /* Coral to match accent - lightened */
+    --sidebar-primary: 32 88% 65%; /* Sandy Orange to match accent */
     --sidebar-primary-foreground: 175 15% 8%;
     --sidebar-accent: 175 65% 35%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 175 80% 20%;
-    --sidebar-ring: 350 96% 76%;
+    --sidebar-ring: 32 88% 65%;
   }
 
   .dark {

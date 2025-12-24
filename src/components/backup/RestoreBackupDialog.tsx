@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import { Upload, FileJson, AlertTriangle, Check, X, RefreshCw } from 'lucide-react';
+import { Upload, FileJson, Check, RefreshCw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { InlineAlert } from '@/components/ui/inline-alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -159,10 +159,7 @@ export function RestoreBackupDialog({ open, onOpenChange, onRestoreComplete }: R
             </Card>
 
             {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+              <InlineAlert variant="destructive">{error}</InlineAlert>
             )}
           </div>
         )}
@@ -240,20 +237,13 @@ export function RestoreBackupDialog({ open, onOpenChange, onRestoreComplete }: R
             </div>
 
             {replaceMode === 'replace' && (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Warning</AlertTitle>
-                <AlertDescription>
-                  This will permanently replace your current data with the backup.
-                </AlertDescription>
-              </Alert>
+              <InlineAlert variant="warning">
+                <span className="font-medium">Warning:</span> This will permanently replace your current data with the backup.
+              </InlineAlert>
             )}
 
             {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+              <InlineAlert variant="destructive">{error}</InlineAlert>
             )}
           </div>
         )}

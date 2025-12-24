@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { Upload, FileText, AlertCircle } from 'lucide-react';
+import { Upload, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InlineAlert } from '@/components/ui/inline-alert';
 import { validateCsvFile } from '@/lib/csvUtils';
 import { ImportType, getImportTypeLabel } from '@/lib/importUtils';
 
@@ -121,10 +121,7 @@ export function ImportFileUpload({ importType, onFileSelect }: ImportFileUploadP
       </Card>
 
       {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <InlineAlert variant="destructive">{error}</InlineAlert>
       )}
 
       <div className="bg-muted/50 rounded-lg p-4">

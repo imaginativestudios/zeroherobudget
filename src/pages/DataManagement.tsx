@@ -171,7 +171,7 @@ export default function DataManagement() {
       {/* Privacy Notice */}
       <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-4 flex items-start gap-3">
-          <Shield className="h-5 w-5 text-primary mt-0.5" />
+          <Shield className="h-5 w-5 text-primary mt-0.5" aria-hidden="true" />
           <div>
             <p className="font-medium text-sm">Your Data Stays Local</p>
             <p className="text-sm text-muted-foreground">
@@ -185,7 +185,7 @@ export default function DataManagement() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <Database className="h-4 w-4" />
+            <Database className="h-5 w-5" aria-hidden="true" />
             Your Data Summary
           </CardTitle>
         </CardHeader>
@@ -214,7 +214,7 @@ export default function DataManagement() {
       {/* Import Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Upload className="h-5 w-5 text-primary" />
+          <Upload className="h-5 w-5 text-primary" aria-hidden="true" />
           <h2 className="text-lg font-semibold">Import Data</h2>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -248,7 +248,7 @@ export default function DataManagement() {
       {/* Export Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Download className="h-5 w-5 text-primary" />
+          <Download className="h-5 w-5 text-primary" aria-hidden="true" />
           <h2 className="text-lg font-semibold">Export Data</h2>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -288,7 +288,7 @@ export default function DataManagement() {
       {/* Backup Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <FileJson className="h-5 w-5 text-primary" />
+          <FileJson className="h-5 w-5 text-primary" aria-hidden="true" />
           <h2 className="text-lg font-semibold">Backup & Restore</h2>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -299,7 +299,7 @@ export default function DataManagement() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
-                <Download className="h-4 w-4" />
+                <Download className="h-5 w-5" aria-hidden="true" />
                 Create Backup
               </CardTitle>
               <CardDescription>
@@ -357,7 +357,7 @@ export default function DataManagement() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
-                <Upload className="h-4 w-4" />
+                <Upload className="h-5 w-5" aria-hidden="true" />
                 Restore Backup
               </CardTitle>
               <CardDescription>
@@ -385,7 +385,7 @@ export default function DataManagement() {
       {/* Danger Zone */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Trash2 className="h-5 w-5 text-destructive" />
+          <Trash2 className="h-5 w-5 text-destructive" aria-hidden="true" />
           <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
         </div>
         <p className="text-sm text-muted-foreground">

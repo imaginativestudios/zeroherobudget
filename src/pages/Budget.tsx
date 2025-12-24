@@ -217,7 +217,7 @@ export const Budget = () => {
       <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
-            <DollarSign className="h-6 w-6 text-accent" />
+            <DollarSign className="h-5 w-5 text-accent" aria-hidden="true" />
             Monthly Income
           </CardTitle>
         </CardHeader>
@@ -244,7 +244,7 @@ export const Budget = () => {
       <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-chart-1" />
+            <TrendingUp className="h-5 w-5 text-chart-1" aria-hidden="true" />
             Budget Summary
           </CardTitle>
         </CardHeader>

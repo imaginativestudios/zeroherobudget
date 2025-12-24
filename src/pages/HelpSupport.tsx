@@ -85,7 +85,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("getting-started")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <BookOpen className="h-8 w-8 text-primary mb-3" />
+            <BookOpen className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Getting Started</h3>
             <p className="text-sm text-muted-foreground">Learn the basics</p>
           </button>
@@ -93,7 +93,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("features")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <Target className="h-8 w-8 text-primary mb-3" />
+            <Target className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Features</h3>
             <p className="text-sm text-muted-foreground">Explore capabilities</p>
           </button>
@@ -101,7 +101,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("faq")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <MessageCircleQuestion className="h-8 w-8 text-primary mb-3" />
+            <MessageCircleQuestion className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">FAQ</h3>
             <p className="text-sm text-muted-foreground">Common questions</p>
           </button>
@@ -109,7 +109,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("contact")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <Mail className="h-8 w-8 text-primary mb-3" />
+            <Mail className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Contact Us</h3>
             <p className="text-sm text-muted-foreground">Get in touch</p>
           </button>
@@ -202,7 +202,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <Wallet className="h-6 w-6 text-primary" />
+                    <Wallet className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Budget Tracking</h3>
                 </div>
@@ -214,7 +214,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <TrendingDown className="h-6 w-6 text-primary" />
+                    <TrendingDown className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Debt Payoff Strategies</h3>
                 </div>
@@ -226,7 +226,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <CreditCard className="h-6 w-6 text-primary" />
+                    <CreditCard className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Subscription Management</h3>
                 </div>
@@ -238,7 +238,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <BarChart3 className="h-6 w-6 text-primary" />
+                    <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Reports & Analytics</h3>
                 </div>
@@ -250,7 +250,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <Users className="h-6 w-6 text-primary" />
+                    <Users className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Household Collaboration</h3>
                 </div>
@@ -262,7 +262,7 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
-                    <Calendar className="h-6 w-6 text-primary" />
+                    <Calendar className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Transaction History</h3>
                 </div>

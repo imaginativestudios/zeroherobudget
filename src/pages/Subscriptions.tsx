@@ -221,7 +221,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Monthly Spend</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CreditCard className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{formatCurrency(monthlySpend)}</div>
@@ -234,7 +234,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
-            <Play className="h-4 w-4 text-muted-foreground" />
+            <Play className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{activeSubscriptions.length}</div>
@@ -247,7 +247,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Upcoming Renewals</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{upcomingRenewals.length}</div>
@@ -265,7 +265,7 @@ export function Subscriptions() {
       {upcomingRenewals.length > 0 && <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-warning" />
+              <AlertCircle className="h-5 w-5 text-warning" aria-hidden="true" />
               Upcoming Renewals
             </CardTitle>
           </CardHeader>
@@ -330,19 +330,19 @@ export function Subscriptions() {
                     setEditingSubscription(subscription);
                     setShowForm(true);
                   }}>
-                          <Edit className="h-3 w-3" />
+                          <Edit className="h-4 w-4" aria-hidden="true" />
                         </Button>
                         {subscription.manageUrl && <Button size="sm" variant="ghost" onClick={() => handleManageSubscription(subscription.manageUrl)}>
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="h-4 w-4" aria-hidden="true" />
                           </Button>}
                         {subscription.status === 'active' && <Button size="sm" variant="ghost" onClick={() => pauseSubscription(subscription.id)}>
-                            <Pause className="h-3 w-3" />
+                            <Pause className="h-4 w-4" aria-hidden="true" />
                           </Button>}
                         {subscription.status === 'paused' && <Button size="sm" variant="ghost" onClick={() => resumeSubscription(subscription.id)}>
-                            <Play className="h-3 w-3" />
+                            <Play className="h-4 w-4" aria-hidden="true" />
                           </Button>}
                         <Button size="sm" variant="ghost" onClick={() => removeSubscription(subscription.id)}>
-                          <X className="h-3 w-3" />
+                          <X className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </TableCell>

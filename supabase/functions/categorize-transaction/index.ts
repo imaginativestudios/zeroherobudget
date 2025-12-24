@@ -19,6 +19,33 @@ const CATEGORIES = [
   "Miscellaneous"
 ];
 
+// Helper to sanitize strings for SQL LIKE patterns
+const sanitizeForLike = (str: string): string => {
+  return str.replace(/[%_\\]/g, '\\$&');
+};
+
+// Simple in-memory rate limiter per user
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_MAX = 10; // max requests per window
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute window
+
+const checkRateLimit = (userId: string): boolean => {
+  const now = Date.now();
+  const userLimit = rateLimitMap.get(userId);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  
+  if (userLimit.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+  
+  userLimit.count++;
+  return true;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -28,9 +55,18 @@ serve(async (req) => {
   try {
     const { description, amount } = await req.json();
     
+    // Input validation
     if (!description) {
       return new Response(
         JSON.stringify({ error: "Transaction description is required" }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Validate description length to prevent abuse
+    if (typeof description !== 'string' || description.length > 500) {
+      return new Response(
+        JSON.stringify({ error: "Invalid description format or length" }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -44,21 +80,41 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey, {
       global: { headers: { Authorization: authHeader ?? '' } }
     });
+    
+    // Get user ID for rate limiting
+    let userId: string | null = null;
+    if (authHeader) {
+      const { data: { user } } = await supabase.auth.getUser();
+      userId = user?.id ?? null;
+    }
+    
+    // Check rate limit for authenticated users
+    if (userId && !checkRateLimit(userId)) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please wait a moment before trying again." }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Query user's categorization history for similar transactions
     let historicalContext = "";
     if (authHeader) {
-      const { data: history } = await supabase
-        .from('transaction_categorization_history')
-        .select('transaction_description, user_selected_category')
-        .ilike('transaction_description', `%${description.split(' ')[0]}%`)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Sanitize input for LIKE pattern to prevent pattern injection
+      const firstWord = sanitizeForLike(description.split(' ')[0] || '');
+      
+      if (firstWord.length > 0) {
+        const { data: history } = await supabase
+          .from('transaction_categorization_history')
+          .select('transaction_description, user_selected_category')
+          .ilike('transaction_description', `%${firstWord}%`)
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      if (history && history.length > 0) {
-        historicalContext = `\n\nUser's past categorization patterns for similar transactions:\n${
-          history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
-        }`;
+        if (history && history.length > 0) {
+          historicalContext = `\n\nUser's past categorization patterns for similar transactions:\n${
+            history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
+          }`;
+        }
       }
     }
 
@@ -160,9 +216,11 @@ Examples:
     );
 
   } catch (error) {
+    // Log detailed error server-side only
     console.error("Error in categorize-transaction function:", error);
+    // Return generic error to client
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Unable to categorize transaction. Please try again later." }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

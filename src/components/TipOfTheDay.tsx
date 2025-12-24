@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { InlineAlert } from "@/components/ui/inline-alert";
 import { getRandomTip, type FinancialTip } from "@/lib/financialTips";
 
 export const TipOfTheDay = () => {
@@ -42,11 +43,9 @@ export const TipOfTheDay = () => {
         </div>
         
         {tip.proTip && (
-          <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
-            <p className="text-sm font-medium text-foreground">
-              💡 Pro Tip: {tip.proTip}
-            </p>
-          </div>
+          <InlineAlert variant="tip">
+            <span className="font-medium">Pro Tip:</span> {tip.proTip}
+          </InlineAlert>
         )}
 
         <div className="flex justify-end">

@@ -154,7 +154,10 @@ export default function FinancialTips() {
                     {/* Pro Tip Section - Right */}
                     {tip.proTip ? (
                       <div className="lg:w-1/4 p-5 bg-accent/10 border-t lg:border-t-0 lg:border-l border-accent/20 flex flex-col justify-center">
-                        <Badge variant="secondary" className="mb-2 w-fit">Pro Tip</Badge>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Lightbulb className="h-3.5 w-3.5 text-accent fill-accent" aria-hidden="true" />
+                          <span className="text-xs font-semibold text-accent uppercase tracking-wide">Pro Tip</span>
+                        </div>
                         <p className="text-sm text-foreground">
                           {tip.proTip}
                         </p>

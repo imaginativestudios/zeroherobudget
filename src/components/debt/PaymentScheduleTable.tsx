@@ -108,7 +108,7 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-accent">{schedule.summary.debtFreeDate}</p>
+            <p className="text-2xl font-bold text-accent-dark">{schedule.summary.debtFreeDate}</p>
             <p className="text-xs text-muted-foreground mt-1">Freedom achieved!</p>
           </CardContent>
         </Card>

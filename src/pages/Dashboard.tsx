@@ -512,7 +512,7 @@ export const Dashboard = () => {
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-accent">{debt.payoffLabel}</div>
+                          <div className="font-bold text-accent-dark">{debt.payoffLabel}</div>
                         </div>
                       </div>
                       

@@ -335,8 +335,8 @@ export default function DataManagement() {
                       )}
                     </div>
                     {(isStale || needsBackup) && (
-                      <Alert className="mb-3 py-2 border-destructive/50 bg-destructive/5">
-                        <AlertTriangle className="h-3 w-3 text-destructive" />
+                      <Alert className="mb-3 py-2 border-destructive/50 bg-destructive/5 [&>svg]:top-2.5">
+                        <AlertTriangle className="h-4 w-4 text-destructive" aria-hidden="true" />
                         <AlertDescription className="text-xs text-destructive">
                           {needsBackup 
                             ? "You have data but no backup. Create one to protect your data."
@@ -345,7 +345,7 @@ export default function DataManagement() {
                       </Alert>
                     )}
                     <Button onClick={handleCreateBackup} className="w-full" disabled={totalItems === 0}>
-                      <Download className="h-4 w-4 mr-2" />
+                      <Download className="h-4 w-4" aria-hidden="true" />
                       Download Backup
                     </Button>
                   </>
@@ -365,14 +365,14 @@ export default function DataManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Alert className="mb-3 py-2">
-                <AlertCircle className="h-3 w-3" />
+              <Alert className="mb-3 py-2 [&>svg]:top-2.5">
+                <AlertCircle className="h-4 w-4" aria-hidden="true" />
                 <AlertDescription className="text-xs">
                   Restoring may overwrite existing data
                 </AlertDescription>
               </Alert>
               <Button variant="outline" onClick={() => setRestoreDialogOpen(true)} className="w-full">
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="h-4 w-4" aria-hidden="true" />
                 Restore from Backup
               </Button>
             </CardContent>

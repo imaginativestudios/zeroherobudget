@@ -117,11 +117,12 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
   } catch (error: any) {
+    // Log detailed error server-side only
     console.error("Error in subscribe-waitlist function:", error);
+    // Return generic error to client - never expose internal details
     return new Response(
       JSON.stringify({ 
-        error: error.message || "Failed to subscribe to waitlist",
-        details: error.toString()
+        error: "Unable to process your request. Please try again later."
       }),
       {
         status: 500,

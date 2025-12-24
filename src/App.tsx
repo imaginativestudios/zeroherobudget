@@ -33,6 +33,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import HelpSupport from "./pages/HelpSupport";
 import DataPrivacyFAQ from "./pages/DataPrivacyFAQ";
+import IconStyleGuide from "./pages/IconStyleGuide";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/help" element={<HelpSupport />} />
           <Route path="/data-privacy" element={<DataPrivacyFAQ />} />
+          <Route path="/style-guide/icons" element={<IconStyleGuide />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           
           {/* Admin routes */}

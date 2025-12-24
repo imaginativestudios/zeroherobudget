@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LucideIcon, TrendingUp, TrendingDown, Minus, RefreshCw, Building2 } from "lucide-react";
+import { LucideIcon, TrendingUp, TrendingDown, Minus, RefreshCw, Building2, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -133,9 +133,10 @@ export const FinancialCard = ({
         )}
         
         {!syncStatus && insight && (
-          <div className="mt-3 p-2 bg-muted/50 rounded-md">
+          <div className="mt-3 p-2 bg-muted/50 rounded-md flex items-start gap-1.5">
+            <Lightbulb className="h-3.5 w-3.5 text-accent-dark fill-accent-dark flex-shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-xs text-accent-dark font-medium leading-relaxed line-clamp-2">
-              💡 {insight}
+              {insight}
             </p>
           </div>
         )}

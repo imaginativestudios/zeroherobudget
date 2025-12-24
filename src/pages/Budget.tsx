@@ -246,7 +246,7 @@ export const Budget = () => {
       <Card className="shadow-royal">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-chart-1" aria-hidden="true" />
+            <TrendingUp className="h-5 w-5 text-accent" aria-hidden="true" />
             Budget Summary
           </CardTitle>
         </CardHeader>
@@ -318,7 +318,7 @@ export const Budget = () => {
       {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Crown className="h-5 w-5 text-chart-1" />
+              <Crown className="h-5 w-5 text-accent" />
               Planned Spending by Category
             </CardTitle>
           </CardHeader>
@@ -345,7 +345,7 @@ export const Budget = () => {
       {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-chart-2" />
+              <TrendingUp className="h-5 w-5 text-accent" />
               Planned vs Actual by Category
             </CardTitle>
           </CardHeader>

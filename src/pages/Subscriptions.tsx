@@ -221,7 +221,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Monthly Spend</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <CreditCard className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{formatCurrency(monthlySpend)}</div>
@@ -234,7 +234,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
-            <Play className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Play className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{activeSubscriptions.length}</div>
@@ -247,7 +247,7 @@ export function Subscriptions() {
         <Card className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
             <CardTitle className="text-sm font-medium">Upcoming Renewals</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Calendar className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
           <CardContent className="p-4 sm:p-5 pt-0">
             <div className="text-2xl font-bold">{upcomingRenewals.length}</div>

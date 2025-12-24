@@ -85,7 +85,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("getting-started")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <BookOpen className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
+            <BookOpen className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Getting Started</h3>
             <p className="text-sm text-muted-foreground">Learn the basics</p>
           </button>
@@ -93,7 +93,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("features")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <Target className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
+            <Target className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Features</h3>
             <p className="text-sm text-muted-foreground">Explore capabilities</p>
           </button>
@@ -101,7 +101,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("faq")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <MessageCircleQuestion className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
+            <MessageCircleQuestion className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">FAQ</h3>
             <p className="text-sm text-muted-foreground">Common questions</p>
           </button>
@@ -109,7 +109,7 @@ const HelpSupport = () => {
             to="/data-privacy"
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <Shield className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
+            <Shield className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Data Privacy</h3>
             <p className="text-sm text-muted-foreground">How your data is stored</p>
           </Link>
@@ -117,7 +117,7 @@ const HelpSupport = () => {
             onClick={() => scrollToSection("contact")}
             className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
           >
-            <Mail className="h-8 w-8 text-primary mb-3" aria-hidden="true" />
+            <Mail className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Contact Us</h3>
             <p className="text-sm text-muted-foreground">Get in touch</p>
           </button>

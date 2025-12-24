@@ -142,7 +142,7 @@ export const FinancialCard = ({
         
         {/* Footer: Link */}
         {to && (
-          <p className="text-xs text-muted-foreground mt-auto pt-3 transition-all duration-200 group-hover:text-accent group-hover:translate-x-1">
+          <p className="text-xs text-muted-foreground mt-auto pt-3 transition-all duration-200 group-hover:text-accent-dark group-hover:translate-x-1">
             View detailed report →
           </p>
         )}

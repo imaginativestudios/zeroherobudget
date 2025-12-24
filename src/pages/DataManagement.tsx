@@ -172,10 +172,13 @@ export default function DataManagement() {
       <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-4 flex items-start gap-3">
           <Shield className="h-5 w-5 text-primary mt-0.5" aria-hidden="true" />
-          <div>
+          <div className="flex-1">
             <p className="font-medium text-sm">Your Data Stays Local</p>
             <p className="text-sm text-muted-foreground">
-              All your financial data is stored securely on your device. Nothing is sent to external servers.
+              All your financial data is stored securely on your device. Nothing is sent to external servers.{' '}
+              <a href="/data-privacy" className="text-primary hover:underline">
+                Learn how this works →
+              </a>
             </p>
           </div>
         </CardContent>

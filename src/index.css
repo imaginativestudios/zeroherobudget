@@ -47,6 +47,7 @@ All colors MUST be HSL.
     --border: 175 15% 82%; /* Improved contrast from 88% to 82% */
     --input: 175 15% 88%; /* Improved contrast from 92% to 88% */
     --ring: 175 77% 26%;
+    --ring-accent: 32 85% 45%; /* Accent-dark for accessible focus rings */
 
     --radius: 0.75rem;
     
@@ -186,6 +187,29 @@ All colors MUST be HSL.
 }
 
 @layer components {
+  /* Enhanced focus styles for keyboard navigation - uses accent-dark for visibility */
+  .focus-accent {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+  
+  /* Apply accent focus ring to interactive elements globally */
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring-accent));
+  }
+  
+  /* Exception for elements that have their own focus styling */
+  [data-radix-collection-item]:focus-visible,
+  [data-state]:focus-visible {
+    box-shadow: none;
+  }
+
   /* Ensure content clears fixed mobile/tablet header safely (with notches) */
   .safe-header-pt {
     padding-top: calc(72px + env(safe-area-inset-top)) !important;

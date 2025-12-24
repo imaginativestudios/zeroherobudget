@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { AlertCircle, CheckCircle, AlertTriangle, Copy } from 'lucide-react';
+import { CheckCircle, Copy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { InlineAlert } from '@/components/ui/inline-alert';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -65,31 +65,29 @@ export function ImportPreview({
 
       {/* Validation Alerts */}
       {validation.errors.length > 0 && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Validation Errors</AlertTitle>
-          <AlertDescription>
+        <InlineAlert variant="destructive">
+          <div>
+            <span className="font-medium">Validation Errors</span>
             <ul className="list-disc list-inside mt-2">
               {validation.errors.map((error, i) => (
                 <li key={i}>{error}</li>
               ))}
             </ul>
-          </AlertDescription>
-        </Alert>
+          </div>
+        </InlineAlert>
       )}
 
       {validation.warnings.length > 0 && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Warnings</AlertTitle>
-          <AlertDescription>
+        <InlineAlert variant="warning">
+          <div>
+            <span className="font-medium">Warnings</span>
             <ul className="list-disc list-inside mt-2">
               {validation.warnings.map((warning, i) => (
                 <li key={i}>{warning}</li>
               ))}
             </ul>
-          </AlertDescription>
-        </Alert>
+          </div>
+        </InlineAlert>
       )}
 
       {/* Duplicate Handling */}

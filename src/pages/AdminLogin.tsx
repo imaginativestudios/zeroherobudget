@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InlineAlert } from '@/components/ui/inline-alert';
 import { Loader2, Shield } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
@@ -72,9 +72,9 @@ const AdminLogin = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <Alert variant="destructive" role="alert" aria-live="assertive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+              <InlineAlert variant="destructive" aria-live="assertive">
+                {error}
+              </InlineAlert>
             )}
             
             <div className="space-y-2">

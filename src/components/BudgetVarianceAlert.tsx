@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InlineAlert } from "@/components/ui/inline-alert";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/constants";
 
@@ -17,10 +17,10 @@ export const BudgetVarianceAlert = ({ planned, actual, categoryName }: BudgetVar
   
   if (!isSignificant) return null;
 
-  const getAlertType = () => {
+  const getVariant = () => {
     if (isOverBudget && variancePercentage > 50) return "destructive";
-    if (isOverBudget && variancePercentage > 20) return "default";
-    return "default"; // Under budget
+    if (isOverBudget) return "warning";
+    return "success";
   };
 
   const getIcon = () => {
@@ -29,16 +29,16 @@ export const BudgetVarianceAlert = ({ planned, actual, categoryName }: BudgetVar
     return CheckCircle;
   };
 
-  const Icon = getIcon();
-  const alertType = getAlertType();
-
   return (
-    <Alert variant={alertType as any} className="animate-fade-in">
-      <Icon className="h-4 w-4" />
-      <AlertDescription className="flex items-center justify-between">
+    <InlineAlert 
+      variant={getVariant()} 
+      icon={getIcon()} 
+      className="animate-fade-in"
+    >
+      <div className="flex items-center justify-between w-full">
         <div>
           <span className="font-medium">{categoryName}</span> is{" "}
-          <span className={isOverBudget ? "text-destructive" : "text-success"}>
+          <span className={isOverBudget ? "text-destructive" : "text-green-600"}>
             {Math.abs(variancePercentage).toFixed(1)}%{" "}
             {isOverBudget ? "over" : "under"} budget
           </span>
@@ -46,7 +46,7 @@ export const BudgetVarianceAlert = ({ planned, actual, categoryName }: BudgetVar
         <Badge variant={isOverBudget ? "destructive" : "secondary"}>
           {isOverBudget ? "+" : ""}{formatCurrency(variance)}
         </Badge>
-      </AlertDescription>
-    </Alert>
+      </div>
+    </InlineAlert>
   );
 };

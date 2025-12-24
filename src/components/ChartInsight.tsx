@@ -1,6 +1,5 @@
 import { Lightbulb, TrendingUp, TrendingDown, AlertTriangle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
+import { InlineAlert } from "@/components/ui/inline-alert";
 
 interface ChartInsightProps {
   insight: string;
@@ -20,19 +19,20 @@ export const ChartInsight = ({ insight, type = "info" }: ChartInsightProps) => {
   const getVariant = () => {
     switch (type) {
       case "warning": return "destructive";
-      default: return "default";
+      case "trend-up":
+      case "success": return "success";
+      case "trend-down": return "warning";
+      default: return "info";
     }
   };
 
-  const Icon = getIcon();
-  const isLightbulb = type === "info" || type === "success";
-
   return (
-    <Alert variant={getVariant() as any} className="animate-fade-in border-dashed">
-      <Icon className={cn("h-4 w-4", isLightbulb && "fill-current")} />
-      <AlertDescription className="text-sm">
-        <span className="font-medium">Insight:</span> {insight}
-      </AlertDescription>
-    </Alert>
+    <InlineAlert 
+      variant={getVariant()} 
+      icon={getIcon()} 
+      className="animate-fade-in border-dashed"
+    >
+      <span className="font-medium">Insight:</span> {insight}
+    </InlineAlert>
   );
 };

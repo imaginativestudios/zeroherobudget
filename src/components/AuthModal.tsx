@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 
 interface AuthModalProps {
   open: boolean;
@@ -21,13 +22,17 @@ interface AuthModalProps {
   defaultMode?: 'login' | 'signup';
 }
 
+type AuthView = 'auth' | 'forgot-password' | 'reset-sent';
+
 export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const { signIn, signUp } = useAuth();
+  const [rememberMe, setRememberMe] = useState(true);
+  const [view, setView] = useState<AuthView>('auth');
+  const { signIn, signUp, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -94,70 +99,265 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast({
+        title: 'Email required',
+        description: 'Please enter your email address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await resetPassword(email);
+      
+      if (error) {
+        toast({
+          title: 'Reset failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        setView('reset-sent');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      // Reset view when closing
+      setView('auth');
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
-          <DialogDescription className="text-center">
-            Start your journey to financial freedom
-          </DialogDescription>
-        </DialogHeader>
+        {view === 'auth' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
+              <DialogDescription className="text-center">
+                Start your journey to financial freedom
+              </DialogDescription>
+            </DialogHeader>
 
-        <Tabs defaultValue={defaultMode} className="w-full">
-          <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
-            <TabsTrigger 
-              value="login"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                         bg-background text-foreground/70 font-medium
-                         border-r border-border last:border-r-0
-                         hover:bg-muted hover:text-foreground
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                         transition-all cursor-pointer
-                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
-                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
-            >
-              Login
-            </TabsTrigger>
-            <TabsTrigger 
-              value="signup"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                         bg-background text-foreground/70 font-medium
-                         border-r border-border last:border-r-0
-                         hover:bg-muted hover:text-foreground
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                         transition-all cursor-pointer
-                         data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
-                         data-[state=active]:font-semibold data-[state=active]:shadow-sm"
-            >
-              Sign Up
-            </TabsTrigger>
-          </TabsList>
+            <Tabs defaultValue={defaultMode} className="w-full">
+              <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
+                <TabsTrigger 
+                  value="login"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                             bg-background text-foreground/70 font-medium
+                             border-r border-border last:border-r-0
+                             hover:bg-muted hover:text-foreground
+                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                             transition-all cursor-pointer
+                             data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                             data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+                >
+                  Login
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signup"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                             bg-background text-foreground/70 font-medium
+                             border-r border-border last:border-r-0
+                             hover:bg-muted hover:text-foreground
+                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                             transition-all cursor-pointer
+                             data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                             data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+                >
+                  Sign Up
+                </TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-4 mt-4">
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-email">Email</Label>
+                    <Input
+                      id="login-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="login-password">Password</Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="remember-me"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) => setRememberMe(checked === true)}
+                        disabled={loading}
+                      />
+                      <Label 
+                        htmlFor="remember-me" 
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Remember me
+                      </Label>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="px-0 h-auto text-sm text-primary"
+                      onClick={() => setView('forgot-password')}
+                      disabled={loading}
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    variant="royal"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="signup">
+                <form onSubmit={handleSignup} className="space-y-4 mt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-firstname">First Name</Label>
+                      <Input
+                        id="signup-firstname"
+                        type="text"
+                        placeholder="John"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-lastname">Last Name</Label>
+                      <Input
+                        id="signup-lastname"
+                        type="text"
+                        placeholder="Doe"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={loading}
+                      minLength={6}
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    variant="royal"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      'Create Account'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </>
+        )}
+
+        {view === 'forgot-password' && (
+          <>
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setView('auth')}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <DialogTitle className="text-xl font-bold">Reset Password</DialogTitle>
+              </div>
+              <DialogDescription className="text-left pl-10">
+                Enter your email and we'll send you a link to reset your password.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleForgotPassword} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
+                <Label htmlFor="reset-email">Email</Label>
                 <Input
-                  id="login-email"
+                  id="reset-email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
-                <Input
-                  id="login-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
+                  autoFocus
                 />
               </div>
               <Button 
@@ -169,84 +369,52 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    Sending...
                   </>
                 ) : (
-                  'Sign In'
+                  'Send Reset Link'
                 )}
               </Button>
             </form>
-          </TabsContent>
+          </>
+        )}
 
-          <TabsContent value="signup">
-            <form onSubmit={handleSignup} className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-firstname">First Name</Label>
-                  <Input
-                    id="signup-firstname"
-                    type="text"
-                    placeholder="John"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-lastname">Last Name</Label>
-                  <Input
-                    id="signup-lastname"
-                    type="text"
-                    placeholder="Doe"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                  minLength={6}
-                />
-              </div>
+        {view === 'reset-sent' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-center">Check Your Email</DialogTitle>
+              <DialogDescription className="text-center">
+                We've sent a password reset link to <strong>{email}</strong>. 
+                Click the link in the email to reset your password.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 mt-4">
               <Button 
-                type="submit" 
+                type="button" 
                 className="w-full" 
                 variant="royal"
-                disabled={loading}
+                onClick={() => {
+                  setView('auth');
+                  onOpenChange(false);
+                }}
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  'Create Account'
-                )}
+                Back to Login
               </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
+              <p className="text-xs text-muted-foreground text-center">
+                Didn't receive the email? Check your spam folder or{' '}
+                <Button
+                  type="button"
+                  variant="link"
+                  className="px-0 h-auto text-xs"
+                  onClick={() => setView('forgot-password')}
+                >
+                  try again
+                </Button>
+              </p>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

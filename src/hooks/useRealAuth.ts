@@ -93,6 +93,16 @@ export const useRealAuth = () => {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/dashboard`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
+    });
+    
+    return { error };
+  };
+
   const resendConfirmation = async (email: string) => {
     const { error } = await supabase.auth.resend({
       type: 'signup',
@@ -106,6 +116,7 @@ export const useRealAuth = () => {
     signUp,
     signIn,
     signOut,
+    resetPassword,
     resendConfirmation,
   };
 };

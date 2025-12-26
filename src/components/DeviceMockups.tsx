@@ -1,12 +1,33 @@
+import { useRef } from "react";
 import { DollarSign, TrendingUp, TrendingDown, Target, AlertTriangle, CreditCard, Trophy, BarChart3, Menu } from "lucide-react";
+import { useParallax } from "@/hooks/useParallax";
 
 export function DeviceMockups() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { parallaxOffset, rotateX, isInView } = useParallax(containerRef, {
+    parallaxFactor: 0.08,
+    maxRotation: 4,
+  });
+
   return (
-    <div className="relative flex items-end justify-center gap-4 lg:gap-8">
+    <div 
+      ref={containerRef}
+      className="relative flex items-end justify-center gap-4 lg:gap-8"
+      style={{ perspective: '1000px' }}
+    >
       {/* Desktop Monitor */}
-      <div className="relative">
+      <div 
+        className="relative animate-float-slow will-change-transform"
+        style={{
+          transform: isInView 
+            ? `translateY(${parallaxOffset * 0.6}px) rotateX(${rotateX * 0.5}deg)` 
+            : undefined,
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.1s ease-out',
+        }}
+      >
         {/* Monitor Frame */}
-        <div className="relative bg-foreground/90 rounded-lg p-2 shadow-2xl">
+        <div className="relative bg-foreground/90 rounded-lg p-2 shadow-2xl transition-shadow duration-300 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
           {/* Screen */}
           <div className="w-[280px] sm:w-[400px] lg:w-[520px] h-[175px] sm:h-[250px] lg:h-[325px] bg-background rounded overflow-hidden">
             {/* Dashboard Content */}
@@ -244,9 +265,19 @@ export function DeviceMockups() {
       </div>
       
       {/* Mobile Phone */}
-      <div className="relative -mb-4 lg:-mb-8">
+      <div 
+        className="relative -mb-4 lg:-mb-8 animate-float will-change-transform"
+        style={{
+          transform: isInView 
+            ? `translateY(${parallaxOffset}px) rotateX(${rotateX}deg)` 
+            : undefined,
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.1s ease-out',
+          animationDelay: '0.5s',
+        }}
+      >
         {/* Phone Frame */}
-        <div className="relative bg-foreground/90 rounded-2xl lg:rounded-3xl p-1.5 lg:p-2 shadow-2xl">
+        <div className="relative bg-foreground/90 rounded-2xl lg:rounded-3xl p-1.5 lg:p-2 shadow-2xl transition-shadow duration-300 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
           {/* Notch */}
           <div className="absolute top-2 lg:top-3 left-1/2 -translate-x-1/2 w-12 lg:w-16 h-2 lg:h-3 bg-foreground/90 rounded-full z-10" />
           

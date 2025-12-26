@@ -119,7 +119,7 @@ export default {
 			transitionProperty: {
 				'royal': 'var(--transition-royal)'
 			},
-			keyframes: {
+		keyframes: {
 				'accordion-down': {
 					from: {
 						height: '0'
@@ -155,6 +155,22 @@ export default {
 						opacity: '1',
 						transform: 'scale(1)'
 					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-12px)'
+					}
+				},
+				'float-slow': {
+					'0%, 100%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-8px)'
+					}
 				}
 			},
 			animation: {
@@ -162,7 +178,9 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'tab-fade-in': 'tab-fade-in 0.25s ease-out',
 				'tab-scale-in': 'tab-scale-in 0.2s ease-out',
-				'tab-enter': 'tab-fade-in 0.25s ease-out, tab-scale-in 0.2s ease-out'
+				'tab-enter': 'tab-fade-in 0.25s ease-out, tab-scale-in 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+				'float-slow': 'float-slow 8s ease-in-out infinite'
 			}
 		}
 	},

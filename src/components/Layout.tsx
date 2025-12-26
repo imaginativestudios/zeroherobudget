@@ -18,11 +18,9 @@ interface LayoutProps {
 
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Household", href: "/household", icon: Users },
   { name: "Budgets", href: "/budgets", icon: DollarSign },
   { name: "Debts", href: "/debts", icon: Target },
   { name: "Transactions", href: "/transactions", icon: Receipt },
-  { name: "Subscriptions", href: "/subscriptions", icon: CreditCard },
   { name: "Data Management", href: "/data", icon: Database },
   { name: "Achievements", href: "/achievements", icon: Trophy },
   { name: "Financial Tips", href: "/learn", icon: Lightbulb },
@@ -59,14 +57,12 @@ export const Layout = ({ children }: LayoutProps) => {
   // Define keyboard shortcuts with config for the help dialog
   const shortcutConfigs: ShortcutConfig[] = useMemo(() => [
     { key: "1", ctrl: true, description: "Go to Dashboard", category: "Navigation" },
-    { key: "2", ctrl: true, description: "Go to Household", category: "Navigation" },
-    { key: "3", ctrl: true, description: "Go to Budgets", category: "Navigation" },
-    { key: "4", ctrl: true, description: "Go to Debts", category: "Navigation" },
-    { key: "5", ctrl: true, description: "Go to Transactions", category: "Navigation" },
-    { key: "6", ctrl: true, description: "Go to Subscriptions", category: "Navigation" },
-    { key: "7", ctrl: true, description: "Go to Achievements", category: "Navigation" },
-    { key: "8", ctrl: true, description: "Go to Financial Tips", category: "Navigation" },
-    { key: "9", ctrl: true, description: "Go to Reports", category: "Navigation" },
+    { key: "2", ctrl: true, description: "Go to Budgets", category: "Navigation" },
+    { key: "3", ctrl: true, description: "Go to Debts", category: "Navigation" },
+    { key: "4", ctrl: true, description: "Go to Transactions", category: "Navigation" },
+    { key: "5", ctrl: true, description: "Go to Achievements", category: "Navigation" },
+    { key: "6", ctrl: true, description: "Go to Financial Tips", category: "Navigation" },
+    { key: "7", ctrl: true, description: "Go to Reports", category: "Navigation" },
     { key: "/", ctrl: true, description: "Show keyboard shortcuts", category: "Help" },
   ], []);
 
@@ -82,61 +78,47 @@ export const Layout = ({ children }: LayoutProps) => {
     {
       ...shortcutConfigs[1],
       action: () => {
-        navigate("/household");
-        toast({ title: "Navigated to Household" });
-      },
-    },
-    {
-      ...shortcutConfigs[2],
-      action: () => {
         navigate("/budgets");
         toast({ title: "Navigated to Budgets" });
       },
     },
     {
-      ...shortcutConfigs[3],
+      ...shortcutConfigs[2],
       action: () => {
         navigate("/debts");
         toast({ title: "Navigated to Debts" });
       },
     },
     {
-      ...shortcutConfigs[4],
+      ...shortcutConfigs[3],
       action: () => {
         navigate("/transactions");
         toast({ title: "Navigated to Transactions" });
       },
     },
     {
-      ...shortcutConfigs[5],
-      action: () => {
-        navigate("/subscriptions");
-        toast({ title: "Navigated to Subscriptions" });
-      },
-    },
-    {
-      ...shortcutConfigs[6],
+      ...shortcutConfigs[4],
       action: () => {
         navigate("/achievements");
         toast({ title: "Navigated to Achievements" });
       },
     },
     {
-      ...shortcutConfigs[7],
+      ...shortcutConfigs[5],
       action: () => {
         navigate("/learn");
         toast({ title: "Navigated to Financial Tips" });
       },
     },
     {
-      ...shortcutConfigs[8],
+      ...shortcutConfigs[6],
       action: () => {
         navigate("/reports");
         toast({ title: "Navigated to Reports" });
       },
     },
     {
-      ...shortcutConfigs[9],
+      ...shortcutConfigs[7],
       action: () => setShowShortcutsDialog(true),
     },
   ], [navigate, shortcutConfigs]);
@@ -213,7 +195,6 @@ export const Layout = ({ children }: LayoutProps) => {
                   const tourId = item.href === '/budgets' ? 'nav-budgets'
                     : item.href === '/debts' ? 'nav-debts'
                     : item.href === '/transactions' ? 'nav-transactions'
-                    : item.href === '/subscriptions' ? 'nav-subscriptions'
                     : item.href === '/achievements' ? 'nav-achievements'
                     : item.href === '/reports' ? 'nav-reports'
                     : undefined;

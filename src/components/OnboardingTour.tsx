@@ -46,7 +46,7 @@ const getMobileTabletTourSteps = (): Step[] => [
       <div className="space-y-2">
         <h3 className="text-base font-semibold text-foreground">Navigation Sidebar</h3>
         <p className="text-sm text-muted-foreground">
-          Access Budgets, Debts, Transactions, Subscriptions, Reports, and more from here.
+          Access Budgets, Debts, Transactions, Reports, and more from here.
         </p>
       </div>
     ),
@@ -186,19 +186,6 @@ const getDesktopTourSteps = (): Step[] => [
         <h3 className="font-semibold text-foreground">Transaction Tracking</h3>
         <p className="text-sm text-muted-foreground">
           Record all your income and expenses. Search, filter, and analyze spending patterns to stay on top of your finances.
-        </p>
-      </div>
-    ),
-    placement: 'right',
-    disableBeacon: true,
-  },
-  {
-    target: '[data-tour="nav-subscriptions"]',
-    content: (
-      <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Subscription Manager</h3>
-        <p className="text-sm text-muted-foreground">
-          Track all recurring subscriptions, get renewal alerts, and identify subscriptions you may no longer need.
         </p>
       </div>
     ),

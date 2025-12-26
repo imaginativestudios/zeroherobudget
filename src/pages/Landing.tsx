@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
-import { ArrowRight, Shield, TrendingDown, Users, Target, BarChart3, CreditCard } from 'lucide-react';
+import { DeviceMockups } from '@/components/DeviceMockups';
+import { ArrowRight, Shield, TrendingDown, Target, BarChart3, Zap } from 'lucide-react';
+
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
@@ -20,13 +22,9 @@ export default function Landing() {
     title: 'Budget Mastery',
     description: 'Track every dollar with intelligent categorization and visual progress tracking across 10 household categories.'
   }, {
-    icon: CreditCard,
-    title: 'Subscription Control',
-    description: 'Automatically detect and manage recurring subscriptions to cut unnecessary spending.'
-  }, {
-    icon: Users,
-    title: 'Household Collaboration',
-    description: 'Manage finances together with role-based access and shared household budgets.'
+    icon: Zap,
+    title: 'Quick Data Entry',
+    description: 'Add transactions in seconds with smart categorization and drag-and-drop expense organization.'
   }, {
     icon: BarChart3,
     title: 'Visual Analytics',
@@ -61,7 +59,7 @@ export default function Landing() {
           
           {/* Subheadline */}
           <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
-            Take control of your finances with intelligent budgeting, powerful debt payoff strategies, and real-time household collaboration.
+            Take control of your finances with intelligent budgeting and powerful debt payoff strategies.
           </p>
           
           {/* CTA Buttons - Grouped by Proximity */}
@@ -86,8 +84,8 @@ export default function Landing() {
               <span>Proven Debt Strategies</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4" aria-hidden="true" />
-              <span>Add family members for free</span>
+              <Target className="h-4 w-4" aria-hidden="true" />
+              <span>Track Every Dollar</span>
             </div>
           </div>
         </div>
@@ -119,7 +117,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Demo/Video Section */}
+        {/* Demo Section with Device Mockups */}
         <section className="py-24 bg-gradient-subtle">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
@@ -127,29 +125,12 @@ export default function Landing() {
                 See It In Action
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Watch how easy it is to track budgets, manage debt, and achieve your financial goals.
+                Manage your finances from any device. Beautiful, intuitive, and designed for clarity.
               </p>
             </div>
 
             <div className="max-w-5xl mx-auto">
-              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-elegant border border-border bg-card">
-                {/* Placeholder for demo video */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
-                  <div className="text-center">
-                    <BarChart3 className="w-24 h-24 text-primary mx-auto mb-4 opacity-50" aria-hidden="true" />
-                    <p className="text-muted-foreground text-lg">Demo video placeholder</p>
-                    <p className="text-sm text-muted-foreground mt-2">Add your video URL to showcase the app</p>
-                  </div>
-                </div>
-                {/* To add actual video, replace above with:
-                 <iframe 
-                  src="YOUR_VIDEO_URL" 
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                 />
-                 */}
-              </div>
+              <DeviceMockups />
             </div>
           </div>
         </section>

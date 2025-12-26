@@ -14,8 +14,8 @@ const FAQ_KNOWLEDGE = `
 **Q: What is Zero Hero?**
 A: Zero Hero is a comprehensive financial management app that helps you transform debt into victory. It combines budget tracking, debt payoff strategies (Snowball and Avalanche methods), subscription management, and household collaboration features to help you achieve financial freedom.
 
-**Q: Is Zero Hero free to use?**
-A: Yes! Zero Hero is currently free to use as a prototype. You can access all features including budget tracking, debt management, subscription monitoring, and household collaboration at no cost.
+**Q: Does Zero Hero offer a free trial?**
+A: Zero Hero offers a free trial to help you get started. After your trial, affordable subscription plans give you full access to budget tracking, debt management, subscription monitoring, and household collaboration features.
 
 **Q: What debt payoff strategies are available?**
 A: Zero Hero offers two proven debt elimination strategies:

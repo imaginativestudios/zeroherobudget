@@ -151,7 +151,7 @@ export default function Landing() {
             </Button>
 
             <p className="mt-8 text-sm text-white">
-              No credit card required • Free forever • Cancel anytime
+              Start with a free trial • Cancel anytime
             </p>
           </div>
         </section>

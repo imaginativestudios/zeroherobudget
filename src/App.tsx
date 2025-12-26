@@ -11,17 +11,13 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
 import { Transactions } from "@/pages/Transactions";
-import { Subscriptions } from "@/pages/Subscriptions";
 import { Reports } from "@/pages/Reports";
-import { Household } from "@/pages/Household";
 import { Achievements } from "@/pages/Achievements";
-import { AcceptInvite } from "@/pages/AcceptInvite";
 import FinancialTips from "@/pages/FinancialTips";
 import DataManagement from "@/pages/DataManagement";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
-import { SubscriptionsReport } from "@/pages/reports/SubscriptionsReport";
 import ComingSoon from "./pages/ComingSoon";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
@@ -53,7 +49,6 @@ const App = () => (
           <Route path="/help" element={<HelpSupport />} />
           <Route path="/data-privacy" element={<DataPrivacyFAQ />} />
           <Route path="/style-guide/icons" element={<IconStyleGuide />} />
-          <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -64,11 +59,9 @@ const App = () => (
             <Layout>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/household" element={<Household />} />
                 <Route path="/budgets" element={<Budget />} />
                 <Route path="/debts" element={<DebtSnowball />} />
                 <Route path="/transactions" element={<Transactions />} />
-                <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/achievements" element={<Achievements />} />
                 <Route path="/learn" element={<FinancialTips />} />
                 <Route path="/data" element={<DataManagement />} />
@@ -77,7 +70,6 @@ const App = () => (
                 <Route path="/reports/expenses" element={<Reports />} />
                 <Route path="/reports/available" element={<AvailableForDebtReport />} />
                 <Route path="/reports/net-worth" element={<NetWorthReport />} />
-                <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

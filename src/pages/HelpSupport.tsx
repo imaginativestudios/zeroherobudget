@@ -301,9 +301,9 @@ const HelpSupport = () => {
                 </AccordionItem>
 
                 <AccordionItem value="item-2">
-                  <AccordionTrigger>Is Zero Hero free to use?</AccordionTrigger>
+                  <AccordionTrigger>Does Zero Hero offer a free trial?</AccordionTrigger>
                   <AccordionContent>
-                    Yes! Zero Hero offers a free tier that includes all core features including budget tracking, debt management, and basic reports. Premium features like advanced analytics and priority support are available with our paid plans.
+                    Zero Hero offers a free trial to get you started. Our subscription plans include all core features including budget tracking, debt management, and reports. Premium features like advanced analytics and priority support are available with higher-tier plans.
                   </AccordionContent>
                 </AccordionItem>
 

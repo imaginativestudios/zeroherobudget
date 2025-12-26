@@ -47,6 +47,7 @@ interface GroupCardProps {
   onMoveToGroup: (itemId: string, targetGroup: string) => void;
   onRenameGroup: (oldName: string, newName: string) => void;
   onDeleteGroup: (groupName: string) => void;
+  isFirstGroup?: boolean;
 }
 
 export function GroupCard({
@@ -60,6 +61,7 @@ export function GroupCard({
   onMoveToGroup,
   onRenameGroup,
   onDeleteGroup,
+  isFirstGroup = false,
 }: GroupCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(groupName);
@@ -172,6 +174,7 @@ export function GroupCard({
                         e.stopPropagation();
                         onAddExpense(groupName);
                       }}
+                      {...(isFirstGroup ? { 'data-tour': 'budget-add-expense' } : {})}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>

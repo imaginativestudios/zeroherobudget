@@ -1,7 +1,6 @@
 import { Expense, Debt, Asset } from './csvUtils';
 
-// Demo account constants
-export const DEMO_EMAIL = 'demo@example.com';
+// Default empty values for new users
 
 // Demo data - comprehensive household budget
 export const DEMO_EXPENSES: Expense[] = [

@@ -17,7 +17,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { clearDemoData, clearSelectiveData, ClearDataOptions } from '@/lib/demoData';
+import { clearAllUserData, clearSelectiveData, ClearDataOptions } from '@/lib/dataClear';
 import { createBackup, downloadBackup } from '@/lib/dataBackup';
 
 interface DataStats {
@@ -101,7 +101,7 @@ export function ClearDataDialog({
     
     try {
       if (clearMode === 'all') {
-        clearDemoData(user.id);
+        clearAllUserData(user.id);
         toast({
           title: 'Data Cleared',
           description: 'All your data has been permanently deleted.',

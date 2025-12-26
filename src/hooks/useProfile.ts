@@ -1,2 +1,2 @@
-// Export mock profile for prototype mode
-export { useMockProfile as useProfile } from './useMockProfile';
+// Export real profile hook for production
+export { useRealProfile as useProfile } from './useRealProfile';

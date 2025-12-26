@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
-import { DemoDataInitializer } from "@/components/DemoDataInitializer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { OnboardingTourProvider } from "@/contexts/OnboardingTourContext";
 import { Dashboard } from "@/pages/Dashboard";
@@ -41,14 +40,12 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <OnboardingTourProvider>
-        <DemoDataInitializer />
         <Toaster />
         <Sonner />
         <BrowserRouter>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<ComingSoon />} />
-          <Route path="/demo" element={<Landing />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

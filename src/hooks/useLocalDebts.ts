@@ -1,6 +1,6 @@
-import { useUserLocalStorage } from './useUserLocalStorage';
 import { usePriorityLocalStorage } from './usePriorityLocalStorage';
 import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
+import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Debt {
@@ -17,15 +17,17 @@ export interface Debt {
 }
 
 export function useLocalDebts(priority: 'critical' | 'secondary' = 'critical') {
+  const { user } = useAuth();
   const loadState = useProgressiveLoad();
   const shouldLoad = useShouldLoad(priority, loadState);
   const [debts, setDebts, isLoading] = usePriorityLocalStorage<Debt[]>('debts', [], priority, shouldLoad);
 
   const addDebt = (debt: Omit<Debt, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!user) return;
     const newDebt: Debt = {
       ...debt,
       id: uuidv4(),
-      user_id: 'demo-user-123',
+      user_id: user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

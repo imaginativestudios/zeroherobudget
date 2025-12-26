@@ -1,4 +1,5 @@
 import { useUserLocalStorage } from './useUserLocalStorage';
+import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Account {
@@ -14,13 +15,15 @@ export interface Account {
 }
 
 export function useLocalAccounts() {
+  const { user } = useAuth();
   const [accounts, setAccounts] = useUserLocalStorage<Account[]>('accounts', []);
 
   const addAccount = (account: Omit<Account, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!user) return;
     const newAccount: Account = {
       ...account,
       id: uuidv4(),
-      user_id: 'demo-user-123',
+      user_id: user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
+import { useHouseholds } from '@/hooks/useHouseholds';
 import { UserPlus, Copy, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -47,6 +47,13 @@ export function InvitationForm() {
     
     if (!error && token) {
       setInvitationToken(token);
+    } else if (error) {
+      toast({
+        title: "Feature not available",
+        description: error,
+        variant: "destructive",
+      });
+      setIsOpen(false);
     }
     
     setIsSubmitting(false);

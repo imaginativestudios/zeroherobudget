@@ -5,7 +5,6 @@ import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
 import { DeviceMockups } from '@/components/DeviceMockups';
 import { ArrowRight, Shield, TrendingDown, Target, BarChart3, Zap } from 'lucide-react';
-
 export default function Landing() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
@@ -35,11 +34,11 @@ export default function Landing() {
     description: 'Your data stays on your device. No cloud storage, no third-party access—complete control over your finances.'
   }];
   return <>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Solid Background */}
-        <div className="absolute inset-0 bg-primary">
+        {/* Solid Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
           {/* Subtle decorative elements for visual depth */}
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
@@ -58,7 +57,7 @@ export default function Landing() {
           </h1>
           
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-white mb-8 max-w-3xl mx-auto md:text-lg">
             Take control of your finances with intelligent budgeting and powerful debt payoff strategies.
           </p>
           
@@ -118,7 +117,7 @@ export default function Landing() {
         </section>
 
         {/* Demo Section with Device Mockups */}
-        <section className="py-24 bg-secondary">
+        <section className="py-24 bg-gradient-subtle">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
@@ -136,7 +135,7 @@ export default function Landing() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-24 bg-primary text-primary-foreground">
+        <section className="py-24 bg-gradient-to-br from-primary to-primary-light text-primary-foreground">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Ready to Take Control?
@@ -151,7 +150,7 @@ export default function Landing() {
             </Button>
 
             <p className="mt-8 text-sm text-white">
-              Start with a free trial • Cancel anytime
+              No credit card required • Free forever • Cancel anytime
             </p>
           </div>
         </section>

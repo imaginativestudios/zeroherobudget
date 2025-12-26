@@ -146,7 +146,7 @@ export const DebtSnowball = () => {
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                        transition-all cursor-pointer
-                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Crown className="h-4 w-4" aria-hidden="true" />
@@ -160,7 +160,7 @@ export const DebtSnowball = () => {
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                        transition-all cursor-pointer
-                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Calendar className="h-4 w-4" aria-hidden="true" />
@@ -174,7 +174,7 @@ export const DebtSnowball = () => {
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                        transition-all cursor-pointer
-                       data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Scale className="h-4 w-4" aria-hidden="true" />

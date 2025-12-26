@@ -70,7 +70,7 @@ export function DeviceMockups() {
               </div>
               
               {/* Main Content */}
-              <div className="flex-1 p-2 lg:p-4 bg-gradient-to-br from-background to-secondary/30 overflow-hidden">
+              <div className="flex-1 p-2 lg:p-4 bg-background overflow-hidden">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-2 lg:mb-3">
                   <div className="text-[7px] lg:text-[10px] font-bold text-foreground">Welcome, debt warrior!</div>
@@ -241,16 +241,11 @@ export function DeviceMockups() {
                         <line x1="0" y1="20" x2="100" y2="20" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="2 2" />
                         <line x1="0" y1="30" x2="100" y2="30" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="2 2" />
                         
-                        {/* Gradient fill under the line */}
-                        <defs>
-                          <linearGradient id="debtGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
+                        {/* Solid fill under the line */}
                         <path
                           d="M 0 5 Q 15 8, 25 12 T 50 20 T 75 30 T 100 38 L 100 40 L 0 40 Z"
-                          fill="url(#debtGradient)"
+                          fill="hsl(var(--primary))"
+                          fillOpacity="0.15"
                         />
                         
                         {/* Line */}
@@ -309,7 +304,7 @@ export function DeviceMockups() {
           {/* Screen */}
           <div className="w-[100px] sm:w-[120px] lg:w-[160px] h-[180px] sm:h-[220px] lg:h-[300px] bg-background rounded-xl lg:rounded-2xl overflow-hidden">
             {/* Mobile Dashboard */}
-            <div className="h-full p-2 lg:p-3 bg-gradient-to-br from-background to-secondary/30 overflow-hidden">
+            <div className="h-full p-2 lg:p-3 bg-background overflow-hidden">
               {/* Mobile Header */}
               <div className="flex justify-between items-center mb-2 lg:mb-3 pt-3 lg:pt-4">
                 <Menu className="w-3 h-3 lg:w-4 lg:h-4 text-foreground" />

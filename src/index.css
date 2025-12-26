@@ -51,10 +51,10 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
     
-    /* Royal gradients */
-    --gradient-royal: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(var(--accent-dark)) 0%, hsl(var(--accent-light)) 100%);
-    --gradient-subtle: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
+    /* Legacy gradient definitions - kept for backward compatibility but prefer solid colors */
+    --gradient-royal: hsl(var(--primary));
+    --gradient-gold: hsl(var(--accent));
+    --gradient-subtle: hsl(var(--secondary));
     
     /* Royal shadows */
     --shadow-royal: 0 10px 40px -10px hsl(var(--primary) / 0.3);
@@ -271,18 +271,9 @@ All colors MUST be HSL.
     word-break: break-word;
   }
 
-  /* Cross-browser gradient text utility */
+  /* Solid primary text utility (replacing gradient text) */
   .text-gradient-royal {
-    background: var(--gradient-royal);
-    background-image: var(--gradient-royal);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    /* Fallback for browsers that don't support gradient text */
-    @supports not (background-clip: text) {
-      color: hsl(var(--primary));
-    }
+    color: hsl(var(--primary));
   }
 
   /* Responsive card standardization */

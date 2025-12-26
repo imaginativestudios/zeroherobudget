@@ -106,11 +106,7 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			backgroundImage: {
-				'gradient-royal': 'var(--gradient-royal)',
-				'gradient-gold': 'var(--gradient-gold)',
-				'gradient-subtle': 'var(--gradient-subtle)'
-			},
+			/* Gradients removed - use solid colors instead */
 			boxShadow: {
 				'royal': 'var(--shadow-royal)',
 				'gold': 'var(--shadow-gold)',

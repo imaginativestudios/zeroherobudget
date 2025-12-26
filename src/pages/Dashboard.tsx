@@ -13,6 +13,7 @@ import { AchievementCard } from "@/components/AchievementCard";
 import { TipOfTheDay } from "@/components/TipOfTheDay";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { PrivacyBadge } from "@/components/PrivacyBadge";
+import { DashboardEmptyState } from "@/components/DashboardEmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -92,6 +93,16 @@ export const Dashboard = () => {
 
   // Get greeting name
   const greetingName = profile?.first_name || profile?.display_name || 'there';
+
+  // Check if user is new (no meaningful data)
+  const isNewUser = useMemo(() => {
+    const hasNoIncome = !income || income === 0;
+    const hasNoExpenses = totalExpenses === 0;
+    const hasNoDebts = debts.length === 0;
+    const hasNoTransactions = transactions.length === 0;
+    
+    return hasNoIncome && hasNoExpenses && hasNoDebts && hasNoTransactions;
+  }, [income, totalExpenses, debts.length, transactions.length]);
 
   // Prepare spending by category data with insights
   const spendingByCategory = useMemo(() => {
@@ -186,6 +197,15 @@ export const Dashboard = () => {
       </text>
     );
   };
+
+  // Show empty state for new users
+  if (!isCriticalLoading && !isSecondaryLoading && isNewUser) {
+    return (
+      <div className="space-y-6 lg:space-y-8">
+        <DashboardEmptyState greetingName={greetingName} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 lg:space-y-8">

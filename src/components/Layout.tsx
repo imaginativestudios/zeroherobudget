@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2 } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -37,7 +37,22 @@ export const Layout = ({ children }: LayoutProps) => {
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const { resetTour } = useOnboardingTour();
 
-  // Removed auth-gating for prototype mode
+  // Show loading spinner while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users to landing page
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 

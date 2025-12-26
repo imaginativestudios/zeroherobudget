@@ -209,7 +209,7 @@ export function GroupableExpenses({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center" data-tour="budget-add-group">
         <Dialog open={showAddGroup} onOpenChange={setShowAddGroup}>
           <DialogTrigger asChild>
             <Button variant="outline">
@@ -251,8 +251,8 @@ export function GroupableExpenses({
           items={groupOrder.map(group => `group-${group}`)}
           strategy={verticalListSortingStrategy}
         >
-          <div className="space-y-4">
-            {groupOrder.map((groupName) => (
+          <div className="space-y-4" data-tour="budget-expense-list">
+            {groupOrder.map((groupName, index) => (
               <GroupCard
                 key={groupName}
                 groupName={groupName}
@@ -265,6 +265,7 @@ export function GroupableExpenses({
                 onMoveToGroup={handleMoveToGroup}
                 onRenameGroup={handleRenameGroup}
                 onDeleteGroup={handleDeleteGroup}
+                isFirstGroup={index === 0}
               />
             ))}
           </div>

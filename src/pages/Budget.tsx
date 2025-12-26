@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,10 +14,14 @@ import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constant
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
+import { BudgetOnboardingTour } from "@/components/budget/BudgetOnboardingTour";
+import { useBudgetTour } from "@/hooks/useBudgetTour";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
+
 export const Budget = () => {
+  const { startTour } = useBudgetTour();
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
@@ -173,9 +177,21 @@ export const Budget = () => {
     event.target.value = "";
   };
   return <div className="space-y-8">
+      <BudgetOnboardingTour hasExpenses={expenses.length > 0} />
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={startTour}
+              className="text-muted-foreground hover:text-foreground"
+              title="Restart tour"
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Button>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
@@ -216,7 +232,7 @@ export const Budget = () => {
         </div>
       </div>
       {/* Income Section */}
-      <Card className="shadow-royal">
+      <Card className="shadow-royal" data-tour="budget-income">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <DollarSign className="h-5 w-5 text-accent" aria-hidden="true" />
@@ -243,7 +259,7 @@ export const Budget = () => {
       </Card>
 
       {/* Budget Summary Section */}
-      <Card className="shadow-royal">
+      <Card className="shadow-royal" data-tour="budget-summary">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <TrendingUp className="h-5 w-5 text-accent" aria-hidden="true" />

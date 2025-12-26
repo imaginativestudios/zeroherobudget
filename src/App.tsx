@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { OnboardingTourProvider } from "@/contexts/OnboardingTourContext";
+import { BudgetTourProvider } from "@/contexts/BudgetTourContext";
 import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
@@ -40,8 +40,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <OnboardingTourProvider>
-        <Toaster />
-        <Sonner />
+        <BudgetTourProvider>
+          <Toaster />
+          <Sonner />
         <BrowserRouter>
         <Routes>
           {/* Public routes */}
@@ -82,9 +83,10 @@ const App = () => (
               </Routes>
             </Layout>
           } />
-        </Routes>
-        <ChatbotWidget />
-      </BrowserRouter>
+          </Routes>
+          <ChatbotWidget />
+        </BrowserRouter>
+        </BudgetTourProvider>
       </OnboardingTourProvider>
     </TooltipProvider>
   </QueryClientProvider>

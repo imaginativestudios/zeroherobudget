@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { DemoDataButton } from "./DemoDataButton";
 import { Logo } from "./Logo";
 import { OnboardingTour } from "./OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
@@ -233,7 +232,6 @@ export const Layout = ({ children }: LayoutProps) => {
                     Signed in as {user.email}
                   </div>
                   <div className="px-3 space-y-2">
-                    <DemoDataButton />
                     <Button
                       onClick={resetTour}
                       variant="outline"

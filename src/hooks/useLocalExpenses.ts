@@ -1,6 +1,6 @@
-import { useUserLocalStorage } from './useUserLocalStorage';
 import { usePriorityLocalStorage } from './usePriorityLocalStorage';
 import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
+import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Expense {
@@ -17,19 +17,20 @@ export interface Expense {
 }
 
 export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical') {
+  const { user } = useAuth();
   const loadState = useProgressiveLoad();
   const shouldLoad = useShouldLoad(priority, loadState);
   const [expenses, setExpenses, isLoading] = usePriorityLocalStorage<Expense[]>('expenses', [], priority, shouldLoad);
 
-  // Sort expenses by sort_order
   const sortedExpenses = [...expenses].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
   const addExpense = (expense: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'sort_order'>) => {
+    if (!user) return;
     const maxSortOrder = expenses.reduce((max, e) => Math.max(max, e.sort_order ?? 0), -1);
     const newExpense: Expense = {
       ...expense,
       id: uuidv4(),
-      user_id: 'demo-user-123',
+      user_id: user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       sort_order: maxSortOrder + 1,
@@ -38,13 +39,9 @@ export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical'
   };
 
   const updateExpense = (id: string, updates: Partial<Expense>) => {
-    setExpenses(
-      expenses.map((expense) =>
-        expense.id === id
-          ? { ...expense, ...updates, updated_at: new Date().toISOString() }
-          : expense
-      )
-    );
+    setExpenses(expenses.map((expense) =>
+      expense.id === id ? { ...expense, ...updates, updated_at: new Date().toISOString() } : expense
+    ));
   };
 
   const removeExpense = (id: string) => {
@@ -60,12 +57,5 @@ export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical'
     setExpenses(updatedExpenses);
   };
 
-  return {
-    expenses: sortedExpenses,
-    isLoading,
-    addExpense,
-    updateExpense,
-    removeExpense,
-    setExpensesOrder,
-  };
+  return { expenses: sortedExpenses, isLoading, addExpense, updateExpense, removeExpense, setExpensesOrder };
 }

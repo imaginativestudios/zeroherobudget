@@ -3,7 +3,7 @@ import { Users, UserPlus, Mail, Crown, Shield, Eye, Trash2, X } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useMockHouseholds as useHouseholds } from '@/hooks/useMockHouseholds';
+import { useHouseholds } from '@/hooks/useHouseholds';
 import { HouseholdSelector } from '@/components/HouseholdSelector';
 import { InvitationForm } from '@/components/InvitationForm';
 

@@ -1,3 +1,3 @@
-// Export mock auth for prototype mode
-export { useMockAuth as useAuth } from './useMockAuth';
-export type { AuthState } from './useMockAuth';
+// Export real Supabase auth for production
+export { useRealAuth as useAuth } from './useRealAuth';
+export type { AuthState } from './useRealAuth';

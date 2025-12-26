@@ -61,8 +61,8 @@ const ComingSoon = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section with Gradient Background */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-16 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
+      {/* Hero Section with Solid Background */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-16 bg-primary">
         <div className="w-full max-w-2xl mx-auto text-center space-y-8">
           {/* Logo */}
           <div className="flex justify-center">

@@ -35,11 +35,11 @@ export default function Landing() {
     description: 'Your data stays on your device. No cloud storage, no third-party access—complete control over your finances.'
   }];
   return <>
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Solid Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
+        {/* Solid Background */}
+        <div className="absolute inset-0 bg-primary">
           {/* Subtle decorative elements for visual depth */}
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
@@ -118,7 +118,7 @@ export default function Landing() {
         </section>
 
         {/* Demo Section with Device Mockups */}
-        <section className="py-24 bg-gradient-subtle">
+        <section className="py-24 bg-secondary">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
@@ -136,7 +136,7 @@ export default function Landing() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-24 bg-gradient-to-br from-primary to-primary-light text-primary-foreground">
+        <section className="py-24 bg-primary text-primary-foreground">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Ready to Take Control?

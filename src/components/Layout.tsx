@@ -38,7 +38,7 @@ export const Layout = ({ children }: LayoutProps) => {
   // Show loading spinner while checking auth status
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
+      <div className="min-h-screen flex items-center justify-center bg-secondary">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Loading...</p>
@@ -127,7 +127,7 @@ export const Layout = ({ children }: LayoutProps) => {
   useKeyboardShortcuts(shortcuts);
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen bg-secondary">
       {/* Skip to main content link for accessibility */}
       <a 
         href="#main-content" 
@@ -137,7 +137,7 @@ export const Layout = ({ children }: LayoutProps) => {
       </a>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-royal shadow-royal border-b border-sidebar-border">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-primary shadow-royal border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
           <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
             <Logo className="h-6 sm:h-7 w-auto" />
@@ -177,7 +177,7 @@ export const Layout = ({ children }: LayoutProps) => {
         aria-label="Main navigation"
         data-tour="nav-sidebar"
       >
-        <nav className="bg-gradient-royal shadow-royal border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
+        <nav className="bg-primary shadow-royal border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
           <ScrollArea className="flex-1">
             <div className="p-4 lg:p-6">
               {/* Desktop Header */}

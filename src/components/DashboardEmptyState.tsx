@@ -59,7 +59,7 @@ export function DashboardEmptyState({ greetingName }: DashboardEmptyStateProps) 
   return (
     <div className="space-y-8">
       {/* Welcome Hero */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-royal p-6 sm:p-8 text-primary-foreground">
+      <div className="relative overflow-hidden rounded-2xl bg-primary p-6 sm:p-8 text-primary-foreground">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute bottom-0 left-0 -mb-8 -ml-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
         

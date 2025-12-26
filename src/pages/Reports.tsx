@@ -170,12 +170,6 @@ export const Reports = () => {
                 top: 20,
                 bottom: 60
               }}>
-                    <defs>
-                      <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.9} />
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
-                      </linearGradient>
-                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                     <XAxis dataKey="name" angle={-30} textAnchor="end" interval={0} height={60} stroke="hsl(var(--muted-foreground))" fontSize={12} tick={{
                   fill: "hsl(var(--muted-foreground))"
@@ -201,7 +195,7 @@ export const Reports = () => {
                   fontSize: "12px",
                   color: "hsl(var(--foreground))"
                 }} />
-                    <Bar dataKey="planned" name="Planned" fill="url(#barGradient)" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--primary))" filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))" />
+                    <Bar dataKey="planned" name="Planned" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--primary))" filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))" />
                     <Bar dataKey="actual" name="Actual" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--accent))" filter="drop-shadow(0 2px 4px hsl(var(--accent) / 0.2))" />
                   </BarChart>
                 </ResponsiveContainer>

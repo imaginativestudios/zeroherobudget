@@ -152,7 +152,7 @@ export function ImportPreview({
                       row.errors.length > 0 
                         ? 'bg-destructive/10' 
                         : row.isDuplicate 
-                        ? 'bg-amber-500/10' 
+                        ? 'bg-warning/10' 
                         : ''
                     }`}
                   >
@@ -161,12 +161,12 @@ export function ImportPreview({
                       {row.errors.length > 0 ? (
                         <Badge variant="destructive" className="text-xs">Error</Badge>
                       ) : row.isDuplicate ? (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="warning" className="text-xs">
                           <Copy className="h-3 w-3 mr-1" />
                           Duplicate
                         </Badge>
                       ) : (
-                        <Badge variant="default" className="text-xs bg-green-500">OK</Badge>
+                        <Badge variant="success" className="text-xs">OK</Badge>
                       )}
                     </td>
                     {fieldConfigs.slice(0, 4).map(field => (
@@ -196,8 +196,8 @@ interface StatCardProps {
 function StatCard({ label, value, variant = 'default' }: StatCardProps) {
   const colorClasses = {
     default: 'text-foreground',
-    success: 'text-green-500',
-    warning: 'text-amber-500',
+    success: 'text-success',
+    warning: 'text-warning',
     error: 'text-destructive',
   };
 

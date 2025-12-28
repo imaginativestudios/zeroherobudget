@@ -23,8 +23,8 @@ const gettingStartedSteps = [
     description: 'Add your monthly income to start tracking your finances.',
     href: '/budgets',
     linkText: 'Go to Budgets',
-    color: 'text-emerald-500',
-    bgColor: 'bg-emerald-500/10',
+    color: 'text-success',
+    bgColor: 'bg-success/10',
   },
   {
     icon: Receipt,
@@ -32,8 +32,8 @@ const gettingStartedSteps = [
     description: 'Track your planned monthly expenses by category.',
     href: '/budgets',
     linkText: 'Add Expenses',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
+    color: 'text-info',
+    bgColor: 'bg-info/10',
   },
   {
     icon: Target,
@@ -41,8 +41,8 @@ const gettingStartedSteps = [
     description: 'Add debts to see your payoff timeline and strategies.',
     href: '/debts',
     linkText: 'Add Debts',
-    color: 'text-amber-500',
-    bgColor: 'bg-amber-500/10',
+    color: 'text-warning',
+    bgColor: 'bg-warning/10',
   },
   {
     icon: CreditCard,
@@ -50,8 +50,8 @@ const gettingStartedSteps = [
     description: 'Keep track of recurring subscriptions and their costs.',
     href: '/subscriptions',
     linkText: 'Add Subscriptions',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500/10',
+    color: 'text-tier-hero',
+    bgColor: 'bg-tier-hero/10',
   },
 ];
 

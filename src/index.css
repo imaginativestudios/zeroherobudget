@@ -38,16 +38,30 @@ All colors MUST be HSL.
     --destructive: 0 75% 55%; /* Improved contrast from 60% to 55% */
     --destructive-foreground: 0 0% 100%;
 
-    --success: 175 80% 22%; /* Teal instead of purple */
+    --success: 160 60% 35%; /* Teal-green for success states - WCAG AA compliant */
     --success-foreground: 0 0% 100%;
     
     --warning: 38 92% 40%; /* Orange-amber for warnings - WCAG AA compliant */
     --warning-foreground: 0 0% 100%;
+    
+    --info: 200 80% 40%; /* Blue for informational states - WCAG AA compliant */
+    --info-foreground: 0 0% 100%;
 
     --border: 175 15% 82%; /* Improved contrast from 88% to 82% */
     --input: 175 15% 88%; /* Improved contrast from 92% to 88% */
     --ring: 175 77% 26%;
     --ring-accent: 32 85% 45%; /* Accent-dark for accessible focus rings */
+    
+    /* Pricing Tier Colors - semantic tokens for consistent tier theming */
+    --tier-starter: 160 60% 35%; /* Same as success - growth/starter */
+    --tier-supporter: 200 80% 40%; /* Same as info - supportive blue */
+    --tier-champion: 32 85% 45%; /* Accent-dark - golden achievement */
+    --tier-hero: 280 55% 45%; /* Purple for hero tier - WCAG AA compliant */
+    
+    /* Tour Colors - for onboarding experiences */
+    --tour-primary: 175 77% 26%; /* Primary teal */
+    --tour-accent: 32 85% 43%; /* Accent gold */
+    --tour-spotlight: 32 88% 65%; /* Accent for spotlight */
 
     --radius: 0.75rem;
     
@@ -87,41 +101,79 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 84% 6%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 84% 6%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 175 65% 40%; /* Teal to match light mode branding */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 175 55% 50%;
+    --primary-dark: 175 70% 30%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217 32% 17%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 32 88% 55%; /* Sandy orange to match light mode */
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 32 90% 65%;
+    --accent-dark: 32 85% 45%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 160 50% 40%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 80% 45%;
+    --warning-foreground: 0 0% 100%;
+    
+    --info: 200 70% 50%;
+    --info-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 217 32% 20%;
+    --input: 217 32% 20%;
+    --ring: 175 65% 40%;
+    --ring-accent: 32 88% 55%;
+    
+    /* Pricing Tier Colors - Dark mode */
+    --tier-starter: 160 50% 45%;
+    --tier-supporter: 200 70% 50%;
+    --tier-champion: 32 85% 50%;
+    --tier-hero: 280 50% 55%;
+    
+    /* Tour Colors - Dark mode */
+    --tour-primary: 175 65% 40%;
+    --tour-accent: 32 85% 50%;
+    --tour-spotlight: 32 88% 55%;
+
+    /* Chart colors for dark mode */
+    --chart-1: 280 60% 60%;
+    --chart-2: 200 70% 55%;
+    --chart-3: 160 50% 50%;
+    --chart-4: 45 85% 55%;
+    --chart-5: 340 55% 60%;
+    --chart-6: 280 45% 65%;
+    --chart-7: 45 85% 60%;
+    --chart-8: 140 40% 55%;
+    --chart-9: 15 65% 60%;
+    --chart-10: 220 35% 65%;
+
+    --sidebar-background: 222 84% 6%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 32 88% 55%; /* Orange accent */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 175 50% 25%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 20%;
+    --sidebar-ring: 32 88% 55%;
   }
 }
 

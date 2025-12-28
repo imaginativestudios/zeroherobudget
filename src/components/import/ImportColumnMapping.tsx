@@ -48,7 +48,7 @@ export function ImportColumnMapping({
         </p>
         <div className="mt-4 flex items-center justify-center gap-2">
           {mappingStatus.complete ? (
-            <Badge variant="default" className="bg-green-500">
+            <Badge variant="success">
               <CheckCircle className="h-3 w-3 mr-1" />
               All required fields mapped
             </Badge>
@@ -122,7 +122,7 @@ function FieldMappingRow({ field, headers, selectedColumn, onSelect, sampleValue
   const isMapped = !!selectedColumn;
 
   return (
-    <Card className={`transition-colors ${isMapped ? 'border-green-500/50' : field.required ? 'border-amber-500/50' : ''}`}>
+    <Card className={`transition-colors ${isMapped ? 'border-success/50' : field.required ? 'border-warning/50' : ''}`}>
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex-1 min-w-0">
@@ -132,9 +132,9 @@ function FieldMappingRow({ field, headers, selectedColumn, onSelect, sampleValue
                 <Badge variant="outline" className="text-xs">Required</Badge>
               )}
               {isMapped ? (
-                <CheckCircle className="h-4 w-4 text-green-500" />
+                <CheckCircle className="h-4 w-4 text-success" />
               ) : field.required ? (
-                <XCircle className="h-4 w-4 text-amber-500" />
+                <XCircle className="h-4 w-4 text-warning" />
               ) : null}
             </div>
             {field.examples && (

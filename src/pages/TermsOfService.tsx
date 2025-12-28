@@ -133,8 +133,9 @@ const TermsOfService = () => {
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>Budget tracking and expense categorization</li>
               <li>Debt management with snowball and avalanche strategies</li>
-              <li>Recurring bill tracking and analysis</li>
+              <li>Subscription tracking and analysis</li>
               <li>Financial reporting and insights</li>
+              <li>Household collaboration features</li>
               <li>Transaction management and account tracking</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
@@ -190,6 +191,33 @@ const TermsOfService = () => {
             <p className="text-foreground/80 leading-relaxed">
               You represent and warrant that you own or have the necessary rights to all User Content and that 
               your User Content does not violate any third-party rights or applicable laws.
+            </p>
+          </section>
+
+          {/* Payment Terms */}
+          <section className="bg-card border border-border rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">Payment Terms</h2>
+            
+            <h3 className="text-xl font-semibold mt-6 mb-3">Subscription Plans</h3>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              Zero Hero may offer both free and paid subscription plans. Paid plans may include additional 
+              features, storage, or capabilities not available in free plans.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Billing and Renewal</h3>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li>Subscription fees are billed in advance on a recurring basis (monthly or annually)</li>
+              <li>Your subscription will automatically renew unless cancelled before the renewal date</li>
+              <li>We reserve the right to change our pricing with 30 days' notice</li>
+              <li>All fees are non-refundable except as required by law</li>
+              <li>You are responsible for all taxes associated with your subscription</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Cancellation</h3>
+            <p className="text-foreground/80 leading-relaxed">
+              You may cancel your subscription at any time through your account settings. Cancellation will 
+              take effect at the end of your current billing period. No refunds will be provided for partial 
+              subscription periods.
             </p>
           </section>
 

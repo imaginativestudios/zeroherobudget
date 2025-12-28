@@ -9,8 +9,10 @@ import {
   Mail,
   Wallet,
   TrendingDown,
+  CreditCard,
   BarChart3,
   Home,
+  Users,
   Calendar,
   Shield,
   Download,
@@ -160,6 +162,16 @@ const HelpSupport = () => {
                 </p>
               </div>
 
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">4</span>
+                  Inviting Household Members
+                </h3>
+                <p className="text-muted-foreground ml-10">
+                  Visit the Household page to invite family members or partners. They'll receive an email invitation to join your household and collaborate on your shared financial goals.
+                </p>
+              </div>
+
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
                   <Compass className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
@@ -222,12 +234,36 @@ const HelpSupport = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-3">
+                    <CreditCard className="h-6 w-6 text-primary" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">Subscription Management</h3>
+                </div>
+                <p className="text-muted-foreground">
+                  Track all your recurring subscriptions in one place. Get alerts for upcoming renewals and identify subscriptions you may no longer need.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-3">
                     <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">Reports & Analytics</h3>
                 </div>
                 <p className="text-muted-foreground">
                   Generate detailed financial reports including income analysis, net worth tracking, and expense breakdowns. Export reports as PDF or CSV.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-3">
+                    <Users className="h-6 w-6 text-primary" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">Household Collaboration</h3>
+                </div>
+                <p className="text-muted-foreground">
+                  Invite family members to collaborate on shared finances. Assign roles (Owner, Admin, Member, Viewer) with different permission levels.
                 </p>
               </div>
 
@@ -260,18 +296,32 @@ const HelpSupport = () => {
                 <AccordionItem value="item-1">
                   <AccordionTrigger>What is Zero Hero?</AccordionTrigger>
                   <AccordionContent>
-                    Zero Hero is a comprehensive debt management and budgeting application designed to help individuals and families achieve financial freedom. We combine proven debt payoff strategies with intuitive budget tracking and subscription monitoring.
+                    Zero Hero is a comprehensive debt management and budgeting application designed to help individuals and families achieve financial freedom. We combine proven debt payoff strategies with intuitive budget tracking, subscription management, and collaborative household features.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-2">
+                  <AccordionTrigger>Does Zero Hero offer a free trial?</AccordionTrigger>
+                  <AccordionContent>
+                    Zero Hero offers a free trial to get you started. Our subscription plans include all core features including budget tracking, debt management, and reports. Premium features like advanced analytics and priority support are available with higher-tier plans.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3">
                   <AccordionTrigger>What debt payoff strategies are available?</AccordionTrigger>
                   <AccordionContent>
                     Zero Hero supports two proven strategies: the Debt Snowball method (paying off smallest balances first for psychological wins) and the Debt Avalanche method (paying off highest interest rates first to save money). You can switch between strategies at any time to see which works best for you.
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="item-3">
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>Can I use Zero Hero with my family?</AccordionTrigger>
+                  <AccordionContent>
+                    Absolutely! Zero Hero includes household collaboration features. You can invite family members, assign different roles (Owner, Admin, Member, Viewer), and work together on shared financial goals. All household members can view and contribute to budgets, debts, and transactions based on their permission level.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-5">
                   <AccordionTrigger>What browsers are supported?</AccordionTrigger>
                   <AccordionContent>
                     Zero Hero works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for the best experience and security.
@@ -305,7 +355,7 @@ const HelpSupport = () => {
                 <AccordionItem value="account-3">
                   <AccordionTrigger>Can I delete my account?</AccordionTrigger>
                   <AccordionContent>
-                    Yes, you can delete your account at any time from your Account Settings. Please note that this action is permanent and will delete all your data including budgets, debts, and transactions. We recommend exporting your data before deletion if you want to keep a copy.
+                    Yes, you can delete your account at any time from your Account Settings. Please note that this action is permanent and will delete all your data including budgets, debts, transactions, and household information. We recommend exporting your data before deletion if you want to keep a copy.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -336,7 +386,7 @@ const HelpSupport = () => {
                 <AccordionItem value="privacy-3">
                   <AccordionTrigger>Can I export my data?</AccordionTrigger>
                   <AccordionContent>
-                    Yes! You can export all your data at any time. Go to Reports or Settings and use the export feature to download your data in CSV or PDF format. This includes budgets, debts, and transactions.
+                    Yes! You can export all your data at any time. Go to Reports or Settings and use the export feature to download your data in CSV or PDF format. This includes budgets, debts, transactions, and household information.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -404,6 +454,7 @@ const HelpSupport = () => {
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-7 space-y-1">
                   <li>Check that you've selected the correct date range</li>
+                  <li>Verify you're viewing the correct household (if you have multiple)</li>
                   <li>Clear any active filters that might be hiding transactions</li>
                   <li>Refresh the page to reload data</li>
                   <li>Try accessing from a different browser or device</li>

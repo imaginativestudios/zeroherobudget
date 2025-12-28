@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Profile } from '@/types/households';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+
+export interface Profile {
+  id: string;
+  email: string;
+  display_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export function useRealProfile() {
   const { user } = useAuth();

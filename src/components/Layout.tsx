@@ -229,24 +229,6 @@ export const Layout = ({ children }: LayoutProps) => {
                     Signed in as {user.email}
                   </div>
                   <div className="px-3 space-y-2">
-                    <Button
-                      onClick={resetTour}
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-2"
-                    >
-                      <Compass className="h-4 w-4" aria-hidden="true" />
-                      Take a Tour
-                    </Button>
-                    <Button
-                      onClick={() => setShowShortcutsDialog(true)}
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-2"
-                    >
-                      <Keyboard className="h-4 w-4" aria-hidden="true" />
-                      Shortcuts
-                    </Button>
                     <Link
                       to="/data-privacy"
                       className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"

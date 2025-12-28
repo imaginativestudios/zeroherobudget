@@ -1,0 +1,131 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+
+interface SubscriptionStatus {
+  subscribed: boolean;
+  tierName: string | null;
+  tierEmoji: string | null;
+  amount: number | null;
+  subscriptionEnd: string | null;
+}
+
+export const useSubscriptionStatus = () => {
+  const { user, session } = useAuth();
+  const [status, setStatus] = useState<SubscriptionStatus>({
+    subscribed: false,
+    tierName: null,
+    tierEmoji: null,
+    amount: null,
+    subscriptionEnd: null,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const checkSubscription = useCallback(async () => {
+    if (!user || !session) {
+      setStatus({
+        subscribed: false,
+        tierName: null,
+        tierEmoji: null,
+        amount: null,
+        subscriptionEnd: null,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setError(null);
+      const { data, error: fnError } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (fnError) {
+        throw new Error(fnError.message);
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setStatus({
+        subscribed: data.subscribed,
+        tierName: data.tier_name,
+        tierEmoji: data.tier_emoji,
+        amount: data.amount,
+        subscriptionEnd: data.subscription_end,
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to check subscription';
+      setError(errorMessage);
+      console.error('Subscription check error:', errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, session]);
+
+  useEffect(() => {
+    checkSubscription();
+
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(checkSubscription, 60000);
+    return () => clearInterval(interval);
+  }, [checkSubscription]);
+
+  const createCheckout = async (amount: number) => {
+    if (!session) {
+      throw new Error('You must be logged in to subscribe');
+    }
+
+    const { data, error: fnError } = await supabase.functions.invoke('create-checkout', {
+      body: { amount },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (fnError) {
+      throw new Error(fnError.message);
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data.url;
+  };
+
+  const openCustomerPortal = async () => {
+    if (!session) {
+      throw new Error('You must be logged in to manage your subscription');
+    }
+
+    const { data, error: fnError } = await supabase.functions.invoke('customer-portal', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (fnError) {
+      throw new Error(fnError.message);
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data.url;
+  };
+
+  return {
+    ...status,
+    loading,
+    error,
+    checkSubscription,
+    createCheckout,
+    openCustomerPortal,
+  };
+};

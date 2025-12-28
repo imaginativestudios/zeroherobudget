@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2 } from 'lucide-react';
+import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -31,10 +31,12 @@ const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
   const { 
     subscribed, 
+    isTrialing,
     tierName, 
     tierEmoji, 
     amount: currentAmount, 
     subscriptionEnd,
+    trialEnd,
     loading: subLoading,
     checkSubscription,
     createCheckout,
@@ -46,6 +48,16 @@ const Pricing = () => {
 
   const tierInfo = getTierInfo(selectedAmount);
 
+  // Calculate days remaining in trial
+  const getTrialDaysRemaining = () => {
+    if (!trialEnd) return 0;
+    const now = new Date();
+    const end = new Date(trialEnd);
+    const diffTime = end.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
   // Handle success/cancel redirects
   useEffect(() => {
     const success = searchParams.get('success');
@@ -54,10 +66,9 @@ const Pricing = () => {
     if (success === 'true') {
       toast({
         title: 'Welcome to Zero Hero! 🎉',
-        description: 'Thank you for subscribing! Your support means the world to us.',
+        description: 'Your 7-day free trial has started. Enjoy all features!',
       });
       checkSubscription();
-      // Clear the URL params
       navigate('/pricing', { replace: true });
     } else if (canceled === 'true') {
       toast({
@@ -73,7 +84,7 @@ const Pricing = () => {
     if (!user) {
       toast({
         title: 'Sign in required',
-        description: 'Please sign in to subscribe.',
+        description: 'Please sign in to start your free trial.',
         variant: 'destructive',
       });
       navigate('/auth');
@@ -118,6 +129,7 @@ const Pricing = () => {
   };
 
   const loading = authLoading || subLoading;
+  const trialDaysRemaining = getTrialDaysRemaining();
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,26 +167,53 @@ const Pricing = () => {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : subscribed ? (
-          /* Current Subscriber View */
-          <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-background">
+          /* Current Subscriber View (Active or Trialing) */
+          <Card className={`border-2 ${isTrialing ? 'border-chart-3/50 bg-gradient-to-br from-chart-3/5 to-background' : 'border-primary/50 bg-gradient-to-br from-primary/5 to-background'}`}>
             <CardHeader className="text-center">
               <div className="text-5xl mb-2">{tierEmoji}</div>
               <CardTitle className="text-2xl">
                 You're a <span className="text-primary">{tierName}</span>!
               </CardTitle>
-              <CardDescription className="text-lg">
-                Thank you for supporting Zero Hero at ${currentAmount}/month
-              </CardDescription>
+              {isTrialing ? (
+                <CardDescription className="text-lg">
+                  <span className="inline-flex items-center gap-2 text-chart-3 font-medium">
+                    <Sparkles className="h-4 w-4" />
+                    Free Trial — {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining
+                  </span>
+                </CardDescription>
+              ) : (
+                <CardDescription className="text-lg">
+                  Thank you for supporting Zero Hero at ${currentAmount}/month
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="text-center text-sm text-muted-foreground">
-                Your subscription renews on{' '}
-                {subscriptionEnd && new Date(subscriptionEnd).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </div>
+              {isTrialing ? (
+                <div className="bg-chart-3/10 border border-chart-3/20 rounded-lg p-4 text-center">
+                  <p className="text-sm text-foreground">
+                    Your trial ends on{' '}
+                    <span className="font-semibold">
+                      {trialEnd && new Date(trialEnd).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Then ${currentAmount}/month — cancel anytime before to avoid charges
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground">
+                  Your subscription renews on{' '}
+                  {subscriptionEnd && new Date(subscriptionEnd).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </div>
+              )}
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {features.map((feature, index) => (
@@ -210,6 +249,12 @@ const Pricing = () => {
               <CardTitle className={`text-3xl ${tierInfo.color}`}>
                 {tierInfo.name} Plan
               </CardTitle>
+              <CardDescription className="text-base mt-2">
+                <span className="inline-flex items-center gap-2 text-chart-3 font-medium">
+                  <Sparkles className="h-4 w-4" />
+                  Start with 7 days free
+                </span>
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
               {/* Price Display */}
@@ -218,6 +263,9 @@ const Pricing = () => {
                   <span className="text-5xl font-bold text-foreground">${selectedAmount}</span>
                   <span className="text-xl text-muted-foreground">/month</span>
                 </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  after your free trial
+                </p>
               </div>
 
               {/* Slider */}
@@ -263,16 +311,17 @@ const Pricing = () => {
                   </>
                 ) : (
                   <>
-                    Subscribe for ${selectedAmount}/month
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Start 7-Day Free Trial
                   </>
                 )}
               </Button>
 
               {/* Trust Indicators */}
               <div className="text-center text-sm text-muted-foreground space-y-2">
-                <p>✨ Cancel anytime • No hidden fees • 100% of features</p>
+                <p>✨ Try free for 7 days, then ${selectedAmount}/month</p>
                 <p className="text-xs">
-                  Secure payment powered by Stripe
+                  Cancel anytime • No hidden fees • Secure payment via Stripe
                 </p>
               </div>
             </CardContent>

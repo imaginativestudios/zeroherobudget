@@ -4,20 +4,24 @@ import { useAuth } from '@/hooks/useAuth';
 
 interface SubscriptionStatus {
   subscribed: boolean;
+  isTrialing: boolean;
   tierName: string | null;
   tierEmoji: string | null;
   amount: number | null;
   subscriptionEnd: string | null;
+  trialEnd: string | null;
 }
 
 export const useSubscriptionStatus = () => {
   const { user, session } = useAuth();
   const [status, setStatus] = useState<SubscriptionStatus>({
     subscribed: false,
+    isTrialing: false,
     tierName: null,
     tierEmoji: null,
     amount: null,
     subscriptionEnd: null,
+    trialEnd: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,10 +30,12 @@ export const useSubscriptionStatus = () => {
     if (!user || !session) {
       setStatus({
         subscribed: false,
+        isTrialing: false,
         tierName: null,
         tierEmoji: null,
         amount: null,
         subscriptionEnd: null,
+        trialEnd: null,
       });
       setLoading(false);
       return;
@@ -53,10 +59,12 @@ export const useSubscriptionStatus = () => {
 
       setStatus({
         subscribed: data.subscribed,
+        isTrialing: data.is_trialing || false,
         tierName: data.tier_name,
         tierEmoji: data.tier_emoji,
         amount: data.amount,
         subscriptionEnd: data.subscription_end,
+        trialEnd: data.trial_end || null,
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to check subscription';

@@ -9,7 +9,7 @@ const TermsOfService = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
-              <Logo variant="dark" className="h-8 md:h-10 w-auto" />
+              <Logo className="h-8 md:h-10 w-auto" />
             </Link>
             <Button variant="ghost" asChild>
               <Link to="/">
@@ -133,8 +133,9 @@ const TermsOfService = () => {
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>Budget tracking and expense categorization</li>
               <li>Debt management with snowball and avalanche strategies</li>
-              <li>Recurring bill tracking and analysis</li>
+              <li>Subscription tracking and analysis</li>
               <li>Financial reporting and insights</li>
+              <li>Household collaboration features</li>
               <li>Transaction management and account tracking</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
@@ -193,6 +194,33 @@ const TermsOfService = () => {
             </p>
           </section>
 
+          {/* Payment Terms */}
+          <section className="bg-card border border-border rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">Payment Terms</h2>
+            
+            <h3 className="text-xl font-semibold mt-6 mb-3">Subscription Plans</h3>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              Zero Hero may offer both free and paid subscription plans. Paid plans may include additional 
+              features, storage, or capabilities not available in free plans.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Billing and Renewal</h3>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li>Subscription fees are billed in advance on a recurring basis (monthly or annually)</li>
+              <li>Your subscription will automatically renew unless cancelled before the renewal date</li>
+              <li>We reserve the right to change our pricing with 30 days' notice</li>
+              <li>All fees are non-refundable except as required by law</li>
+              <li>You are responsible for all taxes associated with your subscription</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Cancellation</h3>
+            <p className="text-foreground/80 leading-relaxed">
+              You may cancel your subscription at any time through your account settings. Cancellation will 
+              take effect at the end of your current billing period. No refunds will be provided for partial 
+              subscription periods.
+            </p>
+          </section>
+
           {/* Termination */}
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
@@ -216,6 +244,7 @@ const TermsOfService = () => {
               <li>Violation of these Terms or our policies</li>
               <li>Fraudulent, abusive, or illegal activity</li>
               <li>Prolonged inactivity</li>
+              <li>Non-payment of fees (for paid subscriptions)</li>
               <li>At our sole discretion for any other reason</li>
             </ul>
           </section>
@@ -259,12 +288,11 @@ const TermsOfService = () => {
               <li>MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT</li>
               <li>ACCURACY, RELIABILITY, OR COMPLETENESS OF ANY INFORMATION OR CALCULATIONS</li>
               <li>UNINTERRUPTED, SECURE, OR ERROR-FREE OPERATION</li>
-              <li>THAT DEFECTS WILL BE CORRECTED</li>
+              <li>If you have any dispute with us, you agree to first contact us and attempt to resolve the dispute informally by contacting us at legal@zeroherobudget.com</li>
               <li>THAT THE SERVICE IS FREE FROM VIRUSES OR HARMFUL COMPONENTS</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
-              YOU USE THE SERVICE AT YOUR OWN RISK. WE DO NOT WARRANT THAT THE SERVICE WILL MEET YOUR 
-              REQUIREMENTS OR EXPECTATIONS.
+              legal@zeroherobudget.com
             </p>
           </section>
 

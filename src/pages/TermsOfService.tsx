@@ -216,7 +216,6 @@ const TermsOfService = () => {
               <li>Violation of these Terms or our policies</li>
               <li>Fraudulent, abusive, or illegal activity</li>
               <li>Prolonged inactivity</li>
-              <li>Non-payment of fees (for paid subscriptions)</li>
               <li>At our sole discretion for any other reason</li>
             </ul>
           </section>

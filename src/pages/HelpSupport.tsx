@@ -203,7 +203,7 @@ const HelpSupport = () => {
                   <h3 className="text-lg font-semibold text-foreground">Budget Tracking</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Track planned vs. actual spending across 10 household categories. Visualize budget variance with charts and get instant insights on overspending.
+                  Track planned vs. actual spending across customizable budget categories. Visualize budget variance with charts and get instant insights on overspending.
                 </p>
               </div>
 

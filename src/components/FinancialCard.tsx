@@ -94,9 +94,9 @@ export const FinancialCard = ({
           {syncStatus && syncStatus.connectedBanks > 0 && (
             <div className="flex items-center gap-1 flex-shrink-0">
               {syncStatus.isSyncing ? (
-                <RefreshCw className="h-3 w-3 text-blue-500 animate-spin" aria-hidden="true" />
+                <RefreshCw className="h-3 w-3 text-info animate-spin" aria-hidden="true" />
               ) : (
-                <Building2 className="h-3 w-3 text-green-500" aria-hidden="true" />
+                <Building2 className="h-3 w-3 text-success" aria-hidden="true" />
               )}
               <span className="text-xs text-muted-foreground">{syncStatus.connectedBanks}</span>
             </div>
@@ -126,7 +126,7 @@ export const FinancialCard = ({
         {syncStatus && syncStatus.lastSync && (
           <div className="mt-3 p-2 bg-muted/50 rounded-md border border-border/50">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <RefreshCw className={cn("h-3 w-3", syncStatus.isSyncing && "animate-spin text-blue-500")} aria-hidden="true" />
+              <RefreshCw className={cn("h-3 w-3", syncStatus.isSyncing && "animate-spin text-info")} aria-hidden="true" />
               {syncStatus.isSyncing ? "Syncing..." : `Updated ${formatDistanceToNow(new Date(syncStatus.lastSync), { addSuffix: true })}`}
             </p>
           </div>

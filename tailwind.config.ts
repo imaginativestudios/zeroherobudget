@@ -60,6 +60,10 @@ export default {
 					DEFAULT: 'hsl(var(--warning))',
 					foreground: 'hsl(var(--warning-foreground))'
 				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))'
+				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
@@ -69,6 +73,17 @@ export default {
 					foreground: 'hsl(var(--accent-foreground))',
 					light: 'hsl(var(--accent-light))',
 					dark: 'hsl(var(--accent-dark))'
+				},
+				tier: {
+					starter: 'hsl(var(--tier-starter))',
+					supporter: 'hsl(var(--tier-supporter))',
+					champion: 'hsl(var(--tier-champion))',
+					hero: 'hsl(var(--tier-hero))'
+				},
+				tour: {
+					primary: 'hsl(var(--tour-primary))',
+					accent: 'hsl(var(--tour-accent))',
+					spotlight: 'hsl(var(--tour-spotlight))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',

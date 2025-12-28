@@ -304,18 +304,18 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: 'hsl(175, 77%, 26%)',
+          primaryColor: 'hsl(var(--tour-primary))',
           textColor: 'hsl(var(--foreground))',
           backgroundColor: 'hsl(var(--card))',
           arrowColor: 'hsl(var(--card))',
           overlayColor: 'rgba(0, 0, 0, 0.6)',
-          spotlightShadow: '0 0 0 4px rgba(232, 163, 23, 0.5)',
+          spotlightShadow: '0 0 0 4px hsl(var(--tour-spotlight) / 0.5)',
           zIndex: 10000,
           width: tooltipWidth,
         },
         buttonNext: {
-          backgroundColor: 'hsl(42, 85%, 43%)',
-          color: 'hsl(175, 80%, 18%)',
+          backgroundColor: 'hsl(var(--tour-accent))',
+          color: 'hsl(var(--primary-dark))',
           fontSize: 14,
           fontWeight: 600,
           borderRadius: 8,
@@ -335,7 +335,7 @@ export const OnboardingTour = ({ setMobileMenuOpen, isMobileMenuOpen }: Onboardi
         tooltip: {
           borderRadius: 12,
           padding: isTabletOrMobile ? 16 : 20,
-          boxShadow: '0 10px 40px -10px rgba(15, 118, 110, 0.3)',
+          boxShadow: 'var(--shadow-royal)',
           maxWidth: tooltipWidth,
           position: 'relative',
           zIndex: 10002,

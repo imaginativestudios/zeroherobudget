@@ -10,10 +10,10 @@ import { toast } from '@/hooks/use-toast';
 import { Logo } from '@/components/Logo';
 
 const getTierInfo = (amount: number) => {
-  if (amount <= 5) return { name: 'Starter', emoji: '🌱', color: 'text-emerald-500' };
-  if (amount <= 9) return { name: 'Supporter', emoji: '💪', color: 'text-blue-500' };
-  if (amount <= 12) return { name: 'Champion', emoji: '🏆', color: 'text-amber-500' };
-  return { name: 'Hero', emoji: '🦸', color: 'text-purple-500' };
+  if (amount <= 5) return { name: 'Starter', emoji: '🌱', color: 'text-tier-starter' };
+  if (amount <= 9) return { name: 'Supporter', emoji: '💪', color: 'text-tier-supporter' };
+  if (amount <= 12) return { name: 'Champion', emoji: '🏆', color: 'text-tier-champion' };
+  return { name: 'Hero', emoji: '🦸', color: 'text-tier-hero' };
 };
 
 const features = [

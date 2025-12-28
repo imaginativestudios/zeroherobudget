@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 interface AuthModalProps {
   open: boolean;
@@ -148,7 +149,8 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
       <DialogContent className="sm:max-w-[425px]">
         {view === 'auth' && (
           <>
-            <DialogHeader>
+            <DialogHeader className="flex flex-col items-center">
+              <Logo variant="dark" className="h-8 mb-4" />
               <DialogTitle className="text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
               <DialogDescription className="text-center">
                 Start your journey to financial freedom

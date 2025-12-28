@@ -9,7 +9,7 @@ const TermsOfService = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
-              <Logo className="h-8 md:h-10 w-auto" />
+              <Logo variant="dark" className="h-8 md:h-10 w-auto" />
             </Link>
             <Button variant="ghost" asChild>
               <Link to="/">

@@ -19,7 +19,7 @@ export default function Landing() {
   }, {
     icon: Target,
     title: 'Budget Mastery',
-    description: 'Track every dollar with intelligent categorization and visual progress tracking across 10 household categories.'
+    description: 'Track every dollar with intelligent categorization and visual progress tracking across customizable budget categories.'
   }, {
     icon: Zap,
     title: 'Quick Data Entry',
@@ -150,7 +150,7 @@ export default function Landing() {
             </Button>
 
             <p className="mt-8 text-sm text-white">
-              No credit card required • Free forever • Cancel anytime
+              No credit card required • Free forever • No hidden fees
             </p>
           </div>
         </section>

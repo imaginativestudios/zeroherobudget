@@ -71,7 +71,7 @@ const PrivacyPolicy = () => {
               <li>Budget categories and expense amounts</li>
               <li>Debt information (balances, interest rates, payment schedules)</li>
               <li>Transaction records and descriptions</li>
-              <li>Subscription service information and costs</li>
+              <li>Recurring bill information and costs</li>
               <li>Account balances and financial goals</li>
             </ul>
 

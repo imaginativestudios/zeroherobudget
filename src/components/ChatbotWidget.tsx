@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Sparkles, X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2 } from "lucide-react";
+import SparklesIcon from "@/components/icons/SparklesIcon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -229,7 +230,7 @@ export const ChatbotWidget = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-white" aria-hidden="true" />
+              <SparklesIcon size={20} className="text-white" aria-hidden="true" />
               <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
             </div>
             <Button
@@ -339,7 +340,7 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-6 w-6 text-white" aria-hidden="true" />
         ) : (
-          <Sparkles className="h-6 w-6 text-white" aria-hidden="true" />
+          <SparklesIcon size={24} className="text-white" aria-hidden="true" />
         )}
       </Button>
     </div>

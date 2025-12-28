@@ -35,26 +35,8 @@ export const Layout = ({ children }: LayoutProps) => {
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const { resetTour } = useOnboardingTour();
 
-  // Show loading spinner while checking auth status
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect unauthenticated users to landing page
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
-
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
   // Define keyboard shortcuts with config for the help dialog
+  // IMPORTANT: All hooks must be called before any conditional returns
   const shortcutConfigs: ShortcutConfig[] = useMemo(() => [
     { key: "1", ctrl: true, description: "Go to Dashboard", category: "Navigation" },
     { key: "2", ctrl: true, description: "Go to Budgets", category: "Navigation" },
@@ -123,8 +105,27 @@ export const Layout = ({ children }: LayoutProps) => {
     },
   ], [navigate, shortcutConfigs]);
 
-  // Enable keyboard shortcuts
+  // Enable keyboard shortcuts - must be called before conditional returns
   useKeyboardShortcuts(shortcuts);
+
+  // Show loading spinner while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-secondary">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users to landing page
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
     <div className="min-h-screen bg-secondary">

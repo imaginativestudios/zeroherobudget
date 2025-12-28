@@ -34,7 +34,7 @@ export default function DataPrivacyFAQ() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            <Logo className="h-8" />
+            <Logo className="h-8" variant="dark" />
           </Link>
           <Link to="/data">
             <Button variant="outline" size="sm">

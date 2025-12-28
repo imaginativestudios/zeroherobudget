@@ -57,7 +57,7 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4">
           <div className="flex justify-center">
-            <Logo className="h-16" />
+            <Logo className="h-16" variant="dark" />
           </div>
           <div className="space-y-2 text-center">
             <div className="flex items-center justify-center gap-2">

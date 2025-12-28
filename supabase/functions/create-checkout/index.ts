@@ -54,27 +54,42 @@ serve(async (req) => {
     // Check if customer already exists
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId: string | undefined;
+    let hasHadSubscription = false;
     
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
       logStep("Found existing customer", { customerId });
       
-      // Check if they already have an active subscription
-      const subscriptions = await stripe.subscriptions.list({
+      // Check if they already have an active or trialing subscription
+      const activeSubscriptions = await stripe.subscriptions.list({
         customer: customerId,
         status: "active",
         limit: 1,
       });
       
-      if (subscriptions.data.length > 0) {
+      const trialingSubscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "trialing",
+        limit: 1,
+      });
+      
+      if (activeSubscriptions.data.length > 0 || trialingSubscriptions.data.length > 0) {
         throw new Error("You already have an active subscription. Please manage it from your account settings.");
       }
+      
+      // Check if they've ever had a subscription (to prevent trial abuse)
+      const allSubscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        limit: 1,
+      });
+      hasHadSubscription = allSubscriptions.data.length > 0;
+      logStep("Checked subscription history", { hasHadSubscription });
     }
 
     const origin = req.headers.get("origin") || "https://ukpejgrghpewwdfztryg.lovableproject.com";
     
-    // Create checkout session with dynamic pricing
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session with dynamic pricing and 7-day free trial for new customers
+    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
@@ -97,7 +112,19 @@ serve(async (req) => {
         user_id: user.id,
         selected_amount: amountCents.toString(),
       },
-    });
+    };
+    
+    // Only add trial for customers who have never subscribed before
+    if (!hasHadSubscription) {
+      sessionConfig.subscription_data = {
+        trial_period_days: 7,
+      };
+      logStep("Adding 7-day trial for new customer");
+    } else {
+      logStep("Skipping trial for returning customer");
+    }
+    
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 

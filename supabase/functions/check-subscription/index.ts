@@ -64,10 +64,12 @@ serve(async (req) => {
       logStep("No customer found");
       return new Response(JSON.stringify({ 
         subscribed: false,
+        is_trialing: false,
         tier_name: null,
         tier_emoji: null,
         amount: null,
         subscription_end: null,
+        trial_end: null,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -77,42 +79,63 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    const subscriptions = await stripe.subscriptions.list({
+    // Check for active subscriptions first
+    const activeSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
       limit: 1,
     });
 
-    if (subscriptions.data.length === 0) {
-      logStep("No active subscription found");
+    // Also check for trialing subscriptions
+    const trialingSubscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "trialing",
+      limit: 1,
+    });
+
+    // Prefer active over trialing
+    const subscription = activeSubscriptions.data[0] || trialingSubscriptions.data[0];
+
+    if (!subscription) {
+      logStep("No active or trialing subscription found");
       return new Response(JSON.stringify({ 
         subscribed: false,
+        is_trialing: false,
         tier_name: null,
         tier_emoji: null,
         amount: null,
         subscription_end: null,
+        trial_end: null,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
-    const subscription = subscriptions.data[0];
+    const isTrialing = subscription.status === "trialing";
     const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
     const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    const trialEnd = subscription.trial_end 
+      ? new Date(subscription.trial_end * 1000).toISOString() 
+      : null;
     
-    logStep("Active subscription found", { 
-      subscriptionId: subscription.id, 
+    logStep("Subscription found", { 
+      subscriptionId: subscription.id,
+      status: subscription.status,
+      isTrialing,
       amountCents,
-      endDate: subscriptionEnd 
+      endDate: subscriptionEnd,
+      trialEnd,
     });
 
     return new Response(JSON.stringify({
       subscribed: true,
+      is_trialing: isTrialing,
       tier_name: getTierName(amountCents),
       tier_emoji: getTierEmoji(amountCents),
       amount: amountCents / 100,
       subscription_end: subscriptionEnd,
+      trial_end: trialEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

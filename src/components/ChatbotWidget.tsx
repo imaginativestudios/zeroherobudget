@@ -332,7 +332,7 @@ export const ChatbotWidget = () => {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         size="icon"
-        className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
+        className={`h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110 ${!isOpen ? 'animate-pulse-glow' : ''}`}
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
         aria-expanded={isOpen}
         aria-controls="chat-panel"

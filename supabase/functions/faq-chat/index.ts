@@ -12,19 +12,13 @@ const FAQ_KNOWLEDGE = `
 ## General Questions
 
 **Q: What is Zero Hero?**
-A: Zero Hero is a comprehensive financial management app that helps you transform debt into victory. It combines budget tracking, debt payoff strategies (Snowball and Avalanche methods), subscription management, and household collaboration features to help you achieve financial freedom.
-
-**Q: Does Zero Hero offer a free trial?**
-A: Zero Hero offers a free trial to help you get started. After your trial, affordable subscription plans give you full access to budget tracking, debt management, subscription monitoring, and household collaboration features.
+A: Zero Hero is a comprehensive financial management app that helps you transform debt into victory. It combines budget tracking, debt payoff strategies (Snowball and Avalanche methods), and recurring bill monitoring to help you achieve financial freedom.
 
 **Q: What debt payoff strategies are available?**
 A: Zero Hero offers two proven debt elimination strategies:
 - Debt Snowball: Pay off smallest debts first for quick wins and motivation
 - Debt Avalanche: Target highest interest rates first to save the most money
 Both strategies include visual progress tracking and motivational achievements.
-
-**Q: Can I use Zero Hero with my family?**
-A: Absolutely! Zero Hero includes household collaboration features. You can invite family members to join your household, manage shared budgets and expenses, and track financial goals together. Multiple members can work on the same financial data simultaneously.
 
 **Q: What browsers are supported?**
 A: Zero Hero works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for optimal performance.
@@ -44,7 +38,7 @@ A: Click "Forgot Password" on the login page, enter your email, and follow the r
 A: Yes, you can delete your account from Settings. Note that this action is permanent and will remove all your financial data. Export your data first if you need to keep records.
 
 **Q: What payment methods are accepted?**
-A: Zero Hero is currently free to use. As we grow, we may introduce premium features with payment options including credit cards and PayPal.
+A: Zero Hero is currently free to use.
 
 ## Data & Privacy
 
@@ -66,11 +60,9 @@ A: All your data is permanently deleted from our servers within 30 days of accou
 
 **Debt Management:** Add all your debts and choose between Snowball or Avalanche payoff strategies. Visualize your debt-free date and track progress with motivational achievements.
 
-**Subscription Management:** Track all your recurring subscriptions, get alerts for upcoming renewals, and identify opportunities to cut unnecessary expenses.
+**Recurring Bills:** Track all your recurring bills and subscriptions, get alerts for upcoming payments, and identify opportunities to cut unnecessary expenses.
 
 **Reports & Analytics:** Access comprehensive financial reports including income statements, net worth tracking, expense analysis, and cash flow available for debt payments.
-
-**Household Collaboration:** Invite family members, share financial data, and work together toward common financial goals with role-based permissions.
 
 ## Troubleshooting
 
@@ -86,7 +78,7 @@ A: Try these steps:
 A: This is expected in prototype mode as data is stored locally in your browser. When authentication is fully implemented, data will sync across all your devices automatically.
 
 **Q: I can't see my transactions**
-A: Make sure you've added at least one account first. Transactions require an account to be associated with. Check the Transactions page filters to ensure you're not filtering out all data.
+A: Make sure you've selected the correct date range. Check the Transactions page filters to ensure you're not filtering out all data.
 
 **Q: How do I clear the cache?**
 A: In Chrome/Edge: Ctrl+Shift+Delete (Cmd+Shift+Delete on Mac)

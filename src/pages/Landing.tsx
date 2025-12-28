@@ -163,9 +163,6 @@ export default function Landing() {
                 © 2026 Zero Hero. From balances due to a more balanced you.
               </p>
               <div className="flex gap-6 text-sm text-muted-foreground">
-                <Link to="/pricing" className="hover:text-foreground transition-colors">
-                  Pricing
-                </Link>
                 <Link to="/privacy" className="hover:text-foreground transition-colors">
                   Privacy
                 </Link>

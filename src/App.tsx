@@ -30,7 +30,6 @@ import HelpSupport from "./pages/HelpSupport";
 import DataPrivacyFAQ from "./pages/DataPrivacyFAQ";
 import IconStyleGuide from "./pages/IconStyleGuide";
 import ColorPaletteGuide from "./pages/ColorPaletteGuide";
-import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -52,7 +51,6 @@ const App = () => (
           <Route path="/data-privacy" element={<DataPrivacyFAQ />} />
           <Route path="/style-guide/icons" element={<IconStyleGuide />} />
           <Route path="/style-guide/colors" element={<ColorPaletteGuide />} />
-          <Route path="/pricing" element={<Pricing />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2 } from 'lucide-react';
+import { Check, Heart, Shield, Zap, ChartBar, CreditCard, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -19,7 +19,6 @@ const getTierInfo = (amount: number) => {
 const features = [
   { icon: ChartBar, text: 'Unlimited budget tracking' },
   { icon: Zap, text: 'AI-powered insights' },
-  { icon: Users, text: 'Household sharing' },
   { icon: Shield, text: 'Bank-level security' },
   { icon: CreditCard, text: 'Debt snowball calculator' },
   { icon: Heart, text: 'Support our mission' },

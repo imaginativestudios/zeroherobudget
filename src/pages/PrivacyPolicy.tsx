@@ -98,7 +98,6 @@ const PrivacyPolicy = () => {
               <li>To authenticate your identity and secure your account</li>
               <li>To calculate debt payoff strategies and financial insights</li>
               <li>To generate reports, charts, and personalized recommendations</li>
-              <li>To enable household collaboration features</li>
               <li>To send important service notifications and updates</li>
               <li>To improve our application and develop new features</li>
               <li>To detect and prevent fraudulent activity or security breaches</li>
@@ -170,7 +169,6 @@ const PrivacyPolicy = () => {
               <li><strong>Service Providers:</strong> Trusted third-party services (e.g., Supabase for hosting) that help us operate our application</li>
               <li><strong>Legal Requirements:</strong> When required by law, court order, or government request</li>
               <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
-              <li><strong>Household Members:</strong> With other members of your household (only data you choose to share)</li>
               <li><strong>Protection of Rights:</strong> To protect the rights, property, or safety of Zero Hero, our users, or others</li>
             </ul>
           </section>

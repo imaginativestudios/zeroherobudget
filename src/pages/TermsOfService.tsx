@@ -2,16 +2,14 @@ import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, AlertTriangle, Scale, UserX, Shield } from "lucide-react";
-
 const TermsOfService = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
-              <Logo className="h-8 md:h-10 w-auto" variant="dark" />
+              <Logo className="h-8 md:h-10 w-auto" />
             </Link>
             <Button variant="ghost" asChild>
               <Link to="/">
@@ -389,8 +387,8 @@ const TermsOfService = () => {
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <p className="text-foreground/80">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:legal@zerohero.app" className="text-primary hover:underline">
-                  legal@zerohero.app
+                <a className="text-primary hover:underline" href="mailto:legal@zeroherobudget.com">
+                  legal@zeroherobudget.com
                 </a>
               </p>
               <p className="text-foreground/80">
@@ -428,8 +426,6 @@ const TermsOfService = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default TermsOfService;

@@ -9,7 +9,6 @@ import {
   Mail,
   Wallet,
   TrendingDown,
-  CreditCard,
   BarChart3,
   Home,
   Calendar,
@@ -217,18 +216,6 @@ const HelpSupport = () => {
                 </div>
                 <p className="text-muted-foreground">
                   Choose between Debt Snowball (smallest balance first) or Debt Avalanche (highest interest first) strategies. See projected payoff timelines and total interest saved.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-primary/10 p-3">
-                    <CreditCard className="h-6 w-6 text-primary" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">Subscription Management</h3>
-                </div>
-                <p className="text-muted-foreground">
-                  Track all your recurring subscriptions in one place. Get alerts for upcoming renewals and identify subscriptions you may no longer need.
                 </p>
               </div>
 

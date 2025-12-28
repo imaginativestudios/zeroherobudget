@@ -394,7 +394,7 @@ const TermsOfService = () => {
               <p className="text-foreground/80">
                 <strong>Support:</strong>{" "}
                 <a href="mailto:support@zerohero.app" className="text-primary hover:underline">
-                  support@zerohero.app
+                  support@zeroherobudget.com
                 </a>
               </p>
             </div>

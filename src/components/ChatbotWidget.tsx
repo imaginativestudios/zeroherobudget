@@ -340,7 +340,7 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-6 w-6 text-white" aria-hidden="true" />
         ) : (
-          <SparklesIcon size={28} className="text-white" aria-hidden="true" />
+          <SparklesIcon size={36} className="text-white" aria-hidden="true" />
         )}
       </Button>
     </div>

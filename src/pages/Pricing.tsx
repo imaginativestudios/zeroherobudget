@@ -136,9 +136,8 @@ const Pricing = () => {
       {/* Header */}
       <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2">
-            <Logo className="h-8 w-8" variant="dark" />
-            <span className="font-bold text-xl text-foreground">Zero Hero</span>
+          <button onClick={() => navigate('/')} className="flex items-center">
+            <Logo className="h-8" variant="dark" />
           </button>
           {user ? (
             <Button variant="outline" onClick={() => navigate('/dashboard')}>

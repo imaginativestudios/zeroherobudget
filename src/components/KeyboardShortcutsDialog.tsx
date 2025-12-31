@@ -57,7 +57,7 @@ export const KeyboardShortcutsDialog = ({
                     <span className="text-sm text-foreground">
                       {shortcut.description}
                     </span>
-                    <kbd className="px-3 py-1.5 text-xs font-semibold text-primary-foreground bg-gradient-royal rounded-md shadow-sm border border-primary/20">
+                    <kbd className="px-3 py-1.5 text-xs font-semibold text-primary-foreground bg-primary rounded-md shadow-sm border border-primary/20">
                       {getShortcutDisplay(shortcut)}
                     </kbd>
                   </div>

@@ -167,7 +167,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                              hover:bg-muted hover:text-foreground
                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                              transition-all cursor-pointer
-                             data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                             data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                              data-[state=active]:font-semibold data-[state=active]:shadow-sm"
                 >
                   Login
@@ -180,7 +180,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                              hover:bg-muted hover:text-foreground
                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                              transition-all cursor-pointer
-                             data-[state=active]:bg-gradient-royal data-[state=active]:text-primary-foreground 
+                             data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                              data-[state=active]:font-semibold data-[state=active]:shadow-sm"
                 >
                   Sign Up

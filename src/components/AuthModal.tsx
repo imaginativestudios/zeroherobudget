@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 interface AuthModalProps {
@@ -23,7 +23,7 @@ interface AuthModalProps {
   defaultMode?: 'login' | 'signup';
 }
 
-type AuthView = 'auth' | 'forgot-password' | 'reset-sent';
+type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'confirmation-sent';
 
 export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,8 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
   const [lastName, setLastName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [view, setView] = useState<AuthView>('auth');
-  const { signIn, signUp, resetPassword } = useAuth();
+  const [confirmationEmail, setConfirmationEmail] = useState('');
+  const { signIn, signUp, resetPassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -76,11 +77,17 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
       const { error } = await signUp(email, password, firstName, lastName);
       
       if (error) {
-        toast({
-          title: 'Signup failed',
-          description: error.message,
-          variant: 'destructive',
-        });
+        // Check if this is a "check your email" message (email confirmation required)
+        if (error.message.includes('check your email') || error.message.includes('confirm your account')) {
+          setConfirmationEmail(email);
+          setView('confirmation-sent');
+        } else {
+          toast({
+            title: 'Signup failed',
+            description: error.message,
+            variant: 'destructive',
+          });
+        }
       } else {
         toast({
           title: 'Welcome!',
@@ -93,6 +100,33 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
       toast({
         title: 'Error',
         description: 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    setLoading(true);
+    try {
+      const { error } = await resendConfirmation(confirmationEmail);
+      if (error) {
+        toast({
+          title: 'Resend failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Email sent!',
+          description: 'A new confirmation email has been sent.',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to resend confirmation email.',
         variant: 'destructive',
       });
     } finally {
@@ -413,6 +447,57 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                 >
                   try again
                 </Button>
+              </p>
+            </div>
+          </>
+        )}
+
+        {view === 'confirmation-sent' && (
+          <>
+            <DialogHeader className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Mail className="h-8 w-8 text-primary" />
+              </div>
+              <DialogTitle className="text-xl font-bold text-center">Check Your Email</DialogTitle>
+              <DialogDescription className="text-center space-y-2">
+                <div className="flex items-center justify-center gap-2 text-primary font-medium">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Account created successfully!</span>
+                </div>
+                <p>
+                  We've sent a confirmation link to <strong>{confirmationEmail}</strong>.
+                  Click the link in the email to activate your account.
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 mt-4">
+              <Button 
+                type="button" 
+                className="w-full" 
+                variant="royal"
+                disabled={loading}
+                onClick={handleResendConfirmation}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Resend Confirmation Email'
+                )}
+              </Button>
+              <Button 
+                type="button" 
+                className="w-full" 
+                variant="outline"
+                onClick={() => setView('auth')}
+              >
+                Back to Login
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                Didn't receive the email? Check your spam folder.
               </p>
             </div>
           </>

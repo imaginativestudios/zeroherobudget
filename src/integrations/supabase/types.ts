@@ -160,7 +160,8 @@ export type Database = {
           invited_by: string
           role: Database["public"]["Enums"]["household_role"]
           status: Database["public"]["Enums"]["invitation_status"]
-          token: string
+          token: string | null
+          token_hash: string | null
         }
         Insert: {
           accepted_at?: string | null
@@ -172,7 +173,8 @@ export type Database = {
           invited_by: string
           role?: Database["public"]["Enums"]["household_role"]
           status?: Database["public"]["Enums"]["invitation_status"]
-          token: string
+          token?: string | null
+          token_hash?: string | null
         }
         Update: {
           accepted_at?: string | null
@@ -184,7 +186,8 @@ export type Database = {
           invited_by?: string
           role?: Database["public"]["Enums"]["household_role"]
           status?: Database["public"]["Enums"]["invitation_status"]
-          token?: string
+          token?: string | null
+          token_hash?: string | null
         }
         Relationships: [
           {

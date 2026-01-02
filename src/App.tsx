@@ -31,6 +31,10 @@ import DataPrivacyFAQ from "./pages/DataPrivacyFAQ";
 import IconStyleGuide from "./pages/IconStyleGuide";
 import ColorPaletteGuide from "./pages/ColorPaletteGuide";
 import Pricing from "./pages/Pricing";
+import { Household } from "./pages/Household";
+import { AcceptInvite } from "./pages/AcceptInvite";
+import { Subscriptions } from "./pages/Subscriptions";
+import { SubscriptionsReport } from "./pages/reports/SubscriptionsReport";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +57,7 @@ const App = () => (
           <Route path="/style-guide/icons" element={<IconStyleGuide />} />
           <Route path="/style-guide/colors" element={<ColorPaletteGuide />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -74,6 +79,9 @@ const App = () => (
                 <Route path="/reports/expenses" element={<Reports />} />
                 <Route path="/reports/available" element={<AvailableForDebtReport />} />
                 <Route path="/reports/net-worth" element={<NetWorthReport />} />
+                <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
+                <Route path="/household" element={<Household />} />
+                <Route path="/subscriptions" element={<Subscriptions />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

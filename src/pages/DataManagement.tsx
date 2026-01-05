@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, Trash2, Clock, AlertTriangle } from 'lucide-react';
+import { Upload, Download, FileText, CreditCard, DollarSign, Target, Database, Shield, FileJson, Trash2, Clock, AlertTriangle, UserX } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -8,6 +8,7 @@ import { InlineAlert } from '@/components/ui/inline-alert';
 import { DataImportWizard } from '@/components/import/DataImportWizard';
 import { RestoreBackupDialog } from '@/components/backup/RestoreBackupDialog';
 import { ClearDataDialog } from '@/components/backup/ClearDataDialog';
+import { DeleteAccountDialog } from '@/components/backup/DeleteAccountDialog';
 import { ImportType } from '@/lib/importUtils';
 import { createBackup, downloadBackup, getLastBackupTimestamp } from '@/lib/dataBackup';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,6 +27,7 @@ export default function DataManagement() {
   const [importWizardOpen, setImportWizardOpen] = useState(false);
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false);
   const [selectedImportType, setSelectedImportType] = useState<ImportType>('transactions');
   const [lastBackup, setLastBackup] = useState<string | null>(null);
 
@@ -405,30 +407,53 @@ export default function DataManagement() {
           <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Permanently delete all your data. This action cannot be undone.
+          Permanently delete your data or account. These actions cannot be undone.
         </p>
 
-        <Card className="border-destructive/30">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <p className="font-medium text-sm">Clear All Data</p>
-                <p className="text-xs text-muted-foreground">
-                  Delete all transactions, budget items, debts, and subscriptions
-                </p>
+        <div className="space-y-3">
+          <Card className="border-destructive/30">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <p className="font-medium text-sm">Clear All Data</p>
+                  <p className="text-xs text-muted-foreground">
+                    Delete all transactions, budget items, debts, and subscriptions
+                  </p>
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setClearDialogOpen(true)}
+                  disabled={totalItems === 0}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Clear Data
+                </Button>
               </div>
-              <Button 
-                variant="destructive" 
-                size="sm"
-                onClick={() => setClearDialogOpen(true)}
-                disabled={totalItems === 0}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Clear Data
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card className="border-destructive/30">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <p className="font-medium text-sm">Delete Account</p>
+                  <p className="text-xs text-muted-foreground">
+                    Permanently delete your account and all associated data
+                  </p>
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteAccountDialogOpen(true)}
+                >
+                  <UserX className="h-4 w-4 mr-2" />
+                  Delete Account
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Import Wizard Modal */}
@@ -452,6 +477,12 @@ export default function DataManagement() {
         onClearComplete={() => {}}
         totalItems={totalItems}
         dataStats={dataStats}
+      />
+
+      {/* Delete Account Dialog */}
+      <DeleteAccountDialog
+        open={deleteAccountDialogOpen}
+        onOpenChange={setDeleteAccountDialogOpen}
       />
     </div>
   );

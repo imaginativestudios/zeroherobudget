@@ -90,7 +90,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send the email
     const emailResponse = await resend.emails.send({
-      from: "Zero Hero <noreply@resend.dev>",
+      from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
       to: [email],
       subject: "Account Deletion Confirmation Code",
       html: `

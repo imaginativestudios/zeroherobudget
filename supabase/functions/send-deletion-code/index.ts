@@ -64,16 +64,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
     
-    // Store in user_settings as a deletion code
+    // Delete any existing deletion code first
+    await supabaseAdmin
+      .from("user_settings")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("setting_key", "deletion_code");
+    
+    // Insert new deletion code
     const { error: settingsError } = await supabaseAdmin
       .from("user_settings")
-      .upsert({
+      .insert({
         user_id: user.id,
         setting_key: "deletion_code",
         setting_value: { code, expires_at: expiresAt },
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: "user_id,setting_key"
       });
 
     if (settingsError) {

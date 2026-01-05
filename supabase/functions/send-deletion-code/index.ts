@@ -53,16 +53,55 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Generate a 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // Store the code with expiration (10 minutes) using admin client
+    // Create admin client for database operations
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    // Check rate limiting (max 3 attempts per hour)
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { data: rateLimitData } = await supabaseAdmin
+      .from("user_settings")
+      .select("setting_value")
+      .eq("user_id", user.id)
+      .eq("setting_key", "deletion_code_attempts")
+      .single();
+
+    const attempts = rateLimitData?.setting_value as { count: number; reset_at: string } | null;
+    
+    if (attempts) {
+      const resetTime = new Date(attempts.reset_at);
+      if (resetTime > new Date() && attempts.count >= 3) {
+        const minutesRemaining = Math.ceil((resetTime.getTime() - Date.now()) / 60000);
+        return new Response(
+          JSON.stringify({ error: `Too many attempts. Please try again in ${minutesRemaining} minutes.` }),
+          { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    }
+
+    // Generate a 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const resetAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+
+    // Update rate limit tracking
+    const newCount = (attempts && new Date(attempts.reset_at) > new Date()) ? attempts.count + 1 : 1;
+    
+    await supabaseAdmin
+      .from("user_settings")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("setting_key", "deletion_code_attempts");
+    
+    await supabaseAdmin
+      .from("user_settings")
+      .insert({
+        user_id: user.id,
+        setting_key: "deletion_code_attempts",
+        setting_value: { count: newCount, reset_at: resetAt },
+      });
     
     // Delete any existing deletion code first
     await supabaseAdmin

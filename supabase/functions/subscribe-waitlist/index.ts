@@ -73,9 +73,13 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Signup saved to database:", signupData);
     }
 
+    // Generate unsubscribe URL with base64-encoded email
+    const encodedEmail = btoa(email);
+    const unsubscribeUrl = `${supabaseUrl}/functions/v1/unsubscribe-waitlist?email=${encodedEmail}`;
+
     // Render React Email template
     const emailHtml = await renderAsync(
-      React.createElement(WaitlistWelcomeEmail, { email })
+      React.createElement(WaitlistWelcomeEmail, { email, unsubscribeUrl })
     );
 
     // Send welcome email
@@ -85,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
       to: [email],
       subject: "Welcome to Zero Hero - You're on the List!",
       html: emailHtml,
-      text: `Welcome to Zero Hero!\n\nYou're officially on the waitlist! We're thrilled to have you join our community of people taking control of their finances.\n\nWe'll notify you as soon as we're ready to welcome you aboard.\n\n- The Zero Hero Team\n\nP.S. Reply to this email if you have any questions!`,
+      text: `Welcome to Zero Hero!\n\nYou're officially on the waitlist! We're thrilled to have you join our community of people taking control of their finances.\n\nWe'll notify you as soon as we're ready to welcome you aboard.\n\n- The Zero Hero Team\n\nP.S. Reply to this email if you have any questions!\n\nTo unsubscribe: ${unsubscribeUrl}`,
     });
 
     console.log("Welcome email sent successfully:", emailResponse);

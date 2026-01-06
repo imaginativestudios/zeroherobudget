@@ -569,6 +569,7 @@ export type Database = {
           id: string
           ip_address: string | null
           source: string | null
+          unsubscribed_at: string | null
           user_agent: string | null
         }
         Insert: {
@@ -577,6 +578,7 @@ export type Database = {
           id?: string
           ip_address?: string | null
           source?: string | null
+          unsubscribed_at?: string | null
           user_agent?: string | null
         }
         Update: {
@@ -585,6 +587,7 @@ export type Database = {
           id?: string
           ip_address?: string | null
           source?: string | null
+          unsubscribed_at?: string | null
           user_agent?: string | null
         }
         Relationships: []

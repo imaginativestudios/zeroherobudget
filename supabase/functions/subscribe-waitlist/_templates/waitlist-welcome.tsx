@@ -14,9 +14,10 @@ import * as React from 'npm:react@18.3.1';
 
 interface WaitlistWelcomeEmailProps {
   email: string;
+  unsubscribeUrl: string;
 }
 
-export const WaitlistWelcomeEmail = ({ email }: WaitlistWelcomeEmailProps) => (
+export const WaitlistWelcomeEmail = ({ email, unsubscribeUrl }: WaitlistWelcomeEmailProps) => (
   <Html>
     <Head />
     <Preview>Welcome to Zero Hero - You're on the List!</Preview>
@@ -71,6 +72,12 @@ export const WaitlistWelcomeEmail = ({ email }: WaitlistWelcomeEmailProps) => (
         <Section style={footerSection}>
           <Text style={footerText}>
             © 2026 Zero Hero. From balances due to a more balanced you.
+          </Text>
+          <Text style={unsubscribeText}>
+            <Link href={unsubscribeUrl} style={unsubscribeLink}>
+              Unsubscribe
+            </Link>
+            {' '}from waitlist emails
           </Text>
         </Section>
       </Container>
@@ -177,4 +184,16 @@ const footerText = {
   color: '#9CA3AF',
   fontSize: '12px',
   margin: '0',
+};
+
+const unsubscribeText = {
+  color: '#9CA3AF',
+  fontSize: '11px',
+  marginTop: '12px',
+  marginBottom: '0',
+};
+
+const unsubscribeLink = {
+  color: '#9CA3AF',
+  textDecoration: 'underline',
 };

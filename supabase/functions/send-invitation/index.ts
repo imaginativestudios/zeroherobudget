@@ -129,9 +129,11 @@ const handler = async (req: Request): Promise<Response> => {
     // Send the email via Resend
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+      replyTo: "support@zeroherobudget.com",
       to: [inviteeEmail],
       subject: `You've been invited to join ${householdName} on Zero Hero`,
       html,
+      text: `You've been invited to join ${householdName} on Zero Hero!\n\n${inviterName} has invited you to join their household "${householdName}" as a ${invitation.role || "member"}.\n\nAccept your invitation here: ${inviteUrl}\n\nThis invitation expires in 7 days.\n\n- The Zero Hero Team`,
     });
 
     console.log("Invitation email sent successfully:", emailResponse);

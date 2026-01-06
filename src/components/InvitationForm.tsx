@@ -40,18 +40,14 @@ export function InvitationForm() {
   const sendInvitationEmail = async (
     inviteeEmail: string,
     inviteUrl: string,
-    householdName: string,
-    inviterName: string,
-    inviteeRole: string
+    invitationId: string
   ) => {
     try {
       const { error } = await supabase.functions.invoke('send-invitation', {
         body: {
-          inviterName,
-          householdName,
           inviteeEmail,
-          role: inviteeRole,
           inviteUrl,
+          invitationId,
         },
       });
 
@@ -73,17 +69,15 @@ export function InvitationForm() {
     
     const result = await createInvitation(email, role);
     
-    if (!result.error && result.token) {
+    if (!result.error && result.token && result.invitationId) {
       setInvitationToken(result.token);
       
-      // Send invitation email
+      // Send invitation email via secure authenticated endpoint
       const inviteUrl = `${window.location.origin}/accept-invite/${result.token}`;
       const emailResult = await sendInvitationEmail(
         email,
         inviteUrl,
-        result.householdName ?? 'My Household',
-        result.inviterName ?? 'A Zero Hero user',
-        role
+        result.invitationId
       );
       
       if (emailResult.success) {
@@ -93,7 +87,9 @@ export function InvitationForm() {
           description: `An email has been sent to ${email}`,
         });
       }
-    } else if (result.error) {
+    } else if (result.token) {
+      // Invitation created but email may not have been sent
+      setInvitationToken(result.token);
       toast({
         title: "Feature not available",
         description: result.error,

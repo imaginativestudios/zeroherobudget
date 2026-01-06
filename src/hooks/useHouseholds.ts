@@ -19,7 +19,7 @@ export function useHouseholds() {
     members: [],
     invitations: [],
     loading: authLoading,
-    createInvitation: async () => ({ success: false, error: 'Authentication required', token: null, householdName: null, inviterName: null }),
+    createInvitation: async () => ({ success: false, error: 'Authentication required', token: null, invitationId: null }),
     cancelInvitation: async () => ({ success: false, error: 'Authentication required' }),
     acceptInvitation: async () => ({ success: false, error: 'Authentication required' }),
     updateMemberRole: async () => ({ success: false, error: 'Authentication required' }),

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,8 +19,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useHouseholds } from '@/hooks/useHouseholds';
-import { UserPlus, Copy, Check } from 'lucide-react';
+import { UserPlus, Copy, Check, Mail } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export function InvitationForm() {
   const { createInvitation, canManageHousehold } = useHouseholds();
@@ -31,10 +31,37 @@ export function InvitationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invitationToken, setInvitationToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   if (!canManageHousehold()) {
     return null;
   }
+
+  const sendInvitationEmail = async (
+    inviteeEmail: string,
+    inviteUrl: string,
+    householdName: string,
+    inviterName: string,
+    inviteeRole: string
+  ) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-invitation', {
+        body: {
+          inviterName,
+          householdName,
+          inviteeEmail,
+          role: inviteeRole,
+          inviteUrl,
+        },
+      });
+
+      if (error) throw error;
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error sending invitation email:', error);
+      return { success: false, error: error.message };
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +69,34 @@ export function InvitationForm() {
     if (!email.trim()) return;
 
     setIsSubmitting(true);
+    setEmailSent(false);
     
-    const { error, token } = await createInvitation(email, role);
+    const result = await createInvitation(email, role);
     
-    if (!error && token) {
-      setInvitationToken(token);
-    } else if (error) {
+    if (!result.error && result.token) {
+      setInvitationToken(result.token);
+      
+      // Send invitation email
+      const inviteUrl = `${window.location.origin}/accept-invite/${result.token}`;
+      const emailResult = await sendInvitationEmail(
+        email,
+        inviteUrl,
+        result.householdName ?? 'My Household',
+        result.inviterName ?? 'A Zero Hero user',
+        role
+      );
+      
+      if (emailResult.success) {
+        setEmailSent(true);
+        toast({
+          title: "Invitation sent!",
+          description: `An email has been sent to ${email}`,
+        });
+      }
+    } else if (result.error) {
       toast({
         title: "Feature not available",
-        description: error,
+        description: result.error,
         variant: "destructive",
       });
       setIsOpen(false);
@@ -80,6 +126,7 @@ export function InvitationForm() {
     setRole('member');
     setInvitationToken(null);
     setCopied(false);
+    setEmailSent(false);
     setIsOpen(false);
   };
 
@@ -144,9 +191,15 @@ export function InvitationForm() {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Invitation Created!</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                {emailSent && <Mail className="h-5 w-5 text-primary" />}
+                Invitation {emailSent ? 'Sent!' : 'Created!'}
+              </DialogTitle>
               <DialogDescription>
-                Share this link with {email} to invite them to your household.
+                {emailSent 
+                  ? `We've sent an email to ${email} with the invitation link.`
+                  : `Share this link with ${email} to invite them to your household.`
+                }
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">

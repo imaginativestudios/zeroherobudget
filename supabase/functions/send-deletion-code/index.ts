@@ -130,6 +130,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send the email
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+      replyTo: "support@zeroherobudget.com",
       to: [email],
       subject: "Account Deletion Confirmation Code",
       html: `
@@ -145,10 +146,11 @@ const handler = async (req: Request): Promise<Response> => {
             This code will expire in 10 minutes. If you didn't request this, please ignore this email and your account will remain safe.
           </p>
           <p style="color: #dc2626; font-size: 14px; font-weight: 500; margin-top: 24px;">
-            ⚠️ Warning: Account deletion is permanent and cannot be undone.
+            Warning: Account deletion is permanent and cannot be undone.
           </p>
         </div>
       `,
+      text: `Account Deletion Request\n\nYour confirmation code is: ${code}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.\n\nWarning: Account deletion is permanent and cannot be undone.\n\n- The Zero Hero Team`,
     });
 
     console.log("Deletion code email sent:", emailResponse);

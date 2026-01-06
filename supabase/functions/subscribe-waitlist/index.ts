@@ -80,10 +80,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send welcome email
     const emailResponse = await resend.emails.send({
-      from: "Zero Hero <onboarding@resend.dev>",
+      from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+      replyTo: "support@zeroherobudget.com",
       to: [email],
       subject: "Welcome to Zero Hero - You're on the List!",
       html: emailHtml,
+      text: `Welcome to Zero Hero!\n\nYou're officially on the waitlist! We're thrilled to have you join our community of people taking control of their finances.\n\nWe'll notify you as soon as we're ready to welcome you aboard.\n\n- The Zero Hero Team\n\nP.S. Reply to this email if you have any questions!`,
     });
 
     console.log("Welcome email sent successfully:", emailResponse);

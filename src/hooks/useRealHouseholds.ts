@@ -171,25 +171,12 @@ export function useRealHouseholds() {
   // Create invitation with secure token
   const createInvitation = async (email: string, role: 'admin' | 'member' | 'viewer') => {
     if (!currentHousehold || !user) {
-      return { success: false, error: 'Not authenticated', token: null, householdName: null, inviterName: null };
+      return { success: false, error: 'Not authenticated', token: null, invitationId: null };
     }
 
     try {
       // Generate a secure random token
       const rawToken = uuidv4();
-      
-      // Get household name for the email
-      const currentHouseholdData = households.find(h => h.id === currentHousehold);
-      const householdName = currentHouseholdData?.name || 'My Household';
-      
-      // Get inviter's display name
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('display_name, first_name, email')
-        .eq('id', user.id)
-        .single();
-      
-      const inviterName = profileData?.display_name || profileData?.first_name || profileData?.email || 'A Zero Hero user';
       
       // Insert invitation - the trigger will hash the token
       const { data, error } = await supabase
@@ -208,11 +195,11 @@ export function useRealHouseholds() {
       
       await fetchInvitations();
       
-      // Return the raw token and metadata for the invitation email
-      return { success: true, error: null, token: rawToken, householdName, inviterName };
+      // Return the raw token and invitation ID for the secure email endpoint
+      return { success: true, error: null, token: rawToken, invitationId: data.id };
     } catch (error: any) {
       console.error('Error creating invitation:', error);
-      return { success: false, error: error.message || 'Failed to create invitation', token: null, householdName: null, inviterName: null };
+      return { success: false, error: error.message || 'Failed to create invitation', token: null, invitationId: null };
     }
   };
 

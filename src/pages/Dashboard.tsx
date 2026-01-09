@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
+import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
 import { FinancialCard } from "@/components/FinancialCard";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -217,7 +218,8 @@ export const Dashboard = () => {
               <span className="leading-tight">Welcome, debt warrior!</span>
             </h1>
           </div>
-          <div className="w-full sm:w-auto flex gap-2 justify-center sm:justify-end mt-4 sm:mt-0">
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2 items-center justify-center sm:justify-end mt-4 sm:mt-0">
+            <HouseholdViewToggle />
             <Button 
               variant="default" 
               size="lg" 

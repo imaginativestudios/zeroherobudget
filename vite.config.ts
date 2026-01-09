@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
+import istanbul from "vite-plugin-istanbul";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -10,9 +11,19 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  build: {
+    sourcemap: mode === 'test' || process.env.COVERAGE === 'true',
+  },
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
+    // Enable coverage instrumentation for E2E tests
+    process.env.COVERAGE === 'true' && istanbul({
+      include: 'src/*',
+      exclude: ['node_modules', 'e2e', 'src/integrations/supabase/types.ts'],
+      extension: ['.ts', '.tsx'],
+      requireEnv: true,
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png'],

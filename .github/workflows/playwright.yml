@@ -28,12 +28,43 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests
+      - name: Run Playwright tests with coverage
         id: playwright
         run: npx playwright test --reporter=json > test-results.json || true
         env:
+          COVERAGE: 'true'
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Generate coverage report
+        if: always()
+        run: |
+          if [ -d ".nyc_output" ]; then
+            npx nyc report --reporter=json-summary --reporter=text --reporter=lcov
+          fi
+
+      - name: Extract coverage summary
+        id: coverage
+        if: always()
+        run: |
+          if [ -f "coverage/coverage-summary.json" ]; then
+            LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+            STATEMENTS=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+            
+            echo "lines=$LINES" >> $GITHUB_OUTPUT
+            echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+            echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+            echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+            echo "has_coverage=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_coverage=false" >> $GITHUB_OUTPUT
+            echo "lines=0" >> $GITHUB_OUTPUT
+            echo "statements=0" >> $GITHUB_OUTPUT
+            echo "functions=0" >> $GITHUB_OUTPUT
+            echo "branches=0" >> $GITHUB_OUTPUT
+          fi
 
       - name: Generate test summary
         id: summary
@@ -74,6 +105,32 @@ jobs:
             const failed = '${{ steps.summary.outputs.failed }}';
             const skipped = '${{ steps.summary.outputs.skipped }}';
             const total = '${{ steps.summary.outputs.total }}';
+            const hasCoverage = '${{ steps.coverage.outputs.has_coverage }}' === 'true';
+            const lines = '${{ steps.coverage.outputs.lines }}';
+            const statements = '${{ steps.coverage.outputs.statements }}';
+            const functions = '${{ steps.coverage.outputs.functions }}';
+            const branches = '${{ steps.coverage.outputs.branches }}';
+            
+            let coverageSection = '';
+            if (hasCoverage) {
+              const getEmoji = (pct) => {
+                const num = parseFloat(pct);
+                if (num >= 80) return '🟢';
+                if (num >= 50) return '🟡';
+                return '🔴';
+              };
+              
+              coverageSection = `
+            
+            ### 📊 Code Coverage
+            
+            | Metric | Coverage |
+            |--------|----------|
+            | ${getEmoji(lines)} Lines | ${lines}% |
+            | ${getEmoji(statements)} Statements | ${statements}% |
+            | ${getEmoji(functions)} Functions | ${functions}% |
+            | ${getEmoji(branches)} Branches | ${branches}% |`;
+            }
             
             const body = `## 🎭 Playwright Test Results
             
@@ -84,6 +141,7 @@ jobs:
             | ❌ Failed | ${failed} |
             | ⏭️ Skipped | ${skipped} |
             | **Total** | ${total} |
+            ${coverageSection}
             
             [View full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
             
@@ -117,6 +175,13 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
           retention-days: 30
 
       - uses: actions/upload-artifact@v4

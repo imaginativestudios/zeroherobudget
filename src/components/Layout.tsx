@@ -1,9 +1,10 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2 } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 import { Logo } from "./Logo";
 import { OnboardingTour } from "./OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
@@ -31,9 +32,30 @@ export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, user, loading } = useAuth();
+  const { subscribed, openCustomerPortal, loading: subLoading } = useSubscriptionStatus();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
+  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
   const { resetTour } = useOnboardingTour();
+
+  const handleManageSubscription = async () => {
+    setIsManagingSubscription(true);
+    try {
+      const portalUrl = await openCustomerPortal();
+      if (portalUrl) {
+        window.location.href = portalUrl;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to open subscription portal';
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsManagingSubscription(false);
+    }
+  };
 
   // Define keyboard shortcuts with config for the help dialog
   // IMPORTANT: All hooks must be called before any conditional returns
@@ -236,6 +258,30 @@ export const Layout = ({ children }: LayoutProps) => {
                       <Shield className="h-4 w-4" aria-hidden="true" />
                       Your Privacy
                     </Link>
+                    {subscribed ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleManageSubscription}
+                        disabled={isManagingSubscription}
+                        className="w-full justify-start text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 h-auto py-2 px-3"
+                      >
+                        {isManagingSubscription ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <CreditCard className="h-4 w-4 mr-2" aria-hidden="true" />
+                        )}
+                        Manage Subscription
+                      </Button>
+                    ) : (
+                      <Link
+                        to="/pricing"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"
+                      >
+                        <CreditCard className="h-4 w-4" aria-hidden="true" />
+                        Subscribe
+                      </Link>
+                    )}
                   </div>
                   <Button
                     onClick={signOut}

@@ -16,6 +16,7 @@ import { Reports } from "@/pages/Reports";
 import { Achievements } from "@/pages/Achievements";
 import FinancialTips from "@/pages/FinancialTips";
 import DataManagement from "@/pages/DataManagement";
+import AccountSettings from "@/pages/AccountSettings";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
@@ -89,6 +90,7 @@ const App = () => (
                 <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
                 <Route path="/household" element={<Household />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/account" element={<AccountSettings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -224,8 +224,8 @@ export function useRealHouseholds() {
   // Accept an invitation using secure token verification
   const acceptInvitation = async (rawToken: string) => {
     try {
-      // Using type assertion as the new function isn't in generated types yet
-      const { data, error } = await (supabase.rpc as any)('accept_invitation_secure', { raw_token: rawToken });
+      // Call the accept_invitation database function with the token
+      const { data, error } = await supabase.rpc('accept_invitation', { invitation_token: rawToken });
 
       if (error) throw error;
       

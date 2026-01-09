@@ -36,6 +36,8 @@ import { Household } from "./pages/Household";
 import { AcceptInvite } from "./pages/AcceptInvite";
 import { Subscriptions } from "./pages/Subscriptions";
 import { SubscriptionsReport } from "./pages/reports/SubscriptionsReport";
+import Install from "./pages/Install";
+import InstallPromptBanner from "./components/InstallPromptBanner";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +62,7 @@ const App = () => (
           <Route path="/style-guide/colors" element={<ColorPaletteGuide />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
+          <Route path="/install" element={<Install />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -90,6 +93,7 @@ const App = () => (
             </Layout>
           } />
           </Routes>
+          <InstallPromptBanner />
           <ChatbotWidget />
         </BrowserRouter>
         </BudgetTourProvider>

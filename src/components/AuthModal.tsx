@@ -181,13 +181,13 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         {view === 'auth' && (
           <>
-            <DialogHeader className="flex flex-col items-center">
-              <Logo variant="dark" className="h-8 mb-4" />
-              <DialogTitle className="text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
-              <DialogDescription className="text-center">
+            <DialogHeader className="flex flex-col items-center space-y-2">
+              <Logo variant="dark" className="h-6 sm:h-8 mb-2 sm:mb-4" />
+              <DialogTitle className="text-xl sm:text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
+              <DialogDescription className="text-center text-sm sm:text-base">
                 Start your journey to financial freedom
               </DialogDescription>
             </DialogHeader>
@@ -293,7 +293,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
 
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4 mt-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="signup-firstname">First Name</Label>
                       <Input

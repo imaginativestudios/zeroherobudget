@@ -1,5 +1,7 @@
 # Welcome to your Lovable project
 
+[![Playwright Tests](https://github.com/imaginativestudios/zeroherobudget/actions/workflows/playwright.yml/badge.svg)](https://github.com/imaginativestudios/zeroherobudget/actions/workflows/playwright.yml)
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/33f67e62-8c56-4bb1-b4f8-e1c8a3c81742

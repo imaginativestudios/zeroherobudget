@@ -223,6 +223,39 @@ const Pricing = () => {
                 ))}
               </div>
 
+              {/* Cancellation & Subscription Details */}
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <h4 className="font-medium text-foreground text-sm flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  Your Subscription Rights
+                </h4>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span><strong>Cancel anytime</strong> — no penalties, no hidden fees, no questions asked</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span>
+                      After cancellation, you'll retain <strong>full access until{' '}
+                      {(subscriptionEnd || trialEnd) && new Date(subscriptionEnd || trialEnd!).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span>You <strong>won't be charged again</strong> after your subscription ends</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span>Your data is always yours — <strong>export it anytime</strong> from Data Management</span>
+                  </li>
+                </ul>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Button
                   variant="outline"
@@ -231,7 +264,9 @@ const Pricing = () => {
                 >
                   {isProcessing ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : null}
+                  ) : (
+                    <CreditCard className="h-4 w-4 mr-2" />
+                  )}
                   Manage Subscription
                 </Button>
                 <Button onClick={() => navigate('/dashboard')}>

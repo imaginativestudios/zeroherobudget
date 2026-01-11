@@ -47,43 +47,43 @@ export default function Landing() {
         {/* Hero Content */}
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Logo - Focal Point */}
-          <div className="mb-8 flex justify-center">
-            <Logo className="h-24 md:h-32 lg:h-40 w-auto" />
+          <div className="mb-4 sm:mb-6 md:mb-8 flex justify-center">
+            <Logo className="h-12 xs:h-16 sm:h-24 md:h-32 lg:h-40 w-auto max-w-[90vw]" />
           </div>
           
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Transform Debt Into Victory
           </h1>
           
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl text-white mb-8 max-w-3xl mx-auto md:text-lg">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
             Take control of your finances with intelligent budgeting and powerful debt payoff strategies.
           </p>
           
           {/* CTA Buttons - Grouped by Proximity */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" variant="gold" className="text-base sm:text-lg px-8 h-12 text-primary-dark" onClick={() => openAuth('signup')}>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-2">
+            <Button size="lg" variant="gold" className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 text-primary-dark" onClick={() => openAuth('signup')}>
               Get Started Free
-              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             </Button>
-            <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 h-12 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
+            <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white" onClick={() => openAuth('login')}>
               Sign In
             </Button>
           </div>
           
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 text-white text-sm">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" aria-hidden="true" />
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 text-white text-xs sm:text-sm">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
               <span>Local-First Privacy</span>
             </div>
-            <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
               <span>Proven Debt Strategies</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Target className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
               <span>Track Every Dollar</span>
             </div>
           </div>

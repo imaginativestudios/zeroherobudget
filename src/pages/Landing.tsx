@@ -149,9 +149,7 @@ export default function Landing() {
               <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             </Button>
 
-            <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/90">
-              No credit card required • Free forever • Cancel anytime
-            </p>
+            <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/90">Cancel anytime</p>
           </div>
         </section>
 

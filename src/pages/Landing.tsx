@@ -135,21 +135,21 @@ export default function Landing() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-24 bg-gradient-to-br from-primary to-primary-light text-primary-foreground">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-primary to-primary-light text-primary-foreground">
+          <div className="container mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
               Ready to Take Control?
             </h2>
-            <p className="text-xl mb-12 text-white max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-8 sm:mb-12 text-white/90 max-w-2xl mx-auto px-2">
               Join thousands who've transformed their financial lives. Start your journey to debt freedom today.
             </p>
             
-            <Button size="lg" variant="gold" onClick={() => openAuth('signup')} className="text-lg px-8 py-6">
+            <Button size="lg" variant="gold" onClick={() => openAuth('signup')} className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6">
               Get Started Free
-              <ArrowRight className="ml-2" aria-hidden="true" />
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             </Button>
 
-            <p className="mt-8 text-sm text-white">
+            <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/90">
               No credit card required • Free forever • Cancel anytime
             </p>
           </div>

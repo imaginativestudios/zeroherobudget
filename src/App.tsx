@@ -8,6 +8,7 @@ import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { OnboardingTourProvider } from "@/contexts/OnboardingTourContext";
 import { BudgetTourProvider } from "@/contexts/BudgetTourContext";
 import { HouseholdViewProvider } from "@/contexts/HouseholdViewContext";
+import { BehavioralTriggerProvider } from "@/contexts/BehavioralTriggerContext";
 import { Dashboard } from "@/pages/Dashboard";
 import { Budget } from "@/pages/Budget";
 import { DebtSnowball } from "@/pages/DebtSnowball";
@@ -52,6 +53,7 @@ const App = () => (
             <Toaster />
             <Sonner />
           <BrowserRouter>
+            <BehavioralTriggerProvider>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
@@ -99,6 +101,7 @@ const App = () => (
           </Routes>
             <InstallPromptBanner />
             <ChatbotWidget />
+            </BehavioralTriggerProvider>
           </BrowserRouter>
           </HouseholdViewProvider>
         </BudgetTourProvider>

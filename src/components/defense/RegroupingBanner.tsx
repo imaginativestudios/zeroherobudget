@@ -1,14 +1,13 @@
 /**
  * Regrouping Banner
  * 
- * Tactical alert displayed when the Moat has a breach.
- * Includes a repair calculator showing how to refill the moat.
+ * Heroic reassurance banner displayed when the Moat needs repairs.
+ * Uses calming colors and encouraging copy to reinforce the protective purpose.
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  AlertTriangle, 
   X, 
   ChevronDown, 
   ChevronUp, 
@@ -36,7 +35,6 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
     repairPlan, 
     dismissBanner, 
     activateRepairMode,
-    isVulnerable,
   } = useMoatStatus();
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -67,35 +65,16 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn('w-full', className)}
     >
-      <Card className={cn(
-        'border-2 overflow-hidden',
-        isVulnerable 
-          ? 'border-destructive/50 bg-destructive/5' 
-          : 'border-warning/50 bg-warning/5'
-      )}>
+      <Card className="border-2 overflow-hidden border-amber-200 bg-slate-100">
         {/* Header */}
-        <div className={cn(
-          'px-4 py-3 flex items-center justify-between',
-          isVulnerable ? 'bg-destructive/10' : 'bg-warning/10'
-        )}>
+        <div className="px-4 py-3 flex items-center justify-between bg-amber-50/80">
           <div className="flex items-center gap-2">
-            <AlertTriangle className={cn(
-              'h-5 w-5',
-              isVulnerable ? 'text-destructive' : 'text-warning'
-            )} />
-            <span className={cn(
-              'font-bold uppercase tracking-wide text-sm',
-              isVulnerable ? 'text-destructive' : 'text-warning'
-            )}>
-              {isVulnerable ? 'Critical Alert' : 'Tactical Alert'}
+            <Shield className="h-5 w-5 text-amber-600" />
+            <span className="font-bold uppercase tracking-wide text-sm text-amber-700">
+              Status: Regrouping
             </span>
-            <Badge variant="outline" className={cn(
-              'text-xs',
-              isVulnerable 
-                ? 'border-destructive/30 text-destructive' 
-                : 'border-warning/30 text-warning'
-            )}>
-              {recoveryState.fortressIntegrity}% Integrity
+            <Badge variant="outline" className="text-xs border-amber-300 text-amber-700">
+              Defenses Active
             </Badge>
           </div>
           <Button
@@ -112,23 +91,16 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
         <CardContent className="p-4 space-y-4">
           {/* Main Message */}
           <div className="flex items-start gap-3">
-            <div className={cn(
-              'p-2 rounded-lg',
-              isVulnerable ? 'bg-destructive/10' : 'bg-warning/10'
-            )}>
-              <Shield className={cn(
-                'h-6 w-6',
-                isVulnerable ? 'text-destructive' : 'text-warning'
-              )} />
+            <div className="p-2 rounded-lg bg-amber-100">
+              <Shield className="h-6 w-6 text-amber-600" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-foreground">
-                Breach Detected: Your Moat has dropped to {formatCurrency(recoveryState.fortressIntegrity * 10)}
+                The Moat Has Done Its Duty
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {isVulnerable 
-                  ? 'Your Fortress Integrity is critically compromised. Immediate tactical shift required.'
-                  : 'Your Fortress Integrity is compromised. We are prioritizing repairs this month.'}
+                Your fortress protected you from new debt. Now, let's focus on 
+                tactical repairs to get your defenses back to 100%.
               </p>
             </div>
           </div>
@@ -240,9 +212,9 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
               Optimize for Repair
             </Button>
             <Button 
-              variant="outline" 
+              variant="ghost" 
               onClick={handleViewWarMap}
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none text-muted-foreground"
             >
               View War Map
               <ArrowRight className="h-4 w-4 ml-2" />

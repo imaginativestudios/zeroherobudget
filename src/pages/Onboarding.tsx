@@ -8,6 +8,8 @@ import { Logo } from '@/components/Logo';
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
 import { HeroTip } from '@/components/onboarding/HeroTip';
 import { MoatSelector } from '@/components/onboarding/MoatSelector';
+import { AhaMomentStep } from '@/components/onboarding/AhaMomentStep';
+import { PricingStep } from '@/components/onboarding/PricingStep';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
 import { Clock, Swords, Castle, ArrowRight, ArrowLeft, Loader2, Shield, AlertCircle } from 'lucide-react';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
@@ -67,7 +69,10 @@ export default function Onboarding() {
     nextStep,
     prevStep,
     skipStep,
+    showAhaMoment,
+    showPricing,
     showCeremony,
+    skipTrial,
     enterDashboard,
     isCompleting,
   } = useOnboardingState();
@@ -76,10 +81,10 @@ export default function Onboarding() {
   const [slideDirection, setSlideDirection] = useState(1);
 
   // Local form state for step 2
-  const [debtName, setDebtName] = useState('');
-  const [debtBalance, setDebtBalance] = useState('');
-  const [debtApr, setDebtApr] = useState('');
-  const [debtMinPayment, setDebtMinPayment] = useState('');
+  const [debtName, setDebtName] = useState(data.primaryDebt?.name || '');
+  const [debtBalance, setDebtBalance] = useState(data.primaryDebt?.balance?.toString() || '');
+  const [debtApr, setDebtApr] = useState(data.primaryDebt?.apr?.toString() || '');
+  const [debtMinPayment, setDebtMinPayment] = useState(data.primaryDebt?.minimumPayment?.toString() || '');
 
   // Validation errors for step 2
   const [errors, setErrors] = useState<{
@@ -88,13 +93,13 @@ export default function Onboarding() {
   }>({});
 
   // Local form state for step 1
-  const [hourlyWageInput, setHourlyWageInput] = useState('');
+  const [hourlyWageInput, setHourlyWageInput] = useState(data.hourlyWage?.toString() || '');
 
   const StepIcon = currentStep <= 3 ? stepIcons[currentStep as 1 | 2 | 3] : Shield;
 
-  // Trigger ceremony effects when step 4 is reached
+  // Trigger ceremony effects when step 6 is reached
   useEffect(() => {
-    if (currentStep === 4) {
+    if (currentStep === 6) {
       // Epic confetti burst
       const duration = 3000;
       const end = Date.now() + duration;
@@ -178,6 +183,27 @@ export default function Onboarding() {
     nextStep();
   };
 
+  const handleStep3Complete = () => {
+    setSlideDirection(1);
+    showAhaMoment();
+  };
+
+  const handleAhaMomentContinue = () => {
+    setSlideDirection(1);
+    showPricing();
+  };
+
+  const handlePricingStartTrial = () => {
+    // This is called after successful checkout redirect
+    // The useOnboardingState hook handles the redirect
+    showCeremony();
+  };
+
+  const handlePricingSkip = () => {
+    setSlideDirection(1);
+    skipTrial();
+  };
+
   const handlePrevStep = () => {
     setSlideDirection(-1);
     prevStep();
@@ -188,15 +214,21 @@ export default function Onboarding() {
     skipStep();
   };
 
-  const handleComplete = () => {
-    setSlideDirection(1);
-    showCeremony();
-  };
-
   const handleEnterFortress = () => {
     soundEffects.heroChoice();
     haptics.medium();
     enterDashboard();
+  };
+
+  // Calculate total steps shown in indicator (show 5 for steps 1-5, hide for ceremony)
+  const getTotalSteps = () => {
+    if (currentStep === 6) return 0; // Don't show indicator on ceremony
+    return 5;
+  };
+
+  const getDisplayStep = () => {
+    if (currentStep === 6) return 0;
+    return currentStep;
   };
 
   return (
@@ -206,8 +238,8 @@ export default function Onboarding() {
         <Link to="/">
           <Logo className="h-8 sm:h-10" variant="dark" />
         </Link>
-        {currentStep <= 3 && (
-          <StepIndicator currentStep={currentStep} totalSteps={3} />
+        {currentStep <= 5 && (
+          <StepIndicator currentStep={getDisplayStep()} totalSteps={getTotalSteps()} />
         )}
       </header>
 
@@ -215,7 +247,7 @@ export default function Onboarding() {
       <main className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg">
           <AnimatePresence mode="wait" custom={slideDirection}>
-            {/* Steps 1-3 */}
+            {/* Steps 1-3: Data Collection */}
             {currentStep <= 3 && (
               <motion.div
                 key={currentStep}
@@ -427,7 +459,7 @@ export default function Onboarding() {
                     </>
                   ) : (
                     <Button
-                      onClick={handleComplete}
+                      onClick={handleStep3Complete}
                       disabled={isCompleting}
                       className="w-full h-12"
                       size="lg"
@@ -436,11 +468,11 @@ export default function Onboarding() {
                       {isCompleting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating your character...
+                          Calculating your path...
                         </>
                       ) : (
                         <>
-                          Complete Setup
+                          See My Freedom Path
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </>
                       )}
@@ -462,8 +494,45 @@ export default function Onboarding() {
               </motion.div>
             )}
 
-            {/* Step 4: Ceremony Screen */}
+            {/* Step 4: Aha Moment */}
             {currentStep === 4 && (
+              <motion.div
+                key="aha-moment"
+                custom={slideDirection}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={slideTransition}
+              >
+                <AhaMomentStep
+                  hourlyWage={data.hourlyWage}
+                  debt={data.primaryDebt}
+                  onContinue={handleAhaMomentContinue}
+                />
+              </motion.div>
+            )}
+
+            {/* Step 5: Pricing */}
+            {currentStep === 5 && (
+              <motion.div
+                key="pricing"
+                custom={slideDirection}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={slideTransition}
+              >
+                <PricingStep
+                  onStartTrial={handlePricingStartTrial}
+                  onSkipTrial={handlePricingSkip}
+                />
+              </motion.div>
+            )}
+
+            {/* Step 6: Ceremony Screen */}
+            {currentStep === 6 && (
               <motion.div
                 key="ceremony"
                 initial={{ opacity: 0, scale: 0.8 }}

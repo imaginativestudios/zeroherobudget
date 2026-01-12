@@ -10,6 +10,15 @@ import { format, subDays, parseISO, startOfDay } from 'date-fns';
 import { useUserLocalStorage } from './useUserLocalStorage';
 import { useStrategy } from './useLocalSettings';
 
+export interface OnboardingData {
+  hourlyWage?: number;
+  debtName?: string;
+  debtBalance?: number;
+  debtApr?: number;
+  debtMinPayment?: number;
+  moatTarget?: 500 | 1000 | 2000;
+}
+
 export interface HeroProfile {
   onboarding_completed: boolean;
   hourly_wage: number | null; // For Freedom Engine calculations
@@ -17,6 +26,11 @@ export interface HeroProfile {
   moat_current: number;
   last_active_date: string | null;
   activity_log: string[]; // Array of ISO dates for app opens (last 7 days)
+  // Onboarding progress persistence
+  onboarding_step?: 1 | 2 | 3 | 4 | 5 | 6;
+  onboarding_data?: OnboardingData;
+  // Trial/subscription gating
+  trial_started?: boolean;
 }
 
 // Separate Savings Vault storage for mental separation of emergency fund
@@ -40,6 +54,9 @@ const DEFAULT_HERO_PROFILE: HeroProfile = {
   moat_current: 0,
   last_active_date: null,
   activity_log: [],
+  onboarding_step: undefined,
+  onboarding_data: undefined,
+  trial_started: false,
 };
 
 const DEFAULT_SAVINGS_VAULT: SavingsVault = {
@@ -79,6 +96,11 @@ export interface UseHeroProfileResult {
   
   // Onboarding
   completeOnboarding: () => void;
+  
+  // Onboarding persistence
+  saveOnboardingProgress: (step: 1 | 2 | 3 | 4 | 5 | 6, data?: OnboardingData) => void;
+  clearOnboardingProgress: () => void;
+  setTrialStarted: (started: boolean) => void;
 }
 
 export function useHeroProfile(): UseHeroProfileResult {
@@ -224,6 +246,32 @@ export function useHeroProfile(): UseHeroProfileResult {
     setProfile({
       ...profile,
       onboarding_completed: true,
+      onboarding_step: undefined,
+      onboarding_data: undefined,
+    });
+  }, [profile, setProfile]);
+
+  // Onboarding persistence
+  const saveOnboardingProgress = useCallback((step: 1 | 2 | 3 | 4 | 5 | 6, data?: OnboardingData) => {
+    setProfile({
+      ...profile,
+      onboarding_step: step,
+      onboarding_data: data ? { ...profile.onboarding_data, ...data } : profile.onboarding_data,
+    });
+  }, [profile, setProfile]);
+
+  const clearOnboardingProgress = useCallback(() => {
+    setProfile({
+      ...profile,
+      onboarding_step: undefined,
+      onboarding_data: undefined,
+    });
+  }, [profile, setProfile]);
+
+  const setTrialStarted = useCallback((started: boolean) => {
+    setProfile({
+      ...profile,
+      trial_started: started,
     });
   }, [profile, setProfile]);
 
@@ -252,6 +300,9 @@ export function useHeroProfile(): UseHeroProfileResult {
     activityLog: profile.activity_log,
     recordDailyActivity,
     completeOnboarding,
+    saveOnboardingProgress,
+    clearOnboardingProgress,
+    setTrialStarted,
   };
 }
 

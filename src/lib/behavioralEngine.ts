@@ -1,16 +1,18 @@
 /**
- * Behavioral Event Trigger Engine - Phase 1: Logic & State Management
+ * Behavioral Engine - Core Calculations
  * 
- * This module provides core calculations for proactive debt-repayment coaching:
- * - Surplus Power: Money available after survival expenses and debt minimums
- * - Shadow Budget: True cost of discretionary spending in terms of debt payoff
- * - Consistency Score: Streak tracking for positive financial behaviors
+ * Implements proactive debt-repayment coaching through:
+ * 1. Surplus Power: Available discretionary income after essentials + debt minimums
+ * 2. Shadow Cost: True cost of purchases when factoring debt interest
+ * 3. Consistency Score: Enhanced multi-factor score (Participation + Budget Adherence + Momentum)
+ * 4. Budget Compliance: Survival spending vs. budget tracking
+ * 5. Strategy Level-Up: Determines when to suggest Avalanche over Snowball
  */
 
 import { Expense } from '@/hooks/useLocalExpenses';
 import { Debt } from '@/hooks/useLocalDebts';
 import { Transaction } from '@/hooks/useLocalTransactions';
-import { format, differenceInDays, parseISO, startOfDay, subDays } from 'date-fns';
+import { format, differenceInDays, parseISO, startOfDay, subDays, startOfWeek, endOfWeek } from 'date-fns';
 
 // Categories considered "survival" expenses (non-negotiable)
 const SURVIVAL_CATEGORIES = [
@@ -20,6 +22,15 @@ const SURVIVAL_CATEGORIES = [
   'Insurance & Healthcare',
   'Transportation',
 ];
+
+// ============= CONSISTENCY SCORE WEIGHTS =============
+export const CONSISTENCY_WEIGHTS = {
+  participation: 0.4,
+  budgetAdherence: 0.4,
+  momentum: 0.2,
+};
+
+// ============= RESULT INTERFACES =============
 
 export interface SurplusPowerResult {
   totalIncome: number;
@@ -49,6 +60,36 @@ export interface ConsistencyScoreResult {
   heroMessage: string;
 }
 
+export interface EnhancedConsistencyScoreResult {
+  // Component scores (0-1 scale)
+  participation: number;       // P_s: Active days / 7
+  budgetAdherence: number;     // B_a: 1 if under budget, else budgeted/spent
+  momentum: number;            // M_q: min(paid_debts * 0.1, 0.5)
+  
+  // Weights for transparency
+  weights: typeof CONSISTENCY_WEIGHTS;
+  
+  // Final composite score (0-100)
+  score: number;
+  
+  // Derived state
+  streakLevel: 'novice' | 'apprentice' | 'warrior' | 'hero' | 'legend';
+  heroMessage: string;
+  
+  // Existing streak data (preserve for UI)
+  currentStreak: number;
+  longestStreak: number;
+  todayLogged: boolean;
+  lastLogDate: string | null;
+  
+  // Raw data for debugging/display
+  activeDaysCount: number;
+  paidDebtsCount: number;
+  survivalBudgetStatus: 'under' | 'over' | 'on-target';
+  survivalSpent: number;
+  survivalBudgeted: number;
+}
+
 export interface BudgetComplianceResult {
   isUnderBudget: boolean;
   budgetedAmount: number;
@@ -57,6 +98,8 @@ export interface BudgetComplianceResult {
   variancePercentage: number;
   daysCompliant: number;
 }
+
+// ============= SURPLUS POWER CALCULATION =============
 
 /**
  * Calculate Surplus Power - the money available for aggressive debt payoff
@@ -109,6 +152,8 @@ export function calculateSurplusPower(
     heroMessage,
   };
 }
+
+// ============= SHADOW COST CALCULATION =============
 
 /**
  * Calculate Shadow Cost - the true cost of discretionary spending
@@ -175,9 +220,138 @@ export function getHighestInterestRate(debts: Debt[]): number {
   return Math.max(...debts.map(d => d.interest_rate)) / 100; // Convert from percentage to decimal
 }
 
+// ============= PARTICIPATION CALCULATION (P_s) =============
+
 /**
- * Calculate Consistency Score - tracks positive financial behavior streaks
- * Monitors consecutive days of transaction logging or budget compliance
+ * Calculate Participation Score (P_s)
+ * Tracks activity over the last 7 days
+ * Activity = app opened OR transaction logged
+ * 
+ * Formula: Active Days / 7
+ */
+export function calculateParticipation(
+  transactions: Transaction[],
+  activityLog: string[] // ISO dates when app was opened
+): { score: number; activeDaysCount: number; activeDays: string[] } {
+  const today = startOfDay(new Date());
+  const sevenDaysAgo = subDays(today, 6); // Include today = 7 days
+  
+  // Get unique active days from transactions
+  const transactionDays = new Set(
+    transactions
+      .filter(t => {
+        const date = startOfDay(parseISO(t.date));
+        return date >= sevenDaysAgo && date <= today;
+      })
+      .map(t => format(parseISO(t.date), 'yyyy-MM-dd'))
+  );
+  
+  // Merge with app-open activity log
+  const activityDays = new Set([
+    ...transactionDays,
+    ...activityLog.filter(d => {
+      try {
+        const date = startOfDay(parseISO(d));
+        return date >= sevenDaysAgo && date <= today;
+      } catch {
+        return false;
+      }
+    }).map(d => format(parseISO(d), 'yyyy-MM-dd'))
+  ]);
+  
+  const activeDaysCount = activityDays.size;
+  const score = activeDaysCount / 7;
+  
+  return {
+    score,
+    activeDaysCount,
+    activeDays: [...activityDays],
+  };
+}
+
+// ============= BUDGET ADHERENCE CALCULATION (B_a) =============
+
+/**
+ * Calculate Budget Adherence (B_a)
+ * For survival categories only (Housing, Food, Utilities, etc.)
+ * 
+ * If spent <= budgeted: B_a = 1
+ * If spent > budgeted: B_a = budgeted / spent (capped at 0)
+ */
+export function calculateBudgetAdherence(
+  expenses: Expense[],
+  transactions: Transaction[],
+  weekStartDate?: Date
+): { score: number; status: 'under' | 'over' | 'on-target'; spent: number; budgeted: number } {
+  const now = weekStartDate || new Date();
+  const weekStart = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
+  const weekEnd = endOfWeek(now, { weekStartsOn: 0 });
+  
+  // Get weekly survival budget (monthly / ~4.33)
+  const monthlySurvivalBudget = expenses
+    .filter(e => !e.is_income && SURVIVAL_CATEGORIES.includes(e.category))
+    .reduce((sum, e) => sum + e.amount, 0);
+  const weeklyBudget = monthlySurvivalBudget / 4.33;
+  
+  // Get actual survival spending this week
+  const weeklySpent = transactions
+    .filter(t => {
+      try {
+        const date = parseISO(t.date);
+        return date >= weekStart && 
+               date <= weekEnd && 
+               t.flow === 'out' && 
+               SURVIVAL_CATEGORIES.includes(t.category);
+      } catch {
+        return false;
+      }
+    })
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  let score: number;
+  let status: 'under' | 'over' | 'on-target';
+  
+  if (weeklyBudget === 0) {
+    // No survival budget set - default to full score
+    score = 1;
+    status = 'on-target';
+  } else if (weeklySpent <= weeklyBudget) {
+    score = 1;
+    status = weeklySpent === weeklyBudget ? 'on-target' : 'under';
+  } else {
+    // Over budget: score is ratio of budget to spent
+    score = Math.max(0, weeklyBudget / weeklySpent);
+    status = 'over';
+  }
+  
+  return { score, status, spent: weeklySpent, budgeted: weeklyBudget };
+}
+
+// ============= MOMENTUM CALCULATION (M_q) =============
+
+/**
+ * Calculate Momentum (M_q)
+ * Based on number of debts marked as paid (balance = 0)
+ * 
+ * Formula: min(paid_debts_count * 0.1, 0.5)
+ * Max contribution: 0.5 (5 or more paid debts)
+ */
+export function calculateMomentum(
+  debts: Debt[]
+): { score: number; paidDebtsCount: number } {
+  const paidDebts = debts.filter(d => d.balance === 0);
+  const paidDebtsCount = paidDebts.length;
+  
+  const score = Math.min(paidDebtsCount * 0.1, 0.5);
+  
+  return { score, paidDebtsCount };
+}
+
+// ============= LEGACY CONSISTENCY SCORE (Streak-based) =============
+
+/**
+ * Calculate streak-based Consistency Score (preserved for backward compatibility)
+ * Tracks daily transaction logging streaks
  */
 export function calculateConsistencyScore(
   transactions: Transaction[],
@@ -263,6 +437,115 @@ export function calculateConsistencyScore(
   };
 }
 
+// ============= ENHANCED CONSISTENCY SCORE =============
+
+/**
+ * Generate hero message based on consistency score components
+ */
+function generateConsistencyHeroMessage(
+  score: number,
+  streakLevel: string,
+  participation: { activeDaysCount: number },
+  budgetAdherence: { status: string }
+): string {
+  if (score >= 90) {
+    return `🏆 LEGENDARY! You've achieved a ${score.toFixed(0)}% Consistency Score. Your financial discipline is unmatched!`;
+  } else if (score >= 75) {
+    return `⚔️ Hero status! ${score.toFixed(0)}% Consistency Score. You're ready to level up your strategy!`;
+  } else if (score >= 50) {
+    return `🛡️ Warrior-level consistency at ${score.toFixed(0)}%. Keep logging daily to build momentum!`;
+  } else if (score >= 25) {
+    if (participation.activeDaysCount < 4) {
+      return `📊 Active ${participation.activeDaysCount}/7 days. Open the app daily to boost your score!`;
+    }
+    if (budgetAdherence.status === 'over') {
+      return `💡 Survival spending is in Tactical Overstretch. Review essentials to improve adherence.`;
+    }
+    return `🌱 Apprentice level at ${score.toFixed(0)}%. Build your streak to unlock higher levels!`;
+  }
+  return `🎯 Start your hero's journey! Log transactions daily to build consistency.`;
+}
+
+/**
+ * Calculate Enhanced Consistency Score
+ * Combines all three components with specified weights
+ * 
+ * Final Score = (P_s × 0.4) + (B_a × 0.4) + (M_q × 0.2) × 100
+ */
+export function calculateEnhancedConsistencyScore(
+  transactions: Transaction[],
+  expenses: Expense[],
+  debts: Debt[],
+  activityLog: string[],
+  storedStreak?: { currentStreak: number; longestStreak: number; lastLogDate: string | null }
+): EnhancedConsistencyScoreResult {
+  // Calculate components
+  const participation = calculateParticipation(transactions, activityLog);
+  const budgetAdherence = calculateBudgetAdherence(expenses, transactions);
+  const momentum = calculateMomentum(debts);
+  
+  // Calculate weighted score (0-1) then scale to 0-100
+  const rawScore = 
+    (participation.score * CONSISTENCY_WEIGHTS.participation) +
+    (budgetAdherence.score * CONSISTENCY_WEIGHTS.budgetAdherence) +
+    (momentum.score * CONSISTENCY_WEIGHTS.momentum);
+  
+  const score = rawScore * 100;
+  
+  // Determine streak level based on score
+  let streakLevel: EnhancedConsistencyScoreResult['streakLevel'];
+  if (score >= 90) streakLevel = 'legend';
+  else if (score >= 75) streakLevel = 'hero';
+  else if (score >= 50) streakLevel = 'warrior';
+  else if (score >= 25) streakLevel = 'apprentice';
+  else streakLevel = 'novice';
+  
+  // Generate hero message
+  const heroMessage = generateConsistencyHeroMessage(score, streakLevel, participation, budgetAdherence);
+  
+  // Calculate streak data (preserve existing logic)
+  const streakData = calculateConsistencyScore(transactions, storedStreak);
+  
+  return {
+    participation: participation.score,
+    budgetAdherence: budgetAdherence.score,
+    momentum: momentum.score,
+    weights: CONSISTENCY_WEIGHTS,
+    score,
+    streakLevel,
+    heroMessage,
+    currentStreak: streakData.currentStreak,
+    longestStreak: streakData.longestStreak,
+    todayLogged: streakData.todayLogged,
+    lastLogDate: streakData.lastLogDate,
+    activeDaysCount: participation.activeDaysCount,
+    paidDebtsCount: momentum.paidDebtsCount,
+    survivalBudgetStatus: budgetAdherence.status,
+    survivalSpent: budgetAdherence.spent,
+    survivalBudgeted: budgetAdherence.budgeted,
+  };
+}
+
+// ============= SHOULD LEVEL UP =============
+
+/**
+ * Determine if user should level up from Snowball to Avalanche strategy
+ * 
+ * Returns true if:
+ * - Consistency Score > 75
+ * - Current strategy is 'snowball'
+ * 
+ * This triggers the UI to suggest Debt Avalanche as a more optimized approach
+ */
+export function shouldLevelUp(
+  consistencyScore: number,
+  currentStrategy: 'snowball' | 'avalanche' | string
+): boolean {
+  return consistencyScore > 75 && currentStrategy.toLowerCase() === 'snowball';
+}
+
+// ============= BUDGET COMPLIANCE =============
+
 /**
  * Check budget compliance for survival categories
  * Returns whether user is staying under their budgeted survival expenses
@@ -302,6 +585,8 @@ export function checkBudgetCompliance(
     daysCompliant,
   };
 }
+
+// ============= UTILITY FUNCTIONS =============
 
 /**
  * Get survival categories constant for external use

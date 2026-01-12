@@ -5,24 +5,27 @@
  * Monitors local data changes and provides contextual coaching insights.
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useLocalExpenses } from './useLocalExpenses';
 import { useLocalDebts } from './useLocalDebts';
 import { useLocalTransactions } from './useLocalTransactions';
 import { useIncome } from './useLocalSettings';
 import { useUserLocalStorage } from './useUserLocalStorage';
+import { useHeroProfile } from './useHeroProfile';
 import {
   calculateSurplusPower,
   calculateShadowCost,
-  calculateConsistencyScore,
+  calculateEnhancedConsistencyScore,
   checkBudgetCompliance,
   getHighestInterestRate,
   getSurvivalCategories,
+  shouldLevelUp,
   SurplusPowerResult,
   ShadowCostResult,
-  ConsistencyScoreResult,
+  EnhancedConsistencyScoreResult,
   BudgetComplianceResult,
+  CONSISTENCY_WEIGHTS,
 } from '@/lib/behavioralEngine';
 
 export interface StoredStreakData {
@@ -34,12 +37,15 @@ export interface StoredStreakData {
 export interface BehavioralEngineResult {
   // Core calculations
   surplusPower: SurplusPowerResult;
-  consistencyScore: ConsistencyScoreResult;
+  consistencyScore: EnhancedConsistencyScoreResult;
   budgetCompliance: BudgetComplianceResult;
   highestInterestRate: number;
   
   // Shadow cost calculator
   getShadowCost: (amount: number) => ShadowCostResult;
+  
+  // Strategy level-up trigger
+  shouldLevelUp: boolean;
   
   // Utility data
   survivalCategories: string[];
@@ -65,6 +71,7 @@ export function useBehavioralEngine(): BehavioralEngineResult {
   const { debts, isLoading: debtsLoading } = useLocalDebts();
   const { transactions, isLoading: transactionsLoading } = useLocalTransactions();
   const [income] = useIncome();
+  const { currentStrategy, activityLog, recordDailyActivity } = useHeroProfile();
   const [storedStreak, setStoredStreak] = useUserLocalStorage<StoredStreakData>(
     'bdt_consistency_streak',
     { currentStreak: 0, longestStreak: 0, lastLogDate: null }
@@ -72,6 +79,11 @@ export function useBehavioralEngine(): BehavioralEngineResult {
 
   const currentMonth = format(new Date(), 'yyyy-MM');
   const isLoading = expensesLoading || debtsLoading || transactionsLoading;
+
+  // Record daily activity when hook is used
+  useEffect(() => {
+    recordDailyActivity();
+  }, [recordDailyActivity]);
 
   // Calculate surplus power
   const surplusPower = useMemo(() => {
@@ -88,9 +100,15 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     return calculateShadowCost(amount, highestInterestRate);
   }, [highestInterestRate]);
 
-  // Calculate consistency score
+  // Calculate enhanced consistency score with all three components
   const consistencyScore = useMemo(() => {
-    const result = calculateConsistencyScore(transactions, storedStreak);
+    const result = calculateEnhancedConsistencyScore(
+      transactions,
+      expenses,
+      debts,
+      activityLog,
+      storedStreak
+    );
     
     // Update stored streak if it changed
     if (
@@ -106,7 +124,12 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     }
     
     return result;
-  }, [transactions, storedStreak, setStoredStreak]);
+  }, [transactions, expenses, debts, activityLog, storedStreak, setStoredStreak]);
+
+  // Check if user should level up from Snowball to Avalanche
+  const shouldLevelUpResult = useMemo(() => {
+    return shouldLevelUp(consistencyScore.score, currentStrategy);
+  }, [consistencyScore.score, currentStrategy]);
 
   // Check budget compliance
   const budgetCompliance = useMemo(() => {
@@ -142,7 +165,7 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     // Surplus power tip
     tips.push(surplusPower.heroMessage);
 
-    // Consistency tip
+    // Enhanced consistency tip with score breakdown
     tips.push(consistencyScore.heroMessage);
 
     // Budget compliance tip with heroic vocabulary
@@ -171,8 +194,15 @@ export function useBehavioralEngine(): BehavioralEngineResult {
       );
     }
 
+    // Level-up suggestion if eligible
+    if (shouldLevelUpResult) {
+      tips.push(
+        `🚀 Level Up Available! Your ${consistencyScore.score.toFixed(0)}% Consistency Score qualifies you for the Debt Avalanche strategy. Save more on interest!`
+      );
+    }
+
     return tips;
-  }, [surplusPower, consistencyScore, budgetCompliance, shadowAlerts, highestInterestRate]);
+  }, [surplusPower, consistencyScore, budgetCompliance, shadowAlerts, highestInterestRate, shouldLevelUpResult]);
 
   return {
     surplusPower,
@@ -180,6 +210,7 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     budgetCompliance,
     highestInterestRate: highestInterestRate * 100, // Return as percentage
     getShadowCost,
+    shouldLevelUp: shouldLevelUpResult,
     survivalCategories: getSurvivalCategories(),
     currentMonth,
     isLoading,
@@ -187,3 +218,4 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     shadowAlerts,
   };
 }
+

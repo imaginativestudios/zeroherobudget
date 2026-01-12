@@ -539,6 +539,7 @@ export default function Onboarding() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
+                  className="space-y-4"
                 >
                   <Button
                     onClick={handleEnterFortress}
@@ -549,6 +550,21 @@ export default function Onboarding() {
                     Enter the Fortress
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
+                  
+                  {/* Skip to Demo Link */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.3 }}
+                    className="text-center"
+                  >
+                    <Link
+                      to="/dashboard"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
+                    >
+                      Skip to Demo Mode
+                    </Link>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             )}

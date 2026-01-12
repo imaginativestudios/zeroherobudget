@@ -15,10 +15,11 @@ export interface ProcessedTransaction {
   date: string;           // ISO format YYYY-MM-DD
   description: string;    // Cleaned description
   amount: number;         // Absolute value
-  category: string;       // Default category
+  category: string;       // Default or user-selected category
   flow: 'in' | 'out';     // Direction of money
   rawText: string;        // Original text for reference
   duplicateKey: string;   // Composite key for dedup
+  aiSuggestedCategory?: string;  // AI-suggested category (if available)
 }
 
 export interface ImportResult {

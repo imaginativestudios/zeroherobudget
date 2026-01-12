@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, CheckCircle2, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import { Shield, CheckCircle2, AlertTriangle, Loader2, Trash2, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,9 @@ import { ProcessedTransaction, ImportResult, findDuplicates } from '@/lib/connec
 import { formatCurrency } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { soundEffects } from '@/lib/soundEffects';
+import { batchCategorizeTransactions, BatchCategorizationProgress } from '@/lib/batchCategorization';
+import { CategoryBadgeSelect } from './CategoryBadgeSelect';
+import { useTransactionCategorization } from '@/hooks/useTransactionCategorization';
 
 interface ConnectorReviewModalProps {
   open: boolean;
@@ -31,6 +34,14 @@ export function ConnectorReviewModal({
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [processedResult, setProcessedResult] = useState<ImportResult | null>(null);
+  
+  // AI Categorization state
+  const [isCategorizingAll, setIsCategorizingAll] = useState(false);
+  const [categorizationProgress, setCategorizationProgress] = useState<BatchCategorizationProgress | null>(null);
+  const [categorySuggestions, setCategorySuggestions] = useState<Map<string, string>>(new Map());
+  const [userCategories, setUserCategories] = useState<Map<string, string>>(new Map());
+  
+  const { recordCategorization } = useTransactionCategorization();
 
   // Process duplicates when modal opens
   useEffect(() => {
@@ -41,6 +52,11 @@ export function ConnectorReviewModal({
       // Select all new (non-duplicate) transactions by default
       const newIds = new Set(result.newTransactions.map(t => t.duplicateKey));
       setSelectedIds(newIds);
+      
+      // Reset categorization state
+      setCategorySuggestions(new Map());
+      setUserCategories(new Map());
+      setCategorizationProgress(null);
     }
   }, [open, importData, existingTransactions]);
 
@@ -65,6 +81,57 @@ export function ConnectorReviewModal({
   const deselectAll = () => {
     setSelectedIds(new Set());
   };
+  
+  // Handle AI categorization for all transactions
+  const handleCategorizeAll = async () => {
+    if (!processedResult || processedResult.newTransactions.length === 0) return;
+    
+    setIsCategorizingAll(true);
+    
+    const transactionsToCategorize = processedResult.newTransactions.map(t => ({
+      duplicateKey: t.duplicateKey,
+      description: t.description,
+      rawText: t.rawText,
+      amount: t.amount,
+      flow: t.flow,
+    }));
+    
+    try {
+      const results = await batchCategorizeTransactions(
+        transactionsToCategorize,
+        (progress) => setCategorizationProgress(progress)
+      );
+      
+      setCategorySuggestions(results);
+      soundEffects.success();
+    } catch (error) {
+      console.error('Error during batch categorization:', error);
+    } finally {
+      setIsCategorizingAll(false);
+      setCategorizationProgress(null);
+    }
+  };
+  
+  // Handle individual category change
+  const handleCategoryChange = (duplicateKey: string, category: string) => {
+    setUserCategories(prev => {
+      const next = new Map(prev);
+      next.set(duplicateKey, category);
+      return next;
+    });
+  };
+  
+  // Get the effective category for a transaction
+  const getEffectiveCategory = (transaction: ProcessedTransaction): string => {
+    return userCategories.get(transaction.duplicateKey) 
+      || categorySuggestions.get(transaction.duplicateKey) 
+      || transaction.category;
+  };
+  
+  // Check if category is from AI
+  const isAiCategory = (duplicateKey: string): boolean => {
+    return !userCategories.has(duplicateKey) && categorySuggestions.has(duplicateKey);
+  };
 
   const handleConfirmImport = async () => {
     if (!processedResult) return;
@@ -73,7 +140,24 @@ export function ConnectorReviewModal({
     soundEffects.success();
     
     // Animate progress
-    const selected = processedResult.newTransactions.filter(t => selectedIds.has(t.duplicateKey));
+    const selected = processedResult.newTransactions
+      .filter(t => selectedIds.has(t.duplicateKey))
+      .map(t => ({
+        ...t,
+        category: getEffectiveCategory(t),
+        aiSuggestedCategory: categorySuggestions.get(t.duplicateKey),
+      }));
+    
+    // Record categorization history for learning
+    selected.forEach(t => {
+      if (categorySuggestions.has(t.duplicateKey)) {
+        const aiSuggested = categorySuggestions.get(t.duplicateKey);
+        const userSelected = userCategories.get(t.duplicateKey) || aiSuggested;
+        if (aiSuggested && userSelected) {
+          recordCategorization(t.rawText, aiSuggested, userSelected, t.amount);
+        }
+      }
+    });
     
     for (let i = 0; i <= 100; i += 5) {
       await new Promise(resolve => setTimeout(resolve, 30));
@@ -119,10 +203,42 @@ export function ConnectorReviewModal({
               {totalDuplicates} Duplicates (skipped)
             </Badge>
           )}
+          {categorySuggestions.size > 0 && (
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+              <Sparkles className="h-3 w-3 mr-1" />
+              {categorySuggestions.size} Categorized
+            </Badge>
+          )}
           <div className="ml-auto text-sm text-muted-foreground">
             {selectedCount} of {totalNew} selected
           </div>
         </div>
+
+        {/* AI Categorization Progress */}
+        <AnimatePresence>
+          {isCategorizingAll && categorizationProgress && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="py-4"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                <span className="text-sm font-medium">
+                  Analyzing {categorizationProgress.current} of {categorizationProgress.total}...
+                </span>
+              </div>
+              <Progress 
+                value={(categorizationProgress.current / categorizationProgress.total) * 100} 
+                className="h-2" 
+              />
+              <p className="text-xs text-muted-foreground mt-1 truncate">
+                "{categorizationProgress.currentDescription}"
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Importing Progress */}
         <AnimatePresence>
@@ -143,11 +259,21 @@ export function ConnectorReviewModal({
         </AnimatePresence>
 
         {/* Transaction List */}
-        {!isImporting && (
+        {!isImporting && !isCategorizingAll && (
           <>
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-2 gap-2 flex-wrap">
               <span className="text-sm font-medium">Incoming Transactions</span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleCategorizeAll}
+                  disabled={isCategorizingAll || newTransactions.length === 0}
+                  className="gap-1"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  AI Categorize
+                </Button>
                 <Button variant="ghost" size="sm" onClick={selectAll}>
                   Select All
                 </Button>
@@ -185,16 +311,24 @@ export function ConnectorReviewModal({
                       />
                       
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">
+                        <p className="font-medium truncate text-sm">
                           {transaction.description}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {transaction.date}
-                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-muted-foreground">
+                            {transaction.date}
+                          </span>
+                          <CategoryBadgeSelect
+                            value={getEffectiveCategory(transaction)}
+                            onChange={(cat) => handleCategoryChange(transaction.duplicateKey, cat)}
+                            aiSuggested={categorySuggestions.get(transaction.duplicateKey)}
+                            isAiCategory={isAiCategory(transaction.duplicateKey)}
+                          />
+                        </div>
                       </div>
                       
                       <div className={cn(
-                        "text-right font-mono font-medium",
+                        "text-right font-mono font-medium text-sm whitespace-nowrap",
                         transaction.flow === 'in' ? 'text-success' : 'text-foreground'
                       )}>
                         {transaction.flow === 'in' ? '+' : '-'}

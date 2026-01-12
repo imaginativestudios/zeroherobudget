@@ -21,6 +21,8 @@ import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
 import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
 import { HeroMoatCard } from "@/components/behavioral/HeroMoatCard";
 import { DebtVictoryModal } from "@/components/behavioral/DebtVictoryModal";
+import { FreedomTimelineWidget } from "@/components/behavioral/FreedomTimelineWidget";
+import { DebtItem } from '@/lib/debtCalculations';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -90,6 +92,18 @@ export const Dashboard = () => {
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
   const netWorth = totalAssets - totalDebt;
   const monthlySubscriptionSpend = getTotalMonthlySpend();
+
+  // Prepare debt items for Freedom Timeline Widget
+  const debtItems: DebtItem[] = useMemo(() => 
+    debts.map(d => ({
+      id: d.id,
+      name: d.name,
+      balance: d.balance,
+      min: d.minimum_payment,
+      apr: d.interest_rate,
+      type: d.type as 'card' | 'loan'
+    })), [debts]
+  );
 
   // Calculate achievement stats
   const debtsPaidOff = useMemo(() => 
@@ -278,6 +292,13 @@ export const Dashboard = () => {
           <ShadowBudgetSummary />
           <HeroMoatCard />
         </div>
+        
+        {/* Freedom Timeline - Full Width for Prominence */}
+        <FreedomTimelineWidget 
+          debts={debtItems}
+          extraBudget={leftover}
+          strategy={strategy as 'Snowball' | 'Avalanche'}
+        />
       </div>
 
       {/* Debt Victory Modal */}

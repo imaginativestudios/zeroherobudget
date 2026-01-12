@@ -105,6 +105,16 @@ export function getCastleIconType(level: CastleLevel): 'cabin' | 'tower' | 'cast
 }
 
 /**
+ * Fortress level display labels for the badge
+ */
+export const FORTRESS_LEVEL_LABELS: Record<CastleLevel, string> = {
+  1: 'Wood Cabin',
+  2: 'Watchtower',
+  3: 'Castle',
+  4: 'Stone Fortress',
+};
+
+/**
  * Moat Milestone definitions for celebrations
  */
 export interface MoatMilestone {

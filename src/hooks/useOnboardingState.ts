@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useHeroProfile } from './useHeroProfile';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
@@ -12,39 +12,109 @@ export interface DebtEntry {
   minimumPayment: number;
 }
 
-export interface OnboardingData {
+export interface OnboardingDataState {
   hourlyWage: number | null;
   primaryDebt: DebtEntry | null;
   moatTarget: 500 | 1000 | 2000;
 }
 
 export interface UseOnboardingStateResult {
-  currentStep: 1 | 2 | 3 | 4;
-  data: OnboardingData;
+  currentStep: 1 | 2 | 3 | 4 | 5 | 6;
+  data: OnboardingDataState;
   setHourlyWage: (wage: number | null) => void;
   setPrimaryDebt: (debt: DebtEntry | null) => void;
   setMoatTarget: (target: 500 | 1000 | 2000) => void;
   nextStep: () => void;
   prevStep: () => void;
   skipStep: () => void;
+  showAhaMoment: () => void;
+  showPricing: () => void;
   showCeremony: () => void;
+  skipTrial: () => void;
   enterDashboard: () => void;
   isCompleting: boolean;
+  isReturning: boolean;
 }
 
 export function useOnboardingState(): UseOnboardingStateResult {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { setMoatTarget: setProfileMoatTarget, completeOnboarding: markComplete } = useHeroProfile();
+  const { 
+    setMoatTarget: setProfileMoatTarget, 
+    completeOnboarding: markComplete,
+    profile,
+    saveOnboardingProgress,
+    clearOnboardingProgress,
+    setTrialStarted,
+  } = useHeroProfile();
   const { addDebt } = useLocalDebts();
 
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
-  const [isCompleting, setIsCompleting] = useState(false);
-  const [data, setData] = useState<OnboardingData>({
-    hourlyWage: null,
-    primaryDebt: null,
-    moatTarget: 1000,
+  // Check for returning user with saved progress
+  const savedStep = profile.onboarding_step;
+  const savedData = profile.onboarding_data;
+  
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(() => {
+    // Check for Stripe redirect
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    
+    if (success === 'true') {
+      return 6; // Go to ceremony
+    }
+    if (canceled === 'true') {
+      return 5; // Stay on pricing
+    }
+    // Restore from saved progress
+    return savedStep || 1;
   });
+  
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [isReturning, setIsReturning] = useState(!!savedStep && savedStep > 1);
+  
+  const [data, setData] = useState<OnboardingDataState>(() => ({
+    hourlyWage: savedData?.hourlyWage || null,
+    primaryDebt: savedData?.debtName ? {
+      name: savedData.debtName,
+      balance: savedData.debtBalance || 0,
+      apr: savedData.debtApr || 0,
+      minimumPayment: savedData.debtMinPayment || 25,
+    } : null,
+    moatTarget: savedData?.moatTarget || 1000,
+  }));
+
+  // Handle Stripe redirect
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    
+    if (success === 'true') {
+      // User completed checkout
+      setTrialStarted(true);
+      localStorage.removeItem('bdt_checkout_in_progress');
+      toast.success('Welcome to Zero Hero!', {
+        description: 'Your 7-day free trial has started.',
+      });
+      // Clean URL
+      navigate('/onboarding', { replace: true });
+    } else if (canceled === 'true') {
+      localStorage.removeItem('bdt_checkout_in_progress');
+      toast.info('No worries!', {
+        description: 'You can still explore in demo mode.',
+      });
+      navigate('/onboarding', { replace: true });
+    }
+  }, [searchParams, navigate, setTrialStarted]);
+
+  // Show welcome back toast for returning users
+  useEffect(() => {
+    if (isReturning) {
+      toast.info('Welcome back, Hero!', {
+        description: 'Let\'s continue where you left off.',
+      });
+      setIsReturning(false);
+    }
+  }, [isReturning]);
 
   const setHourlyWage = useCallback((wage: number | null) => {
     setData((prev) => ({ ...prev, hourlyWage: wage }));
@@ -58,15 +128,30 @@ export function useOnboardingState(): UseOnboardingStateResult {
     setData((prev) => ({ ...prev, moatTarget: target }));
   }, []);
 
+  const saveProgress = useCallback((step: 1 | 2 | 3 | 4 | 5 | 6, currentData: OnboardingDataState) => {
+    const persistData: OnboardingData = {
+      hourlyWage: currentData.hourlyWage || undefined,
+      debtName: currentData.primaryDebt?.name,
+      debtBalance: currentData.primaryDebt?.balance,
+      debtApr: currentData.primaryDebt?.apr,
+      debtMinPayment: currentData.primaryDebt?.minimumPayment,
+      moatTarget: currentData.moatTarget,
+    };
+    saveOnboardingProgress(step, persistData);
+  }, [saveOnboardingProgress]);
+
   const nextStep = useCallback(() => {
     if (currentStep < 3) {
-      setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
+      const newStep = (currentStep + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+      setCurrentStep(newStep);
+      saveProgress(newStep, data);
     }
-  }, [currentStep]);
+  }, [currentStep, data, saveProgress]);
 
   const prevStep = useCallback(() => {
-    if (currentStep > 1 && currentStep < 4) {
-      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
+    if (currentStep > 1 && currentStep <= 5) {
+      const newStep = (currentStep - 1) as 1 | 2 | 3 | 4 | 5 | 6;
+      setCurrentStep(newStep);
     }
   }, [currentStep]);
 
@@ -74,13 +159,23 @@ export function useOnboardingState(): UseOnboardingStateResult {
     nextStep();
   }, [nextStep]);
 
+  const showAhaMoment = useCallback(() => {
+    setCurrentStep(4);
+    saveProgress(4, data);
+  }, [data, saveProgress]);
+
+  const showPricing = useCallback(() => {
+    setCurrentStep(5);
+    saveProgress(5, data);
+  }, [data, saveProgress]);
+
   const saveOnboardingData = useCallback(() => {
     // Store hourly wage in localStorage
     if (data.hourlyWage !== null) {
       const existingProfile = localStorage.getItem('bdt_hero_profile');
-      const profile = existingProfile ? JSON.parse(existingProfile) : {};
-      profile.hourly_wage = data.hourlyWage;
-      localStorage.setItem('bdt_hero_profile', JSON.stringify(profile));
+      const profileData = existingProfile ? JSON.parse(existingProfile) : {};
+      profileData.hourly_wage = data.hourlyWage;
+      localStorage.setItem('bdt_hero_profile', JSON.stringify(profileData));
     }
 
     // Create debt entry if provided
@@ -102,22 +197,30 @@ export function useOnboardingState(): UseOnboardingStateResult {
     setIsCompleting(true);
     try {
       saveOnboardingData();
-      setCurrentStep(4);
+      setCurrentStep(6);
+      saveProgress(6, data);
     } catch (error) {
       console.error('Onboarding error:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsCompleting(false);
     }
-  }, [saveOnboardingData]);
+  }, [saveOnboardingData, data, saveProgress]);
+
+  const skipTrial = useCallback(() => {
+    // User skipped trial - mark as demo mode user
+    setTrialStarted(false);
+    showCeremony();
+  }, [setTrialStarted, showCeremony]);
 
   const enterDashboard = useCallback(() => {
     markComplete();
+    clearOnboardingProgress();
     toast.success('Welcome, Hero! Your quest begins now.', {
       description: 'Your character has been created. Time to conquer your debts!',
     });
     navigate('/dashboard');
-  }, [markComplete, navigate]);
+  }, [markComplete, clearOnboardingProgress, navigate]);
 
   return {
     currentStep,
@@ -128,8 +231,12 @@ export function useOnboardingState(): UseOnboardingStateResult {
     nextStep,
     prevStep,
     skipStep,
+    showAhaMoment,
+    showPricing,
     showCeremony,
+    skipTrial,
     enterDashboard,
     isCompleting,
+    isReturning,
   };
 }

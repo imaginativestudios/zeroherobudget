@@ -186,11 +186,12 @@ export function Subscriptions() {
   return (
     <div className="pt-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Subscriptions</h1>
-        <Button onClick={() => setShowForm(true)} variant="royal">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Subscriptions</h1>
+        <Button onClick={() => setShowForm(true)} variant="royal" size="sm">
           <Plus className="h-4 w-4 mr-2" />
-          Add Subscription
+          <span className="hidden sm:inline">Add Subscription</span>
+          <span className="sm:hidden">Add</span>
         </Button>
       </div>
 
@@ -322,76 +323,74 @@ export function Subscriptions() {
         <CardHeader>
           <CardTitle>All Subscriptions</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {filteredSubscriptions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-muted-foreground px-4">
               No subscriptions found. Add one to start tracking.
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Cycle</TableHead>
-                  <TableHead>Next Charge</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSubscriptions.map(subscription => (
-                  <TableRow key={subscription.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{subscription.name}</div>
-                        {subscription.category !== 'Subscriptions' && (
-                          <div className="text-xs text-muted-foreground">{subscription.category}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatCurrency(subscription.expectedAmount)}</TableCell>
-                    <TableCell className="capitalize">{subscription.cycle}</TableCell>
-                    <TableCell>
-                      {subscription.nextCharge && format(new Date(subscription.nextCharge), 'MMM d, yyyy')}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(subscription.status)}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => {
-                            setEditingSubscription(subscription);
-                            setShowForm(true);
-                          }}
-                        >
-                          <Edit className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                        {subscription.manageUrl && (
-                          <Button size="sm" variant="ghost" onClick={() => handleManageSubscription(subscription.manageUrl)}>
-                            <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                        )}
-                        {subscription.status === 'active' && (
-                          <Button size="sm" variant="ghost" onClick={() => pauseSubscription(subscription.id)}>
-                            <Pause className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                        )}
-                        {subscription.status === 'paused' && (
-                          <Button size="sm" variant="ghost" onClick={() => resumeSubscription(subscription.id)}>
-                            <Play className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                        )}
-                        <Button size="sm" variant="ghost" onClick={() => removeSubscription(subscription.id)}>
-                          <X className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead className="hidden sm:table-cell">Cycle</TableHead>
+                    <TableHead className="hidden md:table-cell">Next Charge</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredSubscriptions.map(subscription => (
+                    <TableRow key={subscription.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-sm">{subscription.name}</div>
+                          {subscription.category !== 'Subscriptions' && (
+                            <div className="text-xs text-muted-foreground">{subscription.category}</div>
+                          )}
+                          <div className="text-xs text-muted-foreground sm:hidden capitalize">{subscription.cycle}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm">{formatCurrency(subscription.expectedAmount)}</TableCell>
+                      <TableCell className="capitalize hidden sm:table-cell">{subscription.cycle}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {subscription.nextCharge && format(new Date(subscription.nextCharge), 'MMM d, yyyy')}
+                      </TableCell>
+                      <TableCell>{getStatusBadge(subscription.status)}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 justify-end">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => {
+                              setEditingSubscription(subscription);
+                              setShowForm(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                          {subscription.status === 'active' && (
+                            <Button size="sm" variant="ghost" onClick={() => pauseSubscription(subscription.id)} className="hidden xs:inline-flex">
+                              <Pause className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          )}
+                          {subscription.status === 'paused' && (
+                            <Button size="sm" variant="ghost" onClick={() => resumeSubscription(subscription.id)} className="hidden xs:inline-flex">
+                              <Play className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          )}
+                          <Button size="sm" variant="ghost" onClick={() => removeSubscription(subscription.id)}>
+                            <X className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

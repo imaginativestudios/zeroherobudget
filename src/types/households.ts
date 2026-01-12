@@ -1,5 +1,6 @@
 export type HouseholdRole = 'owner' | 'admin' | 'member' | 'viewer';
 export type InvitationStatus = 'pending' | 'accepted' | 'expired';
+export type SubscriptionStatus = 'free' | 'trialing' | 'active' | 'canceled' | 'past_due';
 
 export interface Profile {
   id: string;
@@ -10,6 +11,12 @@ export interface Profile {
   avatar_url: string | null;
   created_at: string;
   updated_at: string;
+  // Subscription fields
+  subscription_status?: SubscriptionStatus;
+  stripe_customer_id?: string | null;
+  subscription_tier?: string | null;
+  subscription_amount?: number | null;
+  subscription_end?: string | null;
 }
 
 export interface Household {

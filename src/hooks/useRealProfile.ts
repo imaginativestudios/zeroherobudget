@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Profile } from '@/types/households';
+import { Profile, SubscriptionStatus } from '@/types/households';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+
+// Helper to cast database response to Profile type with correct subscription_status
+const castToProfile = (data: Record<string, unknown>): Profile => {
+  return {
+    ...data,
+    subscription_status: (data.subscription_status as SubscriptionStatus) || 'free',
+  } as Profile;
+};
 
 export function useRealProfile() {
   const { user } = useAuth();
@@ -39,11 +47,12 @@ export function useRealProfile() {
             avatar_url: null,
             created_at: user.created_at || new Date().toISOString(),
             updated_at: new Date().toISOString(),
+            subscription_status: 'free',
           };
           setProfile(newProfile);
         }
-      } else {
-        setProfile(data);
+      } else if (data) {
+        setProfile(castToProfile(data));
       }
       
       setLoading(false);
@@ -81,7 +90,7 @@ export function useRealProfile() {
       .single();
 
     if (!error && data) {
-      setProfile(data);
+      setProfile(castToProfile(data));
     }
     setLoading(false);
   };

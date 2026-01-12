@@ -339,4 +339,19 @@ All colors MUST be HSL.
   .grid > * > .card-consistent {
     height: 100%;
   }
+  
+  /* Regrouping Theme - Subtle tactical gray overlay for breach status */
+  .regrouping-theme {
+    --card: 210 10% 96%;
+    --card-foreground: 210 15% 20%;
+    --accent: 38 92% 40%;
+    --shadow-royal: 0 10px 40px -10px hsl(38 92% 40% / 0.15);
+  }
+  
+  .dark .regrouping-theme {
+    --card: 210 15% 12%;
+    --card-foreground: 210 20% 90%;
+    --accent: 38 85% 50%;
+    --shadow-royal: 0 10px 40px -10px hsl(38 85% 50% / 0.2);
+  }
 }

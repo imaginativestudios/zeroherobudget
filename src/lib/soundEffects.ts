@@ -103,6 +103,14 @@ export const soundEffects = {
     setTimeout(() => playTone(523, 0.15, 0.05), 100);
     setTimeout(() => playTone(659, 0.2, 0.05), 200);
   },
+  
+  /**
+   * Moat breach alert - subtle warning tone (descending)
+   */
+  breachAlert: () => {
+    playTone(440, 0.15, 0.04);  // A4
+    setTimeout(() => playTone(392, 0.2, 0.04), 120); // G4 - descending
+  },
 };
 
 export const playAchievementUnlockSound = (level: 'basic' | 'milestone' | 'epic' = 'basic') => {

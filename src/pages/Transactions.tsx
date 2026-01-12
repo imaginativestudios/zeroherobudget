@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Plus, Download, Upload, Search, Trash2, Edit, DollarSign } from "lucide-react";
+import { Calendar, Plus, Download, Upload, Search, Trash2, Edit, DollarSign, Shield, ClipboardPaste } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CategorySuggestion } from "@/components/transactions/CategorySuggestion";
 import { ShadowImpactCard } from "@/components/behavioral/ShadowImpactCard";
+import { ConnectorReviewModal } from "@/components/import/ConnectorReviewModal";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useExpenses } from "@/hooks/useLocalSettings";
@@ -18,6 +20,8 @@ import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
 import { Transaction } from "@/types/transactions";
 import { toCsv, downloadCsv, parseCsv, validateCsvFile, mapTransactionCsv } from "@/lib/csvUtils";
+import { importFromClipboard, ImportResult, ProcessedTransaction } from "@/lib/connectorImportHandler";
+
 export const Transactions = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [selectedAccount, setSelectedAccount] = useState<string>("all");
@@ -106,9 +110,60 @@ export const Transactions = () => {
     expenseId: "",
     notes: ""
   });
+  
+  // Connector import state
+  const [showConnectorModal, setShowConnectorModal] = useState(false);
+  const [connectorImportData, setConnectorImportData] = useState<ImportResult>({
+    newTransactions: [],
+    duplicates: [],
+    errors: [],
+  });
+  
   const monthTransactions = getTransactionsByMonth(selectedMonth, selectedAccount);
   const filteredTransactions = monthTransactions.filter(t => t.description.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase()));
   const totalSpending = selectedAccount === 'all' ? getTotalActualSpending(selectedMonth) : monthTransactions.filter(t => t.flow === 'out').reduce((sum, t) => sum + t.amount, 0);
+  
+  // Connector import handlers
+  const handlePasteFromConnector = async () => {
+    const result = await importFromClipboard();
+    
+    if (result.errors.length > 0) {
+      toast.error(result.errors[0]);
+      return;
+    }
+    
+    if (result.newTransactions.length === 0) {
+      toast.error("No transactions found in clipboard");
+      return;
+    }
+    
+    setConnectorImportData(result);
+    setShowConnectorModal(true);
+  };
+  
+  const handleConfirmConnectorImport = (selected: ProcessedTransaction[]) => {
+    const transactionsToAdd = selected.map(t => ({
+      date: t.date,
+      description: t.description,
+      amount: t.amount,
+      category: t.category,
+      accountId: activeAccounts[0]?.id || 'default-checking',
+      flow: t.flow,
+      expenseId: undefined,
+      notes: `Imported from Connector: ${t.rawText.slice(0, 100)}`,
+    }));
+    
+    addTransactionsBulk(transactionsToAdd);
+    
+    // Switch to the most recent transaction month
+    if (transactionsToAdd.length > 0) {
+      const dates = transactionsToAdd.map(t => t.date).sort();
+      const mostRecentMonth = dates[dates.length - 1].slice(0, 7);
+      setSelectedMonth(mostRecentMonth);
+    }
+    
+    toast.success(`Successfully imported ${selected.length} transactions`);
+  };
   const handleAddTransaction = () => {
     if (!newTransaction.description || newTransaction.amount <= 0) return;
     addTransaction({
@@ -234,6 +289,17 @@ export const Transactions = () => {
           <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
           
           <div className="flex flex-wrap items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" onClick={handlePasteFromConnector} className="border-primary/30 hover:bg-primary/10">
+                  <Shield className="h-4 w-4 text-primary" aria-hidden="true" />
+                  <span className="hidden sm:inline ml-2">Paste from Connector</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Import transactions from Zero Hero Connector</p>
+              </TooltipContent>
+            </Tooltip>
             <Button variant="outline" size="sm" onClick={exportTransactions} aria-label="Export transactions to CSV">
               <Download className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline ml-2">Export</span>
@@ -624,5 +690,14 @@ export const Transactions = () => {
             </div>}
         </CardContent>
       </Card>
+      
+      {/* Connector Review Modal */}
+      <ConnectorReviewModal
+        open={showConnectorModal}
+        onOpenChange={setShowConnectorModal}
+        importData={connectorImportData}
+        existingTransactions={transactions}
+        onConfirmImport={handleConfirmConnectorImport}
+      />
     </div>;
 };

@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CategorySuggestion } from "@/components/transactions/CategorySuggestion";
+import { ShadowCostPreview } from "@/components/behavioral/ShadowCostPreview";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useExpenses } from "@/hooks/useLocalSettings";
@@ -346,6 +347,13 @@ export const Transactions = () => {
                   category
                 })} />
                   
+                  {/* Shadow Cost Preview for discretionary expenses */}
+                  <ShadowCostPreview 
+                    amount={newTransaction.amount} 
+                    category={newTransaction.category} 
+                    flow={newTransaction.flow} 
+                  />
+                  
                   <div className="space-y-2">
                     <Label htmlFor="transaction-notes">Notes (Optional)</Label>
                     <Textarea id="transaction-notes" value={newTransaction.notes} onChange={e => setNewTransaction({
@@ -576,6 +584,13 @@ export const Transactions = () => {
                             ...newTransaction,
                             category
                           })} />
+                                
+                                {/* Shadow Cost Preview for discretionary expenses */}
+                                <ShadowCostPreview 
+                                  amount={newTransaction.amount} 
+                                  category={newTransaction.category} 
+                                  flow={newTransaction.flow} 
+                                />
                                 
                                 <div className="space-y-2">
                                   <Label>Notes (Optional)</Label>

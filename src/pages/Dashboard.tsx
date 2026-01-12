@@ -15,6 +15,10 @@ import { TipOfTheDay } from "@/components/TipOfTheDay";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { PrivacyBadge } from "@/components/PrivacyBadge";
 import { DashboardEmptyState } from "@/components/DashboardEmptyState";
+import { SurplusPowerCard } from "@/components/behavioral/SurplusPowerCard";
+import { StreakTrackerWidget } from "@/components/behavioral/StreakTrackerWidget";
+import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
+import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -238,8 +242,22 @@ export const Dashboard = () => {
       {/* Privacy Notice for first-time users */}
       <PrivacyNotice />
 
-      {/* Tip of the Day */}
-      <TipOfTheDay />
+      {/* Hero Tips Feed (Behavioral) */}
+      <HeroTipsFeed />
+
+      {/* Behavioral Insights Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground">Behavioral Insights</h2>
+          <div className="h-px flex-1 bg-border"></div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+          <SurplusPowerCard />
+          <StreakTrackerWidget />
+          <ShadowBudgetSummary />
+        </div>
+      </div>
 
       {/* Financial Overview Section */}
       <div className="space-y-4">

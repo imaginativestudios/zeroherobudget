@@ -4,7 +4,7 @@
  * Visualizes the user's consistency streak with level badges and progress.
  */
 
-import { Flame, Star, Trophy, Crown, Sparkles } from 'lucide-react';
+import { Flame, Star, Trophy, Sword, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,7 @@ const STREAK_LEVELS = {
   novice: { icon: Star, color: 'text-muted-foreground', label: 'Novice', next: 'Apprentice', threshold: 3 },
   apprentice: { icon: Flame, color: 'text-warning', label: 'Apprentice', next: 'Warrior', threshold: 7 },
   warrior: { icon: Trophy, color: 'text-primary', label: 'Warrior', next: 'Hero', threshold: 14 },
-  hero: { icon: Crown, color: 'text-success', label: 'Hero', next: 'Legend', threshold: 30 },
+  hero: { icon: Sword, color: 'text-success', label: 'Hero', next: 'Legend', threshold: 30 },
   legend: { icon: Sparkles, color: 'text-tier-champion', label: 'Legend', next: null, threshold: 100 },
 };
 

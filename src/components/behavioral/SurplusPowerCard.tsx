@@ -59,13 +59,13 @@ export function SurplusPowerCard() {
       color: 'text-warning',
       bgColor: 'bg-warning/10',
       icon: TrendingDown,
-      label: 'Tight',
+      label: 'Regrouping',
     },
     negative: {
       color: 'text-destructive',
       bgColor: 'bg-destructive/10',
       icon: TrendingDown,
-      label: 'Deficit',
+      label: 'Temporary Retreat',
     },
   };
 

@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
 import { FinancialCard } from "@/components/FinancialCard";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,8 @@ import { SurplusPowerCard } from "@/components/behavioral/SurplusPowerCard";
 import { StreakTrackerWidget } from "@/components/behavioral/StreakTrackerWidget";
 import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
 import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
+import { HeroMoatCard } from "@/components/behavioral/HeroMoatCard";
+import { DebtVictoryModal } from "@/components/behavioral/DebtVictoryModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -37,6 +39,7 @@ import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomCha
 import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [income] = useIncome();
   const [expenses, , isLoadingExpenses] = useExpenses();
   
@@ -47,6 +50,9 @@ export const Dashboard = () => {
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
+  const [victoryModalOpen, setVictoryModalOpen] = useState(false);
+  const [victoryDebtName, setVictoryDebtName] = useState('');
+  const previousPaidOffRef = useRef<Set<string>>(new Set());
   const { toast } = useToast();
 
   // Secondary data (transactions for charts) loads after
@@ -98,6 +104,20 @@ export const Dashboard = () => {
 
   // Get greeting name
   const greetingName = profile?.first_name || profile?.display_name || 'there';
+
+  // Debt Victory Observer - detect newly paid off debts
+  useEffect(() => {
+    const currentPaidOff = new Set(debts.filter(d => d.balance === 0).map(d => d.id));
+    const newlyVanquished = [...currentPaidOff].find(id => !previousPaidOffRef.current.has(id));
+    
+    if (newlyVanquished && previousPaidOffRef.current.size > 0) {
+      const debtName = debts.find(d => d.id === newlyVanquished)?.name || 'Debt';
+      setVictoryDebtName(debtName);
+      setVictoryModalOpen(true);
+    }
+    
+    previousPaidOffRef.current = currentPaidOff;
+  }, [debts]);
 
   // Check if user is new (no meaningful data)
   const isNewUser = useMemo(() => {
@@ -252,12 +272,22 @@ export const Dashboard = () => {
           <h2 className="text-lg font-semibold text-muted-foreground">Behavioral Insights</h2>
           <div className="h-px flex-1 bg-border"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
           <SurplusPowerCard />
           <StreakTrackerWidget />
           <ShadowBudgetSummary />
+          <HeroMoatCard />
         </div>
       </div>
+
+      {/* Debt Victory Modal */}
+      <DebtVictoryModal
+        open={victoryModalOpen}
+        onOpenChange={setVictoryModalOpen}
+        debtName={victoryDebtName}
+        nextDebt={debts.filter(d => d.balance > 0)[0] ? { name: debts.filter(d => d.balance > 0)[0].name, balance: debts.filter(d => d.balance > 0)[0].balance } : null}
+        onViewBattlePlan={() => { setVictoryModalOpen(false); navigate('/debts'); }}
+      />
 
       {/* Financial Overview Section */}
       <div className="space-y-4">

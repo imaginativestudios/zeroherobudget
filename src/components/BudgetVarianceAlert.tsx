@@ -40,7 +40,7 @@ export const BudgetVarianceAlert = ({ planned, actual, categoryName }: BudgetVar
           <span className="font-medium">{categoryName}</span> is{" "}
           <span className={isOverBudget ? "text-destructive" : "text-green-600"}>
             {Math.abs(variancePercentage).toFixed(1)}%{" "}
-            {isOverBudget ? "over" : "under"} budget
+            {isOverBudget ? "in Tactical Overstretch" : "in Strategic Surplus"}
           </span>
         </div>
         <Badge variant={isOverBudget ? "destructive" : "secondary"}>

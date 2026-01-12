@@ -110,10 +110,10 @@ export const AvailableForDebtReport = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
               <Target className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-              Available for Debt Report
+              War Chest Analysis
             </h1>
             <p className="text-muted-foreground mt-2">
-              Track funds available for debt payments over time
+              Track funds available for slaying Balance Foes
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ export const AvailableForDebtReport = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base text-muted-foreground">Available for Debt</CardTitle>
+            <CardTitle className="text-base text-muted-foreground">War Chest Funds</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
@@ -209,7 +209,7 @@ export const AvailableForDebtReport = () => {
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
             <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
-            12-Month Available Funds Trend
+            12-Month War Chest Trend
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -217,8 +217,8 @@ export const AvailableForDebtReport = () => {
             <>
               <CustomComposedLegend items={[
                 { label: "Income", color: "hsl(var(--primary))", type: "bar" },
-                { label: "Spending", color: "hsl(var(--destructive))", type: "bar" },
-                { label: "Available for Debt", color: "hsl(var(--accent))", type: "line" }
+                { label: "Deployment", color: "hsl(var(--destructive))", type: "bar" },
+                { label: "War Chest", color: "hsl(var(--accent))", type: "line" }
               ]} />
               <div className="h-80 sm:h-96 lg:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">

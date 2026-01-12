@@ -46,7 +46,7 @@ const getMobileTabletTourSteps = (): Step[] => [
       <div className="space-y-2">
         <h3 className="text-base font-semibold text-foreground">Navigation Sidebar</h3>
         <p className="text-sm text-muted-foreground">
-          Access Budgets, Debts, Transactions, Reports, and more from here.
+          Access your War Map, Battle Plan, Quest Log, Intel, and more from here.
         </p>
       </div>
     ),
@@ -58,9 +58,9 @@ const getMobileTabletTourSteps = (): Step[] => [
     target: '[data-tour="nav-budgets"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Budget Management</h3>
+        <h3 className="text-base font-semibold text-foreground">Your War Map</h3>
         <p className="text-sm text-muted-foreground">
-          Track planned vs. actual spending across household categories.
+          Plan your financial strategy and track deployment vs. actual spending.
         </p>
       </div>
     ),
@@ -72,9 +72,9 @@ const getMobileTabletTourSteps = (): Step[] => [
     target: '[data-tour="nav-debts"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Debt Payoff Strategies</h3>
+        <h3 className="text-base font-semibold text-foreground">Your Battle Plan</h3>
         <p className="text-sm text-muted-foreground">
-          Choose Snowball or Avalanche strategy and see payoff timelines.
+          Slay your Balance Foes with Snowball or Avalanche tactics.
         </p>
       </div>
     ),
@@ -157,9 +157,9 @@ const getDesktopTourSteps = (): Step[] => [
     target: '[data-tour="nav-budgets"]',
     content: (
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Budget Management</h3>
+        <h3 className="font-semibold text-foreground">Your War Map</h3>
         <p className="text-sm text-muted-foreground">
-          Track your planned vs. actual spending across 10 household categories. Drag and drop to organize expenses, and see variance alerts.
+          Plan your financial strategy across 10 categories. Drag and drop to organize, and watch for Tactical Overstretch alerts.
         </p>
       </div>
     ),
@@ -170,9 +170,9 @@ const getDesktopTourSteps = (): Step[] => [
     target: '[data-tour="nav-debts"]',
     content: (
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Debt Payoff Strategies</h3>
+        <h3 className="font-semibold text-foreground">Your Battle Plan</h3>
         <p className="text-sm text-muted-foreground">
-          Choose between Snowball (smallest balance first) or Avalanche (highest interest first) strategies. See projected payoff timelines and interest savings.
+          Slay your Balance Foes with Snowball or Avalanche tactics. Track your path to becoming Victorious!
         </p>
       </div>
     ),
@@ -183,9 +183,9 @@ const getDesktopTourSteps = (): Step[] => [
     target: '[data-tour="nav-transactions"]',
     content: (
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Transaction Tracking</h3>
+        <h3 className="font-semibold text-foreground">Your Quest Log</h3>
         <p className="text-sm text-muted-foreground">
-          Record all your income and expenses. Search, filter, and analyze spending patterns to stay on top of your finances.
+          Record every financial quest. Search, filter, and analyze your deployment patterns.
         </p>
       </div>
     ),
@@ -196,9 +196,9 @@ const getDesktopTourSteps = (): Step[] => [
     target: '[data-tour="nav-achievements"]',
     content: (
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Achievements & Milestones</h3>
+        <h3 className="font-semibold text-foreground">Your Victories</h3>
         <p className="text-sm text-muted-foreground">
-          Celebrate your progress! Unlock achievements as you pay off debts and reach financial milestones.
+          Celebrate your heroic progress! Unlock achievements as you vanquish debts and reach milestones.
         </p>
       </div>
     ),
@@ -209,9 +209,9 @@ const getDesktopTourSteps = (): Step[] => [
     target: '[data-tour="nav-reports"]',
     content: (
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground">Reports & Analytics</h3>
+        <h3 className="font-semibold text-foreground">Intel Center</h3>
         <p className="text-sm text-muted-foreground">
-          Generate detailed financial reports including income analysis, net worth tracking, and expense breakdowns. Export as PDF or CSV.
+          Gather intelligence on your financial kingdom. Generate reports on income, net worth, and spending patterns.
         </p>
       </div>
     ),

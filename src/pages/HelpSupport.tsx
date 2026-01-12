@@ -145,30 +145,30 @@ const HelpSupport = () => {
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">2</span>
-                  Setting Up Your First Budget
+                  Setting Up Your War Map
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Navigate to the Budget page and start adding your monthly expenses. Organize them by category (Housing, Utilities, Food, etc.) and set planned amounts for each item. You can drag and drop to reorder items within categories.
+                  Navigate to the War Map page and start adding your monthly expenses. Organize them by category (Housing, Utilities, Food, etc.) and set planned amounts for each item. You can drag and drop to reorder items within categories.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">3</span>
-                  Adding Your Debts
+                  Adding Your Balance Foes
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Go to the Debt Snowball page and add all your debts including credit cards, student loans, and personal loans. Enter the balance, interest rate, and minimum payment for each. Zero Hero will calculate the optimal payoff strategy.
+                  Go to the Battle Plan page and add all your Balance Foes including credit cards, student loans, and personal loans. Enter the balance, interest rate, and minimum payment for each. Zero Hero will calculate the optimal strategy to vanquish them.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">4</span>
-                  Inviting Household Members
+                  Inviting Fellow Heroes
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Visit the Household page to invite family members or partners. They'll receive an email invitation to join your household and collaborate on your shared financial goals.
+                  Visit the Household page to invite family members or partners. They&apos;ll receive an email invitation to join your household and collaborate on your shared financial quest.
                 </p>
               </div>
 
@@ -212,10 +212,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <Wallet className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Budget Tracking</h3>
+                  <h3 className="text-lg font-semibold text-foreground">War Map (Budget)</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Track planned vs. actual spending across 10 household categories. Visualize budget variance with charts and get instant insights on overspending.
+                  Plan your financial strategy across 10 household categories. Visualize Tactical Overstretch and Strategic Surplus with charts and insights.
                 </p>
               </div>
 
@@ -224,10 +224,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <TrendingDown className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Debt Payoff Strategies</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Battle Plan (Debt Payoff)</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Choose between Debt Snowball (smallest balance first) or Debt Avalanche (highest interest first) strategies. See projected payoff timelines and total interest saved.
+                  Slay your Balance Foes using Snowball or Avalanche tactics. See projected victory timelines and total interest saved.
                 </p>
               </div>
 
@@ -239,7 +239,7 @@ const HelpSupport = () => {
                   <h3 className="text-lg font-semibold text-foreground">Subscription Management</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Track all your recurring subscriptions in one place. Get alerts for upcoming renewals and identify subscriptions you may no longer need.
+                  Track all your recurring obligations in one place. Get alerts for upcoming renewals and identify unnecessary deployments.
                 </p>
               </div>
 
@@ -248,10 +248,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Reports & Analytics</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Intel Center (Reports)</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Generate detailed financial reports including income analysis, net worth tracking, and expense breakdowns. Export reports as PDF or CSV.
+                  Gather intelligence on your financial kingdom including income analysis, net worth tracking, and deployment breakdowns.
                 </p>
               </div>
 
@@ -263,7 +263,7 @@ const HelpSupport = () => {
                   <h3 className="text-lg font-semibold text-foreground">Household Collaboration</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Invite family members to collaborate on shared finances. Assign roles (Owner, Admin, Member, Viewer) with different permission levels.
+                  Invite fellow heroes to collaborate on shared finances. Assign roles (Owner, Admin, Member, Viewer) with different permission levels.
                 </p>
               </div>
 
@@ -272,10 +272,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <Calendar className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Transaction History</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Quest Log (Transactions)</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Record and categorize all income and expenses. Search, filter, and analyze transaction patterns over time.
+                  Record and categorize all income and deployments. Search, filter, and analyze patterns over time.
                 </p>
               </div>
             </div>

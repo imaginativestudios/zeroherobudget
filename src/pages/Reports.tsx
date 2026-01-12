@@ -66,33 +66,33 @@ export const Reports = () => {
   }, [expenses, monthlyActuals]);
   const hasTransactionData = useMemo(() => Object.values(monthlyActuals).some(amount => amount > 0), [monthlyActuals]);
   const reportTypes = [{
-    title: "Income Report",
-    description: "Track your monthly income sources and trends",
+    title: "Income Intel",
+    description: "Track your monthly income sources and reinforcements",
     icon: DollarSign,
     href: "/reports/income",
     color: "text-success"
   }, {
-    title: "Available for Debt",
-    description: "See how much you can allocate to debt payments",
+    title: "War Chest Analysis",
+    description: "See your funds available for slaying Balance Foes",
     icon: Target,
     href: "/reports/available",
     color: "text-warning"
   }, {
-    title: "Net Worth Report",
-    description: "Monitor your assets, debts, and overall net worth",
+    title: "Kingdom Wealth",
+    description: "Monitor your assets, Balance Foes, and overall worth",
     icon: TrendingUp,
     href: "/reports/net-worth",
     color: "text-primary"
   }, {
-    title: "Subscription Report",
-    description: "Analyze your recurring subscription spending",
+    title: "Recurring Obligations",
+    description: "Analyze your recurring subscription deployments",
     icon: CreditCard,
     href: "/reports/subscriptions",
     color: "text-accent"
   }];
   return <div className="pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
+        <h1 className="text-3xl font-bold text-foreground">Intel Center</h1>
         <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
           <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Label className="text-sm font-medium">Month:</Label>

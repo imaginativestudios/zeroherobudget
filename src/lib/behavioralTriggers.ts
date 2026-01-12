@@ -28,6 +28,7 @@ export interface TriggerState {
   shadowCostShownTxIds: string[];
   surplusStrikeLastTriggered: number | null;
   strategyPivotShown: boolean;
+  levelUpShown: boolean;
   consistencyHistory: Array<{ date: string; score: number }>;
 }
 
@@ -90,6 +91,9 @@ export function getStoredTriggerState(): TriggerState {
       strategyPivotShown: JSON.parse(
         localStorage.getItem(TRIGGER_STORAGE_KEYS.STRATEGY_PIVOT_SHOWN) || 'false'
       ),
+      levelUpShown: JSON.parse(
+        localStorage.getItem('bdt_level_up_shown') || 'false'
+      ),
       consistencyHistory: JSON.parse(
         localStorage.getItem(TRIGGER_STORAGE_KEYS.CONSISTENCY_HISTORY) || '[]'
       ),
@@ -100,6 +104,7 @@ export function getStoredTriggerState(): TriggerState {
       shadowCostShownTxIds: [],
       surplusStrikeLastTriggered: null,
       strategyPivotShown: false,
+      levelUpShown: false,
       consistencyHistory: [],
     };
   }
@@ -132,6 +137,12 @@ export function updateTriggerState(updates: Partial<TriggerState>): void {
       localStorage.setItem(
         TRIGGER_STORAGE_KEYS.STRATEGY_PIVOT_SHOWN,
         JSON.stringify(updates.strategyPivotShown)
+      );
+    }
+    if (updates.levelUpShown !== undefined) {
+      localStorage.setItem(
+        'bdt_level_up_shown',
+        JSON.stringify(updates.levelUpShown)
       );
     }
     if (updates.consistencyHistory !== undefined) {

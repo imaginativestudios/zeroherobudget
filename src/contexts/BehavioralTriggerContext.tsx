@@ -12,6 +12,7 @@ import { useLocalTransactions, Transaction } from '@/hooks/useLocalTransactions'
 import { useLocalDebts } from '@/hooks/useLocalDebts';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import {
   TriggerState,
   getStoredTriggerState,
@@ -25,6 +26,7 @@ import { calculateShadowCost } from '@/lib/behavioralEngine';
 import { ShadowCostToast } from '@/components/behavioral/ShadowCostToast';
 import { SurplusStrikeModal } from '@/components/behavioral/SurplusStrikeModal';
 import { StrategyPivotDialog } from '@/components/behavioral/StrategyPivotDialog';
+import { LevelUpModal } from '@/components/behavioral/LevelUpModal';
 
 interface ShadowCostTriggerData {
   transactionId: string;
@@ -42,20 +44,33 @@ interface SurplusStrikeTriggerData {
   daysAccelerated: number;
 }
 
+interface LevelUpTriggerData {
+  highestInterestDebt: {
+    name: string;
+    balance: number;
+    interest_rate: number;
+  };
+  annualSavings: number;
+}
+
 interface BehavioralTriggerContextType {
   // Trigger states
   shadowCostData: ShadowCostTriggerData | null;
   surplusStrikeData: SurplusStrikeTriggerData | null;
   showStrategyPivot: boolean;
+  showLevelUp: boolean;
+  levelUpData: LevelUpTriggerData | null;
   
   // Dismiss handlers
   dismissShadowCost: () => void;
   dismissSurplusStrike: () => void;
   dismissStrategyPivot: () => void;
+  dismissLevelUp: () => void;
   
   // Action handlers
   handleSurplusStrike: () => void;
   handleStrategySwitch: (newStrategy: 'Snowball' | 'Avalanche') => void;
+  handleLevelUpSwitch: () => void;
   
   // Manual triggers (for testing/demo)
   triggerShadowCost: (transaction: Transaction) => void;
@@ -97,6 +112,10 @@ export function BehavioralTriggerProvider({ children }: BehavioralTriggerProvide
   const [shadowCostData, setShadowCostData] = useState<ShadowCostTriggerData | null>(null);
   const [surplusStrikeData, setSurplusStrikeData] = useState<SurplusStrikeTriggerData | null>(null);
   const [showStrategyPivot, setShowStrategyPivot] = useState(false);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<LevelUpTriggerData | null>(null);
+
+  const { toast } = useToast();
 
   // Track previous transaction count
   const prevTransactionCount = useRef(transactions.length);
@@ -242,6 +261,59 @@ export function BehavioralTriggerProvider({ children }: BehavioralTriggerProvide
     setShowStrategyPivot(true);
   }, [isProtectedRoute, user, consistencyScore.currentStreak, strategy]);
 
+  // ============= TRIGGER D: Level Up (Consistency > 75 + Snowball) =============
+  useEffect(() => {
+    if (!isProtectedRoute || !user) return;
+    if (debts.length === 0) return;
+    
+    const state = triggerStateRef.current;
+    
+    // Already shown level-up
+    if (state.levelUpShown) return;
+
+    // Check if on Snowball strategy
+    if (strategy !== 'Snowball') return;
+
+    // Check consistency score > 75
+    if (consistencyScore.score <= 75) return;
+
+    // Find highest interest debt
+    const sortedByInterest = [...debts].sort((a, b) => b.interest_rate - a.interest_rate);
+    const highestDebt = sortedByInterest[0];
+    if (!highestDebt) return;
+
+    // Calculate potential annual savings from switching to Avalanche
+    // Using shadow cost logic: difference in interest paid over payoff period
+    const totalBalance = debts.reduce((sum, d) => sum + d.balance, 0);
+    const avgRate = debts.reduce((sum, d) => sum + d.interest_rate * d.balance, 0) / totalBalance;
+    const highestRate = highestDebt.interest_rate;
+    
+    // Estimate savings: ~15-20% efficiency gain from targeting high interest first
+    const avgBalance = totalBalance / 2; // Average outstanding over payoff
+    const interestDifference = avgBalance * ((highestRate - avgRate) / 100) * 0.2;
+    const annualSavings = Math.max(Math.round(interestDifference), 50); // Minimum $50 for display
+
+    // Update state
+    triggerStateRef.current = {
+      ...state,
+      levelUpShown: true,
+    };
+    updateTriggerState({
+      levelUpShown: true,
+    });
+
+    // Trigger the modal
+    setLevelUpData({
+      highestInterestDebt: {
+        name: highestDebt.name,
+        balance: highestDebt.balance,
+        interest_rate: highestDebt.interest_rate,
+      },
+      annualSavings,
+    });
+    setShowLevelUp(true);
+  }, [isProtectedRoute, user, consistencyScore.score, strategy, debts]);
+
   // ============= Dismiss Handlers =============
   const dismissShadowCost = useCallback(() => {
     setShadowCostData(null);
@@ -253,6 +325,11 @@ export function BehavioralTriggerProvider({ children }: BehavioralTriggerProvide
 
   const dismissStrategyPivot = useCallback(() => {
     setShowStrategyPivot(false);
+  }, []);
+
+  const dismissLevelUp = useCallback(() => {
+    setShowLevelUp(false);
+    setLevelUpData(null);
   }, []);
 
   // ============= Action Handlers =============
@@ -268,15 +345,29 @@ export function BehavioralTriggerProvider({ children }: BehavioralTriggerProvide
     setShowStrategyPivot(false);
   }, [setStrategy]);
 
+  const handleLevelUpSwitch = useCallback(() => {
+    setStrategy('Avalanche');
+    setShowLevelUp(false);
+    setLevelUpData(null);
+    toast({
+      title: "Strategy Updated",
+      description: "Your tactical advantage has increased.",
+    });
+  }, [setStrategy, toast]);
+
   const contextValue: BehavioralTriggerContextType = {
     shadowCostData,
     surplusStrikeData,
     showStrategyPivot,
+    showLevelUp,
+    levelUpData,
     dismissShadowCost,
     dismissSurplusStrike,
     dismissStrategyPivot,
+    dismissLevelUp,
     handleSurplusStrike,
     handleStrategySwitch,
+    handleLevelUpSwitch,
     triggerShadowCost,
   };
 
@@ -304,6 +395,18 @@ export function BehavioralTriggerProvider({ children }: BehavioralTriggerProvide
         currentStrategy={strategy}
         onDismiss={dismissStrategyPivot}
         onSwitch={handleStrategySwitch}
+      />
+      
+      {/* Trigger D: Level Up Modal */}
+      <LevelUpModal
+        open={showLevelUp}
+        onOpenChange={setShowLevelUp}
+        consistencyScore={consistencyScore.score}
+        highestInterestDebt={levelUpData?.highestInterestDebt ?? null}
+        annualSavings={levelUpData?.annualSavings ?? 0}
+        currentStrategy={strategy}
+        onSwitch={handleLevelUpSwitch}
+        onDismiss={dismissLevelUp}
       />
     </BehavioralTriggerContext.Provider>
   );

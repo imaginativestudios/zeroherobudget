@@ -12,6 +12,7 @@ import { useStrategy } from './useLocalSettings';
 
 export interface HeroProfile {
   onboarding_completed: boolean;
+  hourly_wage: number | null; // For Freedom Engine calculations
   moat_target: number;
   moat_current: number;
   last_active_date: string | null;
@@ -34,6 +35,7 @@ export interface SavingsVault {
 
 const DEFAULT_HERO_PROFILE: HeroProfile = {
   onboarding_completed: false,
+  hourly_wage: null,
   moat_target: 1000,
   moat_current: 0,
   last_active_date: null,

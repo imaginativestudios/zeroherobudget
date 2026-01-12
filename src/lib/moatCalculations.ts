@@ -103,3 +103,45 @@ export function getCastleIconType(level: CastleLevel): 'cabin' | 'tower' | 'cast
     case 4: return 'fortress';
   }
 }
+
+/**
+ * Moat Milestone definitions for celebrations
+ */
+export interface MoatMilestone {
+  percentage: 25 | 50 | 75 | 100;
+  title: string;
+  message: string;
+  icon: string;
+  celebrationLevel: 'basic' | 'milestone' | 'epic';
+}
+
+export const MOAT_MILESTONES: Record<number, MoatMilestone> = {
+  25: {
+    percentage: 25,
+    title: "Foundation Laid!",
+    message: "Your castle walls are rising! 25% of your Moat is secured.",
+    icon: "🏗️",
+    celebrationLevel: 'basic',
+  },
+  50: {
+    percentage: 50,
+    title: "Halfway Fortified!",
+    message: "Impressive progress, warrior! Your defenses are halfway complete.",
+    icon: "🛡️",
+    celebrationLevel: 'milestone',
+  },
+  75: {
+    percentage: 75,
+    title: "Almost Impenetrable!",
+    message: "Your fortress grows mighty! Just a bit more to full protection.",
+    icon: "⚔️",
+    celebrationLevel: 'milestone',
+  },
+  100: {
+    percentage: 100,
+    title: "Moat Complete!",
+    message: "The Moat is Secure! Your Fortress can now withstand the unexpected!",
+    icon: "🏰",
+    celebrationLevel: 'epic',
+  },
+};

@@ -20,11 +20,13 @@ import { StreakTrackerWidget } from "@/components/behavioral/StreakTrackerWidget
 import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
 import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
 import { MoatBuilder } from "@/components/defense/MoatBuilder";
+import { RegroupingBanner } from "@/components/defense/RegroupingBanner";
 import { DebtVictoryModal } from "@/components/behavioral/DebtVictoryModal";
 import { FreedomTimelineWidget } from "@/components/behavioral/FreedomTimelineWidget";
 import { DebtItem } from '@/lib/debtCalculations';
 import { calculateMoatHealth } from '@/lib/moatCalculations';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
+import { useMoatStatus } from '@/hooks/useMoatStatus';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -65,6 +67,9 @@ export const Dashboard = () => {
   
   // Hero Profile for moat calculations
   const { profile: heroProfile } = useHeroProfile();
+  
+  // Moat status for regrouping detection
+  const { isRegrouping, isVulnerable, bannerDismissed } = useMoatStatus();
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
@@ -77,6 +82,9 @@ export const Dashboard = () => {
     calculateMoatHealth(heroProfile.moat_current, heroProfile.moat_target),
     [heroProfile.moat_current, heroProfile.moat_target]
   );
+  
+  // Determine if dashboard should show regrouping theme
+  const showRegroupingTheme = isRegrouping || isVulnerable;
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
@@ -258,7 +266,7 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className={cn("space-y-6 lg:space-y-8", showRegroupingTheme && "regrouping-theme")}>
       {/* Header */}
       <div className="flex flex-col gap-4" data-tour="welcome-area">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -286,6 +294,11 @@ export const Dashboard = () => {
 
       {/* Privacy Notice for first-time users */}
       <PrivacyNotice />
+
+      {/* Regrouping Banner - shown when Moat has a breach */}
+      {(isRegrouping || isVulnerable) && !bannerDismissed && (
+        <RegroupingBanner />
+      )}
 
       {/* Hero Tips Feed (Behavioral) */}
       <HeroTipsFeed />

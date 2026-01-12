@@ -53,6 +53,20 @@ export const HEROIC_COPY = {
   starterMoat: 'The Starter Moat',
   fortifyMoat: 'Fortify Your Moat',
   
+  // Recovery / Regrouping Terms
+  breach: 'Breach',
+  breachDetected: 'Breach Detected',
+  repairs: 'Repairs',
+  repairMode: 'Repair Mode',
+  tacticalShift: 'Tactical Shift',
+  fortressIntegrity: 'Fortress Integrity',
+  regrouping: 'Regrouping',
+  repairPlan: 'Repair Plan',
+  optimizeForRepair: 'Optimize for Repair',
+  compromised: 'Compromised',
+  daysToRepair: 'Days to Repair',
+  prioritizingRepairs: 'Prioritizing Repairs',
+  
   // Positive Reinforcement
   greatJob: 'Heroic Work',
   excellent: 'Legendary',

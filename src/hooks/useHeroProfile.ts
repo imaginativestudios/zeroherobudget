@@ -25,6 +25,11 @@ export interface SavingsVault {
   last_deposit_date: string | null;
   deposit_history: Array<{ amount: number; date: string }>;
   achieved_milestones: number[]; // [25, 50, 75, 100] as they're reached
+  // Recovery tracking
+  was_secure: boolean;
+  last_secure_date: string | null;
+  breach_acknowledged: boolean;
+  repair_mode_active: boolean;
 }
 
 const DEFAULT_HERO_PROFILE: HeroProfile = {
@@ -41,6 +46,10 @@ const DEFAULT_SAVINGS_VAULT: SavingsVault = {
   last_deposit_date: null,
   deposit_history: [],
   achieved_milestones: [],
+  was_secure: false,
+  last_secure_date: null,
+  breach_acknowledged: false,
+  repair_mode_active: false,
 };
 
 export interface UseHeroProfileResult {
@@ -60,6 +69,7 @@ export interface UseHeroProfileResult {
   addToMoat: (amount: number) => number[]; // Returns newly achieved milestones
   setMoatCurrent: (amount: number) => void;
   setMoatTarget: (amount: number) => void;
+  updateSavingsVault: (updates: Partial<SavingsVault>) => void;
   
   // Activity tracking
   activityLog: string[];
@@ -215,6 +225,14 @@ export function useHeroProfile(): UseHeroProfileResult {
     });
   }, [profile, setProfile]);
 
+  // Update savings vault with partial updates
+  const updateSavingsVault = useCallback((updates: Partial<SavingsVault>) => {
+    setSavingsVault({
+      ...savingsVault,
+      ...updates,
+    });
+  }, [savingsVault, setSavingsVault]);
+
   return {
     profile,
     savingsVault,
@@ -228,6 +246,7 @@ export function useHeroProfile(): UseHeroProfileResult {
     addToMoat,
     setMoatCurrent,
     setMoatTarget,
+    updateSavingsVault,
     activityLog: profile.activity_log,
     recordDailyActivity,
     completeOnboarding,

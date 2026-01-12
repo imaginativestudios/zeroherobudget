@@ -17,6 +17,7 @@ import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
+import { FreedomSlider } from "@/components/behavioral/FreedomSlider";
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
@@ -329,6 +330,13 @@ export const DebtSnowball = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Freedom Date Simulator */}
+      <FreedomSlider
+        debts={debts}
+        currentExtraBudget={leftover}
+        strategy={strategy as "Snowball" | "Avalanche"}
+      />
 
       {/* Timeline Chart */}
       <Card className="shadow-royal">

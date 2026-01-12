@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CategorySuggestion } from "@/components/transactions/CategorySuggestion";
-import { ShadowCostPreview } from "@/components/behavioral/ShadowCostPreview";
+import { ShadowImpactCard } from "@/components/behavioral/ShadowImpactCard";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useExpenses } from "@/hooks/useLocalSettings";
@@ -347,11 +347,14 @@ export const Transactions = () => {
                   category
                 })} />
                   
-                  {/* Shadow Cost Preview for discretionary expenses */}
-                  <ShadowCostPreview 
+                  {/* Shadow Impact Card for discretionary expenses */}
+                  <ShadowImpactCard 
                     amount={newTransaction.amount} 
                     category={newTransaction.category} 
-                    flow={newTransaction.flow} 
+                    flow={newTransaction.flow}
+                    description={newTransaction.description}
+                    onSkipAndPayDebt={() => setShowAddDialog(false)}
+                    onBuyAnyway={() => {}}
                   />
                   
                   <div className="space-y-2">
@@ -585,11 +588,14 @@ export const Transactions = () => {
                             category
                           })} />
                                 
-                                {/* Shadow Cost Preview for discretionary expenses */}
-                                <ShadowCostPreview 
+                                {/* Shadow Impact Card for discretionary expenses */}
+                                <ShadowImpactCard 
                                   amount={newTransaction.amount} 
                                   category={newTransaction.category} 
-                                  flow={newTransaction.flow} 
+                                  flow={newTransaction.flow}
+                                  description={newTransaction.description}
+                                  onSkipAndPayDebt={() => setEditingTransaction(null)}
+                                  onBuyAnyway={() => {}}
                                 />
                                 
                                 <div className="space-y-2">

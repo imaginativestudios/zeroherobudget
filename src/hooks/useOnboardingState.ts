@@ -19,7 +19,7 @@ export interface OnboardingData {
 }
 
 export interface UseOnboardingStateResult {
-  currentStep: 1 | 2 | 3;
+  currentStep: 1 | 2 | 3 | 4;
   data: OnboardingData;
   setHourlyWage: (wage: number | null) => void;
   setPrimaryDebt: (debt: DebtEntry | null) => void;
@@ -27,7 +27,8 @@ export interface UseOnboardingStateResult {
   nextStep: () => void;
   prevStep: () => void;
   skipStep: () => void;
-  completeOnboarding: () => void;
+  showCeremony: () => void;
+  enterDashboard: () => void;
   isCompleting: boolean;
 }
 
@@ -37,7 +38,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const { setMoatTarget: setProfileMoatTarget, completeOnboarding: markComplete } = useHeroProfile();
   const { addDebt } = useLocalDebts();
 
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
   const [isCompleting, setIsCompleting] = useState(false);
   const [data, setData] = useState<OnboardingData>({
     hourlyWage: null,
@@ -59,13 +60,13 @@ export function useOnboardingState(): UseOnboardingStateResult {
 
   const nextStep = useCallback(() => {
     if (currentStep < 3) {
-      setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3);
+      setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
     }
   }, [currentStep]);
 
   const prevStep = useCallback(() => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3);
+    if (currentStep > 1 && currentStep < 4) {
+      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
     }
   }, [currentStep]);
 
@@ -73,54 +74,50 @@ export function useOnboardingState(): UseOnboardingStateResult {
     nextStep();
   }, [nextStep]);
 
-  const completeOnboarding = useCallback(() => {
-    setIsCompleting(true);
+  const saveOnboardingData = useCallback(() => {
+    // Store hourly wage in localStorage
+    if (data.hourlyWage !== null) {
+      const existingProfile = localStorage.getItem('bdt_hero_profile');
+      const profile = existingProfile ? JSON.parse(existingProfile) : {};
+      profile.hourly_wage = data.hourlyWage;
+      localStorage.setItem('bdt_hero_profile', JSON.stringify(profile));
+    }
 
-    try {
-      // Store hourly wage in localStorage (extend hero profile later if needed)
-      if (data.hourlyWage !== null) {
-        const existingProfile = localStorage.getItem('bdt_hero_profile');
-        const profile = existingProfile ? JSON.parse(existingProfile) : {};
-        profile.hourly_wage = data.hourlyWage;
-        localStorage.setItem('bdt_hero_profile', JSON.stringify(profile));
-      }
-
-      // Create debt entry if provided
-      if (data.primaryDebt && data.primaryDebt.name && data.primaryDebt.balance > 0) {
-        addDebt({
-          name: data.primaryDebt.name,
-          balance: data.primaryDebt.balance,
-          interest_rate: data.primaryDebt.apr,
-          minimum_payment: data.primaryDebt.minimumPayment || 25,
-          type: 'credit_card',
-        });
-      }
-
-      // Set moat target
-      setProfileMoatTarget(data.moatTarget);
-
-      // Mark onboarding as complete
-      markComplete();
-
-      // Show welcome message
-      toast.success('Welcome, Hero! Your quest begins now.', {
-        description: 'Your character has been created. Time to conquer your debts!',
+    // Create debt entry if provided
+    if (data.primaryDebt && data.primaryDebt.name && data.primaryDebt.balance > 0) {
+      addDebt({
+        name: data.primaryDebt.name,
+        balance: data.primaryDebt.balance,
+        interest_rate: data.primaryDebt.apr,
+        minimum_payment: data.primaryDebt.minimumPayment || 25,
+        type: 'credit_card',
       });
+    }
 
-      // Navigate based on auth status
-      if (user) {
-        navigate('/dashboard');
-      } else {
-        // For unauthenticated users, go to demo dashboard
-        navigate('/dashboard');
-      }
+    // Set moat target
+    setProfileMoatTarget(data.moatTarget);
+  }, [data, addDebt, setProfileMoatTarget]);
+
+  const showCeremony = useCallback(() => {
+    setIsCompleting(true);
+    try {
+      saveOnboardingData();
+      setCurrentStep(4);
     } catch (error) {
       console.error('Onboarding error:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsCompleting(false);
     }
-  }, [data, user, navigate, addDebt, setProfileMoatTarget, markComplete]);
+  }, [saveOnboardingData]);
+
+  const enterDashboard = useCallback(() => {
+    markComplete();
+    toast.success('Welcome, Hero! Your quest begins now.', {
+      description: 'Your character has been created. Time to conquer your debts!',
+    });
+    navigate('/dashboard');
+  }, [markComplete, navigate]);
 
   return {
     currentStep,
@@ -131,7 +128,8 @@ export function useOnboardingState(): UseOnboardingStateResult {
     nextStep,
     prevStep,
     skipStep,
-    completeOnboarding,
+    showCeremony,
+    enterDashboard,
     isCompleting,
   };
 }

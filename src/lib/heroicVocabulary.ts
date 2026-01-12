@@ -41,10 +41,17 @@ export const HEROIC_COPY = {
   deleteAccount: 'End Journey',
   importFailed: 'Import Needs Regrouping',
   
-  // Emergency Fund
+// Emergency Fund / Defense Terms
   emergencyFund: "The Hero's Moat",
   moat: 'Moat',
   protected: 'Protected',
+  moatVulnerable: 'Castle Vulnerable',
+  moatBuilding: 'Defenses Rising',
+  moatFortified: 'Walls Strengthening', 
+  moatSecure: 'Moat Secure',
+  primaryQuest: 'Primary Quest',
+  starterMoat: 'The Starter Moat',
+  fortifyMoat: 'Fortify Your Moat',
   
   // Positive Reinforcement
   greatJob: 'Heroic Work',

@@ -132,24 +132,24 @@ export function StrategyComparison({
     <div className="space-y-6">
       {/* Winner Banner */}
       <Card className="border-2 border-success bg-success/5">
-        <CardHeader>
-          <div className="flex items-start gap-4">
-            <Award className="h-8 w-8 text-success flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <CardTitle className="text-2xl">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+            <Award className="h-6 w-6 sm:h-8 sm:w-8 text-success flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg sm:text-2xl">
                 {comparison.betterStrategy === "Avalanche" ? (
-                  <span className="flex items-center gap-2">
-                    <Flame className="h-6 w-6 text-chart-4" />
-                    Recommended: Avalanche Strategy
+                  <span className="flex items-center gap-2 flex-wrap">
+                    <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-chart-4" />
+                    <span>Recommended: Avalanche</span>
                   </span>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <Snowflake className="h-6 w-6 text-chart-1" />
-                    Recommended: Snowball Strategy
+                  <span className="flex items-center gap-2 flex-wrap">
+                    <Snowflake className="h-5 w-5 sm:h-6 sm:w-6 text-chart-1" />
+                    <span>Recommended: Snowball</span>
                   </span>
                 )}
               </CardTitle>
-              <CardDescription className="text-base mt-2">
+              <CardDescription className="text-sm sm:text-base mt-2">
                 {comparison.betterStrategy === "Avalanche" ? (
                   <>
                     Save <strong className="text-success">${comparison.interestSavings.toFixed(2)}</strong> in interest
@@ -170,6 +170,7 @@ export function StrategyComparison({
                   onClick={() => onStrategyChange(comparison.betterStrategy)}
                   variant="default"
                   className="mt-4"
+                  size="sm"
                 >
                   Switch to {comparison.betterStrategy}
                 </Button>
@@ -351,22 +352,22 @@ export function StrategyComparison({
           <CardDescription>See when each debt gets paid off under each strategy</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 font-semibold">Debt Name</th>
-                  <th className="text-right py-3 px-4 font-semibold">Balance</th>
-                  <th className="text-center py-3 px-4 font-semibold">
-                    <div className="flex items-center justify-center gap-2">
-                      <Snowflake className="h-4 w-4 text-chart-1" />
-                      <span>Snowball</span>
+                  <th className="text-left py-3 px-2 sm:px-4 font-semibold text-sm">Debt Name</th>
+                  <th className="text-right py-3 px-2 sm:px-4 font-semibold text-sm hidden sm:table-cell">Balance</th>
+                  <th className="text-center py-3 px-2 sm:px-4 font-semibold text-sm">
+                    <div className="flex items-center justify-center gap-1 sm:gap-2">
+                      <Snowflake className="h-3 w-3 sm:h-4 sm:w-4 text-chart-1" />
+                      <span className="hidden xs:inline">Snowball</span>
                     </div>
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold">
-                    <div className="flex items-center justify-center gap-2">
-                      <Flame className="h-4 w-4 text-chart-4" />
-                      <span>Avalanche</span>
+                  <th className="text-center py-3 px-2 sm:px-4 font-semibold text-sm">
+                    <div className="flex items-center justify-center gap-1 sm:gap-2">
+                      <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-chart-4" />
+                      <span className="hidden xs:inline">Avalanche</span>
                     </div>
                   </th>
                 </tr>
@@ -374,23 +375,26 @@ export function StrategyComparison({
               <tbody>
                 {debtComparison.map((debt, index) => (
                   <tr key={debt.name} className={index % 2 === 0 ? "bg-muted/30" : ""}>
-                    <td className="py-3 px-4 font-medium">{debt.name}</td>
-                    <td className="py-3 px-4 text-right">${debt.balance.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3 px-2 sm:px-4 font-medium text-sm">
+                      <div className="truncate max-w-[120px] sm:max-w-none">{debt.name}</div>
+                      <div className="text-xs text-muted-foreground sm:hidden">${debt.balance.toFixed(0)}</div>
+                    </td>
+                    <td className="py-3 px-2 sm:px-4 text-right hidden sm:table-cell">${debt.balance.toFixed(2)}</td>
+                    <td className="py-3 px-2 sm:px-4 text-center">
                       <div className="flex flex-col items-center gap-1">
-                        <span>{debt.snowballDate ? format(new Date(debt.snowballDate), "MMM yyyy") : "N/A"}</span>
+                        <span className="text-xs sm:text-sm">{debt.snowballDate ? format(new Date(debt.snowballDate), "MMM yy") : "N/A"}</span>
                         {debt.snowballMonths < debt.avalancheMonths && (
-                          <Badge variant="default" className="bg-chart-1 text-xs">
+                          <Badge variant="default" className="bg-chart-1 text-[10px] sm:text-xs px-1">
                             {debt.avalancheMonths - debt.snowballMonths}mo faster
                           </Badge>
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3 px-2 sm:px-4 text-center">
                       <div className="flex flex-col items-center gap-1">
-                        <span>{debt.avalancheDate ? format(new Date(debt.avalancheDate), "MMM yyyy") : "N/A"}</span>
+                        <span className="text-xs sm:text-sm">{debt.avalancheDate ? format(new Date(debt.avalancheDate), "MMM yy") : "N/A"}</span>
                         {debt.avalancheMonths < debt.snowballMonths && (
-                          <Badge variant="default" className="bg-chart-4 text-xs">
+                          <Badge variant="default" className="bg-chart-4 text-[10px] sm:text-xs px-1">
                             {debt.snowballMonths - debt.avalancheMonths}mo faster
                           </Badge>
                         )}

@@ -116,24 +116,26 @@ export const DebtSnowball = () => {
 
   return (
     <div className="space-y-8">
-      <div className="pt-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Slay Your Balance Foes</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportDebts} aria-label="Export debts to CSV">
-            <Download className="h-4 w-4" aria-hidden="true" />
-            Export CSV
-          </Button>
-          <Button variant="outline" onClick={() => document.getElementById('import-debt-file')?.click()} aria-label="Import debts from CSV">
-            <Upload className="h-4 w-4" aria-hidden="true" />
-            Import CSV
-          </Button>
-          <input
-            id="import-debt-file"
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={importDebts}
-          />
+      <div className="pt-8 space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Slay Your Balance Foes</h1>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={exportDebts} aria-label="Export debts to CSV">
+              <Download className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline ml-2">Export CSV</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => document.getElementById('import-debt-file')?.click()} aria-label="Import debts from CSV">
+              <Upload className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline ml-2">Import CSV</span>
+            </Button>
+            <input
+              id="import-debt-file"
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={importDebts}
+            />
+          </div>
         </div>
       </div>
 
@@ -141,8 +143,8 @@ export const DebtSnowball = () => {
         <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto">
           <TabsTrigger 
             value="overview"
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                       bg-background text-foreground/70 font-medium
+            className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 
+                       bg-background text-foreground/70 font-medium text-xs sm:text-sm
                        border-r border-border last:border-r-0
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
@@ -151,12 +153,12 @@ export const DebtSnowball = () => {
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Crown className="h-4 w-4" aria-hidden="true" />
-            Overview
+            <span className="hidden xs:inline">Overview</span>
           </TabsTrigger>
           <TabsTrigger 
             value="schedule"
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                       bg-background text-foreground/70 font-medium
+            className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 
+                       bg-background text-foreground/70 font-medium text-xs sm:text-sm
                        border-r border-border last:border-r-0
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
@@ -165,12 +167,12 @@ export const DebtSnowball = () => {
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Calendar className="h-4 w-4" aria-hidden="true" />
-            Payment Schedule
+            <span className="hidden xs:inline">Schedule</span>
           </TabsTrigger>
           <TabsTrigger 
             value="compare"
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                       bg-background text-foreground/70 font-medium
+            className="flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 
+                       bg-background text-foreground/70 font-medium text-xs sm:text-sm
                        border-r border-border last:border-r-0
                        hover:bg-muted hover:text-foreground
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
@@ -179,7 +181,7 @@ export const DebtSnowball = () => {
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
             <Scale className="h-4 w-4" aria-hidden="true" />
-            Compare Strategies
+            <span className="hidden xs:inline">Compare</span>
           </TabsTrigger>
         </TabsList>
 
@@ -193,25 +195,27 @@ export const DebtSnowball = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center">
-            <div className="flex border border-border rounded-lg overflow-hidden">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="flex flex-col xs:flex-row border border-border rounded-lg overflow-hidden w-full xs:w-auto">
               <Button
                 variant={strategy === "Snowball" ? "royal" : "ghost"}
-                className="rounded-none"
+                className="rounded-none text-xs sm:text-sm"
                 onClick={() => setStrategy("Snowball")}
               >
-                Snowball (Smallest First)
+                <span className="hidden sm:inline">Snowball (Smallest First)</span>
+                <span className="sm:hidden">Snowball</span>
               </Button>
               <Button
                 variant={strategy === "Avalanche" ? "royal" : "ghost"}
-                className="rounded-none"
+                className="rounded-none text-xs sm:text-sm"
                 onClick={() => setStrategy("Avalanche")}
               >
-                Avalanche (Highest APR First)
+                <span className="hidden sm:inline">Avalanche (Highest APR)</span>
+                <span className="sm:hidden">Avalanche</span>
               </Button>
             </div>
-            <div className="text-muted-foreground">
-              Extra Budget Available: <span className="font-bold text-accent-dark">{formatCurrency(leftover)}</span>
+            <div className="text-sm sm:text-base text-muted-foreground">
+              Extra Budget: <span className="font-bold text-accent-dark">{formatCurrency(leftover)}</span>
             </div>
           </div>
         </CardContent>
@@ -272,7 +276,7 @@ export const DebtSnowball = () => {
                     <Progress value={progressPercentage} className="h-3" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 xs:grid-cols-3 gap-3">
                     <div>
                       <label htmlFor={`balance-${debt.id}`} className="text-xs text-muted-foreground">Balance</label>
                       <Input
@@ -318,14 +322,16 @@ export const DebtSnowball = () => {
             })}
           </div>
 
-          <div className="flex gap-3">
-            <Button onClick={() => addDebt("card")} variant="royal">
+          <div className="flex flex-col xs:flex-row gap-3">
+            <Button onClick={() => addDebt("card")} variant="royal" className="flex-1 xs:flex-initial text-sm">
               <Plus className="h-4 w-4" aria-hidden="true" />
-              Add Credit Card
+              <span className="hidden sm:inline ml-2">Add Credit Card</span>
+              <span className="sm:hidden ml-2">Add Card</span>
             </Button>
-            <Button onClick={() => addDebt("loan")} variant="royal">
+            <Button onClick={() => addDebt("loan")} variant="royal" className="flex-1 xs:flex-initial text-sm">
               <Plus className="h-4 w-4" aria-hidden="true" />
-              Add Loan
+              <span className="hidden sm:inline ml-2">Add Loan</span>
+              <span className="sm:hidden ml-2">Add Loan</span>
             </Button>
           </div>
         </CardContent>

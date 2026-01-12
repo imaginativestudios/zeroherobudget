@@ -144,30 +144,32 @@ export const PaymentScheduleTable = ({ schedule, strategy }: PaymentScheduleTabl
             >
               <Card className={hasPaidOff ? "border-accent" : ""}>
                 <CollapsibleTrigger className="w-full">
-                  <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                  <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors p-3 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                         {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                          <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                          <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
                         )}
-                        <CardTitle className="text-base font-semibold">
-                          {monthData.label}
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-sm sm:text-base font-semibold text-left">
+                            {monthData.label}
+                          </CardTitle>
                           {hasPaidOff && (
-                            <span className="ml-3 text-sm font-normal text-accent-dark flex items-center gap-1.5">
-                              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                              {monthData.debtsPaidOffThisMonth.join(", ")} PAID OFF!
+                            <span className="text-xs sm:text-sm font-normal text-accent-dark flex items-center gap-1 mt-1">
+                              <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" aria-hidden="true" />
+                              <span className="truncate">{monthData.debtsPaidOffThisMonth.join(", ")} PAID OFF!</span>
                             </span>
                           )}
-                        </CardTitle>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-foreground">
+                      <div className="text-right flex-shrink-0 ml-6 sm:ml-0">
+                        <p className="text-xs sm:text-sm font-semibold text-foreground">
                           Total: {formatCurrency(monthData.totals.totalPayment)}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Remaining: {formatCurrency(monthData.totals.remainingBalance)}
+                          Left: {formatCurrency(monthData.totals.remainingBalance)}
                         </p>
                       </div>
                     </div>

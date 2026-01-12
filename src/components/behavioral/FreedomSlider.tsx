@@ -121,53 +121,48 @@ export function FreedomSlider({
         </div>
 
         {/* Before/After Comparison */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4">
           {/* Before Card */}
-          <div className="p-4 rounded-lg border border-border bg-muted/30 space-y-2 text-center">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="p-3 sm:p-4 rounded-lg border border-border bg-muted/30 space-y-1 sm:space-y-2 text-center">
+            <div className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Current Plan
             </div>
             <div className={cn(
-              "text-xl font-bold text-foreground transition-all duration-300",
+              "text-base sm:text-xl font-bold text-foreground transition-all duration-300",
               isAnimating && "scale-95 opacity-70"
             )}>
               📅 {impact.baselineFreedomDateFormatted}
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {impact.baselineMonths} months
             </div>
-            <div className="text-xs text-destructive">
+            <div className="text-[10px] sm:text-xs text-destructive">
               Interest: {formatCurrency(impact.baselineInterest)}
             </div>
           </div>
 
-          {/* Arrow */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden">
-            <Rocket className="h-6 w-6 text-primary animate-bounce" />
-          </div>
-
           {/* After Card */}
           <div className={cn(
-            "p-4 rounded-lg border-2 space-y-2 text-center transition-all duration-300",
+            "p-3 sm:p-4 rounded-lg border-2 space-y-1 sm:space-y-2 text-center transition-all duration-300",
             extraAmount > 0 
               ? "border-primary bg-primary/10 shadow-lg" 
               : "border-border bg-background"
           )}>
-            <div className="text-xs font-medium text-primary uppercase tracking-wider flex items-center justify-center gap-1">
+            <div className="text-[10px] sm:text-xs font-medium text-primary uppercase tracking-wider flex items-center justify-center gap-1">
               {extraAmount > 0 && <Rocket className="h-3 w-3" />}
               With Extra Payment
             </div>
             <div className={cn(
-              "text-xl font-bold transition-all duration-300",
+              "text-base sm:text-xl font-bold transition-all duration-300",
               extraAmount > 0 ? "text-primary" : "text-foreground",
               isAnimating && "scale-110"
             )}>
               📅 {impact.newFreedomDateFormatted}
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {impact.newMonths} months
             </div>
-            <div className="text-xs text-primary">
+            <div className="text-[10px] sm:text-xs text-primary">
               Interest: {formatCurrency(impact.newInterest)}
             </div>
           </div>
@@ -176,31 +171,31 @@ export function FreedomSlider({
         {/* Savings Summary */}
         {extraAmount > 0 && impact.monthsSaved > 0 && (
           <div className={cn(
-            "p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20",
+            "p-3 sm:p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20",
             "animate-in fade-in-50 slide-in-from-bottom-2 duration-300"
           )}>
-            <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
               <div>
-                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                <div className="flex items-center justify-center gap-1 text-[10px] sm:text-xs text-muted-foreground mb-1">
                   <Clock className="h-3 w-3" />
                   Time Saved
                 </div>
-                <div className="text-2xl font-bold text-primary">
+                <div className="text-xl sm:text-2xl font-bold text-primary">
                   {impact.monthsSaved}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-[10px] sm:text-xs text-muted-foreground">
                   month{impact.monthsSaved !== 1 ? 's' : ''}
                 </div>
               </div>
               <div>
-                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                <div className="flex items-center justify-center gap-1 text-[10px] sm:text-xs text-muted-foreground mb-1">
                   <DollarSign className="h-3 w-3" />
                   Interest Saved
                 </div>
-                <div className="text-2xl font-bold text-accent-dark">
+                <div className="text-xl sm:text-2xl font-bold text-accent-dark">
                   {formatCurrency(impact.totalInterestSaved)}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-[10px] sm:text-xs text-muted-foreground">
                   {humanTime.displayString}
                 </div>
               </div>

@@ -19,10 +19,12 @@ import { SurplusPowerCard } from "@/components/behavioral/SurplusPowerCard";
 import { StreakTrackerWidget } from "@/components/behavioral/StreakTrackerWidget";
 import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
 import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
-import { HeroMoatCard } from "@/components/behavioral/HeroMoatCard";
+import { MoatBuilder } from "@/components/defense/MoatBuilder";
 import { DebtVictoryModal } from "@/components/behavioral/DebtVictoryModal";
 import { FreedomTimelineWidget } from "@/components/behavioral/FreedomTimelineWidget";
 import { DebtItem } from '@/lib/debtCalculations';
+import { calculateMoatHealth } from '@/lib/moatCalculations';
+import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -59,13 +61,22 @@ export const Dashboard = () => {
 
   // Secondary data (transactions for charts) loads after
   const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
-  const { profile } = useProfile();
+  const { profile: userProfile } = useProfile();
+  
+  // Hero Profile for moat calculations
+  const { profile: heroProfile } = useHeroProfile();
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
   
   // Secondary data loading state (for charts)
   const isSecondaryLoading = isLoadingTransactions;
+  
+  // Calculate Moat health for Primary Quest logic
+  const moatHealth = useMemo(() => 
+    calculateMoatHealth(heroProfile.moat_current, heroProfile.moat_target),
+    [heroProfile.moat_current, heroProfile.moat_target]
+  );
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
@@ -117,7 +128,7 @@ export const Dashboard = () => {
   });
 
   // Get greeting name
-  const greetingName = profile?.first_name || profile?.display_name || 'there';
+  const greetingName = userProfile?.first_name || userProfile?.display_name || 'there';
 
   // Debt Victory Observer - detect newly paid off debts
   useEffect(() => {
@@ -279,6 +290,20 @@ export const Dashboard = () => {
       {/* Hero Tips Feed (Behavioral) */}
       <HeroTipsFeed />
 
+      {/* PRIMARY QUEST Section - Moat Building (when incomplete) */}
+      {moatHealth.isPrimaryQuest && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border"></div>
+            <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
+              ⚔️ PRIMARY QUEST
+            </span>
+            <div className="h-px flex-1 bg-border"></div>
+          </div>
+          <MoatBuilder variant="full" showPrimaryQuestBadge />
+        </div>
+      )}
+
       {/* Behavioral Insights Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
@@ -286,14 +311,22 @@ export const Dashboard = () => {
           <h2 className="text-lg font-semibold text-muted-foreground">Behavioral Insights</h2>
           <div className="h-px flex-1 bg-border"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+        <div className={cn(
+          "grid gap-4 items-stretch",
+          moatHealth.isPrimaryQuest 
+            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" 
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        )}>
           <SurplusPowerCard />
           <StreakTrackerWidget />
           <ShadowBudgetSummary />
-          <HeroMoatCard />
+          {/* Only show compact MoatBuilder in grid when Moat is secure */}
+          {!moatHealth.isPrimaryQuest && (
+            <MoatBuilder variant="card" />
+          )}
         </div>
         
-        {/* Freedom Timeline - Full Width for Prominence */}
+        {/* Freedom Timeline - Full Width for Prominence (especially when Moat is secure) */}
         <FreedomTimelineWidget 
           debts={debtItems}
           extraBudget={leftover}

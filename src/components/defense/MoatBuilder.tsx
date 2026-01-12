@@ -1,0 +1,350 @@
+/**
+ * Moat Builder Component
+ * 
+ * Enhanced emergency fund visualization with:
+ * - Animated water reservoir using Framer Motion
+ * - Evolving castle icons based on progress
+ * - Primary Quest highlighting when moat < $1,000
+ */
+
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Home, 
+  Building, 
+  Castle, 
+  Shield, 
+  Plus, 
+  Check, 
+  Droplets,
+  Sparkles,
+  ChevronRight
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from '@/components/ui/dialog';
+import { useHeroProfile } from '@/hooks/useHeroProfile';
+import { calculateMoatHealth, type CastleLevel } from '@/lib/moatCalculations';
+import { cn } from '@/lib/utils';
+import confetti from 'canvas-confetti';
+
+interface MoatBuilderProps {
+  variant?: 'card' | 'full';
+  showPrimaryQuestBadge?: boolean;
+}
+
+export function MoatBuilder({ 
+  variant = 'card', 
+  showPrimaryQuestBadge = false 
+}: MoatBuilderProps) {
+  const { 
+    profile,
+    addToMoat,
+    isMoatComplete,
+  } = useHeroProfile();
+  
+  const [addAmount, setAddAmount] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  const moatHealth = calculateMoatHealth(profile.moat_current, profile.moat_target);
+
+  const handleAddToMoat = () => {
+    const amount = parseFloat(addAmount);
+    if (!isNaN(amount) && amount > 0) {
+      const wasComplete = isMoatComplete;
+      addToMoat(amount);
+      setAddAmount('');
+      setDialogOpen(false);
+      
+      // Trigger celebration if just completed
+      if (!wasComplete && profile.moat_current + amount >= profile.moat_target) {
+        triggerCelebration();
+      }
+    }
+  };
+
+  const triggerCelebration = () => {
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#0D7377', '#FF6B35', '#14919B', '#FFD700', '#10B981'],
+    });
+  };
+
+  // Get castle icon based on level
+  const getCastleIcon = (level: CastleLevel) => {
+    const iconClass = cn(
+      "transition-all duration-500",
+      variant === 'full' ? "h-16 w-16" : "h-12 w-12"
+    );
+    
+    switch (level) {
+      case 1: // 0-25% - Wood Cabin (Vulnerable)
+        return <Home className={cn(iconClass, "text-muted-foreground")} />;
+      case 2: // 26-50% - Small Tower
+        return <Building className={cn(iconClass, "text-primary/60")} />;
+      case 3: // 51-75% - Castle
+        return <Castle className={cn(iconClass, "text-primary")} />;
+      case 4: // 76-100% - Stone Fortress
+        return (
+          <div className="relative">
+            <Castle className={cn(iconClass, moatHealth.status === 'secure' ? "text-success" : "text-primary")} />
+            <Shield className={cn(
+              "absolute -bottom-1 -right-1",
+              variant === 'full' ? "h-6 w-6" : "h-5 w-5",
+              moatHealth.status === 'secure' ? "text-success" : "text-primary"
+            )} />
+          </div>
+        );
+    }
+  };
+
+  return (
+    <Card className={cn(
+      "transition-all duration-500 overflow-hidden",
+      moatHealth.status === 'secure' && "ring-2 ring-success/50 bg-gradient-to-br from-success/5 to-transparent",
+      showPrimaryQuestBadge && "ring-2 ring-warning/50",
+      variant === 'full' && "col-span-full"
+    )}>
+      <CardHeader className={cn("pb-2", variant === 'full' && "pb-4")}>
+        <CardTitle className={cn(
+          "font-medium flex items-center justify-between",
+          variant === 'full' ? "text-lg" : "text-sm"
+        )}>
+          <span className="flex items-center gap-2">
+            <Castle className={cn(
+              "text-primary",
+              variant === 'full' ? "h-5 w-5" : "h-4 w-4"
+            )} />
+            Fortify Your Moat
+          </span>
+          <span className={cn(
+            "px-2 py-0.5 rounded-full flex items-center gap-1",
+            moatHealth.status === 'secure' 
+              ? "text-xs bg-success/10 text-success" 
+              : "text-xs bg-muted text-muted-foreground"
+          )}>
+            {moatHealth.status === 'secure' ? (
+              <>
+                <Shield className="h-3 w-3" />
+                {moatHealth.statusLabel}
+              </>
+            ) : (
+              <>
+                ${profile.moat_current.toLocaleString()} / ${profile.moat_target.toLocaleString()}
+              </>
+            )}
+          </span>
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className={cn("space-y-4", variant === 'full' && "space-y-6")}>
+        {/* Castle Evolution and Water Reservoir */}
+        <div className={cn(
+          "flex gap-4",
+          variant === 'full' ? "flex-row items-center" : "flex-col items-center"
+        )}>
+          {/* Evolving Castle Icon */}
+          <div className="flex-shrink-0">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={moatHealth.castleLevel}
+                initial={{ scale: 0.8, opacity: 0, y: 10 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: -10 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative"
+              >
+                {getCastleIcon(moatHealth.castleLevel)}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          
+          {/* Water Reservoir Visualization */}
+          <div className={cn(
+            "relative bg-muted/50 rounded-lg border-2 border-muted overflow-hidden",
+            variant === 'full' ? "flex-1 h-24" : "w-full h-20"
+          )}>
+            {/* Water Level with Animation */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 bg-primary/80"
+              initial={{ height: 0 }}
+              animate={{ height: `${moatHealth.percentage}%` }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 50, 
+                damping: 15,
+                duration: 0.8 
+              }}
+            >
+              {/* Wave Effect */}
+              <svg 
+                className="absolute top-0 left-0 right-0 h-3 -translate-y-2 text-primary/80" 
+                viewBox="0 0 100 10" 
+                preserveAspectRatio="none"
+              >
+                <motion.path
+                  d="M0,5 Q12.5,0 25,5 T50,5 T75,5 T100,5 V10 H0 Z"
+                  fill="currentColor"
+                  animate={{ x: [0, -25, 0] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                />
+              </svg>
+              
+              {/* Ripple bubbles effect */}
+              {moatHealth.percentage > 10 && (
+                <motion.div 
+                  className="absolute inset-0 flex items-center justify-center"
+                  animate={{ opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                >
+                  <Droplets className="h-6 w-6 text-white/40" />
+                </motion.div>
+              )}
+            </motion.div>
+            
+            {/* Percentage Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.span 
+                className={cn(
+                  "font-bold",
+                  variant === 'full' ? "text-2xl" : "text-xl",
+                  moatHealth.percentage > 50 ? "text-white" : "text-foreground"
+                )}
+                key={moatHealth.percentage}
+                initial={{ scale: 1.2 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                {moatHealth.percentage.toFixed(0)}%
+              </motion.span>
+            </div>
+            
+            {/* Milestone Markers */}
+            <div className="absolute inset-0 flex">
+              {[25, 50, 75].map((milestone) => (
+                <div
+                  key={milestone}
+                  className="absolute h-full border-l border-dashed border-muted-foreground/20"
+                  style={{ left: `${milestone}%` }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Stats Row */}
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <Droplets className={cn(
+              "h-4 w-4",
+              moatHealth.status === 'secure' ? "text-success" : "text-primary"
+            )} />
+            <span className={cn(
+              "font-semibold",
+              moatHealth.status === 'secure' ? "text-success" : "text-foreground"
+            )}>
+              {moatHealth.statusLabel}
+            </span>
+          </div>
+          {moatHealth.status !== 'secure' && (
+            <span className="text-muted-foreground">
+              ${(profile.moat_target - profile.moat_current).toLocaleString()} to go
+            </span>
+          )}
+        </div>
+        
+        {/* Message */}
+        <p className={cn(
+          "text-muted-foreground leading-relaxed",
+          variant === 'full' ? "text-base" : "text-sm"
+        )}>
+          {moatHealth.message}
+        </p>
+        
+        {/* Actions */}
+        <div className={cn(
+          "flex gap-2",
+          variant === 'full' ? "flex-row" : "flex-col"
+        )}>
+          {moatHealth.status === 'secure' ? (
+            <div className="flex items-center justify-center gap-2 py-2 text-success w-full">
+              <Sparkles className="h-4 w-4" />
+              <span className="font-medium text-sm">Fortress Secured!</span>
+              <Sparkles className="h-4 w-4" />
+            </div>
+          ) : (
+            <>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="default" size="sm" className="flex-1">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add to Moat
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Castle className="h-5 w-5 text-primary" />
+                      Fortify Your Moat
+                    </DialogTitle>
+                    <DialogDescription>
+                      How much have you saved toward your emergency fund?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">$</span>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        value={addAmount}
+                        onChange={(e) => setAddAmount(e.target.value)}
+                        min="0"
+                        step="1"
+                        className="text-lg"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Current: ${profile.moat_current.toLocaleString()} • 
+                      Remaining: ${(profile.moat_target - profile.moat_current).toLocaleString()}
+                    </p>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddToMoat} disabled={!addAmount || parseFloat(addAmount) <= 0}>
+                      <Check className="h-4 w-4 mr-2" />
+                      Add ${addAmount || '0'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              
+              {variant === 'full' && (
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/debts">
+                    View Battle Plan
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

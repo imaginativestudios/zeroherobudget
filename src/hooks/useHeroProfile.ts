@@ -18,6 +18,14 @@ export interface HeroProfile {
   activity_log: string[]; // Array of ISO dates for app opens (last 7 days)
 }
 
+// Separate Savings Vault storage for mental separation of emergency fund
+export interface SavingsVault {
+  moat_balance: number;
+  moat_target: number;
+  last_deposit_date: string | null;
+  deposit_history: Array<{ amount: number; date: string }>;
+}
+
 const DEFAULT_HERO_PROFILE: HeroProfile = {
   onboarding_completed: false,
   moat_target: 1000,
@@ -26,15 +34,23 @@ const DEFAULT_HERO_PROFILE: HeroProfile = {
   activity_log: [],
 };
 
+const DEFAULT_SAVINGS_VAULT: SavingsVault = {
+  moat_balance: 0,
+  moat_target: 1000,
+  last_deposit_date: null,
+  deposit_history: [],
+};
+
 export interface UseHeroProfileResult {
   profile: HeroProfile;
+  savingsVault: SavingsVault;
   isLoading: boolean;
   
   // Strategy from useStrategy hook
   currentStrategy: 'Snowball' | 'Avalanche';
   setStrategy: (strategy: 'Snowball' | 'Avalanche') => void;
   
-  // Moat operations
+  // Moat operations (uses savings vault for mental separation)
   moatProgress: number;
   moatRemaining: number;
   isMoatComplete: boolean;
@@ -54,6 +70,12 @@ export function useHeroProfile(): UseHeroProfileResult {
   const [profile, setProfile] = useUserLocalStorage<HeroProfile>(
     'bdt_hero_profile',
     DEFAULT_HERO_PROFILE
+  );
+  
+  // Separate savings vault storage for mental separation of emergency fund
+  const [savingsVault, setSavingsVault] = useUserLocalStorage<SavingsVault>(
+    'bdt_savings_vault',
+    DEFAULT_SAVINGS_VAULT
   );
   
   const [strategy, setStrategy] = useStrategy();
@@ -98,39 +120,72 @@ export function useHeroProfile(): UseHeroProfileResult {
     });
   }, [profile, setProfile, pruneActivityLog]);
 
-  // Moat calculations
+  // Moat calculations - use savingsVault for mental separation
   const moatProgress = useMemo(() => {
-    if (profile.moat_target <= 0) return 100;
-    return Math.min(100, (profile.moat_current / profile.moat_target) * 100);
-  }, [profile.moat_current, profile.moat_target]);
+    const target = savingsVault.moat_target || profile.moat_target;
+    const current = savingsVault.moat_balance || profile.moat_current;
+    if (target <= 0) return 100;
+    return Math.min(100, (current / target) * 100);
+  }, [savingsVault.moat_balance, savingsVault.moat_target, profile.moat_current, profile.moat_target]);
 
   const moatRemaining = useMemo(() => {
-    return Math.max(0, profile.moat_target - profile.moat_current);
-  }, [profile.moat_current, profile.moat_target]);
+    const target = savingsVault.moat_target || profile.moat_target;
+    const current = savingsVault.moat_balance || profile.moat_current;
+    return Math.max(0, target - current);
+  }, [savingsVault.moat_balance, savingsVault.moat_target, profile.moat_current, profile.moat_target]);
 
-  const isMoatComplete = profile.moat_current >= profile.moat_target;
+  const isMoatComplete = (savingsVault.moat_balance || profile.moat_current) >= (savingsVault.moat_target || profile.moat_target);
 
-  // Moat operations
+  // Moat operations - sync to both storages for backward compatibility
   const addToMoat = useCallback((amount: number) => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const newBalance = (savingsVault.moat_balance || profile.moat_current) + amount;
+    
+    // Update savings vault (primary)
+    setSavingsVault({
+      ...savingsVault,
+      moat_balance: newBalance,
+      last_deposit_date: todayStr,
+      deposit_history: [
+        ...savingsVault.deposit_history,
+        { amount, date: todayStr }
+      ].slice(-50), // Keep last 50 deposits
+    });
+    
+    // Sync to hero profile for backward compatibility
     setProfile({
       ...profile,
-      moat_current: profile.moat_current + amount,
+      moat_current: newBalance,
     });
-  }, [profile, setProfile]);
+  }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   const setMoatCurrent = useCallback((amount: number) => {
+    const newAmount = Math.max(0, amount);
+    
+    setSavingsVault({
+      ...savingsVault,
+      moat_balance: newAmount,
+    });
+    
     setProfile({
       ...profile,
-      moat_current: Math.max(0, amount),
+      moat_current: newAmount,
     });
-  }, [profile, setProfile]);
+  }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   const setMoatTarget = useCallback((amount: number) => {
+    const newTarget = Math.max(0, amount);
+    
+    setSavingsVault({
+      ...savingsVault,
+      moat_target: newTarget,
+    });
+    
     setProfile({
       ...profile,
-      moat_target: Math.max(0, amount),
+      moat_target: newTarget,
     });
-  }, [profile, setProfile]);
+  }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   // Onboarding
   const completeOnboarding = useCallback(() => {
@@ -142,6 +197,7 @@ export function useHeroProfile(): UseHeroProfileResult {
 
   return {
     profile,
+    savingsVault,
     isLoading: false,
     currentStrategy: strategy as 'Snowball' | 'Avalanche',
     setStrategy,

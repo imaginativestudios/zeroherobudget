@@ -36,6 +36,7 @@ import {
 import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { calculateMoatHealth, MOAT_MILESTONES, type CastleLevel } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
+import { FortressLevelBadge } from './FortressLevelBadge';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
@@ -185,23 +186,11 @@ export function MoatBuilder({
             )} />
             Fortify Your Moat
           </span>
-          <span className={cn(
-            "px-2 py-0.5 rounded-full flex items-center gap-1",
-            moatHealth.status === 'secure' 
-              ? "text-xs bg-success/10 text-success" 
-              : "text-xs bg-muted text-muted-foreground"
-          )}>
-            {moatHealth.status === 'secure' ? (
-              <>
-                <Shield className="h-3 w-3" />
-                {moatHealth.statusLabel}
-              </>
-            ) : (
-              <>
-                ${profile.moat_current.toLocaleString()} / ${profile.moat_target.toLocaleString()}
-              </>
-            )}
-          </span>
+          <FortressLevelBadge 
+            level={moatHealth.castleLevel}
+            isSecure={moatHealth.status === 'secure'}
+            size="sm"
+          />
         </CardTitle>
       </CardHeader>
       

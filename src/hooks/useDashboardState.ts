@@ -1,0 +1,127 @@
+/**
+ * Dashboard State Hook - Conditional Rendering Engine
+ * 
+ * Implements progressive disclosure by checking user data milestones
+ * to determine which UI elements should be visible.
+ */
+
+import { useMemo } from 'react';
+import { useLocalDebts, Debt } from './useLocalDebts';
+import { useLocalTransactions } from './useLocalTransactions';
+import { useHeroProfile } from './useHeroProfile';
+import { useStrategy } from './useLocalSettings';
+import { differenceInHours } from 'date-fns';
+
+export interface DashboardState {
+  // Empty states
+  isNewUser: boolean;
+  hasNoDebts: boolean;
+  shouldShowInitializeMission: boolean;
+  
+  // Progressive disclosure flags
+  canShowShadowBudget: boolean;        // >= 3 transactions
+  canShowConsistencyXP: boolean;       // Active >= 48 hours
+  canShowBoss: boolean;                // Has debt with balance > 0
+  canShowMoat: boolean;                // Past onboarding
+  
+  // Intel Feed unlocks (for staggered animations)
+  unlockedCards: Array<'surplus' | 'consistency' | 'shadow' | 'freedom'>;
+  
+  // Current target debt ("The Boss")
+  currentBoss: Debt | null;
+  
+  // Strategy
+  strategy: 'Snowball' | 'Avalanche';
+  
+  // Timestamp tracking
+  accountAgeHours: number;
+  
+  // Loading state
+  isLoading: boolean;
+  
+  // Stats for display
+  transactionCount: number;
+  debtCount: number;
+  activeDebtCount: number;
+}
+
+export function useDashboardState(): DashboardState {
+  const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
+  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
+  const { profile } = useHeroProfile();
+  const [strategy] = useStrategy();
+
+  const dashboardState = useMemo(() => {
+    // Calculate account age in hours using activity log's first entry
+    const firstActivity = profile.activity_log?.[0];
+    const accountAgeHours = firstActivity
+      ? differenceInHours(new Date(), new Date(firstActivity))
+      : 0;
+
+    // Count active debts (balance > 0)
+    const activeDebts = debts.filter(d => d.balance > 0);
+    const activeDebtCount = activeDebts.length;
+
+    // Get current boss based on strategy
+    let currentBoss: Debt | null = null;
+    if (activeDebts.length > 0) {
+      if (strategy === 'Avalanche') {
+        // Highest interest rate first
+        currentBoss = activeDebts.reduce((highest, debt) => 
+          debt.interest_rate > highest.interest_rate ? debt : highest
+        );
+      } else {
+        // Snowball: Lowest balance first
+        currentBoss = activeDebts.reduce((lowest, debt) => 
+          debt.balance < lowest.balance ? debt : lowest
+        );
+      }
+    }
+
+    // Progressive disclosure conditions
+    const hasNoDebts = debts.length === 0;
+    const isNewUser = hasNoDebts && transactions.length === 0;
+    const shouldShowInitializeMission = hasNoDebts && profile.onboarding_completed;
+    
+    const canShowShadowBudget = transactions.length >= 3;
+    const canShowConsistencyXP = accountAgeHours >= 48;
+    const canShowBoss = activeDebtCount > 0;
+    const canShowMoat = profile.onboarding_completed || !hasNoDebts;
+
+    // Build unlocked cards array for staggered animation
+    const unlockedCards: DashboardState['unlockedCards'] = ['surplus'];
+    
+    if (canShowConsistencyXP) {
+      unlockedCards.push('consistency');
+    }
+    
+    if (canShowShadowBudget) {
+      unlockedCards.push('shadow');
+    }
+    
+    // Freedom timeline always shows if there are debts
+    if (canShowBoss) {
+      unlockedCards.push('freedom');
+    }
+
+    return {
+      isNewUser,
+      hasNoDebts,
+      shouldShowInitializeMission,
+      canShowShadowBudget,
+      canShowConsistencyXP,
+      canShowBoss,
+      canShowMoat,
+      unlockedCards,
+      currentBoss,
+      strategy: strategy as 'Snowball' | 'Avalanche',
+      accountAgeHours,
+      isLoading: isLoadingDebts || isLoadingTransactions,
+      transactionCount: transactions.length,
+      debtCount: debts.length,
+      activeDebtCount,
+    };
+  }, [debts, transactions, profile, strategy, isLoadingDebts, isLoadingTransactions]);
+
+  return dashboardState;
+}

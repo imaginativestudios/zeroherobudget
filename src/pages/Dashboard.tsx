@@ -1,3 +1,10 @@
+/**
+ * Dynamic Dashboard with Progressive Disclosure
+ * 
+ * Uses useDashboardState hook for conditional rendering based on user data milestones.
+ * Layout: 3-zone system with Moat (Defense), Boss (Offense), and Intel Feed.
+ */
+
 import { useMemo, useState, useEffect, useRef } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,43 +18,45 @@ import { ChartInsight } from "@/components/ChartInsight";
 import { OptimizeStrategyDialog } from "@/components/OptimizeStrategyDialog";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { AchievementCard } from "@/components/AchievementCard";
-import { TipOfTheDay } from "@/components/TipOfTheDay";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
-import { PrivacyBadge } from "@/components/PrivacyBadge";
 import { DashboardEmptyState } from "@/components/DashboardEmptyState";
-import { SurplusPowerCard } from "@/components/behavioral/SurplusPowerCard";
-import { StreakTrackerWidget } from "@/components/behavioral/StreakTrackerWidget";
-import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
-import { ShadowBudgetSummary } from "@/components/behavioral/ShadowBudgetSummary";
 import { MoatBuilder } from "@/components/defense/MoatBuilder";
 import { RegroupingBanner } from "@/components/defense/RegroupingBanner";
 import { DebtVictoryModal } from "@/components/behavioral/DebtVictoryModal";
-import { FreedomTimelineWidget } from "@/components/behavioral/FreedomTimelineWidget";
+import { HeroTipsFeed } from "@/components/behavioral/HeroTipsFeed";
 import { DebtItem } from '@/lib/debtCalculations';
 import { calculateMoatHealth } from '@/lib/moatCalculations';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { useMoatStatus } from '@/hooks/useMoatStatus';
+import { useDashboardState } from '@/hooks/useDashboardState';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { useIncome, useStrategy, useExpenses, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useProfile } from "@/hooks/useProfile";
 import { useAchievements } from "@/hooks/useAchievements";
-import { DEFAULT_EXPENSES, SAMPLE_DEBTS, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
+import { formatCurrency } from "@/lib/constants";
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
 import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 
+// New dashboard components
+import { InitializeMissionCard } from "@/components/dashboard/InitializeMissionCard";
+import { BossCard } from "@/components/dashboard/BossCard";
+import { IntelFeed } from "@/components/dashboard/IntelFeed";
+
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [income] = useIncome();
   const [expenses, , isLoadingExpenses] = useExpenses();
+  
+  // Use the new dashboard state hook for progressive disclosure
+  const dashboardState = useDashboardState();
   
   // Critical data loads first
   const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
@@ -235,27 +244,6 @@ export const Dashboard = () => {
     })), [spendingByCategory, totalExpenses]
   );
 
-  const customLabel = (entry: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = 110;
-    const x = 150 + radius * Math.cos(-entry.midAngle * RADIAN);
-    const y = 150 + radius * Math.sin(-entry.midAngle * RADIAN);
-    
-    return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="hsl(var(--foreground))" 
-        textAnchor={x > 150 ? 'start' : 'end'} 
-        dominantBaseline="central"
-        fontSize="12"
-        fontWeight="500"
-      >
-        {entry.name}
-      </text>
-    );
-  };
-
   // Show empty state for new users
   if (!isCriticalLoading && !isSecondaryLoading && isNewUser) {
     return (
@@ -263,6 +251,11 @@ export const Dashboard = () => {
         <DashboardEmptyState greetingName={greetingName} />
       </div>
     );
+  }
+
+  // Show Initialize Mission if user has completed onboarding but has no debts
+  if (!dashboardState.isLoading && dashboardState.shouldShowInitializeMission) {
+    return <InitializeMissionCard />;
   }
 
   return (
@@ -303,49 +296,62 @@ export const Dashboard = () => {
       {/* Hero Tips Feed (Behavioral) */}
       <HeroTipsFeed />
 
-      {/* PRIMARY QUEST Section - Moat Building (when incomplete) */}
-      {moatHealth.isPrimaryQuest && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-border"></div>
-            <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
-              ⚔️ PRIMARY QUEST
-            </span>
-            <div className="h-px flex-1 bg-border"></div>
-          </div>
-          <MoatBuilder variant="full" showPrimaryQuestBadge />
+      {/* ========================================= */}
+      {/* 3-ZONE LAYOUT: Defense + Offense         */}
+      {/* ========================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* THE MOAT (Defense) - Left Column */}
+        <div className="lg:col-span-1 space-y-4">
+          {moatHealth.isPrimaryQuest && (
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
+                ⚔️ PRIMARY QUEST
+              </span>
+            </div>
+          )}
+          <MoatBuilder 
+            variant="full" 
+            showPrimaryQuestBadge={moatHealth.isPrimaryQuest} 
+          />
         </div>
-      )}
 
-      {/* Behavioral Insights Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border"></div>
-          <h2 className="text-lg font-semibold text-muted-foreground">Behavioral Insights</h2>
-          <div className="h-px flex-1 bg-border"></div>
-        </div>
-        <div className={cn(
-          "grid gap-4 items-stretch",
-          moatHealth.isPrimaryQuest 
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" 
-            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-        )}>
-          <SurplusPowerCard />
-          <StreakTrackerWidget />
-          <ShadowBudgetSummary />
-          {/* Only show compact MoatBuilder in grid when Moat is secure */}
-          {!moatHealth.isPrimaryQuest && (
-            <MoatBuilder variant="card" />
+        {/* THE BOSS (Offense) - Right Column */}
+        <div className="lg:col-span-2">
+          {dashboardState.currentBoss ? (
+            <BossCard
+              debt={dashboardState.currentBoss}
+              strategy={dashboardState.strategy}
+              extraBudget={leftover}
+              allDebts={debts}
+            />
+          ) : (
+            <Card className="h-full flex items-center justify-center p-8">
+              <div className="text-center space-y-4">
+                <Target className="h-12 w-12 text-muted-foreground mx-auto" />
+                <h3 className="text-lg font-semibold">All Debts Vanquished!</h3>
+                <p className="text-muted-foreground">
+                  Congratulations! You have no active debts. Focus on building your Moat.
+                </p>
+                <Button asChild variant="outline">
+                  <Link to="/debts">View Battle History</Link>
+                </Button>
+              </div>
+            </Card>
           )}
         </div>
-        
-        {/* Freedom Timeline - Full Width for Prominence (especially when Moat is secure) */}
-        <FreedomTimelineWidget 
-          debts={debtItems}
-          extraBudget={leftover}
-          strategy={strategy as 'Snowball' | 'Avalanche'}
-        />
       </div>
+
+      {/* ========================================= */}
+      {/* INTEL FEED - Progressive Behavioral Cards */}
+      {/* ========================================= */}
+      <IntelFeed
+        canShowConsistencyXP={dashboardState.canShowConsistencyXP}
+        canShowShadowBudget={dashboardState.canShowShadowBudget}
+        canShowFreedom={dashboardState.canShowBoss}
+        debts={debtItems}
+        extraBudget={leftover}
+        strategy={dashboardState.strategy}
+      />
 
       {/* Debt Victory Modal */}
       <DebtVictoryModal
@@ -681,7 +687,7 @@ export const Dashboard = () => {
           )}
           
           {leftover > 0 && (
-            <div className="mt-6 p-4 bg-gradient-subtle rounded-lg border">
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h4 className="font-semibold text-foreground">Extra Payment Strategy</h4>
@@ -690,7 +696,7 @@ export const Dashboard = () => {
                   </p>
                 </div>
                 <Button 
-                  variant="royal" 
+                  variant="default" 
                   className="w-full sm:w-auto"
                   onClick={() => setOptimizeDialogOpen(true)}
                 >
@@ -718,7 +724,6 @@ export const Dashboard = () => {
         currentStrategy={strategy}
         onStrategyUpdate={(newStrategy, extraPayment) => {
           setStrategy(newStrategy);
-          // Could also update leftover/extra payment if needed
         }}
       />
     </div>

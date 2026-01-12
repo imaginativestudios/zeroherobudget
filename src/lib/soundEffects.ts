@@ -83,6 +83,17 @@ export const soundEffects = {
     setTimeout(() => playTone(784, 0.25, 0.06), 200);
     setTimeout(() => playTone(1047, 0.3, 0.06), 300);
   },
+
+  /**
+   * Hero Choice sound - powerful decision confirmation
+   */
+  heroChoice: () => {
+    // Rising heroic fanfare
+    playTone(440, 0.12, 0.06);
+    setTimeout(() => playTone(554, 0.12, 0.06), 80);
+    setTimeout(() => playTone(659, 0.12, 0.06), 160);
+    setTimeout(() => playTone(880, 0.2, 0.07), 240);
+  },
 };
 
 export const playAchievementUnlockSound = (level: 'basic' | 'milestone' | 'epic' = 'basic') => {

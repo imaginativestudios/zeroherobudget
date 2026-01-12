@@ -48,20 +48,20 @@ export const Reports = () => {
     }).sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance)).slice(0, 3); // Show top 3 variances
   }, [expenses, monthlyActuals]);
 
-  // Generate overall insights
+  // Generate overall insights with heroic vocabulary
   const reportInsight = useMemo(() => {
     const totalPlanned = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
     const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
     const totalVariance = totalActual - totalPlanned;
     const variancePercentage = totalPlanned > 0 ? totalVariance / totalPlanned * 100 : 0;
     if (Math.abs(variancePercentage) < 5) {
-      return "Excellent budget adherence! Your actual spending closely matches your plan.";
+      return "Excellent tactical precision! Your deployment closely matches your war map.";
     } else if (variancePercentage > 20) {
-      return `Spending is ${variancePercentage.toFixed(1)}% over budget. Review high-variance categories.`;
+      return `Deployment is ${variancePercentage.toFixed(1)}% in Tactical Overstretch. Review high-variance categories.`;
     } else if (variancePercentage < -20) {
-      return `Great job! Spending is ${Math.abs(variancePercentage).toFixed(1)}% under budget.`;
+      return `Heroic restraint! Deployment is ${Math.abs(variancePercentage).toFixed(1)}% in Strategic Surplus.`;
     } else {
-      return `Spending is ${variancePercentage > 0 ? 'over' : 'under'} budget by ${Math.abs(variancePercentage).toFixed(1)}%.`;
+      return `Deployment is ${variancePercentage > 0 ? 'in Tactical Overstretch' : 'in Strategic Surplus'} by ${Math.abs(variancePercentage).toFixed(1)}%.`;
     }
   }, [expenses, monthlyActuals]);
   const hasTransactionData = useMemo(() => Object.values(monthlyActuals).some(amount => amount > 0), [monthlyActuals]);

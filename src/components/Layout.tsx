@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Sword, Map, Scroll, BarChart3 } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -11,21 +11,23 @@ import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useKeyboardShortcuts, ShortcutConfig } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
+import { LocalFirstBadge } from "./LocalFirstBadge";
 import { toast } from "@/hooks/use-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+// Heroic navigation names for the Hero's Journey theme
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Budgets", href: "/budgets", icon: DollarSign },
-  { name: "Debts", href: "/debts", icon: Target },
-  { name: "Transactions", href: "/transactions", icon: Receipt },
+  { name: "War Map", href: "/budgets", icon: Map },
+  { name: "Battle Plan", href: "/debts", icon: Sword },
+  { name: "Quest Log", href: "/transactions", icon: Scroll },
   { name: "Data Management", href: "/data", icon: Database },
-  { name: "Achievements", href: "/achievements", icon: Trophy },
-  { name: "Financial Tips", href: "/learn", icon: Lightbulb },
-  { name: "Reports", href: "/reports", icon: TrendingDown },
+  { name: "Victories", href: "/achievements", icon: Trophy },
+  { name: "Hero's Wisdom", href: "/learn", icon: Lightbulb },
+  { name: "Intel", href: "/reports", icon: BarChart3 },
 ];
 
 export const Layout = ({ children }: LayoutProps) => {
@@ -313,14 +315,26 @@ export const Layout = ({ children }: LayoutProps) => {
       <main 
         id="main-content"
         className={cn(
-          "transition-all duration-300 ease-in-out",
+          "transition-all duration-300 ease-in-out flex flex-col min-h-screen",
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
           "p-2 sm:p-4 lg:p-8"
         )}
         role="main"
       >
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        
+        {/* Footer with Local-First Badge */}
+        <footer className="mt-auto pt-8 pb-4 text-center border-t border-border/50">
+          <div className="flex flex-col items-center gap-3">
+            <LocalFirstBadge variant="footer" />
+            <p className="text-xs text-muted-foreground">
+              © 2026 Zero Hero. From balances due to a more balanced you.
+            </p>
+          </div>
+        </footer>
       </main>
       
       {/* Onboarding Tour */}

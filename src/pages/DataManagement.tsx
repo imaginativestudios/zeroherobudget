@@ -400,11 +400,11 @@ export default function DataManagement() {
 
       <Separator />
 
-      {/* Danger Zone */}
+      {/* Point of No Return (formerly Danger Zone) */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <Trash2 className="h-5 w-5 text-destructive" aria-hidden="true" />
-          <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
+          <h2 className="text-lg font-semibold text-destructive">Point of No Return</h2>
         </div>
         <p className="text-sm text-muted-foreground">
           Permanently delete your data or account. These actions cannot be undone.
@@ -415,7 +415,7 @@ export default function DataManagement() {
             <CardContent className="p-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <p className="font-medium text-sm">Clear All Data</p>
+                  <p className="font-medium text-sm">Reset Quest</p>
                   <p className="text-xs text-muted-foreground">
                     Delete all transactions, budget items, debts, and subscriptions
                   </p>
@@ -427,7 +427,7 @@ export default function DataManagement() {
                   disabled={totalItems === 0}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Clear Data
+                  Reset Quest
                 </Button>
               </div>
             </CardContent>
@@ -437,7 +437,7 @@ export default function DataManagement() {
             <CardContent className="p-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <p className="font-medium text-sm">Delete Account</p>
+                  <p className="font-medium text-sm">End Journey</p>
                   <p className="text-xs text-muted-foreground">
                     Permanently delete your account and all associated data
                   </p>
@@ -448,7 +448,7 @@ export default function DataManagement() {
                   onClick={() => setDeleteAccountDialogOpen(true)}
                 >
                   <UserX className="h-4 w-4 mr-2" />
-                  Delete Account
+                  End Journey
                 </Button>
               </div>
             </CardContent>

@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useMoatStatus } from '@/hooks/useMoatStatus';
+import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { formatRepairTimeline } from '@/lib/recoveryEngine';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +38,15 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
     activateRepairMode,
   } = useMoatStatus();
   
+  const { savingsVault } = useHeroProfile();
+  
   const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Calculate repair progress
+  const currentBalance = savingsVault.moat_balance || 0;
+  const targetBalance = savingsVault.moat_target || 1000;
+  const remaining = Math.max(0, targetBalance - currentBalance);
+  const progressPercent = recoveryState.fortressIntegrity;
   
   const handleOptimizeClick = () => {
     activateRepairMode();
@@ -102,6 +111,39 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
                 Your fortress protected you from new debt. Now, let's focus on 
                 tactical repairs to get your defenses back to 100%.
               </p>
+            </div>
+          </div>
+          
+          {/* Repair Progress Bar */}
+          <div className="space-y-2 p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-foreground">
+                {formatCurrency(currentBalance)} of {formatCurrency(targetBalance)}
+              </span>
+              <span className="text-amber-700 font-semibold">
+                {progressPercent}%
+              </span>
+            </div>
+            
+            {/* Animated Progress Bar */}
+            <div className="relative h-3 w-full overflow-hidden rounded-full bg-amber-100">
+              <motion.div
+                className="h-full bg-gradient-to-r from-amber-400 to-primary rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                {formatCurrency(remaining)} remaining to restore full defenses
+              </p>
+              {progressPercent >= 75 && (
+                <p className="text-xs text-primary font-medium">
+                  Almost there!
+                </p>
+              )}
             </div>
           </div>
           

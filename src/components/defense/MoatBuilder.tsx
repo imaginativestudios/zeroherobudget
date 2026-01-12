@@ -34,9 +34,12 @@ import {
   DialogTrigger 
 } from '@/components/ui/dialog';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
-import { calculateMoatHealth, type CastleLevel } from '@/lib/moatCalculations';
+import { calculateMoatHealth, MOAT_MILESTONES, type CastleLevel } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
+import { toast } from 'sonner';
+import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
+import { haptics } from '@/lib/haptics';
 
 interface MoatBuilderProps {
   variant?: 'card' | 'full';
@@ -50,7 +53,7 @@ export function MoatBuilder({
   const { 
     profile,
     addToMoat,
-    isMoatComplete,
+    achievedMilestones,
   } = useHeroProfile();
   
   const [addAmount, setAddAmount] = useState('');
@@ -58,28 +61,81 @@ export function MoatBuilder({
   
   const moatHealth = calculateMoatHealth(profile.moat_current, profile.moat_target);
 
+  const triggerMilestoneCelebration = (milestone: 25 | 50 | 75 | 100) => {
+    const milestoneData = MOAT_MILESTONES[milestone];
+    
+    // Haptic feedback
+    haptics.success();
+    
+    // Tiered confetti based on milestone
+    if (milestone === 100) {
+      // Epic celebration - continuous from both sides
+      const duration = 2 * 1000;
+      const animationEnd = Date.now() + duration;
+      const colors = ['#0D7377', '#FF6B35', '#14919B', '#FFD700', '#10B981'];
+      
+      const frame = () => {
+        confetti({ 
+          particleCount: 4, 
+          angle: 60, 
+          spread: 55, 
+          origin: { x: 0 }, 
+          colors 
+        });
+        confetti({ 
+          particleCount: 4, 
+          angle: 120, 
+          spread: 55, 
+          origin: { x: 1 }, 
+          colors 
+        });
+        if (Date.now() < animationEnd) requestAnimationFrame(frame);
+      };
+      frame();
+      playAchievementUnlockSound('epic');
+    } else if (milestone === 75 || milestone === 50) {
+      // Milestone celebration
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#0D7377', '#FF6B35', '#14919B'],
+      });
+      playAchievementUnlockSound('milestone');
+    } else {
+      // Basic celebration for 25%
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#0D7377', '#14919B'],
+      });
+      soundEffects.moatMilestone();
+    }
+    
+    // Toast notification
+    toast.success(milestoneData.title, {
+      description: milestoneData.message,
+      icon: milestoneData.icon,
+      duration: 5000,
+    });
+  };
+
   const handleAddToMoat = () => {
     const amount = parseFloat(addAmount);
     if (!isNaN(amount) && amount > 0) {
-      const wasComplete = isMoatComplete;
-      addToMoat(amount);
+      // addToMoat returns newly achieved milestones
+      const newlyAchieved = addToMoat(amount);
       setAddAmount('');
       setDialogOpen(false);
       
-      // Trigger celebration if just completed
-      if (!wasComplete && profile.moat_current + amount >= profile.moat_target) {
-        triggerCelebration();
-      }
+      // Trigger celebrations for each milestone (staggered)
+      newlyAchieved.forEach((milestone, index) => {
+        setTimeout(() => {
+          triggerMilestoneCelebration(milestone as 25 | 50 | 75 | 100);
+        }, index * 800);
+      });
     }
-  };
-
-  const triggerCelebration = () => {
-    confetti({
-      particleCount: 150,
-      spread: 100,
-      origin: { y: 0.6 },
-      colors: ['#0D7377', '#FF6B35', '#14919B', '#FFD700', '#10B981'],
-    });
   };
 
   // Get castle icon based on level
@@ -231,15 +287,33 @@ export function MoatBuilder({
               </motion.span>
             </div>
             
-            {/* Milestone Markers */}
-            <div className="absolute inset-0 flex">
-              {[25, 50, 75].map((milestone) => (
-                <div
-                  key={milestone}
-                  className="absolute h-full border-l border-dashed border-muted-foreground/20"
-                  style={{ left: `${milestone}%` }}
-                />
-              ))}
+            {/* Milestone Markers with achieved badges */}
+            <div className="absolute inset-0">
+              {[25, 50, 75].map((milestone) => {
+                const isAchieved = achievedMilestones.includes(milestone) || moatHealth.percentage >= milestone;
+                return (
+                  <div
+                    key={milestone}
+                    className="absolute h-full"
+                    style={{ left: `${milestone}%` }}
+                  >
+                    <div className={cn(
+                      "absolute top-1 -translate-x-1/2 text-xs rounded-full px-1.5 py-0.5 font-medium",
+                      isAchieved 
+                        ? "bg-success/20 text-success" 
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {isAchieved ? "✓" : `${milestone}%`}
+                    </div>
+                    <div className={cn(
+                      "h-full border-l-2",
+                      isAchieved 
+                        ? "border-success/50 border-solid" 
+                        : "border-dashed border-muted-foreground/20"
+                    )} />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

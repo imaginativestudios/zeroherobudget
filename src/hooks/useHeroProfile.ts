@@ -24,6 +24,7 @@ export interface SavingsVault {
   moat_target: number;
   last_deposit_date: string | null;
   deposit_history: Array<{ amount: number; date: string }>;
+  achieved_milestones: number[]; // [25, 50, 75, 100] as they're reached
 }
 
 const DEFAULT_HERO_PROFILE: HeroProfile = {
@@ -39,6 +40,7 @@ const DEFAULT_SAVINGS_VAULT: SavingsVault = {
   moat_target: 1000,
   last_deposit_date: null,
   deposit_history: [],
+  achieved_milestones: [],
 };
 
 export interface UseHeroProfileResult {
@@ -54,7 +56,8 @@ export interface UseHeroProfileResult {
   moatProgress: number;
   moatRemaining: number;
   isMoatComplete: boolean;
-  addToMoat: (amount: number) => void;
+  achievedMilestones: number[];
+  addToMoat: (amount: number) => number[]; // Returns newly achieved milestones
   setMoatCurrent: (amount: number) => void;
   setMoatTarget: (amount: number) => void;
   
@@ -137,9 +140,23 @@ export function useHeroProfile(): UseHeroProfileResult {
   const isMoatComplete = (savingsVault.moat_balance || profile.moat_current) >= (savingsVault.moat_target || profile.moat_target);
 
   // Moat operations - sync to both storages for backward compatibility
-  const addToMoat = useCallback((amount: number) => {
+  const addToMoat = useCallback((amount: number): number[] => {
     const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const newBalance = (savingsVault.moat_balance || profile.moat_current) + amount;
+    const previousBalance = savingsVault.moat_balance || profile.moat_current;
+    const newBalance = previousBalance + amount;
+    const target = savingsVault.moat_target || profile.moat_target;
+    
+    // Calculate percentages before and after
+    const previousPercentage = (previousBalance / target) * 100;
+    const newPercentage = (newBalance / target) * 100;
+    
+    // Detect newly crossed milestones
+    const milestones = [25, 50, 75, 100];
+    const newlyAchieved = milestones.filter(m => 
+      previousPercentage < m && 
+      newPercentage >= m && 
+      !savingsVault.achieved_milestones.includes(m)
+    );
     
     // Update savings vault (primary)
     setSavingsVault({
@@ -150,6 +167,7 @@ export function useHeroProfile(): UseHeroProfileResult {
         ...savingsVault.deposit_history,
         { amount, date: todayStr }
       ].slice(-50), // Keep last 50 deposits
+      achieved_milestones: [...savingsVault.achieved_milestones, ...newlyAchieved],
     });
     
     // Sync to hero profile for backward compatibility
@@ -157,6 +175,8 @@ export function useHeroProfile(): UseHeroProfileResult {
       ...profile,
       moat_current: newBalance,
     });
+    
+    return newlyAchieved;
   }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   const setMoatCurrent = useCallback((amount: number) => {
@@ -204,6 +224,7 @@ export function useHeroProfile(): UseHeroProfileResult {
     moatProgress,
     moatRemaining,
     isMoatComplete,
+    achievedMilestones: savingsVault.achieved_milestones,
     addToMoat,
     setMoatCurrent,
     setMoatTarget,

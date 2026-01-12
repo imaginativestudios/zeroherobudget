@@ -94,6 +94,15 @@ export const soundEffects = {
     setTimeout(() => playTone(659, 0.12, 0.06), 160);
     setTimeout(() => playTone(880, 0.2, 0.07), 240);
   },
+
+  /**
+   * Moat milestone sound - water-themed ascending tones
+   */
+  moatMilestone: () => {
+    playTone(392, 0.15, 0.05);
+    setTimeout(() => playTone(523, 0.15, 0.05), 100);
+    setTimeout(() => playTone(659, 0.2, 0.05), 200);
+  },
 };
 
 export const playAchievementUnlockSound = (level: 'basic' | 'milestone' | 'epic' = 'basic') => {

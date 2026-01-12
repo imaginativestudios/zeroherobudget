@@ -15,7 +15,10 @@ import {
   calculateRecoveryState,
   calculateRepairPlan,
 } from '@/lib/recoveryEngine';
-import { soundEffects } from '@/lib/soundEffects';
+import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
+import { haptics } from '@/lib/haptics';
+import confetti from 'canvas-confetti';
+import { toast } from 'sonner';
 
 const BANNER_DISMISSED_KEY = 'moat_banner_dismissed_session';
 const REPAIR_MODE_KEY = 'moat_repair_mode_active';
@@ -130,15 +133,58 @@ export function useMoatStatus(): MoatStatusResult {
     updateSavingsVault({ breach_acknowledged: true });
   }, [updateSavingsVault]);
   
+  // Recovery celebration when moat returns to 100%
+  const triggerRecoveryCelebration = useCallback(() => {
+    // Haptic feedback
+    haptics.success();
+    
+    // Epic sound for fortress restoration
+    playAchievementUnlockSound('epic');
+    
+    // Epic confetti - 2.5 second side-burst celebration
+    const duration = 2500;
+    const animationEnd = Date.now() + duration;
+    const colors = ['#0D7377', '#14919B', '#10B981', '#FFD700', '#22C55E'];
+    
+    const frame = () => {
+      confetti({ 
+        particleCount: 4, 
+        angle: 60, 
+        spread: 55, 
+        origin: { x: 0, y: 0.6 }, 
+        colors 
+      });
+      confetti({ 
+        particleCount: 4, 
+        angle: 120, 
+        spread: 55, 
+        origin: { x: 1, y: 0.6 }, 
+        colors 
+      });
+      if (Date.now() < animationEnd) requestAnimationFrame(frame);
+    };
+    frame();
+    
+    // Show heroic toast
+    toast.success('Defenses Fully Restored!', {
+      description: 'Your fortress stands strong once more. The moat is at full strength!',
+      icon: '🛡️',
+      duration: 6000,
+    });
+  }, []);
+  
   // Clear repair mode when moat is secure
   useEffect(() => {
     if (isSecure && repairModeActive) {
+      // Trigger recovery celebration before clearing repair mode
+      triggerRecoveryCelebration();
+      
       deactivateRepairMode();
       // Reset banner dismissal for next potential breach
       sessionStorage.removeItem(BANNER_DISMISSED_KEY);
       setBannerDismissed(false);
     }
-  }, [isSecure, repairModeActive, deactivateRepairMode]);
+  }, [isSecure, repairModeActive, deactivateRepairMode, triggerRecoveryCelebration]);
   
   return {
     status,

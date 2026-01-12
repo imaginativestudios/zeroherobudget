@@ -1,24 +1,21 @@
 /**
  * Hero Profile Hook
  * 
- * Unified hook for the Hero's Stats including the Moat (emergency fund) tracking.
- * Consolidates user profile state for behavioral coaching.
+ * Consolidates user profile state for behavioral coaching purposes.
+ * Tracks onboarding, strategy selection, emergency fund (Moat), and activity.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import { format, subDays, parseISO, startOfDay } from 'date-fns';
 import { useUserLocalStorage } from './useUserLocalStorage';
 import { useStrategy } from './useLocalSettings';
 
 export interface HeroProfile {
-  // Onboarding
   onboarding_completed: boolean;
-  
-  // The Moat (Emergency Fund)
-  moat_target: number;      // Default 1000
-  moat_current: number;     // Current savings toward $1,000
-  
-  // Last active tracking
+  moat_target: number;
+  moat_current: number;
   last_active_date: string | null;
+  activity_log: string[]; // Array of ISO dates for app opens (last 7 days)
 }
 
 const DEFAULT_HERO_PROFILE: HeroProfile = {
@@ -26,18 +23,19 @@ const DEFAULT_HERO_PROFILE: HeroProfile = {
   moat_target: 1000,
   moat_current: 0,
   last_active_date: null,
+  activity_log: [],
 };
 
 export interface UseHeroProfileResult {
   profile: HeroProfile;
   isLoading: boolean;
   
-  // Strategy (from existing hook)
-  currentStrategy: string;
-  setStrategy: (strategy: string) => void;
+  // Strategy from useStrategy hook
+  currentStrategy: 'Snowball' | 'Avalanche';
+  setStrategy: (strategy: 'Snowball' | 'Avalanche') => void;
   
   // Moat operations
-  moatProgress: number; // 0-100 percentage
+  moatProgress: number;
   moatRemaining: number;
   isMoatComplete: boolean;
   addToMoat: (amount: number) => void;
@@ -45,78 +43,107 @@ export interface UseHeroProfileResult {
   setMoatTarget: (amount: number) => void;
   
   // Activity tracking
-  recordActivity: () => void;
+  activityLog: string[];
+  recordDailyActivity: () => void;
   
   // Onboarding
   completeOnboarding: () => void;
 }
 
 export function useHeroProfile(): UseHeroProfileResult {
-  const [heroProfile, setHeroProfile, isLoading] = useUserLocalStorage<HeroProfile>(
+  const [profile, setProfile] = useUserLocalStorage<HeroProfile>(
     'bdt_hero_profile',
     DEFAULT_HERO_PROFILE
   );
+  
   const [strategy, setStrategy] = useStrategy();
 
-  // Calculate moat progress
+  // Prune activity log to keep only last 7 days
+  const pruneActivityLog = useCallback((log: string[]): string[] => {
+    const today = startOfDay(new Date());
+    const sevenDaysAgo = subDays(today, 6);
+    
+    return log.filter(dateStr => {
+      try {
+        const date = startOfDay(parseISO(dateStr));
+        return date >= sevenDaysAgo && date <= today;
+      } catch {
+        return false;
+      }
+    });
+  }, []);
+
+  // Record daily activity (called when app is opened)
+  const recordDailyActivity = useCallback(() => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    
+    // Skip if already recorded today
+    if (profile.activity_log.includes(todayStr)) {
+      if (profile.last_active_date !== todayStr) {
+        setProfile({
+          ...profile,
+          last_active_date: todayStr,
+        });
+      }
+      return;
+    }
+    
+    // Add today and prune old entries
+    const updatedLog = pruneActivityLog([...profile.activity_log, todayStr]);
+    
+    setProfile({
+      ...profile,
+      activity_log: updatedLog,
+      last_active_date: todayStr,
+    });
+  }, [profile, setProfile, pruneActivityLog]);
+
+  // Moat calculations
   const moatProgress = useMemo(() => {
-    if (heroProfile.moat_target <= 0) return 100;
-    return Math.min(100, (heroProfile.moat_current / heroProfile.moat_target) * 100);
-  }, [heroProfile.moat_current, heroProfile.moat_target]);
+    if (profile.moat_target <= 0) return 100;
+    return Math.min(100, (profile.moat_current / profile.moat_target) * 100);
+  }, [profile.moat_current, profile.moat_target]);
 
   const moatRemaining = useMemo(() => {
-    return Math.max(0, heroProfile.moat_target - heroProfile.moat_current);
-  }, [heroProfile.moat_current, heroProfile.moat_target]);
+    return Math.max(0, profile.moat_target - profile.moat_current);
+  }, [profile.moat_current, profile.moat_target]);
 
-  const isMoatComplete = moatProgress >= 100;
+  const isMoatComplete = profile.moat_current >= profile.moat_target;
 
-  // Add to moat (cumulative)
+  // Moat operations
   const addToMoat = useCallback((amount: number) => {
-    setHeroProfile({
-      ...heroProfile,
-      moat_current: Math.min(
-        heroProfile.moat_target,
-        heroProfile.moat_current + amount
-      ),
+    setProfile({
+      ...profile,
+      moat_current: profile.moat_current + amount,
     });
-  }, [heroProfile, setHeroProfile]);
+  }, [profile, setProfile]);
 
-  // Set moat current directly
   const setMoatCurrent = useCallback((amount: number) => {
-    setHeroProfile({
-      ...heroProfile,
-      moat_current: Math.max(0, Math.min(heroProfile.moat_target, amount)),
+    setProfile({
+      ...profile,
+      moat_current: Math.max(0, amount),
     });
-  }, [heroProfile, setHeroProfile]);
+  }, [profile, setProfile]);
 
-  // Set moat target
   const setMoatTarget = useCallback((amount: number) => {
-    setHeroProfile({
-      ...heroProfile,
+    setProfile({
+      ...profile,
       moat_target: Math.max(0, amount),
     });
-  }, [heroProfile, setHeroProfile]);
+  }, [profile, setProfile]);
 
-  // Record activity
-  const recordActivity = useCallback(() => {
-    setHeroProfile({
-      ...heroProfile,
-      last_active_date: new Date().toISOString(),
-    });
-  }, [heroProfile, setHeroProfile]);
-
-  // Complete onboarding
+  // Onboarding
   const completeOnboarding = useCallback(() => {
-    setHeroProfile({
-      ...heroProfile,
+    setProfile({
+      ...profile,
       onboarding_completed: true,
     });
-  }, [heroProfile, setHeroProfile]);
+  }, [profile, setProfile]);
 
   return {
-    profile: heroProfile,
-    isLoading,
-    currentStrategy: strategy,
+    profile,
+    isLoading: false,
+    currentStrategy: strategy as 'Snowball' | 'Avalanche',
     setStrategy,
     moatProgress,
     moatRemaining,
@@ -124,7 +151,9 @@ export function useHeroProfile(): UseHeroProfileResult {
     addToMoat,
     setMoatCurrent,
     setMoatTarget,
-    recordActivity,
+    activityLog: profile.activity_log,
+    recordDailyActivity,
     completeOnboarding,
   };
 }
+

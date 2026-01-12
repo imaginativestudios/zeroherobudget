@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface SubscriptionStatus {
   subscribed: boolean;
@@ -75,13 +76,58 @@ export const useSubscriptionStatus = () => {
     }
   }, [user, session]);
 
+  // Realtime subscription channel ref
+  const channelRef = useRef<RealtimeChannel | null>(null);
+
   useEffect(() => {
     checkSubscription();
 
-    // Auto-refresh every 60 seconds
+    // Auto-refresh every 60 seconds as fallback
     const interval = setInterval(checkSubscription, 60000);
     return () => clearInterval(interval);
   }, [checkSubscription]);
+
+  // Realtime listener for profile subscription status changes
+  useEffect(() => {
+    if (!user) {
+      // Cleanup if user logs out
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+      return;
+    }
+
+    // Subscribe to profile changes for this user
+    const channel = supabase
+      .channel(`profile-subscription-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`,
+        },
+        (payload) => {
+          console.log('[useSubscriptionStatus] Profile updated via realtime:', payload);
+          // Immediately refresh subscription status when profile changes
+          checkSubscription();
+        }
+      )
+      .subscribe((status) => {
+        console.log('[useSubscriptionStatus] Realtime subscription status:', status);
+      });
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+  }, [user, checkSubscription]);
 
   const createCheckout = async (amount: number) => {
     if (!session) {

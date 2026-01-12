@@ -13,19 +13,25 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.create-checkout]
-verify_jwt = true
+verify_jwt = false
 
 [functions.check-subscription]
-verify_jwt = true
+verify_jwt = false
 
 [functions.customer-portal]
-verify_jwt = true
+verify_jwt = false
 
 [functions.send-invitation]
-verify_jwt = true
+verify_jwt = false
 
 [functions.send-deletion-code]
-verify_jwt = true
+verify_jwt = false
 
 [functions.verify-deletion-code]
-verify_jwt = true
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.test-subscription]
+verify_jwt = false

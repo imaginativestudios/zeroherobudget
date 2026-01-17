@@ -12,6 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useKeyboardShortcuts, ShortcutConfig } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { LocalFirstBadge } from "./LocalFirstBadge";
+import { DemoModeBadge } from "./DemoModeBadge";
+import { isDemoDataLoaded } from "@/lib/demoDataLoader";
 import { toast } from "@/hooks/use-toast";
 
 interface LayoutProps {
@@ -144,8 +146,9 @@ export const Layout = ({ children }: LayoutProps) => {
     );
   }
 
-  // Redirect unauthenticated users to landing page
-  if (!user) {
+  // Redirect unauthenticated users to landing page (unless in demo mode)
+  const isInDemoMode = !user && isDemoDataLoaded();
+  if (!user && !isInDemoMode) {
     return <Navigate to="/" replace />;
   }
 
@@ -212,6 +215,11 @@ export const Layout = ({ children }: LayoutProps) => {
               
               {/* Mobile padding for header */}
               <div className="lg:hidden mb-4 mt-16" />
+              
+              {/* Demo Mode Badge */}
+              <div className="mb-4">
+                <DemoModeBadge />
+              </div>
               
               <ul className="space-y-2">
                 {navigationItems.map((item) => {

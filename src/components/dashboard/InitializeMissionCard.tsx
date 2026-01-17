@@ -10,25 +10,28 @@ import { Swords, Plus, ArrowRight, Sparkles, Target } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useLocalDebts } from '@/hooks/useLocalDebts';
-import { DEMO_DEBTS } from '@/lib/constants';
+import { loadDemoData } from '@/lib/demoDataLoader';
+import { toast } from '@/hooks/use-toast';
 
 export function InitializeMissionCard() {
   const navigate = useNavigate();
-  const { addDebt } = useLocalDebts();
 
   const handleLoadDemoData = () => {
-    DEMO_DEBTS.forEach(debt => {
-      addDebt({
-        name: debt.name,
-        balance: debt.balance,
-        interest_rate: debt.apr,
-        minimum_payment: debt.min,
-        type: debt.type,
+    const result = loadDemoData();
+    if (result.loaded) {
+      toast({
+        title: "Demo Data Loaded! 🎉",
+        description: result.summary,
       });
-    });
-    // Refresh the page to show the new data
-    window.location.reload();
+      // Refresh to show the new data
+      window.location.reload();
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to load demo data",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

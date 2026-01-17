@@ -6,7 +6,7 @@
  */
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
 import { FinancialCard } from "@/components/FinancialCard";
@@ -51,6 +51,10 @@ import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/c
 import { InitializeMissionCard } from "@/components/dashboard/InitializeMissionCard";
 import { BossCard } from "@/components/dashboard/BossCard";
 import { IntelFeed } from "@/components/dashboard/IntelFeed";
+import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
+import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
+import { format } from "date-fns";
+import { getSurvivalCategories } from "@/lib/behavioralEngine";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -81,6 +85,23 @@ export const Dashboard = () => {
   
   // Moat status for regrouping detection
   const { isRegrouping, isVulnerable, bannerDismissed } = useMoatStatus();
+
+  // Behavioral Engine for Stamina Wheel
+  const { surplusPower } = useBehavioralEngine();
+
+  // Calculate current month's discretionary spending for Stamina Wheel
+  const currentMonthSpend = useMemo(() => {
+    const currentMonth = format(new Date(), 'yyyy-MM');
+    const survivalCategories = getSurvivalCategories();
+    
+    return transactions
+      .filter(t => 
+        t.date.startsWith(currentMonth) && 
+        t.flow === 'out' && 
+        !survivalCategories.includes(t.category)
+      )
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
@@ -474,6 +495,31 @@ export const Dashboard = () => {
           </>
         ) : (
           <>
+        {/* Financial Stamina Wheel */}
+        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
+          <CardHeader className="p-4 sm:p-5">
+            <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
+              <Heart className="h-5 w-5 text-success" aria-hidden="true" />
+              Financial Stamina
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-5 pt-0 flex flex-col items-center">
+            <StaminaWheel
+              incomeTotal={surplusPower.totalIncome}
+              fixedExpenses={surplusPower.survivalExpenses}
+              debtPayments={surplusPower.debtMinimums}
+              currentSpend={currentMonthSpend}
+              size={280}
+            />
+            <div className="mt-4 w-full">
+              <ChartInsight 
+                insight={surplusPower.heroMessage} 
+                type={surplusPower.isPositive ? "success" : "warning"} 
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Spending by Category Chart */}
         <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
           <CardHeader className="p-4 sm:p-5">

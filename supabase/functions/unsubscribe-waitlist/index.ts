@@ -9,6 +9,16 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// HTML escape function to prevent XSS attacks
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 const handler = async (req: Request): Promise<Response> => {
   try {
     const url = new URL(req.url);
@@ -131,7 +141,7 @@ function renderSuccessPage(email: string): string {
   <div class="card">
     <div class="icon">👋</div>
     <h1>You've been unsubscribed</h1>
-    <p>We've removed <span class="email">${email}</span> from our waitlist.</p>
+    <p>We've removed <span class="email">${escapeHtml(email)}</span> from our waitlist.</p>
     <p>We're sorry to see you go! If you change your mind, you can always sign up again at our website.</p>
     <div class="footer">
       © 2026 Zero Hero. From balances due to a more balanced you.
@@ -189,7 +199,7 @@ function renderErrorPage(message: string): string {
   <div class="card">
     <div class="icon">⚠️</div>
     <h1>Something went wrong</h1>
-    <p>${message}</p>
+    <p>${escapeHtml(message)}</p>
   </div>
 </body>
 </html>

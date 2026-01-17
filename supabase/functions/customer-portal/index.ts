@@ -67,8 +67,14 @@ serve(async (req) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    console.error("Error in customer-portal:", error);
+    
+    // Only expose safe error about missing customer
+    const clientMessage = errorMessage === "No Stripe customer found for this user"
+      ? errorMessage
+      : "Unable to access billing portal";
+    
+    return new Response(JSON.stringify({ error: clientMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

@@ -201,8 +201,8 @@ serve(async (req) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    logStep("ERROR: Unexpected error", { message: error.message });
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Unexpected error in stripe-webhook:", error);
+    return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

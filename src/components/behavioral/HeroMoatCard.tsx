@@ -174,14 +174,14 @@ export function HeroMoatCard() {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
-                Add to Moat
+                Add to Sanctuary
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Castle className="h-5 w-5 text-primary" />
-                  Add to Your Moat
+                  <Heart className="h-5 w-5 text-primary" />
+                  Add to Your Sanctuary
                 </DialogTitle>
                 <DialogDescription>
                   How much have you saved toward your emergency fund?

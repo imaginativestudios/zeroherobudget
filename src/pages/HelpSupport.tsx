@@ -525,7 +525,7 @@ const HelpSupport = () => {
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-lg p-8 text-center space-y-4">
           <h2 className="text-2xl font-bold text-foreground">Ready to Start Your Journey?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of users who are taking control of their finances with Zero Hero.
+            Transform your relationship with money. Your quest to financial freedom starts today.
           </p>
           <Link to="/auth">
             <Button size="lg" variant="default" className="bg-accent hover:bg-accent-dark text-primary-dark hover:text-white">

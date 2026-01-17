@@ -318,7 +318,7 @@ export default function Landing() {
               transition={{ delay: 0.1 }}
               className="text-sm sm:text-base md:text-lg lg:text-xl mb-8 sm:mb-12 text-white/90 max-w-2xl mx-auto px-2"
             >
-              Join thousands who've transformed their relationship with money. Your quest to financial freedom starts today.
+              Transform your relationship with money. Your quest to financial freedom starts today.
             </motion.p>
 
             <motion.div

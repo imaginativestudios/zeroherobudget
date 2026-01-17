@@ -31,6 +31,7 @@ import AdminWaitlist from "./pages/AdminWaitlist";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Legal from "./pages/Legal";
 import HelpSupport from "./pages/HelpSupport";
 import DataPrivacyFAQ from "./pages/DataPrivacyFAQ";
 import IconStyleGuide from "./pages/IconStyleGuide";
@@ -65,6 +66,7 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/legal" element={<Legal />} />
           <Route path="/help" element={<HelpSupport />} />
           <Route path="/data-privacy" element={<DataPrivacyFAQ />} />
           <Route path="/style-guide/icons" element={<IconStyleGuide />} />

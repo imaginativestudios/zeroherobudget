@@ -361,11 +361,8 @@ export default function Landing() {
                 <Link to="/pricing" className="hover:text-foreground transition-colors">
                   Pricing
                 </Link>
-                <Link to="/privacy" className="hover:text-foreground transition-colors">
-                  Privacy
-                </Link>
-                <Link to="/terms" className="hover:text-foreground transition-colors">
-                  Terms
+                <Link to="/legal" className="hover:text-foreground transition-colors">
+                  Legal
                 </Link>
                 <Link to="/help" className="hover:text-foreground transition-colors">
                   Support

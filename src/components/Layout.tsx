@@ -363,6 +363,12 @@ export const Layout = ({ children }: LayoutProps) => {
         <footer className="mt-auto pt-8 pb-4 text-center border-t border-border/50">
           <div className="flex flex-col items-center gap-3">
             <LocalFirstBadge variant="footer" />
+            <Link 
+              to="/legal" 
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Legal & Privacy
+            </Link>
             <p className="text-xs text-muted-foreground">
               © 2026 Zero Hero. From balances due to a more balanced you.
             </p>

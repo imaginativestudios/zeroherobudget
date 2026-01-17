@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 // Extension code blocks
+// Chrome Web Store Ready - No broad host permissions
 const MANIFEST_JSON = `{
   "manifest_version": 3,
   "name": "Zero Hero Connector",
@@ -21,63 +22,62 @@ const MANIFEST_JSON = `{
       "16": "icon16.png",
       "48": "icon48.png"
     }
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ]
+  }
 }`;
 
-const CONTENT_JS = `// Zero Hero Connector - Content Script
-chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
-  if (req.action === "scout") {
-    try {
-      // Find all table rows on the page
-      const rows = Array.from(document.querySelectorAll("tr, [role='row']"));
-      
-      const data = rows.map(row => {
-        const text = row.innerText || row.textContent || "";
+// Safety check prevents duplicate listeners on multiple scans
+const CONTENT_JS = `// Zero Hero Connector - Content Script (Programmatic Injection)
+if (!window.hasZeroHeroScout) {
+  window.hasZeroHeroScout = true;
+  
+  chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+    if (req.action === "scout") {
+      try {
+        // Find all table rows on the page
+        const rows = Array.from(document.querySelectorAll("tr, [role='row']"));
         
-        // Heuristic patterns for dates and amounts
-        const dateMatch = text.match(/\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?/);
-        const amountMatch = text.match(/-?\\$?[\\d,]+\\.\\d{2}/);
+        const data = rows.map(row => {
+          const text = row.innerText || row.textContent || "";
+          
+          // Heuristic patterns for dates and amounts
+          const dateMatch = text.match(/\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?/);
+          const amountMatch = text.match(/-?\\$?[\\d,]+\\.\\d{2}/);
+          
+          if (dateMatch && amountMatch) {
+            const amount = parseFloat(amountMatch[0].replace(/[^0-9.\\-]/g, ""));
+            return {
+              date: dateMatch[0],
+              amount: amount,
+              raw_text: text.trim().substring(0, 200)
+            };
+          }
+          return null;
+        }).filter(Boolean);
         
-        if (dateMatch && amountMatch) {
-          const amount = parseFloat(amountMatch[0].replace(/[^0-9.\\-]/g, ""));
-          return {
-            date: dateMatch[0],
-            amount: amount,
-            raw_text: text.trim().substring(0, 200)
-          };
-        }
-        return null;
-      }).filter(Boolean);
-      
-      // Remove duplicates
-      const unique = data.filter((item, index, self) =>
-        index === self.findIndex(t => 
-          t.date === item.date && 
-          t.amount === item.amount && 
-          t.raw_text === item.raw_text
-        )
-      );
-      
-      sendResponse({ 
-        status: "success", 
-        data: unique,
-        count: unique.length
-      });
-    } catch (error) {
-      sendResponse({ 
-        status: "error", 
-        message: error.message 
-      });
+        // Remove duplicates
+        const unique = data.filter((item, index, self) =>
+          index === self.findIndex(t => 
+            t.date === item.date && 
+            t.amount === item.amount && 
+            t.raw_text === item.raw_text
+          )
+        );
+        
+        sendResponse({ 
+          status: "success", 
+          data: unique,
+          count: unique.length
+        });
+      } catch (error) {
+        sendResponse({ 
+          status: "error", 
+          message: error.message 
+        });
+      }
     }
-  }
-  return true; // Keep channel open for async response
-});`;
+    return true; // Keep channel open for async response
+  });
+}`;
 
 const POPUP_HTML = `<!DOCTYPE html>
 <html>
@@ -176,6 +176,17 @@ const POPUP_HTML = `<!DOCTYPE html>
     document.getElementById('scan').addEventListener('click', async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
+      // Step 1: Inject the Scout Script dynamically (Chrome Web Store compliant)
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content.js']
+        });
+      } catch (e) {
+        // Script may already be injected, continue anyway
+      }
+
+      // Step 2: Send the scout command
       chrome.tabs.sendMessage(tab.id, { action: "scout" }, (response) => {
         if (response && response.status === "success") {
           scannedData = response.data;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { clearDemoData, isDemoDataLoaded } from '@/lib/demoDataLoader';
 
 export interface AuthState {
   user: User | null;
@@ -20,6 +21,14 @@ export const useRealAuth = () => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        // Clear demo data when user signs in to ensure fresh start
+        if (event === 'SIGNED_IN' && session?.user) {
+          if (isDemoDataLoaded()) {
+            clearDemoData();
+            console.log('[Auth] Cleared demo data for new authenticated session');
+          }
+        }
+        
         setState({
           user: session?.user ?? null,
           session,

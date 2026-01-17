@@ -172,7 +172,19 @@ const ComingSoon = () => {
               size="lg"
               variant="gold"
               className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 text-primary-dark w-full sm:w-auto"
-              onClick={() => {
+              onClick={async () => {
+                // Safety check: Ensure user is logged out before entering demo mode
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                  toast({
+                    title: "Already logged in",
+                    description: "You're viewing your own data. Log out to explore the demo.",
+                    variant: "destructive"
+                  });
+                  navigate('/dashboard');
+                  return;
+                }
+                
                 const result = loadDemoData();
                 if (result.loaded) {
                   toast({
@@ -180,6 +192,12 @@ const ComingSoon = () => {
                     description: "Explore a fully-populated financial dashboard",
                   });
                   navigate('/dashboard');
+                } else {
+                  toast({
+                    title: "Demo Not Available",
+                    description: result.summary,
+                    variant: "destructive"
+                  });
                 }
               }}
             >
@@ -423,7 +441,19 @@ const ComingSoon = () => {
               size="lg"
               variant="gold"
               className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
-              onClick={() => {
+              onClick={async () => {
+                // Safety check: Ensure user is logged out before entering demo mode
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                  toast({
+                    title: "Already logged in",
+                    description: "You're viewing your own data. Log out to explore the demo.",
+                    variant: "destructive"
+                  });
+                  navigate('/dashboard');
+                  return;
+                }
+                
                 const result = loadDemoData();
                 if (result.loaded) {
                   toast({
@@ -431,6 +461,12 @@ const ComingSoon = () => {
                     description: "Explore a fully-populated financial dashboard",
                   });
                   navigate('/dashboard');
+                } else {
+                  toast({
+                    title: "Demo Not Available",
+                    description: result.summary,
+                    variant: "destructive"
+                  });
                 }
               }}
             >

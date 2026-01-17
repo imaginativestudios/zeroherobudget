@@ -397,9 +397,23 @@ function convertDemoTransactions() {
 /**
  * Load all demo data into localStorage under the demo user ID.
  * This is completely isolated from real authenticated users.
+ * 
+ * SAFETY: Only loads demo data if no authenticated session exists.
+ * Returns early with a warning if an auth session is detected.
  */
 export function loadDemoData(): { loaded: boolean; summary: string } {
   try {
+    // SAFETY CHECK: Detect if an auth session exists
+    // Demo data should never be loaded for authenticated users
+    const hasAuthSession = Object.keys(localStorage).some(key => 
+      key.includes('sb-') && key.includes('auth-token')
+    );
+    
+    if (hasAuthSession) {
+      console.warn('[Demo Data] Auth session detected. Refusing to load demo data for authenticated user.');
+      return { loaded: false, summary: 'Cannot load demo data while logged in. Please log out first.' };
+    }
+    
     // Clear any existing demo data first
     clearDemoData();
     

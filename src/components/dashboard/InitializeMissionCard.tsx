@@ -12,11 +12,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { loadDemoData } from '@/lib/demoDataLoader';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export function InitializeMissionCard() {
   const navigate = useNavigate();
 
-  const handleLoadDemoData = () => {
+  const handleLoadDemoData = async () => {
+    // Safety check: Ensure user is logged out before loading demo data
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      toast({
+        title: "Already logged in",
+        description: "You're viewing your own data. Log out to explore the demo.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const result = loadDemoData();
     if (result.loaded) {
       toast({
@@ -27,8 +39,8 @@ export function InitializeMissionCard() {
       window.location.reload();
     } else {
       toast({
-        title: "Error",
-        description: "Failed to load demo data",
+        title: "Demo Not Available",
+        description: result.summary,
         variant: "destructive",
       });
     }

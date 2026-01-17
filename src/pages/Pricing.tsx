@@ -95,7 +95,7 @@ const Pricing = () => {
     try {
       const checkoutUrl = await createCheckout(selectedAmount);
       if (checkoutUrl) {
-        window.location.href = checkoutUrl;
+        window.open(checkoutUrl, '_blank');
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create checkout';

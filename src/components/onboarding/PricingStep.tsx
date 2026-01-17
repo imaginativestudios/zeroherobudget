@@ -57,7 +57,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
       // Save that we're in checkout flow
       localStorage.setItem('bdt_checkout_in_progress', 'true');
       
-      window.location.href = checkoutUrl;
+      window.open(checkoutUrl, '_blank');
     } catch (error) {
       console.error('Checkout error:', error);
       toast.error('Failed to start checkout. Please try again.');

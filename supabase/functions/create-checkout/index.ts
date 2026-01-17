@@ -96,7 +96,7 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product: "prod_Tg4Fyg2Yn7oxSn", // Zero Hero Subscription product
+            product: "prod_ToGDxQx1RgvD3J", // Zero Hero Subscription product
             unit_amount: amountCents,
             recurring: {
               interval: "month",

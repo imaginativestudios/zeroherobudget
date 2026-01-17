@@ -38,6 +38,7 @@ import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useProfile } from "@/hooks/useProfile";
 import { useAchievements } from "@/hooks/useAchievements";
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 import { formatCurrency } from "@/lib/constants";
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
@@ -52,6 +53,7 @@ import { InitializeMissionCard } from "@/components/dashboard/InitializeMissionC
 import { BossCard } from "@/components/dashboard/BossCard";
 import { IntelFeed } from "@/components/dashboard/IntelFeed";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
+import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format } from "date-fns";
 import { getSurvivalCategories } from "@/lib/behavioralEngine";
@@ -85,6 +87,9 @@ export const Dashboard = () => {
   
   // Moat status for regrouping detection
   const { isRegrouping, isVulnerable, bannerDismissed } = useMoatStatus();
+
+  // Subscription status for trial countdown
+  const { isTrialing, trialEnd, tierEmoji, tierName } = useSubscriptionStatus();
 
   // Behavioral Engine for Stamina Wheel
   const { surplusPower } = useBehavioralEngine();
@@ -332,6 +337,15 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Trial Countdown Banner */}
+      {isTrialing && trialEnd && (
+        <TrialCountdownBanner 
+          trialEnd={trialEnd} 
+          tierEmoji={tierEmoji} 
+          tierName={tierName} 
+        />
+      )}
 
       {/* Privacy Notice for first-time users */}
       <PrivacyNotice />

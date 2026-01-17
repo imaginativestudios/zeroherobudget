@@ -1,100 +1,108 @@
 /**
- * Heroic Vocabulary Glossary
+ * Adventure Vocabulary Glossary
  * 
- * Centralized copy constants for the Hero's Journey theme.
+ * Centralized copy constants for the Sophisticated Adventure theme.
+ * Inspired by restoration journeys (Legend of Zelda: Breath of the Wild).
  * Use these throughout the app to maintain consistent, encouraging language.
  */
 
 export const HEROIC_COPY = {
   // Budget/Spending Terms
-  budget: 'War Map',
-  budgets: 'War Maps',
-  overspent: 'Tactical Overstretch',
-  overBudget: 'Tactical Overstretch',
-  underBudget: 'Strategic Surplus',
-  deficit: 'Temporary Retreat',
-  spending: 'Deployment',
+  budget: 'The Atlas',
+  budgets: 'Atlases',
+  overspent: 'Off the Path',
+  overBudget: 'Off the Path',
+  underBudget: 'Ahead of the Journey',
+  deficit: 'A Detour',
+  spending: 'Provisions',
   
   // Debt Terms
-  payDebt: 'Slay Balance',
-  debt: 'Balance Foe',
-  debts: 'Balance Foes',
-  paidOff: 'Vanquished',
-  debtFree: 'Victorious',
+  payDebt: 'Clear Shadow',
+  debt: 'The Shadow',
+  debts: 'Shadows',
+  paidOff: 'Cleared',
+  debtFree: 'Restored',
   
   // Status Terms
-  failed: 'Regrouping Needed',
+  failed: 'Course Correction Needed',
   error: 'Obstacle Encountered',
-  warning: 'Tactical Alert',
-  negative: 'Temporary Retreat',
-  behind: 'Regrouping Phase',
+  warning: 'Path Alert',
+  negative: 'A Detour',
+  behind: 'Finding the Way',
   missed: 'Detour Taken',
   
   // Navigation/Section Names
   dangerZone: 'Point of No Return',
-  transactions: 'Quest Log',
-  achievements: 'Victories',
-  reports: 'Intel',
+  transactions: 'Journey Log',
+  achievements: 'Milestones',
+  reports: 'Discoveries',
   
   // Action Terms
-  clearData: 'Reset Quest',
+  clearData: 'New Journey',
   deleteAccount: 'End Journey',
-  importFailed: 'Import Needs Regrouping',
+  importFailed: 'Import Needs Attention',
   
-// Emergency Fund / Defense Terms
-  emergencyFund: "The Hero's Moat",
-  moat: 'Moat',
-  protected: 'Protected',
-  moatVulnerable: 'Castle Vulnerable',
-  moatBuilding: 'Defenses Rising',
-  moatFortified: 'Walls Strengthening', 
-  moatSecure: 'Moat Secure',
-  primaryQuest: 'Primary Quest',
-  starterMoat: 'The Starter Moat',
-  fortifyMoat: 'Fortify Your Moat',
+  // Emergency Fund / Sanctuary Terms
+  emergencyFund: "The Sanctuary",
+  moat: 'Sanctuary',
+  protected: 'Safe',
+  moatVulnerable: 'Sanctuary Exposed',
+  moatBuilding: 'Sanctuary Growing',
+  moatFortified: 'Sanctuary Strengthening', 
+  moatSecure: 'Sanctuary Safe',
+  primaryQuest: 'Current Quest',
+  starterMoat: 'The First Sanctuary',
+  fortifyMoat: 'Grow Your Sanctuary',
   
-  // Recovery / Regrouping Terms
-  breach: 'Breach',
-  breachDetected: 'Breach Detected',
-  repairs: 'Repairs',
-  repairMode: 'Repair Mode',
-  tacticalShift: 'Tactical Shift',
-  fortressIntegrity: 'Fortress Integrity',
-  regrouping: 'Regrouping',
-  repairPlan: 'Repair Plan',
-  optimizeForRepair: 'Optimize for Repair',
-  compromised: 'Compromised',
-  daysToRepair: 'Days to Repair',
-  prioritizingRepairs: 'Prioritizing Repairs',
+  // Recovery / Restoration Terms
+  breach: 'Disruption',
+  breachDetected: 'Disruption Detected',
+  repairs: 'Restoration',
+  repairMode: 'Restoration Mode',
+  tacticalShift: 'Path Adjustment',
+  fortressIntegrity: 'Sanctuary Strength',
+  regrouping: 'Restoring',
+  repairPlan: 'Restoration Plan',
+  optimizeForRepair: 'Focus on Restoration',
+  compromised: 'Needs Attention',
+  daysToRepair: 'Days to Restore',
+  prioritizingRepairs: 'Prioritizing Restoration',
   
   // Positive Reinforcement
-  greatJob: 'Heroic Work',
-  excellent: 'Legendary',
-  good: 'Valiant',
+  greatJob: 'Well Traveled',
+  excellent: 'Remarkable',
+  good: 'On the Right Path',
+
+  // Journey Levels
+  squire: 'Wayfarer',
+  knight: 'Sage',
+  warrior: 'Pathfinder',
+  hero: 'Sage',
+  legend: 'Luminary',
 };
 
 /**
- * Get the heroic equivalent of a negative term
+ * Get the adventure equivalent of a term
  */
 export function getHeroicTerm(term: keyof typeof HEROIC_COPY): string {
   return HEROIC_COPY[term] || term;
 }
 
 /**
- * Replace "over budget" with heroic alternative
+ * Replace "over budget" with adventure alternative
  */
 export function getOverBudgetMessage(percentage: number): string {
   if (percentage > 50) {
-    return `in Tactical Overstretch by ${percentage.toFixed(1)}%`;
+    return `${percentage.toFixed(1)}% off the path`;
   }
-  return `${percentage.toFixed(1)}% in Tactical Overstretch`;
+  return `${percentage.toFixed(1)}% off the path`;
 }
 
 /**
- * Replace "under budget" with heroic alternative
+ * Replace "under budget" with adventure alternative
  */
 export function getUnderBudgetMessage(percentage: number): string {
-  return `${Math.abs(percentage).toFixed(1)}% in Strategic Surplus`;
+  return `${Math.abs(percentage).toFixed(1)}% ahead of the journey`;
 }
 
 /**
@@ -102,14 +110,14 @@ export function getUnderBudgetMessage(percentage: number): string {
  */
 export function getBudgetStatusLabel(isOver: boolean, percentage: number): string {
   if (isOver) {
-    return percentage > 50 ? 'Critical Overstretch' : 'Tactical Overstretch';
+    return percentage > 50 ? 'Far Off Path' : 'Off the Path';
   }
-  return 'Strategic Surplus';
+  return 'Ahead of Journey';
 }
 
 /**
  * Get deficit label
  */
 export function getDeficitLabel(): string {
-  return 'Temporary Retreat';
+  return 'A Detour';
 }

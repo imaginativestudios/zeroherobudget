@@ -11,7 +11,7 @@ import {
   Shield, 
   TrendingDown, 
   Target, 
-  Castle, 
+  Heart, 
   Zap, 
   Sprout,
   ChevronRight
@@ -29,31 +29,31 @@ const ComingSoon = () => {
   // The Three Oaths - matching Landing page
   const oaths = [
     {
-      icon: Castle,
-      title: 'The Fortress',
-      quote: '"Build a Moat before you build a castle."',
-      description: 'Your first quest: A $1,000 emergency fund. This Moat protects 80% of Heroes from falling back into debt.',
+      icon: Heart,
+      title: 'The Sanctuary',
+      quote: '"Build a safe haven before the storm."',
+      description: 'Your first quest: A $1,000 emergency fund. This Sanctuary protects 80% of travelers from falling back into shadow.',
     },
     {
       icon: Zap,
       title: 'The Freedom Engine',
-      quote: '"Every dollar you don\'t pay in interest is an hour of life reclaimed."',
+      quote: '"Every dollar saved is an hour of life reclaimed."',
       description: 'We calculate the TRUE cost of purchases—in hours of work, not just dollars.',
     },
     {
       icon: Sprout,
       title: 'Growth Over Guilt',
-      quote: '"There are no failures here—only feedback."',
-      description: 'Overspent? That\'s a \'Tactical Overstretch\' not a character flaw. Behind on goals? You\'re in a \'Regrouping Phase.\'',
+      quote: '"There are no failures here—only lessons."',
+      description: 'Off the path? That\'s just a \'Detour\' not a character flaw. Behind on goals? You\'re \'Finding the Way.\'',
     },
   ];
 
-  // The Path - Squire to Legend
+  // The Path - Wayfarer to Luminary
   const journeyLevels = [
-    { level: 1, title: 'Squire', quote: 'Every legend starts with a single step.' },
-    { level: 2, title: 'Warrior', quote: 'Your Moat is full. Your Castle stands ready.' },
-    { level: 3, title: 'Champion', quote: 'You\'ve slain your first Balance Foe.' },
-    { level: 4, title: 'Legend', quote: 'Debt-free. You ARE the Zero Hero.' },
+    { level: 1, title: 'Wayfarer', quote: 'Every journey starts with a single step.' },
+    { level: 2, title: 'Pathfinder', quote: 'Your Sanctuary is complete. You\'re ready for the road ahead.' },
+    { level: 3, title: 'Sage', quote: 'You\'ve cleared your first Shadow.' },
+    { level: 4, title: 'Luminary', quote: 'Debt-free. You ARE the Zero Hero.' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

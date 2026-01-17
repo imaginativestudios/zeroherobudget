@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Sword, Map, Scroll, BarChart3, Plug } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Cloud, Scroll, BarChart3, Plug, Heart } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -20,16 +20,16 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-// Heroic navigation names for the Hero's Journey theme
+// Adventure navigation names for the Restoration Journey theme
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "War Map", href: "/budgets", icon: Map },
-  { name: "Battle Plan", href: "/debts", icon: Sword },
-  { name: "Quest Log", href: "/transactions", icon: Scroll },
+  { name: "The Atlas", href: "/budgets", icon: Compass },
+  { name: "Shadow Path", href: "/debts", icon: Cloud },
+  { name: "Journey Log", href: "/transactions", icon: Scroll },
   { name: "Data Management", href: "/data", icon: Database },
-  { name: "Victories", href: "/achievements", icon: Trophy },
-  { name: "Hero's Wisdom", href: "/learn", icon: Lightbulb },
-  { name: "Intel", href: "/reports", icon: BarChart3 },
+  { name: "Milestones", href: "/achievements", icon: Trophy },
+  { name: "Traveler's Guide", href: "/learn", icon: Lightbulb },
+  { name: "Discoveries", href: "/reports", icon: BarChart3 },
 ];
 
 export const Layout = ({ children }: LayoutProps) => {

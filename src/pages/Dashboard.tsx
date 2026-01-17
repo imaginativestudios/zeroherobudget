@@ -5,7 +5,7 @@
  * Layout: 3-zone system with Moat (Defense), Boss (Offense), and Intel Feed.
  */
 
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
@@ -41,6 +41,8 @@ import { useAchievements } from "@/hooks/useAchievements";
 import { formatCurrency } from "@/lib/constants";
 import { generateFinancialInsights, getPreviousMonthData, type InsightData } from "@/lib/insights";
 import { simulatePayoff } from "@/lib/debtCalculations";
+import { showWelcomeToast, hasWelcomeBeenShown, markWelcomeAsShown } from "@/lib/welcomeToast";
+import { useAuth } from "@/hooks/useAuth";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
 import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
@@ -147,6 +149,10 @@ export const Dashboard = () => {
   // Get greeting name
   const greetingName = userProfile?.first_name || userProfile?.display_name || 'there';
 
+  // Auth for welcome toast
+  const { user } = useAuth();
+  const welcomeToastShownRef = useRef(false);
+
   // Debt Victory Observer - detect newly paid off debts
   useEffect(() => {
     const currentPaidOff = new Set(debts.filter(d => d.balance === 0).map(d => d.id));
@@ -160,6 +166,27 @@ export const Dashboard = () => {
     
     previousPaidOffRef.current = currentPaidOff;
   }, [debts]);
+
+  // Welcome Toast for First-Time Users
+  useEffect(() => {
+    // Only show for authenticated users who haven't seen the welcome toast yet
+    if (!user || welcomeToastShownRef.current || isCriticalLoading) return;
+    
+    // Check if this is a first-time user (no debts and no transactions)
+    const isFirstTimeUser = debts.length === 0 && transactions.length === 0;
+    
+    if (isFirstTimeUser && !hasWelcomeBeenShown(user.id)) {
+      // Small delay to let the page settle
+      const timer = setTimeout(() => {
+        const userName = user.user_metadata?.first_name || null;
+        showWelcomeToast(userName, () => navigate('/debts'));
+        markWelcomeAsShown(user.id);
+        welcomeToastShownRef.current = true;
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, debts.length, transactions.length, isCriticalLoading, navigate]);
 
   // Check if user is new (no meaningful data)
   const isNewUser = useMemo(() => {

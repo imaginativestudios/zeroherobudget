@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Crown, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale } from "lucide-react";
+import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -152,7 +152,7 @@ export const DebtSnowball = () => {
                        data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
                        data-[state=active]:font-semibold data-[state=active]:shadow-sm"
           >
-            <Crown className="h-4 w-4" aria-hidden="true" />
+            <Compass className="h-4 w-4" aria-hidden="true" />
             <span className="hidden xs:inline">Overview</span>
           </TabsTrigger>
           <TabsTrigger 

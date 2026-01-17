@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from './useAuth';
 import { LoadPriority } from './useProgressiveLoad';
+import { DEMO_USER_ID } from '@/lib/constants';
 
 /**
  * Enhanced localStorage hook with priority-based loading
  * Critical data loads immediately, secondary data can be deferred
+ * 
+ * For unauthenticated users, falls back to DEMO_USER_ID to read demo data.
+ * Real authenticated users always use their own UUID, ensuring complete isolation.
  */
 export function usePriorityLocalStorage<T>(
   key: string,
@@ -19,13 +23,11 @@ export function usePriorityLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() => {
     // For critical priority, load immediately
     if (priority === 'critical' || !shouldLoad) {
-      if (!user) {
-        setIsLoading(false);
-        return initialValueRef.current;
-      }
+      // Use demo user ID for unauthenticated users to show demo data
+      const effectiveUserId = user?.id ?? DEMO_USER_ID;
       
       try {
-        const userKey = `${user.id}_${key}`;
+        const userKey = `${effectiveUserId}_${key}`;
         const item = window.localStorage.getItem(userKey);
         setIsLoading(false);
         return item ? JSON.parse(item) : initialValueRef.current;
@@ -45,14 +47,11 @@ export function usePriorityLocalStorage<T>(
     if (priority === 'secondary' && shouldLoad && !isLoading) {
       setIsLoading(true);
       
-      if (!user) {
-        setStoredValue(initialValueRef.current);
-        setIsLoading(false);
-        return;
-      }
+      // Use demo user ID for unauthenticated users
+      const effectiveUserId = user?.id ?? DEMO_USER_ID;
 
       try {
-        const userKey = `${user.id}_${key}`;
+        const userKey = `${effectiveUserId}_${key}`;
         const item = window.localStorage.getItem(userKey);
         setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
       } catch (error) {
@@ -69,14 +68,12 @@ export function usePriorityLocalStorage<T>(
     if (!shouldLoad) return;
     
     setIsLoading(true);
-    if (!user) {
-      setStoredValue(initialValueRef.current);
-      setIsLoading(false);
-      return;
-    }
+    
+    // Use demo user ID for unauthenticated users
+    const effectiveUserId = user?.id ?? DEMO_USER_ID;
 
     try {
-      const userKey = `${user.id}_${key}`;
+      const userKey = `${effectiveUserId}_${key}`;
       const item = window.localStorage.getItem(userKey);
       setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
     } catch (error) {
@@ -88,11 +85,12 @@ export function usePriorityLocalStorage<T>(
   }, [user, key, shouldLoad]);
 
   const setValue = (value: T) => {
-    if (!user) return;
+    // Use demo user ID for unauthenticated users (allows demo interactions)
+    const effectiveUserId = user?.id ?? DEMO_USER_ID;
     
     try {
       setStoredValue(value);
-      const userKey = `${user.id}_${key}`;
+      const userKey = `${effectiveUserId}_${key}`;
       window.localStorage.setItem(userKey, JSON.stringify(value));
     } catch (error) {
       console.error(`Error setting localStorage key "${key}":`, error);

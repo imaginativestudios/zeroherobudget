@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+import { loadDemoData } from "@/lib/demoDataLoader";
 
 const ComingSoon = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -166,16 +168,24 @@ const ComingSoon = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 px-2"
           >
-            <Link to="/dashboard">
-              <Button
-                size="lg"
-                variant="gold"
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 text-primary-dark w-full sm:w-auto"
-              >
-                Explore Demo
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="gold"
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 text-primary-dark w-full sm:w-auto"
+              onClick={() => {
+                const result = loadDemoData();
+                if (result.loaded) {
+                  toast({
+                    title: "Demo Loaded! 🎉",
+                    description: "Explore a fully-populated financial dashboard",
+                  });
+                  navigate('/dashboard');
+                }
+              }}
+            >
+              Explore Demo
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            </Button>
           </motion.div>
 
           {/* Email Signup Form */}
@@ -409,16 +419,24 @@ const ComingSoon = () => {
             transition={{ delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/dashboard">
-              <Button
-                size="lg"
-                variant="gold"
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
-              >
-                Explore Demo
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="gold"
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
+              onClick={() => {
+                const result = loadDemoData();
+                if (result.loaded) {
+                  toast({
+                    title: "Demo Loaded! 🎉",
+                    description: "Explore a fully-populated financial dashboard",
+                  });
+                  navigate('/dashboard');
+                }
+              }}
+            >
+              Explore Demo
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            </Button>
           </motion.div>
         </div>
       </section>

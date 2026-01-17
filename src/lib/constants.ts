@@ -91,3 +91,6 @@ export const formatCurrency = (value: number): string => {
     maximumFractionDigits: 0,
   }).format(isFinite(value) ? value : 0);
 };
+
+// Demo User ID for isolated demo mode
+export const DEMO_USER_ID = 'demo-hero-00000000';

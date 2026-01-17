@@ -113,11 +113,18 @@ serve(async (req) => {
     }
 
     const isTrialing = subscription.status === "trialing";
-    const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-    const trialEnd = subscription.trial_end 
-      ? new Date(subscription.trial_end * 1000).toISOString() 
-      : null;
+    const amountCents = subscription.items.data[0]?.price?.unit_amount ?? 300;
+    
+    // Safely handle date conversions
+    let subscriptionEnd: string | null = null;
+    if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
+      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    }
+    
+    let trialEnd: string | null = null;
+    if (subscription.trial_end && typeof subscription.trial_end === 'number') {
+      trialEnd = new Date(subscription.trial_end * 1000).toISOString();
+    }
     
     logStep("Subscription found", { 
       subscriptionId: subscription.id,

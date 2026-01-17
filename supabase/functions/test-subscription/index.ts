@@ -23,6 +23,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // SECURITY: Block in production environment
+  const environment = Deno.env.get("ENVIRONMENT");
+  if (environment === "production") {
+    logStep("BLOCKED: Production environment");
+    return new Response(JSON.stringify({ error: "Endpoint disabled in production" }), {
+      status: 403,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
@@ -66,7 +76,27 @@ serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    logStep("User authenticated", { userId });
+    
+    // SECURITY: Check if user is admin (additional protection layer)
+    const { data: roleData } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    
+    const isAdmin = !!roleData;
+    
+    // Only allow if in dev environment OR user is admin
+    if (!isAdmin && environment !== "development") {
+      logStep("BLOCKED: Non-admin user in non-dev environment", { userId });
+      return new Response(JSON.stringify({ error: "Admin access required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    logStep("User authenticated", { userId, isAdmin });
 
     const { action, tier, amount } = await req.json();
     const amountCents = amount || 1500;

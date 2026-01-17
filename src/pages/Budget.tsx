@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Crown, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
+import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -334,7 +334,7 @@ export const Budget = () => {
       {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Crown className="h-5 w-5 text-accent" />
+              <Compass className="h-5 w-5 text-accent" />
               Planned Spending by Category
             </CardTitle>
           </CardHeader>

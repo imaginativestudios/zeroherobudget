@@ -1,5 +1,5 @@
 
-import { Users, UserPlus, Mail, Crown, Shield, Eye, Trash2, X } from 'lucide-react';
+import { Users, UserPlus, Mail, Scroll, Shield, Eye, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +36,7 @@ export function Household() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
-        return <Crown className="h-4 w-4 text-accent" aria-hidden="true" />;
+        return <Scroll className="h-4 w-4 text-accent" aria-hidden="true" />;
       case 'admin':
         return <Shield className="h-4 w-4 text-primary" aria-hidden="true" />;
       case 'member':

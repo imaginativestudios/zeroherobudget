@@ -15,7 +15,7 @@ import {
   Lightbulb,
   AlertTriangle,
   BarChart3,
-  Crown
+  Compass
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ const IconStyleGuide = () => {
       examples: [
         { icon: DollarSign, label: "Monthly Income" },
         { icon: TrendingUp, label: "Budget Summary" },
-        { icon: Crown, label: "Spending Chart" },
+        { icon: Compass, label: "Spending Chart" },
       ]
     },
     {

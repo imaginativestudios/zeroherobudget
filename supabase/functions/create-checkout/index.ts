@@ -134,8 +134,18 @@ serve(async (req) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    console.error("Error in create-checkout:", error);
+    
+    // Only expose safe, expected error messages to the client
+    const safeErrors = [
+      "Amount must be between $3 and $15",
+      "You already have an active subscription. Please manage it from your account settings.",
+    ];
+    const clientMessage = safeErrors.includes(errorMessage) 
+      ? errorMessage 
+      : "Unable to create checkout session";
+    
+    return new Response(JSON.stringify({ error: clientMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

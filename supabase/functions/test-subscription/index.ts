@@ -143,8 +143,8 @@ serve(async (req) => {
       .eq("id", userId);
 
     if (updateError) {
-      logStep("ERROR: Failed to update profile", { error: updateError.message });
-      return new Response(JSON.stringify({ error: updateError.message }), {
+      console.error("Failed to update profile:", updateError);
+      return new Response(JSON.stringify({ error: "Failed to update subscription status" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -157,8 +157,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    logStep("ERROR: Unexpected error", { message: error.message });
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Unexpected error in test-subscription:", error);
+    return new Response(JSON.stringify({ error: "An unexpected error occurred" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

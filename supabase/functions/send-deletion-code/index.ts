@@ -81,8 +81,10 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    // Generate a 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a 6-digit code using cryptographically secure random
+    const randomArray = new Uint32Array(1);
+    crypto.getRandomValues(randomArray);
+    const code = (100000 + (randomArray[0] % 900000)).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
     const resetAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 

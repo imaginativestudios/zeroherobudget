@@ -35,9 +35,10 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
   const pendingCheckoutRef = useRef(false);
   
   const { user } = useAuth();
-  const { createCheckout } = useSubscriptionStatus();
+  const { createCheckout, subscribed, isTrialing, loading: statusLoading, tierName, tierEmoji } = useSubscriptionStatus();
   
   const tierInfo = getTierInfo(amount);
+  const hasActiveSubscription = subscribed || isTrialing;
 
   // When user logs in after opening auth modal, trigger checkout
   useEffect(() => {
@@ -60,7 +61,8 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
       window.open(checkoutUrl, '_blank');
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error('Failed to start checkout. Please try again.');
+      const message = error instanceof Error ? error.message : 'Failed to start checkout. Please try again.';
+      toast.error(message);
       setProcessing(false);
     }
   };
@@ -74,6 +76,80 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
 
     await handleCheckout();
   };
+
+  // Show active subscription status instead of pricing
+  if (hasActiveSubscription && !statusLoading) {
+    return (
+      <>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', duration: 0.5 }}
+          className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg"
+        >
+          {/* Success Icon */}
+          <motion.div 
+            className="flex justify-center mb-6"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+          >
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center">
+              <Check className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+            </div>
+          </motion.div>
+
+          {/* Status Message */}
+          <motion.div 
+            className="text-center mb-6"
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+              {isTrialing ? 'Your Trial is Active!' : 'You\'re Subscribed!'}
+            </h1>
+            <p className="text-muted-foreground">
+              {isTrialing 
+                ? 'You already have an active trial. Continue your quest!'
+                : 'Your fortress is fully operational.'}
+            </p>
+          </motion.div>
+
+          {/* Current Tier Badge */}
+          <motion.div
+            initial={{ y: 15, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-center mb-8"
+          >
+            <span className="text-4xl">{tierEmoji || '⚔️'}</span>
+            <p className="text-lg font-bold text-primary mt-2">
+              {tierName || 'Hero'}
+            </p>
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="space-y-3"
+          >
+            <Button
+              onClick={onStartTrial}
+              className="w-full h-12"
+              size="lg"
+              variant="gold"
+            >
+              Continue to Dashboard
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+        </motion.div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -173,7 +249,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
         >
           <Button
             onClick={handleStartTrial}
-            disabled={processing}
+            disabled={processing || statusLoading}
             className="w-full h-12"
             size="lg"
             variant="gold"

@@ -1,12 +1,12 @@
 /**
- * Hero's Moat Card
+ * Hero's Sanctuary Card
  * 
  * Visualizes the user's progress toward their first $1,000 emergency fund.
- * Uses a castle-and-water metaphor with rising water levels.
+ * Uses a growing sanctuary metaphor with peaceful restoration themes.
  */
 
 import { useState } from 'react';
-import { Castle, Droplets, Shield, Plus, Check, Sparkles } from 'lucide-react';
+import { Heart, Droplets, Shield, Plus, Check, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -58,12 +58,12 @@ export function HeroMoatCard() {
 
   // Milestone messages
   const getMilestoneMessage = () => {
-    if (isMoatComplete) return "Your castle is fully protected! You're ready for life's storms.";
-    if (moatProgress >= 75) return "Almost there! Your defenses are strong.";
-    if (moatProgress >= 50) return "Halfway to full protection! Keep building.";
-    if (moatProgress >= 25) return "Good progress! Your moat is taking shape.";
-    if (moatProgress > 0) return "Every dollar strengthens your defenses.";
-    return "Start building your financial fortress today.";
+    if (isMoatComplete) return "Your Sanctuary is safe! You're ready for life's unexpected turns.";
+    if (moatProgress >= 75) return "Almost there! Your safe haven is nearly complete.";
+    if (moatProgress >= 50) return "Halfway to peace of mind! Keep growing.";
+    if (moatProgress >= 25) return "Good progress! Your Sanctuary is taking shape.";
+    if (moatProgress > 0) return "Every dollar brings more peace of mind.";
+    return "Start building your Sanctuary today.";
   };
 
   return (
@@ -74,13 +74,13 @@ export function HeroMoatCard() {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <Castle className="h-4 w-4 text-primary" />
-            The Hero's Moat
+            <Heart className="h-4 w-4 text-primary" />
+            The Sanctuary
           </span>
           {isMoatComplete ? (
             <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success flex items-center gap-1">
               <Shield className="h-3 w-3" />
-              Protected
+              Safe
             </span>
           ) : (
             <span className="text-xs text-muted-foreground">

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Building, Castle, Shield } from 'lucide-react';
+import { Sprout, Home, Heart, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CastleLevel, FORTRESS_LEVEL_LABELS } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
@@ -17,19 +17,19 @@ const getLevelIcon = (level: CastleLevel, isSecure: boolean) => {
   
   switch (level) {
     case 1:
-      return <Home className={cn(iconClass, "h-3.5 w-3.5")} />;
+      return <Sprout className={cn(iconClass, "h-3.5 w-3.5")} />;
     case 2:
-      return <Building className={cn(iconClass, "h-3.5 w-3.5")} />;
+      return <Home className={cn(iconClass, "h-3.5 w-3.5")} />;
     case 3:
-      return <Castle className={cn(iconClass, "h-3.5 w-3.5")} />;
+      return <Heart className={cn(iconClass, "h-3.5 w-3.5")} />;
     case 4:
       return isSecure ? (
         <span className="flex items-center gap-0.5">
-          <Castle className={cn(iconClass, "h-3.5 w-3.5")} />
+          <Heart className={cn(iconClass, "h-3.5 w-3.5")} />
           <Shield className={cn(iconClass, "h-3 w-3")} />
         </span>
       ) : (
-        <Castle className={cn(iconClass, "h-3.5 w-3.5")} />
+        <Heart className={cn(iconClass, "h-3.5 w-3.5")} />
       );
   }
 };

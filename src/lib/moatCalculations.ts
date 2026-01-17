@@ -1,8 +1,8 @@
 /**
- * Moat Health Calculations
+ * Sanctuary Health Calculations
  * 
- * Calculates the health/status of the user's emergency fund (Moat)
- * to determine if it should be the Primary Quest on the Dashboard.
+ * Calculates the health/status of the user's emergency fund (Sanctuary)
+ * to determine if it should be the Current Quest on the Dashboard.
  */
 
 export type MoatStatus = 'vulnerable' | 'building' | 'fortified' | 'secure';
@@ -18,10 +18,10 @@ export interface MoatHealth {
 }
 
 /**
- * Calculate the health of the user's Moat (emergency fund)
+ * Calculate the health of the user's Sanctuary (emergency fund)
  * 
- * @param moatCurrent - Current moat balance
- * @param moatTarget - Target moat amount (default $1,000)
+ * @param moatCurrent - Current sanctuary balance
+ * @param moatTarget - Target sanctuary amount (default $1,000)
  * @returns MoatHealth object with status, quest priority, and messaging
  */
 export function calculateMoatHealth(
@@ -30,27 +30,27 @@ export function calculateMoatHealth(
 ): MoatHealth {
   const percentage = Math.min(100, Math.max(0, (moatCurrent / moatTarget) * 100));
   
-  // Moat is complete - no longer primary quest
+  // Sanctuary is complete - no longer current quest
   if (moatCurrent >= moatTarget) {
     return {
       status: 'secure',
       isPrimaryQuest: false,
       percentage: 100,
-      message: "The Moat is Secure! Your Fortress can now withstand the unexpected. Focus all power on the next Debt Boss.",
+      message: "Your Sanctuary is safe! You're protected from the unexpected. Focus on clearing the next Shadow.",
       castleLevel: 4,
-      statusLabel: 'Moat Secure',
+      statusLabel: 'Sanctuary Safe',
     };
   }
   
-  // No moat at all - vulnerable state
+  // No sanctuary at all - vulnerable state
   if (moatCurrent === 0) {
     return {
       status: 'vulnerable',
       isPrimaryQuest: true,
       percentage: 0,
-      message: "Your Castle is vulnerable. Build your $1,000 Moat to prevent debt from ever breaking back in.",
+      message: "Your Sanctuary needs building. Create your $1,000 safe haven to protect your journey.",
       castleLevel: 1,
-      statusLabel: 'Castle Vulnerable',
+      statusLabel: 'Sanctuary Exposed',
     };
   }
   
@@ -60,9 +60,9 @@ export function calculateMoatHealth(
       status: 'fortified',
       isPrimaryQuest: true,
       percentage,
-      message: "Almost there! Your defenses are nearly impenetrable. One final push to complete your Moat!",
+      message: "Almost there! Your Sanctuary is nearly complete. One final step to full protection!",
       castleLevel: 4,
-      statusLabel: 'Walls Strengthening',
+      statusLabel: 'Sanctuary Strengthening',
     };
   }
   
@@ -74,10 +74,10 @@ export function calculateMoatHealth(
       isPrimaryQuest: true,
       percentage,
       message: percentage >= 51 
-        ? "Your fortress grows stronger! Keep fortifying your defenses."
-        : "Good progress, warrior! Your moat is taking shape.",
+        ? "Your Sanctuary grows stronger! Keep nurturing your safe haven."
+        : "Good progress, traveler! Your Sanctuary is taking shape.",
       castleLevel,
-      statusLabel: 'Defenses Rising',
+      statusLabel: 'Sanctuary Growing',
     };
   }
   
@@ -86,9 +86,9 @@ export function calculateMoatHealth(
     status: 'building',
     isPrimaryQuest: true,
     percentage,
-    message: "Every dollar strengthens your castle walls. Keep building!",
+    message: "Every dollar brings more peace of mind. Keep building your Sanctuary!",
     castleLevel: 1,
-    statusLabel: 'Defenses Rising',
+    statusLabel: 'Sanctuary Growing',
   };
 }
 
@@ -105,17 +105,17 @@ export function getCastleIconType(level: CastleLevel): 'cabin' | 'tower' | 'cast
 }
 
 /**
- * Fortress level display labels for the badge
+ * Sanctuary level display labels for the badge
  */
 export const FORTRESS_LEVEL_LABELS: Record<CastleLevel, string> = {
-  1: 'Wood Cabin',
-  2: 'Watchtower',
-  3: 'Castle',
-  4: 'Stone Fortress',
+  1: 'Seedling',
+  2: 'Shelter',
+  3: 'Haven',
+  4: 'Sanctuary',
 };
 
 /**
- * Moat Milestone definitions for celebrations
+ * Sanctuary Milestone definitions for celebrations
  */
 export interface MoatMilestone {
   percentage: 25 | 50 | 75 | 100;
@@ -128,30 +128,30 @@ export interface MoatMilestone {
 export const MOAT_MILESTONES: Record<number, MoatMilestone> = {
   25: {
     percentage: 25,
-    title: "Foundation Laid!",
-    message: "Your castle walls are rising! 25% of your Moat is secured.",
-    icon: "🏗️",
+    title: "Seeds Planted!",
+    message: "Your Sanctuary is taking root! 25% of your goal is reached.",
+    icon: "🌱",
     celebrationLevel: 'basic',
   },
   50: {
     percentage: 50,
-    title: "Halfway Fortified!",
-    message: "Impressive progress, warrior! Your defenses are halfway complete.",
-    icon: "🛡️",
+    title: "Halfway There!",
+    message: "Remarkable progress, traveler! Your Sanctuary is halfway complete.",
+    icon: "🏕️",
     celebrationLevel: 'milestone',
   },
   75: {
     percentage: 75,
-    title: "Almost Impenetrable!",
-    message: "Your fortress grows mighty! Just a bit more to full protection.",
-    icon: "⚔️",
+    title: "Almost Complete!",
+    message: "Your safe haven grows strong! Just a bit more to full peace of mind.",
+    icon: "🏡",
     celebrationLevel: 'milestone',
   },
   100: {
     percentage: 100,
-    title: "Moat Complete!",
-    message: "The Moat is Secure! Your Fortress can now withstand the unexpected!",
-    icon: "🏰",
+    title: "Sanctuary Complete!",
+    message: "Your Sanctuary is safe! You're protected from life's unexpected turns.",
+    icon: "✨",
     celebrationLevel: 'epic',
   },
 };

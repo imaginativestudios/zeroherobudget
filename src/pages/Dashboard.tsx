@@ -292,7 +292,7 @@ export const Dashboard = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="pt-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              <span className="leading-tight">Welcome, debt warrior!</span>
+              <span className="leading-tight">Welcome, traveler!</span>
             </h1>
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2 items-center justify-center sm:justify-end mt-4 sm:mt-0">
@@ -327,12 +327,12 @@ export const Dashboard = () => {
       {/* 3-ZONE LAYOUT: Defense + Offense         */}
       {/* ========================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* THE MOAT (Defense) - Left Column */}
+        {/* THE SANCTUARY (Defense) - Left Column */}
         <div className="lg:col-span-1 space-y-4">
           {moatHealth.isPrimaryQuest && (
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
-                ⚔️ PRIMARY QUEST
+                🌟 CURRENT QUEST
               </span>
             </div>
           )}

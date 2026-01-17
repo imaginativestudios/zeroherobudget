@@ -179,17 +179,17 @@ export function BossCard({
           {/* Progress Bar (visual only for now) */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Battle Progress</span>
+              <span className="text-muted-foreground">Journey Progress</span>
               <span className="font-medium">
                 {thisDebtSchedule?.totalInterest 
                   ? `$${thisDebtSchedule.totalInterest.toLocaleString()} interest saved` 
-                  : 'Start slaying!'}
+                  : 'Begin clearing!'}
               </span>
             </div>
             <Progress value={progressPercentage} className="h-3" />
           </div>
 
-          {/* STRIKE Button */}
+          {/* CLEAR SHADOW Button */}
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -205,7 +205,7 @@ export function BossCard({
               onClick={() => setStrikeModalOpen(true)}
             >
               <Zap className="w-6 h-6" />
-              STRIKE! — Make Extra Payment
+              CLEAR SHADOW — Make Extra Payment
             </Button>
           </motion.div>
         </CardContent>

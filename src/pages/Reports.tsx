@@ -72,20 +72,20 @@ export const Reports = () => {
     href: "/reports/income",
     color: "text-success"
   }, {
-    title: "War Chest Analysis",
-    description: "See your funds available for slaying Balance Foes",
+    title: "Available Funds",
+    description: "See your funds available for clearing Shadows",
     icon: Target,
     href: "/reports/available",
     color: "text-warning"
   }, {
-    title: "Kingdom Wealth",
-    description: "Monitor your assets, Balance Foes, and overall worth",
+    title: "Net Worth",
+    description: "Monitor your assets, Shadows, and overall worth",
     icon: TrendingUp,
     href: "/reports/net-worth",
     color: "text-primary"
   }, {
-    title: "Recurring Obligations",
-    description: "Analyze your recurring subscription deployments",
+    title: "Recurring Commitments",
+    description: "Analyze your recurring subscription costs",
     icon: CreditCard,
     href: "/reports/subscriptions",
     color: "text-accent"

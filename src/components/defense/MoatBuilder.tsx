@@ -184,7 +184,7 @@ export function MoatBuilder({
               "text-primary",
               variant === 'full' ? "h-5 w-5" : "h-4 w-4"
             )} />
-            Fortify Your Moat
+            Grow Your Sanctuary
           </span>
           <FortressLevelBadge 
             level={moatHealth.castleLevel}

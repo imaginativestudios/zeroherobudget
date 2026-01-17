@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
 import { DeviceMockups } from '@/components/DeviceMockups';
-import { ArrowRight, Shield, TrendingDown, Target, Castle, Zap, Sprout, ChevronRight } from 'lucide-react';
+import { ArrowRight, Shield, TrendingDown, Target, Heart, Zap, Sprout, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Landing() {
@@ -24,51 +24,51 @@ export default function Landing() {
   // The Three Oaths
   const oaths = [
     {
-      icon: Castle,
-      title: 'The Fortress',
-      quote: '"Build a Moat before you build a castle."',
-      description: 'Your first quest: A $1,000 emergency fund. This Moat protects 80% of Heroes from falling back into debt.',
+      icon: Heart,
+      title: 'The Sanctuary',
+      quote: '"Build a safe haven before the storm."',
+      description: 'Your first quest: A $1,000 emergency fund. This Sanctuary protects 80% of travelers from falling back into shadow.',
     },
     {
       icon: Zap,
       title: 'The Freedom Engine',
-      quote: '"Every dollar you don\'t pay in interest is an hour of life reclaimed."',
+      quote: '"Every dollar saved is an hour of life reclaimed."',
       description: 'We calculate the TRUE cost of purchases—in hours of work, not just dollars.',
     },
     {
       icon: Sprout,
       title: 'Growth Over Guilt',
-      quote: '"There are no failures here—only feedback."',
-      description: 'Overspent? That\'s a \'Tactical Overstretch\' not a character flaw. Behind on goals? You\'re in a \'Regrouping Phase.\'',
+      quote: '"There are no failures here—only lessons."',
+      description: 'Off the path? That\'s just a \'Detour\' not a character flaw. Behind on goals? You\'re \'Finding the Way.\'',
     },
   ];
 
-  // The Path - Squire to Legend
+  // The Path - Wayfarer to Luminary
   const journeyLevels = [
     {
       level: 1,
-      title: 'Squire',
-      quote: 'Every legend starts with a single step.',
+      title: 'Wayfarer',
+      quote: 'Every journey starts with a single step.',
       milestones: [
         'Complete onboarding',
-        'Enter your first debt',
-        'Set your Moat target',
+        'Enter your first shadow',
+        'Set your Sanctuary target',
       ],
     },
     {
       level: 2,
-      title: 'Warrior',
-      quote: 'Your Moat is full. Your Castle stands ready.',
+      title: 'Pathfinder',
+      quote: 'Your Sanctuary is complete. You\'re ready for the road ahead.',
       milestones: [
         'Build $1,000 emergency fund',
         'Log 7 days of transactions',
-        'Make your first extra debt payment',
+        'Make your first extra payment',
       ],
     },
     {
       level: 3,
-      title: 'Champion',
-      quote: 'You\'ve slain your first Balance Foe.',
+      title: 'Sage',
+      quote: 'You\'ve cleared your first Shadow.',
       milestones: [
         'Pay off your first debt',
         'Maintain 30-day streak',
@@ -77,10 +77,10 @@ export default function Landing() {
     },
     {
       level: 4,
-      title: 'Legend',
+      title: 'Luminary',
       quote: 'Debt-free. You ARE the Zero Hero.',
       milestones: [
-        'All debts vanquished',
+        'All shadows cleared',
         '6-month emergency fund',
         'Financial freedom achieved',
       ],

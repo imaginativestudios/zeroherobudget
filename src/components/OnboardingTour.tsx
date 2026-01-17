@@ -46,7 +46,7 @@ const getMobileTabletTourSteps = (): Step[] => [
       <div className="space-y-2">
         <h3 className="text-base font-semibold text-foreground">Navigation Sidebar</h3>
         <p className="text-sm text-muted-foreground">
-          Access your War Map, Battle Plan, Quest Log, Intel, and more from here.
+          Access your Atlas, Shadow Path, Journey Log, Discoveries, and more from here.
         </p>
       </div>
     ),
@@ -58,9 +58,9 @@ const getMobileTabletTourSteps = (): Step[] => [
     target: '[data-tour="nav-budgets"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Your War Map</h3>
+        <h3 className="text-base font-semibold text-foreground">The Atlas</h3>
         <p className="text-sm text-muted-foreground">
-          Plan your financial strategy and track deployment vs. actual spending.
+          Plan your financial journey and track your provisions vs. actual spending.
         </p>
       </div>
     ),
@@ -72,9 +72,9 @@ const getMobileTabletTourSteps = (): Step[] => [
     target: '[data-tour="nav-debts"]',
     content: (
       <div className="space-y-2">
-        <h3 className="text-base font-semibold text-foreground">Your Battle Plan</h3>
+        <h3 className="text-base font-semibold text-foreground">Shadow Path</h3>
         <p className="text-sm text-muted-foreground">
-          Slay your Balance Foes with Snowball or Avalanche tactics.
+          Clear your Shadows with Snowball or Avalanche approaches.
         </p>
       </div>
     ),

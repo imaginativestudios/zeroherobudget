@@ -140,7 +140,6 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
               onClick={onStartTrial}
               className="w-full h-12"
               size="lg"
-              variant="gold"
             >
               Continue to Dashboard
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -252,7 +251,6 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             disabled={processing || statusLoading}
             className="w-full h-12"
             size="lg"
-            variant="gold"
           >
             {processing ? (
               <>

@@ -48,9 +48,8 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Button 
             size="lg" 
-            variant="gold" 
             asChild 
-            className="text-primary-dark"
+            className="bg-white text-primary hover:bg-white/90"
           >
             <Link to="/">
               <Home className="mr-2 h-5 w-5" />

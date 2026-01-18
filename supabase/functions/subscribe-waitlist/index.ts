@@ -82,14 +82,18 @@ const handler = async (req: Request): Promise<Response> => {
       React.createElement(WaitlistWelcomeEmail, { email, unsubscribeUrl })
     );
 
-    // Send welcome email
+    // Send welcome email with List-Unsubscribe headers for Gmail/Yahoo compliance
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
       replyTo: "support@zeroherobudget.com",
       to: [email],
-      subject: "Welcome to Zero Hero - You're on the List!",
+      subject: "Zero Hero - You're on the waitlist",
+      headers: {
+        "List-Unsubscribe": `<${unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
       html: emailHtml,
-      text: `Welcome to Zero Hero!\n\nYou're officially on the waitlist! We're thrilled to have you join our community of people taking control of their finances.\n\nWe'll notify you as soon as we're ready to welcome you aboard.\n\n- The Zero Hero Team\n\nP.S. Reply to this email if you have any questions!\n\nTo unsubscribe: ${unsubscribeUrl}`,
+      text: `Zero Hero Waitlist\n\nThanks for signing up. We'll email you when we launch.\n\n- The Zero Hero Team\n\nTo unsubscribe: ${unsubscribeUrl}`,
     });
 
     console.log("Welcome email sent successfully:", emailResponse);

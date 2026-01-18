@@ -28,37 +28,31 @@ export const HouseholdInviteEmail = ({
 }: HouseholdInviteEmailProps) => (
   <Html>
     <Head />
-    <Preview>You've been invited to join {householdName} on Zero Hero!</Preview>
+    <Preview>{inviterName} invited you to join {householdName} on Zero Hero</Preview>
     <Body style={main}>
       <Container style={container}>
-        {/* Header with Zero Hero branding */}
+        {/* Header with solid background */}
         <Section style={header}>
-          <Heading style={headerTitle}>🎯 Zero Hero</Heading>
+          <Heading style={headerTitle}>Zero Hero</Heading>
         </Section>
 
         {/* Main content */}
         <Section style={content}>
-          <Heading style={h2}>You're Invited!</Heading>
+          <Heading style={h2}>You're Invited</Heading>
           
           <Text style={paragraph}>
-            Hey there! 👋
-          </Text>
-          
-          <Text style={paragraph}>
-            <strong>{inviterName}</strong> has invited you to join their household 
-            "<strong>{householdName}</strong>" on Zero Hero as a <strong>{role}</strong>.
+            <strong>{inviterName}</strong> invited you to join "<strong>{householdName}</strong>" on Zero Hero as a <strong>{role}</strong>.
           </Text>
 
           {/* Benefits Box */}
           <Section style={boxSection}>
-            <Heading style={boxHeading}>What You'll Get</Heading>
-            <Text style={listItem}>✓ Shared budgets and expense tracking</Text>
-            <Text style={listItem}>✓ Collaborative debt payoff planning</Text>
-            <Text style={listItem}>✓ Real-time financial insights for the household</Text>
+            <Text style={listItem}>- Shared budgets and expense tracking</Text>
+            <Text style={listItem}>- Collaborative debt payoff planning</Text>
+            <Text style={listItem}>- Real-time financial insights</Text>
           </Section>
 
           <Text style={paragraph}>
-            Click the button below to accept your invitation and start your journey to financial freedom together!
+            Click below to accept your invitation.
           </Text>
 
           {/* CTA Button */}
@@ -78,12 +72,12 @@ export const HouseholdInviteEmail = ({
 
           <Text style={paragraph}>
             <em style={italic}>
-              This invitation will expire in 7 days. If you didn't expect this invitation, you can safely ignore this email.
+              This invitation expires in 7 days. If you didn't expect this, you can ignore this email.
             </em>
           </Text>
 
           <Text style={footer}>
-            Questions? Just reply to this email - we'd love to hear from you!
+            Questions? Reply to this email.
             <br />
             <strong>- The Zero Hero Team</strong>
           </Text>
@@ -102,7 +96,7 @@ export const HouseholdInviteEmail = ({
 
 export default HouseholdInviteEmail;
 
-// Styles - Zero Hero brand colors (Teal primary #0D7377, Orange accent #F4A259)
+// Styles - clean, professional, no spam triggers
 const main = {
   backgroundColor: '#f6f9fc',
   fontFamily:
@@ -118,14 +112,14 @@ const container = {
 };
 
 const header = {
-  background: 'linear-gradient(135deg, #0D7377 0%, #0a5c5f 100%)',
-  padding: '40px 30px',
+  backgroundColor: '#0D7377',
+  padding: '32px 30px',
   textAlign: 'center' as const,
 };
 
 const headerTitle = {
   color: '#ffffff',
-  fontSize: '32px',
+  fontSize: '28px',
   fontWeight: 'bold',
   margin: '0',
   lineHeight: '1.2',
@@ -137,7 +131,7 @@ const content = {
 
 const h2 = {
   color: '#0D7377',
-  fontSize: '24px',
+  fontSize: '22px',
   fontWeight: 'bold',
   marginTop: '0',
   marginBottom: '20px',
@@ -151,19 +145,10 @@ const paragraph = {
 };
 
 const boxSection = {
-  backgroundColor: '#e6f5f5',
-  borderLeft: '4px solid #0D7377',
-  borderRadius: '0 8px 8px 0',
-  padding: '24px',
+  backgroundColor: '#f9fafb',
+  borderRadius: '6px',
+  padding: '20px 24px',
   margin: '24px 0',
-};
-
-const boxHeading = {
-  color: '#0D7377',
-  fontSize: '18px',
-  fontWeight: 'bold',
-  marginTop: '0',
-  marginBottom: '16px',
 };
 
 const listItem = {
@@ -179,12 +164,12 @@ const buttonContainer = {
 };
 
 const button = {
-  backgroundColor: '#F4A259',
-  borderRadius: '8px',
-  color: '#1a1a1a',
+  backgroundColor: '#0D7377',
+  borderRadius: '6px',
+  color: '#ffffff',
   display: 'inline-block',
   fontSize: '16px',
-  fontWeight: 'bold',
+  fontWeight: '600',
   padding: '14px 32px',
   textDecoration: 'none',
   textAlign: 'center' as const,

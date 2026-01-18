@@ -134,7 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
       replyTo: "support@zeroherobudget.com",
       to: [email],
-      subject: "Account Deletion Confirmation Code",
+      subject: "Zero Hero - Account Deletion Code",
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
           <h1 style="color: #dc2626; margin-bottom: 24px;">Account Deletion Request</h1>

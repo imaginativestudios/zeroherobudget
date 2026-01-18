@@ -203,12 +203,12 @@ export const Budget = () => {
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-slate-100 font-sanctuary-serif">Shadow Path</h1>
+            <h1 className="text-3xl font-bold text-foreground">The Atlas</h1>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={startTour}
-              className="text-slate-400 hover:text-slate-200"
+              className="text-muted-foreground hover:text-foreground"
               title="Restart tour"
             >
               <HelpCircle className="h-5 w-5" />
@@ -217,10 +217,10 @@ export const Budget = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
-            <div className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-slate-900/40">
-              <Calendar className="h-4 w-4 text-slate-400" />
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-44 bg-slate-800/50 border-white/10">
+                <SelectTrigger className="w-44">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -239,12 +239,12 @@ export const Budget = () => {
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-2 p-3 rounded-xl border border-white/5 bg-slate-900/40">
-              <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-700/50">
+            <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
+              <Button variant="outline" size="sm" onClick={exportExpenses}>
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Export</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()} className="bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-700/50">
+              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()}>
                 <Upload className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Import</span>
               </Button>
@@ -257,7 +257,7 @@ export const Budget = () => {
       {/* ========================================= */}
       {/* HERO: STAMINA WHEEL - Central Visual     */}
       {/* ========================================= */}
-      <Card variant="glass" className="card-sanctuary py-8" data-tour="budget-summary">
+      <Card className="shadow-royal py-8" data-tour="budget-summary">
         <CardContent className="flex flex-col items-center justify-center">
           <div className="stamina-glow mb-6">
             <StaminaWheel
@@ -269,36 +269,36 @@ export const Budget = () => {
             />
           </div>
           <div className="text-center space-y-2">
-            <h2 className="text-xl font-semibold text-slate-100 font-sanctuary-serif">
+            <h2 className="text-xl font-semibold text-foreground">
               Your Financial Energy
             </h2>
-            <p className="text-slate-400 max-w-md">
+            <p className="text-muted-foreground max-w-md">
               Watch your stamina as you allocate resources. The green vitality represents your safe-to-spend buffer.
             </p>
           </div>
         </CardContent>
       </Card>
       {/* Income Section */}
-      <Card variant="glass" className="card-sanctuary hover-lift" data-tour="budget-income">
+      <Card className="shadow-royal hover-lift" data-tour="budget-income">
         <CardHeader className="p-6">
-          <CardTitle className="text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-            <DollarSign className="h-5 w-5 text-emerald-400" aria-hidden="true" />
+          <CardTitle className="text-xl text-foreground flex items-center gap-3">
+            <DollarSign className="h-5 w-5 text-success" aria-hidden="true" />
             Monthly Income
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <div className="flex items-center gap-4">
-            <label htmlFor="income-amount" className="text-slate-400 font-medium">Income Amount:</label>
+            <label htmlFor="income-amount" className="text-muted-foreground font-medium">Income Amount:</label>
             <Input 
               id="income-amount"
               type="number" 
               step="0.01" 
               value={income} 
               onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
-              className="w-48 bg-slate-800/50 border-white/10 text-slate-100"
+              className="w-48"
               aria-describedby="income-display"
             />
-            <span id="income-display" className="text-2xl font-bold text-amber-400" aria-live="polite">
+            <span id="income-display" className="text-2xl font-bold text-primary" aria-live="polite">
               {formatCurrency(income)}
             </span>
           </div>
@@ -308,38 +308,38 @@ export const Budget = () => {
       {/* ========================================= */}
       {/* INVENTORY-STYLE CATEGORY LIST            */}
       {/* ========================================= */}
-      <Card variant="glass" className="card-sanctuary hover-lift">
+      <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6">
-          <CardTitle className="text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-            <Compass className="h-5 w-5 text-amber-400" aria-hidden="true" />
+          <CardTitle className="text-xl text-foreground flex items-center gap-3">
+            <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
             Budget Inventory
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           {/* Summary Statistics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
-              <div className="text-sm text-slate-500 mb-1">Total Planned</div>
-              <div className="text-2xl font-bold text-slate-100">
+            <div className="p-4 bg-muted/50 rounded-xl border">
+              <div className="text-sm text-muted-foreground mb-1">Total Planned</div>
+              <div className="text-2xl font-bold text-foreground">
                 {formatCurrency(totalExpenses)}
               </div>
             </div>
-            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
-              <div className="text-sm text-slate-500 mb-1">Total Actual</div>
-              <div className="text-2xl font-bold text-slate-100">
+            <div className="p-4 bg-muted/50 rounded-xl border">
+              <div className="text-sm text-muted-foreground mb-1">Total Actual</div>
+              <div className="text-2xl font-bold text-foreground">
                 {formatCurrency(totalActual)}
               </div>
             </div>
-            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
-              <div className="text-sm text-slate-500 mb-1">Variance</div>
-              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="p-4 bg-muted/50 rounded-xl border">
+              <div className="text-sm text-muted-foreground mb-1">Variance</div>
+              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-success' : 'text-destructive'}`}>
                 {variance <= 0 ? <TrendingDown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
                 {formatCurrency(Math.abs(variance))}
               </div>
             </div>
-            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
-              <div className="text-sm text-slate-500 mb-1">Budget Used</div>
-              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="p-4 bg-muted/50 rounded-xl border">
+              <div className="text-sm text-muted-foreground mb-1">Budget Used</div>
+              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-success' : 'text-destructive'}`}>
                 {budgetUsedPercent.toFixed(1)}%
               </div>
             </div>
@@ -347,7 +347,7 @@ export const Budget = () => {
 
           {/* Sleek Vertical Category List */}
           {categoryData.length > 0 && (
-            <div className="space-y-3 divide-sanctuary">
+            <div className="space-y-3">
               {categoryData.map((cat, idx) => {
                 const CategoryIcon = getCategoryIcon(cat.name);
                 const usagePercent = cat.planned > 0 ? Math.min(100, (cat.actual / cat.planned) * 100) : 0;
@@ -358,35 +358,35 @@ export const Budget = () => {
                   <div 
                     key={cat.name}
                     className={cn(
-                      "flex items-center gap-4 p-4 rounded-xl bg-slate-800/30 border border-white/5 hover:border-primary/30 transition-all cursor-pointer",
+                      "flex items-center gap-4 p-4 rounded-xl bg-muted/30 border hover:border-primary/30 transition-all cursor-pointer",
                       isFullySpent && "opacity-60"
                     )}
                   >
                     {/* Icon */}
                     <div className={cn(
                       "w-10 h-10 rounded-lg flex items-center justify-center",
-                      isOverBudget ? "bg-red-500/20" : "bg-primary/20"
+                      isOverBudget ? "bg-destructive/20" : "bg-primary/20"
                     )}>
                       <CategoryIcon className={cn(
                         "h-5 w-5",
-                        isOverBudget ? "text-red-400" : "text-primary"
+                        isOverBudget ? "text-destructive" : "text-primary"
                       )} />
                     </div>
                     
                     {/* Name */}
                     <span className={cn(
                       "flex-1 font-medium",
-                      isFullySpent ? "text-slate-500" : "text-slate-100"
+                      isFullySpent ? "text-muted-foreground" : "text-foreground"
                     )}>
                       {cat.name}
                     </span>
                     
                     {/* Progress Bar - Thin */}
-                    <div className="w-24 sm:w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="w-24 sm:w-32 h-1.5 bg-muted rounded-full overflow-hidden">
                       <div 
                         className={cn(
                           "h-full rounded-full transition-all",
-                          isOverBudget ? "bg-red-400" : "bg-primary"
+                          isOverBudget ? "bg-destructive" : "bg-primary"
                         )}
                         style={{ width: `${usagePercent}%` }}
                       />
@@ -395,7 +395,7 @@ export const Budget = () => {
                     {/* Amount Left */}
                     <span className={cn(
                       "font-mono text-sm w-20 text-right",
-                      isOverBudget ? "text-red-400" : "text-emerald-400"
+                      isOverBudget ? "text-destructive" : "text-success"
                     )}>
                       {isOverBudget ? '-' : ''}{formatCurrency(Math.abs(cat.planned - cat.actual))}
                     </span>
@@ -408,10 +408,10 @@ export const Budget = () => {
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="card-sanctuary hover-lift animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal hover-lift animate-fade-in">
           <CardHeader className="p-6">
-            <CardTitle className="text-lg text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <Compass className="h-5 w-5 text-amber-400" />
+            <CardTitle className="text-lg text-foreground flex items-center gap-3">
+              <Compass className="h-5 w-5 text-primary" />
               Planned Spending by Category
             </CardTitle>
           </CardHeader>
@@ -435,10 +435,10 @@ export const Budget = () => {
         </Card>}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="card-sanctuary hover-lift animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal hover-lift animate-fade-in">
           <CardHeader className="p-6">
-            <CardTitle className="text-lg text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <TrendingUp className="h-5 w-5 text-amber-400" />
+            <CardTitle className="text-lg text-foreground flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
               Planned vs Actual by Category
             </CardTitle>
           </CardHeader>
@@ -487,9 +487,9 @@ export const Budget = () => {
         </Card>}
 
       {/* Expenses Section */}
-      <Card variant="glass" className="card-sanctuary hover-lift">
+      <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6">
-          <CardTitle className="text-xl text-slate-100 font-sanctuary-serif">Monthly Expenses</CardTitle>
+          <CardTitle className="text-xl text-foreground">Monthly Expenses</CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <GroupableExpenses expenses={expenses.map(e => ({
@@ -539,13 +539,13 @@ export const Budget = () => {
           });
         }} monthlyActuals={monthlyActuals} />
           
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
+          <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <div></div>
             <div className="space-y-1 text-right">
-              <div className={`text-lg font-bold ${leftover >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <div className={`text-lg font-bold ${leftover >= 0 ? 'text-success' : 'text-destructive'}`}>
                 Planned Leftover: {formatCurrency(leftover)}
               </div>
-              <div className={`text-lg font-bold ${actualLeftover >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <div className={`text-lg font-bold ${actualLeftover >= 0 ? 'text-success' : 'text-destructive'}`}>
                 Actual Leftover: {formatCurrency(actualLeftover)}
               </div>
             </div>
@@ -554,30 +554,30 @@ export const Budget = () => {
       </Card>
 
       {/* Assets Section */}
-      <Card variant="glass" className="card-sanctuary hover-lift">
+      <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6">
-          <CardTitle className="text-xl text-slate-100 font-sanctuary-serif">Assets (for Net Worth Calculation)</CardTitle>
+          <CardTitle className="text-xl text-foreground">Assets (for Net Worth Calculation)</CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="text-left p-3 font-semibold text-slate-400">Asset</th>
-                  <th className="text-left p-3 font-semibold text-slate-400">Value</th>
-                  <th className="text-center p-3 font-semibold text-slate-400">Actions</th>
+                  <th className="text-left p-3 font-semibold text-muted-foreground">Asset</th>
+                  <th className="text-left p-3 font-semibold text-muted-foreground">Value</th>
+                  <th className="text-center p-3 font-semibold text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {assets.map(asset => <tr key={asset.id} className="border-t border-white/5">
+                {assets.map(asset => <tr key={asset.id} className="border-t">
                     <td className="p-3 break-anywhere">
-                      <Input value={asset.name} onChange={e => updateAsset(asset.id, 'name', e.target.value)} className="min-w-0 bg-slate-800/50 border-white/10 text-slate-100" />
+                      <Input value={asset.name} onChange={e => updateAsset(asset.id, 'name', e.target.value)} className="min-w-0" />
                     </td>
                     <td className="p-3">
-                      <Input type="number" step="0.01" value={asset.value} onChange={e => updateAsset(asset.id, 'value', parseFloat(e.target.value) || 0)} className="w-40 bg-slate-800/50 border-white/10 text-slate-100" />
+                      <Input type="number" step="0.01" value={asset.value} onChange={e => updateAsset(asset.id, 'value', parseFloat(e.target.value) || 0)} className="w-40" />
                     </td>
                     <td className="p-3 text-center">
-                      <Button variant="ghost" size="sm" onClick={() => removeAsset(asset.id)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
+                      <Button variant="ghost" size="sm" onClick={() => removeAsset(asset.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </td>
@@ -586,12 +586,12 @@ export const Budget = () => {
             </table>
           </div>
           
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
+          <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <Button onClick={addAsset} variant="default" className="btn-glow">
               <Plus className="h-4 w-4" />
               Add Asset
             </Button>
-            <div className="text-lg font-semibold text-amber-400">
+            <div className="text-lg font-semibold text-primary">
               Total Assets: {formatCurrency(totalAssets)}
             </div>
           </div>

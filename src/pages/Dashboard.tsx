@@ -321,16 +321,16 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="p-6 sm:p-8 rounded-2xl card-sanctuary"
+        className="p-6 sm:p-8 rounded-2xl bg-card border shadow-royal"
         data-tour="welcome-area"
       >
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Welcome + Consistency */}
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-100 font-sanctuary-serif">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
               Welcome, traveler
             </h1>
-            <p className="text-slate-400">
+            <p className="text-muted-foreground">
               Your quest continues. Stay focused on the path ahead.
             </p>
           </div>
@@ -338,8 +338,8 @@ export const Dashboard = () => {
           {/* Right: Next Objective */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="text-left sm:text-right">
-              <p className="text-sm text-slate-500 uppercase tracking-wide">Next Objective</p>
-              <p className="text-lg font-semibold text-amber-400">
+              <p className="text-sm text-muted-foreground uppercase tracking-wide">Next Objective</p>
+              <p className="text-lg font-semibold text-primary">
                 {dashboardState.currentBoss 
                   ? `Clear the Shadow on ${dashboardState.currentBoss.name}` 
                   : 'Build your Sanctuary'}
@@ -460,9 +460,9 @@ export const Dashboard = () => {
         className="space-y-6"
       >
         <div className="flex items-center gap-4">
-          <div className="divider-sanctuary flex-1"></div>
-          <h2 className="text-lg font-semibold text-slate-400 tracking-wide uppercase text-sm">Financial Overview</h2>
-          <div className="divider-sanctuary flex-1"></div>
+          <div className="h-px bg-border flex-1"></div>
+          <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Financial Overview</h2>
+          <div className="h-px bg-border flex-1"></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
         {isCriticalLoading ? (
@@ -533,11 +533,11 @@ export const Dashboard = () => {
         className="space-y-6"
       >
         <div className="flex items-center gap-4">
-          <div className={`divider-sanctuary flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
-          <h2 className={`text-lg font-semibold text-slate-400 tracking-wide uppercase text-sm transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+          <div className={`h-px bg-border flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-sm font-semibold text-muted-foreground tracking-wide uppercase transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
             Analytics {isSecondaryLoading && <span className="text-xs ml-2 opacity-70">Loading...</span>}
           </h2>
-          <div className={`divider-sanctuary flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <div className={`h-px bg-border flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
         {isSecondaryLoading ? (
@@ -548,10 +548,10 @@ export const Dashboard = () => {
         ) : (
           <>
         {/* Financial Stamina Wheel - HERO ELEMENT */}
-        <Card variant="glass" className="overflow-hidden h-full animate-fade-in card-sanctuary">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
           <CardHeader className="p-6 sm:p-8">
-            <CardTitle className="text-lg sm:text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <Heart className="h-6 w-6 text-emerald-400" aria-hidden="true" />
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
+              <Heart className="h-6 w-6 text-success" aria-hidden="true" />
               Financial Stamina
             </CardTitle>
           </CardHeader>
@@ -575,10 +575,10 @@ export const Dashboard = () => {
         </Card>
 
         {/* Spending by Category Chart */}
-        <Card variant="glass" className="overflow-hidden h-full animate-fade-in card-sanctuary">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
           <CardHeader className="p-6 sm:p-8">
-            <CardTitle className="text-lg sm:text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <BarChart3 className="h-6 w-6 text-amber-400" aria-hidden="true" />
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
+              <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
               Spending by Category
             </CardTitle>
           </CardHeader>
@@ -640,10 +640,10 @@ export const Dashboard = () => {
         </Card>
 
         {/* Debt Payoff Projection */}
-        <Card variant="glass" className="overflow-hidden h-full animate-fade-in card-sanctuary">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
           <CardHeader className="p-6 sm:p-8">
-            <CardTitle className="text-lg sm:text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <TrendingDown className="h-6 w-6 text-amber-400" />
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
+              <TrendingDown className="h-6 w-6 text-primary" />
               Debt Payoff Projection
             </CardTitle>
           </CardHeader>
@@ -716,19 +716,19 @@ export const Dashboard = () => {
         className="space-y-6"
       >
         <div className="flex items-center gap-4">
-          <div className={`divider-sanctuary flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
-          <h2 className={`text-lg font-semibold text-slate-400 tracking-wide uppercase text-sm transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+          <div className={`h-px bg-border flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-sm font-semibold text-muted-foreground tracking-wide uppercase transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
             Victories & Achievements
           </h2>
-          <div className={`divider-sanctuary flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <div className={`h-px bg-border flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         
-        <Card variant="glass" className="animate-fade-in card-sanctuary">
+        <Card className="animate-fade-in shadow-royal">
           <CardHeader className="p-6 sm:p-8">
-            <CardTitle className="text-lg sm:text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-              <Trophy className="h-6 w-6 text-amber-400" />
+            <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
+              <Trophy className="h-6 w-6 text-primary" />
               Your Progress Milestones
-              <span className="ml-auto text-sm font-normal text-slate-400">
+              <span className="ml-auto text-sm font-normal text-muted-foreground">
                 {unlockedCount} / {totalCount} Unlocked
               </span>
             </CardTitle>
@@ -765,14 +765,14 @@ export const Dashboard = () => {
         className="space-y-6"
       >
         <div className="flex items-center gap-4">
-          <div className="divider-sanctuary flex-1"></div>
-          <h2 className="text-lg font-semibold text-slate-400 tracking-wide uppercase text-sm">Debt Progress</h2>
-          <div className="divider-sanctuary flex-1"></div>
+          <div className="h-px bg-border flex-1"></div>
+          <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Debt Progress</h2>
+          <div className="h-px bg-border flex-1"></div>
         </div>
-        <Card variant="glass" className="card-sanctuary">
+        <Card className="shadow-royal">
         <CardHeader className="p-6 sm:p-8">
-          <CardTitle className="text-lg sm:text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
-            <Target className="h-6 w-6 text-amber-400" />
+          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
+            <Target className="h-6 w-6 text-primary" />
             Upcoming Payoffs ({strategy} Strategy)
           </CardTitle>
         </CardHeader>
@@ -787,29 +787,29 @@ export const Dashboard = () => {
                     ? ((debt.orig - debt.balance) / debt.orig) * 100 
                     : 0;
                   
-                  return (
-                    <div key={debt.id} className="border border-white/5 rounded-xl p-6 space-y-4 bg-slate-900/40 hover-lift">
+                    return (
+                    <div key={debt.id} className="border rounded-xl p-6 space-y-4 bg-muted/30 hover-lift">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-semibold text-slate-100">{debt.name}</h4>
-                          <p className="text-sm text-slate-400">
+                          <h4 className="font-semibold text-foreground">{debt.name}</h4>
+                          <p className="text-sm text-muted-foreground">
                             {debt.type === 'card' ? 'Credit Card' : 'Loan'}
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-amber-400">{debt.payoffLabel}</div>
+                          <div className="font-bold text-primary">{debt.payoffLabel}</div>
                         </div>
                       </div>
                       
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Progress</span>
-                          <span className="text-slate-300">{progressPercentage.toFixed(1)}%</span>
+                          <span className="text-muted-foreground">Progress</span>
+                          <span className="text-foreground">{progressPercentage.toFixed(1)}%</span>
                         </div>
                         <Progress value={progressPercentage} className="h-2" />
                       </div>
                       
-                      <div className="text-sm text-slate-500">
+                      <div className="text-sm text-muted-foreground">
                         Remaining: {formatCurrency(debt.balance)} • 
                         Interest: {formatCurrency(debt.totalInterest)}
                       </div>
@@ -824,7 +824,7 @@ export const Dashboard = () => {
           )}
           
           {leftover > 0 && (
-            <div className="mt-8 p-6 bg-slate-900/60 rounded-xl border border-white/5">
+            <div className="mt-8 p-6 bg-muted/50 rounded-xl border">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h4 className="font-semibold text-slate-100">Extra Payment Strategy</h4>

@@ -53,6 +53,7 @@ import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/c
 import { InitializeMissionCard } from "@/components/dashboard/InitializeMissionCard";
 import { BossCard } from "@/components/dashboard/BossCard";
 import { IntelFeed } from "@/components/dashboard/IntelFeed";
+import { StatusBanner } from "@/components/dashboard/StatusBanner";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
@@ -361,22 +362,16 @@ export const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Trial Countdown Banner */}
-      {isTrialing && trialEnd && (
-        <TrialCountdownBanner 
-          trialEnd={trialEnd} 
-          tierEmoji={tierEmoji} 
-          tierName={tierName} 
-        />
-      )}
-
-      {/* Privacy Notice for first-time users */}
-      <PrivacyNotice />
-
-      {/* Regrouping Banner - shown when Moat has a breach */}
-      {(isRegrouping || isVulnerable) && !bannerDismissed && (
-        <RegroupingBanner />
-      )}
+      {/* Unified Status Banner - Single priority slot */}
+      <StatusBanner
+        isTrialing={isTrialing}
+        trialEnd={trialEnd}
+        tierEmoji={tierEmoji}
+        tierName={tierName}
+        isRegrouping={isRegrouping}
+        isVulnerable={isVulnerable}
+        bannerDismissed={bannerDismissed}
+      />
 
       {/* Hero Tips Feed (Behavioral) */}
       <HeroTipsFeed />

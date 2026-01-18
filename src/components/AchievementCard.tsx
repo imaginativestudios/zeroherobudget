@@ -28,14 +28,14 @@ export const AchievementCard = ({ achievement }: AchievementCardProps) => {
   return (
     <Card 
       className={cn(
-        "relative overflow-hidden transition-all duration-500",
+        "relative overflow-hidden transition-all duration-500 h-full",
         achievement.unlocked 
-          ? "bg-primary/10 border-primary/30 shadow-elegant" 
+          ? "bg-primary/10 border-primary/30" 
           : "bg-muted/30 opacity-60 border-border/50",
         justUnlocked && "animate-scale-in"
       )}
     >
-      <CardContent className="p-4">
+      <CardContent>
         {achievement.unlocked && (
           <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
         )}

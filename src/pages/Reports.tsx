@@ -117,16 +117,16 @@ export const Reports = () => {
       </div>
 
       {/* Report Navigation Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {reportTypes.map(report => <Link key={report.href} to={report.href}>
-            <Card className="shadow-elegant hover:shadow-royal transition-royal cursor-pointer hover:translate-y-[-1px] h-full">
-              <CardHeader className="p-4 sm:p-5">
+            <Card className="cursor-pointer h-full">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-                  <report.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${report.color}`} aria-hidden="true" />
+                  <report.icon className={`h-5 w-5 ${report.color}`} aria-hidden="true" />
                   {report.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4 sm:p-5 pt-0">
+              <CardContent>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {report.description}
                 </p>
@@ -153,14 +153,14 @@ export const Reports = () => {
           </div>
         </div>}
       
-      {isSecondaryLoading ? <ChartCardSkeleton /> : <Card className="shadow-royal overflow-hidden animate-fade-in">
-        <CardHeader className="p-4 sm:p-5">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : <Card className="overflow-hidden animate-fade-in">
+        <CardHeader>
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-accent" aria-hidden="true" />
             Planned vs Actual - {formatMonthDisplay(selectedMonth)}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 pt-0">
+        <CardContent>
           {hasTransactionData ? <>
               <div className="h-[350px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">

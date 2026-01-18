@@ -77,7 +77,7 @@ export function SurplusPowerCard() {
       <CardHeader className="p-6 pb-2">
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-warning" />
+            <Zap className="h-5 w-5 text-warning" />
             Surplus Power
           </span>
           <span className={cn('text-xs px-2 py-0.5 rounded-full', config.bgColor, config.color)}>

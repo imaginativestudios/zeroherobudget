@@ -187,7 +187,7 @@ export const DebtSnowball = () => {
 
         <TabsContent value="overview" className="space-y-8 mt-8">
           {/* Strategy Selection */}
-          <Card className="shadow-royal">
+          <Card>
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <Target className="h-5 w-5 text-accent" aria-hidden="true" />
@@ -222,11 +222,11 @@ export const DebtSnowball = () => {
       </Card>
 
       {/* Debt Management */}
-      <Card className="shadow-royal">
-        <CardHeader className="p-4 sm:p-5">
+      <Card>
+        <CardHeader>
           <CardTitle className="text-base sm:text-lg">Debt Management</CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 pt-0">
+        <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {debts.map((debt) => {
               const progressPercentage = debt._orig 
@@ -345,14 +345,14 @@ export const DebtSnowball = () => {
       />
 
       {/* Timeline Chart */}
-      <Card className="shadow-royal">
-        <CardHeader className="p-4 sm:p-5">
+      <Card>
+        <CardHeader>
           <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
             <TrendingDown className="h-5 w-5 text-accent" aria-hidden="true" />
             Total Debt Balance Over Time
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 pt-0">
+        <CardContent>
           {transactions.length > 0 ? (
             <>
               <CustomLineLegend items={[{ label: "Total Debt Balance", color: "hsl(var(--primary))" }]} />

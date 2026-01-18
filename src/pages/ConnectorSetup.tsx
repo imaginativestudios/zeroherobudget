@@ -100,7 +100,7 @@ export default function ConnectorSetup() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.4 }}
       >
-        <Card variant="glass" className="border-primary/20">
+        <Card className="border-primary/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-xl bg-primary/10">
@@ -148,7 +148,7 @@ export default function ConnectorSetup() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
       >
-        <Card variant="glass">
+        <Card>
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-lg">How It Works</CardTitle>
           </CardHeader>

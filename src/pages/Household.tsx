@@ -87,9 +87,9 @@ export function Household() {
       </div>
 
       {selectedHousehold && (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 items-stretch">
           {/* Household Members */}
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" aria-hidden="true" />
@@ -152,7 +152,7 @@ export function Household() {
           </Card>
 
           {/* Pending Invitations */}
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5" aria-hidden="true" />
@@ -209,7 +209,7 @@ export function Household() {
       )}
 
       {households.length === 0 && (
-        <Card className="shadow-royal">
+        <Card>
           <CardContent className="text-center py-12">
             <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-lg font-semibold mb-2">No households found</h3>

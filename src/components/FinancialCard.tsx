@@ -77,15 +77,15 @@ export const FinancialCard = ({
 
   const cardContent = (
     <Card className={cn(
-      "h-full flex flex-col shadow-royal hover-lift transition-all duration-300 ease-out",
+      "h-full flex flex-col transition-all duration-300 ease-out",
       to && "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       className
     )}>
-      <CardHeader className="pb-2 p-4 sm:p-5">
+      <CardHeader>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 transition-transform duration-200 group-hover:scale-105 min-w-0 flex-1">
-            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" aria-hidden="true" />
-            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground min-w-0 truncate">
+            <Icon className="h-5 w-5 text-accent flex-shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" aria-hidden="true" />
+            <CardTitle className="text-sm font-medium text-muted-foreground min-w-0 truncate">
               {title}
             </CardTitle>
           </div>
@@ -101,7 +101,7 @@ export const FinancialCard = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col justify-between p-4 sm:p-5 pt-0 transition-all duration-200">
+      <CardContent className="flex-grow flex flex-col justify-between transition-all duration-200">
         {/* Primary: Amount */}
         <div className={cn("text-xl sm:text-2xl font-bold transition-all duration-200 group-hover:scale-105", getAmountColor())}>
           {formatCurrency(amount)}

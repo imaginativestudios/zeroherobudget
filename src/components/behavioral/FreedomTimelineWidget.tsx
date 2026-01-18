@@ -101,14 +101,14 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
   const heroMessage = getHeroicMessage(monthsRemaining);
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background shadow-lg overflow-hidden">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-lg font-bold">
+    <Card className="shadow-royal hover-lift overflow-hidden">
+      <CardHeader className="p-6 pb-2">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <Calendar className="h-5 w-5 text-primary" aria-hidden="true" />
           Freedom Timeline
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-6 pt-0 space-y-4">
         {/* Main Date Display */}
         <div className="text-center py-2">
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">

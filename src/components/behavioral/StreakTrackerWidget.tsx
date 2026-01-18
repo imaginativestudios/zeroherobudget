@@ -59,8 +59,8 @@ export function StreakTrackerWidget() {
   const daysToNext = currentThreshold - currentStreak;
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
+    <Card className="h-full shadow-royal hover-lift">
+      <CardHeader className="p-6 pb-2">
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-warning" />
@@ -72,7 +72,7 @@ export function StreakTrackerWidget() {
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="p-6 pt-0 space-y-3">
         <div className="flex items-baseline gap-2">
           <span className={cn('text-3xl font-bold', levelConfig.color)}>
             {currentStreak}

@@ -1,16 +1,10 @@
-import { Hono } from "https://deno.land/x/hono@v3.12.11/mod.ts";
-import { cors } from "https://deno.land/x/hono@v3.12.11/middleware/cors/index.ts";
-
-const app = new Hono();
-
-// Enable CORS
-app.use("/*", cors({
-  origin: "*",
-  allowHeaders: ["authorization", "x-client-info", "apikey", "content-type"],
-}));
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 // Image generation prompts
-const PROMPTS = {
+const PROMPTS: Record<string, string> = {
   'small-tile': `Create a clean promotional banner for a browser extension called "Zero Hero Connector". 
 Dimensions: 440x280 pixels aspect ratio.
 Background: Dark navy/slate gradient (#0f172a to #1e293b).
@@ -42,28 +36,39 @@ Simple, bold, professional. Ultra high resolution.`
 };
 
 // Dimension configs
-const DIMENSIONS = {
-  'small-tile': { width: 448, height: 288 }, // Closest to 440x280 that's multiple of 32
+const DIMENSIONS: Record<string, { width: number; height: number }> = {
+  'small-tile': { width: 448, height: 288 },
   'marquee': { width: 1280, height: 800 },
-  'icon-128': { width: 512, height: 512 } // Generate larger, resize client-side
+  'icon-128': { width: 512, height: 512 }
 };
 
-app.post("/", async (c) => {
+Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
-    const { type } = await c.req.json();
+    const { type } = await req.json();
     
-    if (!type || !PROMPTS[type as keyof typeof PROMPTS]) {
-      return c.json({ error: "Invalid image type. Use: small-tile, marquee, or icon-128" }, 400);
+    if (!type || !PROMPTS[type]) {
+      return new Response(
+        JSON.stringify({ error: "Invalid image type. Use: small-tile, marquee, or icon-128" }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY not found");
-      return c.json({ error: "API key not configured" }, 500);
+      return new Response(
+        JSON.stringify({ error: "API key not configured" }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    const prompt = PROMPTS[type as keyof typeof PROMPTS];
-    const dimensions = DIMENSIONS[type as keyof typeof DIMENSIONS];
+    const prompt = PROMPTS[type];
+    const dimensions = DIMENSIONS[type];
 
     console.log(`Generating ${type} image with dimensions ${dimensions.width}x${dimensions.height}`);
 
@@ -88,7 +93,10 @@ app.post("/", async (c) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI Gateway error:", errorText);
-      return c.json({ error: "Failed to generate image" }, 500);
+      return new Response(
+        JSON.stringify({ error: "Failed to generate image" }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const data = await response.json();
@@ -96,27 +104,31 @@ app.post("/", async (c) => {
 
     if (!imageUrl) {
       console.error("No image in response:", JSON.stringify(data));
-      return c.json({ error: "No image generated" }, 500);
+      return new Response(
+        JSON.stringify({ error: "No image generated" }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Return the base64 image data
-    return c.json({
-      success: true,
-      imageData: imageUrl,
-      type,
-      dimensions: {
-        width: dimensions.width,
-        height: dimensions.height
-      }
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        imageData: imageUrl,
+        type,
+        dimensions: {
+          width: dimensions.width,
+          height: dimensions.height
+        }
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error("Error generating image:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });
-
-// Handle OPTIONS for CORS
-app.options("/*", (c) => c.text("OK"));
-
-Deno.serve(app.fetch);

@@ -4,7 +4,6 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Link,
   Preview,
   Section,
@@ -20,49 +19,37 @@ interface WaitlistWelcomeEmailProps {
 export const WaitlistWelcomeEmail = ({ email, unsubscribeUrl }: WaitlistWelcomeEmailProps) => (
   <Html>
     <Head />
-    <Preview>Welcome to Zero Hero - You're on the List!</Preview>
+    <Preview>You're on the Zero Hero waitlist</Preview>
     <Body style={main}>
       <Container style={container}>
-        {/* Header with gradient background */}
+        {/* Header with solid background */}
         <Section style={header}>
-          <Heading style={headerTitle}>🎯 Zero Hero</Heading>
+          <Heading style={headerTitle}>Zero Hero</Heading>
         </Section>
 
         {/* Main content */}
         <Section style={content}>
-          <Heading style={h2}>Welcome to the Journey!</Heading>
+          <Heading style={h2}>You're on the list</Heading>
           
           <Text style={paragraph}>
-            Hey there, Future Zero Hero! 👋
+            Thanks for signing up for the Zero Hero waitlist.
           </Text>
           
           <Text style={paragraph}>
-            Thanks for joining our waitlist! You're now part of an exclusive group getting early access to Zero Hero - the app that transforms debt into victory.
+            We'll send you an email when we're ready to welcome you.
           </Text>
 
           {/* What's Next Box */}
           <Section style={boxSection}>
-            <Heading style={boxHeading}>What's Next?</Heading>
-            <Text style={listItem}>✓ We'll notify you as soon as we launch</Text>
-            <Text style={listItem}>✓ Get exclusive early-bird features</Text>
-            <Text style={listItem}>✓ Join a community committed to financial freedom</Text>
+            <Text style={listItem}>- You'll be notified when we launch</Text>
+            <Text style={listItem}>- Early access to new features</Text>
+            <Text style={listItem}>- No spam, ever</Text>
           </Section>
-
-          <Text style={paragraph}>
-            In the meantime, here's a pro tip:{' '}
-            <em style={italic}>
-              Start tracking where your money goes. The first step to crushing debt is knowing your cash flow.
-            </em>
-          </Text>
-
-          <Text style={paragraph}>
-            Ready to become a Zero Hero?
-          </Text>
 
           <Section style={divider} />
 
           <Text style={footer}>
-            Questions? Just reply to this email - we'd love to hear from you!
+            Questions? Reply to this email.
             <br />
             <strong>- The Zero Hero Team</strong>
           </Text>
@@ -87,7 +74,7 @@ export const WaitlistWelcomeEmail = ({ email, unsubscribeUrl }: WaitlistWelcomeE
 
 export default WaitlistWelcomeEmail;
 
-// Styles
+// Styles - clean, professional, no spam triggers
 const main = {
   backgroundColor: '#f6f9fc',
   fontFamily:
@@ -103,14 +90,14 @@ const container = {
 };
 
 const header = {
-  background: 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
-  padding: '40px 30px',
+  backgroundColor: '#0D7377',
+  padding: '32px 30px',
   textAlign: 'center' as const,
 };
 
 const headerTitle = {
   color: '#ffffff',
-  fontSize: '32px',
+  fontSize: '28px',
   fontWeight: 'bold',
   margin: '0',
   lineHeight: '1.2',
@@ -121,8 +108,8 @@ const content = {
 };
 
 const h2 = {
-  color: '#8B5CF6',
-  fontSize: '24px',
+  color: '#0D7377',
+  fontSize: '22px',
   fontWeight: 'bold',
   marginTop: '0',
   marginBottom: '20px',
@@ -136,18 +123,10 @@ const paragraph = {
 };
 
 const boxSection = {
-  backgroundColor: '#F3F4F6',
-  borderRadius: '8px',
-  padding: '24px',
+  backgroundColor: '#f9fafb',
+  borderRadius: '6px',
+  padding: '20px 24px',
   margin: '24px 0',
-};
-
-const boxHeading = {
-  color: '#6D28D9',
-  fontSize: '18px',
-  fontWeight: 'bold',
-  marginTop: '0',
-  marginBottom: '16px',
 };
 
 const listItem = {
@@ -155,11 +134,6 @@ const listItem = {
   fontSize: '15px',
   lineHeight: '1.6',
   margin: '8px 0',
-};
-
-const italic = {
-  fontStyle: 'italic',
-  color: '#555555',
 };
 
 const divider = {

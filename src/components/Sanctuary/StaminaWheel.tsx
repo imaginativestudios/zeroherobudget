@@ -98,12 +98,6 @@ export function StaminaWheel({
         aria-hidden="true"
       >
         <defs>
-          {/* Outer glow filter for Vitality */}
-          <filter id="vitalityGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-          
           {/* Gradient for vitality segment */}
           <linearGradient id="vitalityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="hsl(160 60% 35%)" />
@@ -226,7 +220,7 @@ export function StaminaWheel({
                 strokeDasharray={`${vitalityDash} ${circumference}`}
                 strokeDashoffset={vitalityOffset}
                 strokeLinecap="round"
-                filter={!isLowVitality ? "url(#vitalityGlow)" : undefined}
+                
                 initial={{ strokeDasharray: `0 ${circumference}`, opacity: 0 }}
                 animate={{ 
                   strokeDasharray: `${vitalityDash} ${circumference}`,

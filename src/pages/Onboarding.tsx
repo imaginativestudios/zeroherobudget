@@ -544,7 +544,7 @@ export default function Onboarding() {
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', delay: 0.2, stiffness: 200 }}
-                  className="mx-auto w-24 h-24 bg-gradient-to-br from-accent to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-accent/50 mb-6"
+                  className="mx-auto w-24 h-24 bg-gradient-to-br from-accent to-amber-500 rounded-full flex items-center justify-center shadow-lg mb-6"
                 >
                   <Shield className="w-12 h-12 text-white" />
                 </motion.div>

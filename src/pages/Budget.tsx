@@ -259,7 +259,7 @@ export const Budget = () => {
       {/* ========================================= */}
       <Card className="shadow-royal py-8" data-tour="budget-summary">
         <CardContent className="flex flex-col items-center justify-center">
-          <div className="stamina-glow mb-6">
+          <div className="mb-6">
             <StaminaWheel
               incomeTotal={income}
               fixedExpenses={totalExpenses}

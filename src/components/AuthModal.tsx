@@ -303,6 +303,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         disabled={loading}
+                        required
                       />
                     </div>
                     <div className="space-y-2">

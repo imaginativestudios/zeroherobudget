@@ -175,7 +175,7 @@ export const Dashboard = () => {
   });
 
   // Get greeting name
-  const greetingName = userProfile?.first_name || userProfile?.display_name || 'there';
+  const greetingName = userProfile?.first_name || userProfile?.display_name || 'hero';
 
   // Auth for welcome toast
   const { user } = useAuth();
@@ -329,7 +329,7 @@ export const Dashboard = () => {
           {/* Left: Welcome + Consistency */}
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Welcome, traveler
+              Welcome, {greetingName}
             </h1>
             <p className="text-muted-foreground">
               Your quest continues. Stay focused on the path ahead.

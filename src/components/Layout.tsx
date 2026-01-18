@@ -155,7 +155,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-background">
       {/* Skip to main content link for accessibility */}
       <a 
         href="#main-content" 
@@ -352,7 +352,7 @@ export const Layout = ({ children }: LayoutProps) => {
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
           "p-2 sm:p-4 lg:p-8",
-          "bg-slate-950/95" // Sanctuary background
+          "bg-secondary" // Standard background
         )}
         role="main"
       >

@@ -124,7 +124,7 @@ const ComingSoon = () => {
             transition={{ duration: 0.6 }}
             className="mb-4 sm:mb-6 md:mb-8 flex justify-center"
           >
-            <Logo className="h-12 xs:h-16 sm:h-24 md:h-32 lg:h-40 w-auto max-w-[90vw]" />
+            <Logo className="h-12 xs:h-16 sm:h-24 md:h-32 lg:h-40 w-auto max-w-[90vw]" variant="dark" />
           </motion.div>
 
           {/* Coming Soon Badge */}

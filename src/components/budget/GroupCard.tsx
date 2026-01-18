@@ -125,7 +125,7 @@ export function GroupCard({
       <div
         ref={setNodeRef}
         style={style}
-        className="border border-border rounded-lg bg-card transition-all duration-200 hover:shadow-lg hover:border-primary/30"
+        className="border border-border/50 rounded-lg bg-card/80 backdrop-blur-md transition-all duration-200 hover:shadow-lg hover:border-primary/30 hover-lift"
       >
         <Accordion type="single" collapsible defaultValue={`group-${groupName}`}>
           <AccordionItem value={`group-${groupName}`} className="border-none">

@@ -232,7 +232,7 @@ export const Budget = () => {
         </div>
       </div>
       {/* Income Section */}
-      <Card className="shadow-royal" data-tour="budget-income">
+      <Card variant="glass" className="hover-lift" data-tour="budget-income">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <DollarSign className="h-5 w-5 text-accent" aria-hidden="true" />
@@ -259,7 +259,7 @@ export const Budget = () => {
       </Card>
 
       {/* Budget Summary Section */}
-      <Card className="shadow-royal" data-tour="budget-summary">
+      <Card variant="glass" className="hover-lift" data-tour="budget-summary">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-3">
             <TrendingUp className="h-5 w-5 text-accent" aria-hidden="true" />
@@ -331,7 +331,7 @@ export const Budget = () => {
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="hover-lift animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Compass className="h-5 w-5 text-accent" />
@@ -358,7 +358,7 @@ export const Budget = () => {
         </Card>}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal animate-fade-in">
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="hover-lift animate-fade-in">
           <CardHeader className="p-4 sm:p-5">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-accent" />
@@ -410,7 +410,7 @@ export const Budget = () => {
         </Card>}
 
       {/* Expenses Section */}
-      <Card className="shadow-royal">
+      <Card variant="glass" className="hover-lift">
         <CardHeader>
           <CardTitle className="text-xl">Monthly Expenses</CardTitle>
         </CardHeader>
@@ -477,7 +477,7 @@ export const Budget = () => {
       </Card>
 
       {/* Assets Section */}
-      <Card className="shadow-royal">
+      <Card variant="glass" className="hover-lift">
         <CardHeader>
           <CardTitle className="text-xl">Assets (for Net Worth Calculation)</CardTitle>
         </CardHeader>

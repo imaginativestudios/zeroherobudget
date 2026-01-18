@@ -349,7 +349,7 @@ export const Dashboard = () => {
             <Button 
               variant="default" 
               size="lg" 
-              className="min-w-[140px] font-semibold rounded-xl btn-glow"
+              className="min-w-[140px] font-semibold rounded-xl"
               asChild
             >
               <Link to="/reports">
@@ -464,7 +464,7 @@ export const Dashboard = () => {
           <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Financial Overview</h2>
           <div className="h-px bg-border flex-1"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
         {isCriticalLoading ? (
           <>
             <FinancialCardSkeleton />
@@ -548,7 +548,7 @@ export const Dashboard = () => {
         ) : (
           <>
         {/* Financial Stamina Wheel - HERO ELEMENT */}
-        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal hover-lift">
           <CardHeader className="p-6 sm:p-8">
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
               <Heart className="h-6 w-6 text-success" aria-hidden="true" />
@@ -575,7 +575,7 @@ export const Dashboard = () => {
         </Card>
 
         {/* Spending by Category Chart */}
-        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal hover-lift">
           <CardHeader className="p-6 sm:p-8">
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
               <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -640,7 +640,7 @@ export const Dashboard = () => {
         </Card>
 
         {/* Debt Payoff Projection */}
-        <Card className="overflow-hidden h-full animate-fade-in shadow-royal">
+        <Card className="overflow-hidden h-full animate-fade-in shadow-royal hover-lift">
           <CardHeader className="p-6 sm:p-8">
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
               <TrendingDown className="h-6 w-6 text-primary" />
@@ -723,7 +723,7 @@ export const Dashboard = () => {
           <div className={`h-px bg-border flex-1 transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         
-        <Card className="animate-fade-in shadow-royal">
+        <Card className="animate-fade-in shadow-royal hover-lift">
           <CardHeader className="p-6 sm:p-8">
             <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
               <Trophy className="h-6 w-6 text-primary" />
@@ -769,7 +769,7 @@ export const Dashboard = () => {
           <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Debt Progress</h2>
           <div className="h-px bg-border flex-1"></div>
         </div>
-        <Card className="shadow-royal">
+        <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6 sm:p-8">
           <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-3">
             <Target className="h-6 w-6 text-primary" />

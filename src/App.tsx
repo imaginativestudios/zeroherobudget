@@ -44,6 +44,7 @@ import { SubscriptionsReport } from "./pages/reports/SubscriptionsReport";
 import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import ConnectorSetup from "./pages/ConnectorSetup";
+import ReleaseKit from "./pages/ReleaseKit";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
+                <Route path="/settings/release-kit" element={<ReleaseKit />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

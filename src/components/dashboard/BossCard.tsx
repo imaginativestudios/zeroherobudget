@@ -68,11 +68,13 @@ export function BossCard({
 
   return (
     <>
-      <Card className={cn(
-        "relative overflow-hidden transition-all duration-300",
-        "bg-gradient-to-br from-background to-muted/20",
-        isHighInterest && "ring-2 ring-destructive/30"
-      )}>
+      <Card 
+        variant="glass"
+        className={cn(
+          "relative overflow-hidden transition-all duration-300 hover-lift",
+          isHighInterest && "ring-2 ring-destructive/30"
+        )}
+      >
         {/* Animated background effect */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5"

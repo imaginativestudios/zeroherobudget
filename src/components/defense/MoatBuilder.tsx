@@ -168,12 +168,15 @@ export function MoatBuilder({
   };
 
   return (
-    <Card className={cn(
-      "transition-all duration-500 overflow-hidden",
-      moatHealth.status === 'secure' && "ring-2 ring-success/50 bg-gradient-to-br from-success/5 to-transparent",
-      showPrimaryQuestBadge && "ring-2 ring-warning/50",
-      variant === 'full' && "col-span-full"
-    )}>
+    <Card 
+      variant="glass"
+      className={cn(
+        "transition-all duration-500 overflow-hidden hover-lift",
+        moatHealth.status === 'secure' && "ring-2 ring-success/50 bg-gradient-to-br from-success/5 to-transparent",
+        showPrimaryQuestBadge && "ring-2 ring-warning/50",
+        variant === 'full' && "col-span-full"
+      )}
+    >
       <CardHeader className={cn("pb-2", variant === 'full' && "pb-4")}>
         <CardTitle className={cn(
           "font-medium flex items-center justify-between",

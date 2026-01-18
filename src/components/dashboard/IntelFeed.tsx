@@ -1,12 +1,13 @@
 /**
- * Intel Feed Component
+ * Quest Insights Component - Progressive Behavioral Cards
  * 
- * Container for dynamic behavioral cards with staggered Framer Motion animations.
- * Cards unlock progressively based on user engagement milestones.
+ * Displays staggered, animated cards that unlock based on user milestones.
+ * Part of the Dashboard's progressive disclosure system.
  */
 
 import { motion } from 'framer-motion';
-import { Radio } from 'lucide-react';
+import { Compass, Lock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { SurplusPowerCard } from '@/components/behavioral/SurplusPowerCard';
 import { StreakTrackerWidget } from '@/components/behavioral/StreakTrackerWidget';
 import { ShadowBudgetSummary } from '@/components/behavioral/ShadowBudgetSummary';
@@ -66,16 +67,19 @@ export function IntelFeed({
     (canShowShadowBudget ? 1 : 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-border" />
-        <h2 className="text-lg font-semibold text-muted-foreground flex items-center gap-2">
-          <Radio className="h-4 w-4 text-primary animate-pulse" />
-          Intel Feed
-        </h2>
-        <div className="h-px flex-1 bg-border" />
+      <div className="flex items-center gap-3 mb-6">
+        <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
+        <h2 className="text-xl font-semibold text-foreground">Quest Insights</h2>
+        <Badge variant="outline" className="text-xs ml-2">
+          {visibleCardCount}/4 unlocked
+        </Badge>
       </div>
+      
+      <p className="text-sm text-muted-foreground mb-6" role="status" aria-live="polite">
+        Your journey's wisdom—insights earned through financial discipline
+      </p>
 
       {/* Cards Grid with Staggered Animation */}
       <motion.div
@@ -131,13 +135,25 @@ export function IntelFeed({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center text-sm text-muted-foreground"
+          className="flex flex-col sm:flex-row gap-4 mt-4"
         >
           {!canShowConsistencyXP && (
-            <p>📊 Consistency tracker unlocks after 48 hours of activity</p>
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+              <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Consistency XP</p>
+                <p className="text-xs text-muted-foreground/70">Wisdom unlocks after 48 hours on your quest</p>
+              </div>
+            </div>
           )}
           {!canShowShadowBudget && (
-            <p>👻 Shadow budget unlocks after logging 3 transactions</p>
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+              <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Shadow Budget</p>
+                <p className="text-xs text-muted-foreground/70">Reveal the shadow after 3 transactions logged</p>
+              </div>
+            </div>
           )}
         </motion.div>
       )}

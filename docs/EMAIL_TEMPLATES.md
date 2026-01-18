@@ -219,37 +219,34 @@ interface HouseholdInviteEmailProps {
 
 ### 3. Account Deletion Code
 
-**Location:** `supabase/functions/send-deletion-code/index.ts` (inline HTML)
+**Location:** `supabase/functions/send-deletion-code/_templates/deletion-code.tsx`
 
 **Type:** Transactional (Security)
 
 | Property | Value |
 |----------|-------|
 | Subject | `Zero Hero - Account Deletion Code` |
-| Preview | N/A (inline template) |
-| From | `Zero Hero <hello@zeroherobudget.com>` |
+| Preview | `Your account deletion confirmation code` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
+
+**Props:**
+```typescript
+interface DeletionCodeEmailProps {
+  code: string;  // 6-digit verification code
+}
+```
 
 **Special Styling:**
-- Uses **red accent** (`#dc2626`) for warning context
-- Code displayed in large monospace font
+- Teal header (`#0D7377`) for brand consistency
+- **Red accent** (`#dc2626`) for warning title and permanence warning
+- Code displayed in large monospace font with letter-spacing
+- Gray code box background (`#f3f4f6`)
 - Expires in 10 minutes
 
-**Template Structure:**
-```html
-<!-- Header uses red for warning context -->
-<div style="background-color: #dc2626; padding: 32px; text-align: center;">
-  <h1 style="color: #ffffff; font-size: 28px; margin: 0;">
-    Account Deletion Request
-  </h1>
-</div>
-
-<!-- Code display -->
-<div style="background-color: #fef2f2; padding: 24px; text-align: center; border-radius: 8px;">
-  <p style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #dc2626;">
-    {code}
-  </p>
-</div>
-```
+**Template Notes:**
+- Uses React Email component pattern (same as other templates)
+- Rendered via `renderAsync` in edge function
+- Includes plain text fallback for email clients
 
 ---
 

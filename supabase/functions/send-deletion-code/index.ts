@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.56.0";
 import { Resend } from "npm:resend@2.0.0";
+import React from "npm:react@18.3.1";
+import { renderAsync } from "npm:@react-email/components@0.0.22";
+import { DeletionCodeEmail } from "./_templates/deletion-code.tsx";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -129,29 +132,18 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Render React Email template
+    const emailHtml = await renderAsync(
+      React.createElement(DeletionCodeEmail, { code })
+    );
+
     // Send the email
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
       replyTo: "support@zeroherobudget.com",
       to: [email],
       subject: "Zero Hero - Account Deletion Code",
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-          <h1 style="color: #dc2626; margin-bottom: 24px;">Account Deletion Request</h1>
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            You've requested to delete your Zero Hero account. To confirm this action, please enter the following code:
-          </p>
-          <div style="background: #f3f4f6; border-radius: 8px; padding: 24px; text-align: center; margin: 24px 0;">
-            <code style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #111827;">${code}</code>
-          </div>
-          <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
-            This code will expire in 10 minutes. If you didn't request this, please ignore this email and your account will remain safe.
-          </p>
-          <p style="color: #dc2626; font-size: 14px; font-weight: 500; margin-top: 24px;">
-            Warning: Account deletion is permanent and cannot be undone.
-          </p>
-        </div>
-      `,
+      html: emailHtml,
       text: `Account Deletion Request\n\nYour confirmation code is: ${code}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.\n\nWarning: Account deletion is permanent and cannot be undone.\n\n- The Zero Hero Team`,
     });
 

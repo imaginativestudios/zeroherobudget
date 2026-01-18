@@ -4,16 +4,18 @@ import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Download, Smartphone, Share, Plus, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
-
 const Install = () => {
-  const { isInstallable, isInstalled, promptInstall, isIOS, showIOSInstructions } = usePWAInstall();
-
+  const {
+    isInstallable,
+    isInstalled,
+    promptInstall,
+    isIOS,
+    showIOSInstructions
+  } = usePWAInstall();
   const handleInstall = async () => {
     await promptInstall();
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-primary/95 to-primary-dark">
+  return <div className="min-h-screen bg-gradient-to-br from-primary via-primary/95 to-primary-dark">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -39,8 +41,7 @@ const Install = () => {
           </div>
 
           {/* Already Installed */}
-          {isInstalled && (
-            <Card className="border-green-200 bg-green-50">
+          {isInstalled && <Card className="border-green-200 bg-green-50">
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="flex-shrink-0">
                   <CheckCircle2 className="h-10 w-10 text-green-600" />
@@ -52,12 +53,10 @@ const Install = () => {
                   </p>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
 
           {/* Install Button (Android/Desktop) */}
-          {isInstallable && !isInstalled && (
-            <Card>
+          {isInstallable && !isInstalled && <Card>
               <CardHeader className="text-center">
                 <CardTitle className="flex items-center justify-center gap-2">
                   <Download className="h-5 w-5 text-primary" />
@@ -68,21 +67,15 @@ const Install = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <Button 
-                  size="lg" 
-                  onClick={handleInstall}
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8"
-                >
+                <Button size="lg" onClick={handleInstall} className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8">
                   <Download className="mr-2 h-5 w-5" />
                   Install Zero Hero
                 </Button>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
 
           {/* iOS Instructions */}
-          {showIOSInstructions && (
-            <Card>
+          {showIOSInstructions && <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Smartphone className="h-5 w-5 text-primary" />
@@ -129,8 +122,7 @@ const Install = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
 
           {/* Features */}
           <Card>
@@ -162,15 +154,13 @@ const Install = () => {
           {/* Back to App */}
           <div className="text-center">
             <Link to="/dashboard">
-              <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              <Button variant="outline" className="border-white/30 bg-accent text-primary-dark">
                 Continue to Dashboard
               </Button>
             </Link>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Install;

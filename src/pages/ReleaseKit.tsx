@@ -116,6 +116,43 @@ export default function ReleaseKit() {
     toast.success(`${filename} downloaded!`);
   };
 
+  // Convert base64 data URL to Blob
+  const base64ToBlob = (base64: string): Blob => {
+    const base64Data = base64.split(',')[1];
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return new Blob([bytes], { type: 'image/png' });
+  };
+
+  const resizeIcon = (base64: string, size: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement('img');
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, size, size);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, 'image/png');
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = base64;
+    });
+  };
+
   const generateZip = async () => {
     setIsGenerating(true);
     
@@ -126,7 +163,24 @@ export default function ReleaseKit() {
       zip.file('manifest.json', MANIFEST_JSON_PROD);
       zip.file('content.js', CONTENT_JS);
       zip.file('popup.html', POPUP_HTML);
-      zip.file('README-ICONS.txt', ICON_README);
+      
+      // Check if icons have been generated
+      const iconImage = generatedImages['icon-128'];
+      if (iconImage) {
+        // Add 128px icon directly
+        const icon128Blob = base64ToBlob(iconImage.imageData);
+        zip.file('icon128.png', icon128Blob);
+        
+        // Generate and add resized versions
+        const icon48Blob = await resizeIcon(iconImage.imageData, 48);
+        const icon16Blob = await resizeIcon(iconImage.imageData, 16);
+        
+        zip.file('icon48.png', icon48Blob);
+        zip.file('icon16.png', icon16Blob);
+      } else {
+        // No icons generated - include README
+        zip.file('README-ICONS.txt', ICON_README);
+      }
       
       // Generate and download
       const blob = await zip.generateAsync({ type: 'blob' });
@@ -139,7 +193,10 @@ export default function ReleaseKit() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      toast.success('Production ZIP generated successfully!');
+      toast.success(iconImage 
+        ? 'Production ZIP generated with icons!' 
+        : 'Production ZIP generated! (Generate icons first to include them)'
+      );
     } catch (error) {
       toast.error('Failed to generate ZIP file');
       console.error(error);
@@ -220,8 +277,17 @@ export default function ReleaseKit() {
                   <code className="bg-muted px-2 py-0.5 rounded text-xs">popup.html</code> — Extension popup UI
                 </li>
                 <li className="flex items-center gap-2">
-                  <AlertCircle className="h-3 w-3 text-amber-500" />
-                  <code className="bg-muted px-2 py-0.5 rounded text-xs">README-ICONS.txt</code> — Icon requirements (add manually)
+                  {generatedImages['icon-128'] ? (
+                    <>
+                      <Check className="h-3 w-3 text-success" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">icon16.png, icon48.png, icon128.png</code> — Generated icons (auto-resized)
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-3 w-3 text-amber-500" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">icons</code> — Generate below to include
+                    </>
+                  )}
                 </li>
               </ul>
             </div>

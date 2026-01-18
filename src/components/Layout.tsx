@@ -155,7 +155,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-slate-950">
       {/* Skip to main content link for accessibility */}
       <a 
         href="#main-content" 
@@ -351,11 +351,12 @@ export const Layout = ({ children }: LayoutProps) => {
           "transition-all duration-300 ease-in-out flex flex-col min-h-screen",
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
-          "p-2 sm:p-4 lg:p-8"
+          "p-2 sm:p-4 lg:p-8",
+          "bg-slate-950/95" // Sanctuary background
         )}
         role="main"
       >
-        <div className="flex-1">
+        <div className="flex-1 max-w-7xl mx-auto w-full">
           {children}
         </div>
         

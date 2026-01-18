@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
+import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle, Heart, Home, Zap, ShoppingCart, Car, Shield, Sparkles, Gamepad2, PiggyBank, CreditCard, MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
@@ -16,6 +17,8 @@ import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expe
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 import { BudgetOnboardingTour } from "@/components/budget/BudgetOnboardingTour";
 import { useBudgetTour } from "@/hooks/useBudgetTour";
+import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
+import { cn } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
@@ -176,17 +179,36 @@ export const Budget = () => {
     }
     event.target.value = "";
   };
+  // Category icon mapping for inventory-style display
+  const getCategoryIcon = (category: string) => {
+    const iconMap: Record<string, React.ElementType> = {
+      'Housing': Home,
+      'Utilities': Zap,
+      'Food': ShoppingCart,
+      'Transportation': Car,
+      'Insurance & Healthcare': Shield,
+      'Personal Care': Sparkles,
+      'Entertainment': Gamepad2,
+      'Savings & Investments': PiggyBank,
+      'Debt Payments': CreditCard,
+      'Miscellaneous': MoreHorizontal,
+    };
+    return iconMap[category] || MoreHorizontal;
+  };
+
   return <div className="space-y-8">
       <BudgetOnboardingTour hasExpenses={expenses.length > 0} />
+      
+      {/* Header */}
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-foreground">Budget Management</h1>
+            <h1 className="text-3xl font-bold text-slate-100 font-sanctuary-serif">Shadow Path</h1>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={startTour}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-slate-400 hover:text-slate-200"
               title="Restart tour"
             >
               <HelpCircle className="h-5 w-5" />
@@ -195,10 +217,10 @@ export const Budget = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-slate-900/40">
+              <Calendar className="h-4 w-4 text-slate-400" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-44 bg-background">
+                <SelectTrigger className="w-44 bg-slate-800/50 border-white/10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -217,12 +239,12 @@ export const Budget = () => {
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-2 p-3 rounded-lg border bg-primary-foreground">
-              <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-background">
+            <div className="flex items-center gap-2 p-3 rounded-xl border border-white/5 bg-slate-900/40">
+              <Button variant="outline" size="sm" onClick={exportExpenses} className="bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-700/50">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Export</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()} className="bg-background">
+              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()} className="bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-700/50">
                 <Upload className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Import</span>
               </Button>
@@ -231,114 +253,169 @@ export const Budget = () => {
           </div>
         </div>
       </div>
+
+      {/* ========================================= */}
+      {/* HERO: STAMINA WHEEL - Central Visual     */}
+      {/* ========================================= */}
+      <Card variant="glass" className="card-sanctuary py-8" data-tour="budget-summary">
+        <CardContent className="flex flex-col items-center justify-center">
+          <div className="stamina-glow mb-6">
+            <StaminaWheel
+              incomeTotal={income}
+              fixedExpenses={totalExpenses}
+              debtPayments={0}
+              currentSpend={totalActual}
+              size={400}
+            />
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-semibold text-slate-100 font-sanctuary-serif">
+              Your Financial Energy
+            </h2>
+            <p className="text-slate-400 max-w-md">
+              Watch your stamina as you allocate resources. The green vitality represents your safe-to-spend buffer.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
       {/* Income Section */}
-      <Card variant="glass" className="hover-lift" data-tour="budget-income">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-3">
-            <DollarSign className="h-5 w-5 text-accent" aria-hidden="true" />
+      <Card variant="glass" className="card-sanctuary hover-lift" data-tour="budget-income">
+        <CardHeader className="p-6">
+          <CardTitle className="text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
+            <DollarSign className="h-5 w-5 text-emerald-400" aria-hidden="true" />
             Monthly Income
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 pt-0">
           <div className="flex items-center gap-4">
-            <label htmlFor="income-amount" className="text-muted-foreground font-medium">Income Amount:</label>
+            <label htmlFor="income-amount" className="text-slate-400 font-medium">Income Amount:</label>
             <Input 
               id="income-amount"
               type="number" 
               step="0.01" 
               value={income} 
               onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
-              className="w-48"
+              className="w-48 bg-slate-800/50 border-white/10 text-slate-100"
               aria-describedby="income-display"
             />
-            <span id="income-display" className="text-2xl font-bold text-success" aria-live="polite">
+            <span id="income-display" className="text-2xl font-bold text-amber-400" aria-live="polite">
               {formatCurrency(income)}
             </span>
           </div>
         </CardContent>
       </Card>
 
-      {/* Budget Summary Section */}
-      <Card variant="glass" className="hover-lift" data-tour="budget-summary">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-accent" aria-hidden="true" />
-            Budget Summary
+      {/* ========================================= */}
+      {/* INVENTORY-STYLE CATEGORY LIST            */}
+      {/* ========================================= */}
+      <Card variant="glass" className="card-sanctuary hover-lift">
+        <CardHeader className="p-6">
+          <CardTitle className="text-xl text-slate-100 flex items-center gap-3 font-sanctuary-serif">
+            <Compass className="h-5 w-5 text-amber-400" aria-hidden="true" />
+            Budget Inventory
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="p-6 pt-0">
           {/* Summary Statistics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-muted/50 rounded-lg border">
-              <div className="text-sm text-muted-foreground mb-1">Total Planned</div>
-              <div className="text-2xl font-bold text-foreground">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
+              <div className="text-sm text-slate-500 mb-1">Total Planned</div>
+              <div className="text-2xl font-bold text-slate-100">
                 {formatCurrency(totalExpenses)}
               </div>
             </div>
-            <div className="p-4 bg-muted/50 rounded-lg border">
-              <div className="text-sm text-muted-foreground mb-1">Total Actual</div>
-              <div className="text-2xl font-bold text-foreground">
+            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
+              <div className="text-sm text-slate-500 mb-1">Total Actual</div>
+              <div className="text-2xl font-bold text-slate-100">
                 {formatCurrency(totalActual)}
               </div>
             </div>
-            <div className="p-4 bg-muted/50 rounded-lg border">
-              <div className="text-sm text-muted-foreground mb-1">Variance</div>
-              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-success' : 'text-destructive'}`}>
+            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
+              <div className="text-sm text-slate-500 mb-1">Variance</div>
+              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                 {variance <= 0 ? <TrendingDown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
                 {formatCurrency(Math.abs(variance))}
               </div>
             </div>
-            <div className="p-4 bg-muted/50 rounded-lg border">
-              <div className="text-sm text-muted-foreground mb-1">Budget Used</div>
-              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-success' : 'text-destructive'}`}>
+            <div className="p-4 bg-slate-800/40 rounded-xl border border-white/5">
+              <div className="text-sm text-slate-500 mb-1">Budget Used</div>
+              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-emerald-400' : 'text-red-400'}`}>
                 {budgetUsedPercent.toFixed(1)}%
               </div>
             </div>
           </div>
 
-
-          {/* Category Variance Table */}
-          {categoryData.length > 0 && <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground">Category Variance</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left p-2 font-semibold text-muted-foreground">Category</th>
-                      <th className="text-right p-2 font-semibold text-muted-foreground">Planned</th>
-                      <th className="text-right p-2 font-semibold text-muted-foreground">Actual</th>
-                      <th className="text-right p-2 font-semibold text-muted-foreground">Variance</th>
-                      <th className="text-right p-2 font-semibold text-muted-foreground">% Diff</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categoryData.map((cat, idx) => <tr key={cat.name} className="border-b border-border/50">
-                        <td className="p-2 font-medium text-foreground">{cat.name}</td>
-                        <td className="text-right p-2 text-foreground">{formatCurrency(cat.planned)}</td>
-                        <td className="text-right p-2 text-foreground">{formatCurrency(cat.actual)}</td>
-                        <td className={`text-right p-2 font-semibold ${cat.variance <= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {cat.variance <= 0 ? '-' : '+'}{formatCurrency(Math.abs(cat.variance))}
-                        </td>
-                        <td className={`text-right p-2 font-semibold ${cat.variance <= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {cat.variancePercent > 0 ? '+' : ''}{cat.variancePercent.toFixed(1)}%
-                        </td>
-                      </tr>)}
-                  </tbody>
-                </table>
-              </div>
-            </div>}
+          {/* Sleek Vertical Category List */}
+          {categoryData.length > 0 && (
+            <div className="space-y-3 divide-sanctuary">
+              {categoryData.map((cat, idx) => {
+                const CategoryIcon = getCategoryIcon(cat.name);
+                const usagePercent = cat.planned > 0 ? Math.min(100, (cat.actual / cat.planned) * 100) : 0;
+                const isOverBudget = cat.actual > cat.planned;
+                const isFullySpent = usagePercent >= 100;
+                
+                return (
+                  <div 
+                    key={cat.name}
+                    className={cn(
+                      "flex items-center gap-4 p-4 rounded-xl bg-slate-800/30 border border-white/5 hover:border-primary/30 transition-all cursor-pointer",
+                      isFullySpent && "opacity-60"
+                    )}
+                  >
+                    {/* Icon */}
+                    <div className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center",
+                      isOverBudget ? "bg-red-500/20" : "bg-primary/20"
+                    )}>
+                      <CategoryIcon className={cn(
+                        "h-5 w-5",
+                        isOverBudget ? "text-red-400" : "text-primary"
+                      )} />
+                    </div>
+                    
+                    {/* Name */}
+                    <span className={cn(
+                      "flex-1 font-medium",
+                      isFullySpent ? "text-slate-500" : "text-slate-100"
+                    )}>
+                      {cat.name}
+                    </span>
+                    
+                    {/* Progress Bar - Thin */}
+                    <div className="w-24 sm:w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                      <div 
+                        className={cn(
+                          "h-full rounded-full transition-all",
+                          isOverBudget ? "bg-red-400" : "bg-primary"
+                        )}
+                        style={{ width: `${usagePercent}%` }}
+                      />
+                    </div>
+                    
+                    {/* Amount Left */}
+                    <span className={cn(
+                      "font-mono text-sm w-20 text-right",
+                      isOverBudget ? "text-red-400" : "text-emerald-400"
+                    )}>
+                      {isOverBudget ? '-' : ''}{formatCurrency(Math.abs(cat.planned - cat.actual))}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Planned Spending by Category - Donut Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="hover-lift animate-fade-in">
-          <CardHeader className="p-4 sm:p-5">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Compass className="h-5 w-5 text-accent" />
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="card-sanctuary hover-lift animate-fade-in">
+          <CardHeader className="p-6">
+            <CardTitle className="text-lg text-slate-100 flex items-center gap-3 font-sanctuary-serif">
+              <Compass className="h-5 w-5 text-amber-400" />
               Planned Spending by Category
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent className="p-6 pt-0">
             <ResponsiveContainer width="100%" height={400}>
               <PieChart>
                 <Pie data={categoryData} dataKey="planned" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} label={({
@@ -358,14 +435,14 @@ export const Budget = () => {
         </Card>}
 
       {/* Planned vs Actual by Category - Bar Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="hover-lift animate-fade-in">
-          <CardHeader className="p-4 sm:p-5">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-accent" />
+      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card variant="glass" className="card-sanctuary hover-lift animate-fade-in">
+          <CardHeader className="p-6">
+            <CardTitle className="text-lg text-slate-100 flex items-center gap-3 font-sanctuary-serif">
+              <TrendingUp className="h-5 w-5 text-amber-400" />
               Planned vs Actual by Category
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent className="p-6 pt-0">
             <CustomBarLegend items={[{
           label: "Planned Budget",
           color: "hsl(var(--chart-8))"
@@ -410,11 +487,11 @@ export const Budget = () => {
         </Card>}
 
       {/* Expenses Section */}
-      <Card variant="glass" className="hover-lift">
-        <CardHeader>
-          <CardTitle className="text-xl">Monthly Expenses</CardTitle>
+      <Card variant="glass" className="card-sanctuary hover-lift">
+        <CardHeader className="p-6">
+          <CardTitle className="text-xl text-slate-100 font-sanctuary-serif">Monthly Expenses</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 pt-0">
           <GroupableExpenses expenses={expenses.map(e => ({
           id: e.id,
           name: e.name,
@@ -462,13 +539,13 @@ export const Budget = () => {
           });
         }} monthlyActuals={monthlyActuals} />
           
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-border">
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
             <div></div>
             <div className="space-y-1 text-right">
-              <div className={`text-lg font-bold ${leftover >= 0 ? 'text-success' : 'text-destructive'}`}>
+              <div className={`text-lg font-bold ${leftover >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                 Planned Leftover: {formatCurrency(leftover)}
               </div>
-              <div className={`text-lg font-bold ${actualLeftover >= 0 ? 'text-success' : 'text-destructive'}`}>
+              <div className={`text-lg font-bold ${actualLeftover >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                 Actual Leftover: {formatCurrency(actualLeftover)}
               </div>
             </div>
@@ -477,30 +554,30 @@ export const Budget = () => {
       </Card>
 
       {/* Assets Section */}
-      <Card variant="glass" className="hover-lift">
-        <CardHeader>
-          <CardTitle className="text-xl">Assets (for Net Worth Calculation)</CardTitle>
+      <Card variant="glass" className="card-sanctuary hover-lift">
+        <CardHeader className="p-6">
+          <CardTitle className="text-xl text-slate-100 font-sanctuary-serif">Assets (for Net Worth Calculation)</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 pt-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="text-left p-3 font-semibold">Asset</th>
-                  <th className="text-left p-3 font-semibold">Value</th>
-                  <th className="text-center p-3 font-semibold">Actions</th>
+                  <th className="text-left p-3 font-semibold text-slate-400">Asset</th>
+                  <th className="text-left p-3 font-semibold text-slate-400">Value</th>
+                  <th className="text-center p-3 font-semibold text-slate-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {assets.map(asset => <tr key={asset.id}>
+                {assets.map(asset => <tr key={asset.id} className="border-t border-white/5">
                     <td className="p-3 break-anywhere">
-                      <Input value={asset.name} onChange={e => updateAsset(asset.id, 'name', e.target.value)} className="min-w-0" />
+                      <Input value={asset.name} onChange={e => updateAsset(asset.id, 'name', e.target.value)} className="min-w-0 bg-slate-800/50 border-white/10 text-slate-100" />
                     </td>
                     <td className="p-3">
-                      <Input type="number" step="0.01" value={asset.value} onChange={e => updateAsset(asset.id, 'value', parseFloat(e.target.value) || 0)} className="w-40" />
+                      <Input type="number" step="0.01" value={asset.value} onChange={e => updateAsset(asset.id, 'value', parseFloat(e.target.value) || 0)} className="w-40 bg-slate-800/50 border-white/10 text-slate-100" />
                     </td>
                     <td className="p-3 text-center">
-                      <Button variant="ghost" size="sm" onClick={() => removeAsset(asset.id)} className="text-destructive hover:text-destructive">
+                      <Button variant="ghost" size="sm" onClick={() => removeAsset(asset.id)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </td>
@@ -509,12 +586,12 @@ export const Budget = () => {
             </table>
           </div>
           
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-border">
-            <Button onClick={addAsset} variant="royal">
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
+            <Button onClick={addAsset} variant="default" className="btn-glow">
               <Plus className="h-4 w-4" />
               Add Asset
             </Button>
-            <div className="text-lg font-semibold">
+            <div className="text-lg font-semibold text-amber-400">
               Total Assets: {formatCurrency(totalAssets)}
             </div>
           </div>

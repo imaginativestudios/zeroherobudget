@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Scroll, Image, Copy, Check, Download, Package, FileText, Shield, AlertCircle } from 'lucide-react';
+import { Hammer, Scroll, Image, Copy, Check, Download, Package, FileText, Shield, AlertCircle, Wand2, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import JSZip from 'jszip';
+import { supabase } from '@/integrations/supabase/client';
 import {
   MANIFEST_JSON_PROD,
   CONTENT_JS,
@@ -15,6 +16,14 @@ import {
   STORE_LISTING,
   VISUAL_ASSETS,
 } from '@/lib/extensionCode';
+
+type ImageType = 'small-tile' | 'marquee' | 'icon-128';
+
+interface GeneratedImage {
+  type: ImageType;
+  imageData: string;
+  dimensions: { width: number; height: number };
+}
 
 function CopyField({ label, value, multiline = false }: { label: string; value: string; multiline?: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -59,6 +68,53 @@ function CopyField({ label, value, multiline = false }: { label: string; value: 
 
 export default function ReleaseKit() {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingType, setGeneratingType] = useState<ImageType | null>(null);
+  const [generatedImages, setGeneratedImages] = useState<Record<ImageType, GeneratedImage | null>>({
+    'small-tile': null,
+    'marquee': null,
+    'icon-128': null
+  });
+
+  const generateImage = async (type: ImageType) => {
+    setGeneratingType(type);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-store-images', {
+        body: { type }
+      });
+
+      if (error) throw error;
+
+      if (data?.success && data?.imageData) {
+        setGeneratedImages(prev => ({
+          ...prev,
+          [type]: {
+            type,
+            imageData: data.imageData,
+            dimensions: data.dimensions
+          }
+        }));
+        toast.success(`${type} image conjured successfully!`);
+      } else {
+        throw new Error(data?.error || 'Failed to generate image');
+      }
+    } catch (error) {
+      console.error('Image generation error:', error);
+      toast.error(`Failed to conjure ${type} image`);
+    } finally {
+      setGeneratingType(null);
+    }
+  };
+
+  const downloadImage = (image: GeneratedImage, filename: string) => {
+    const link = document.createElement('a');
+    link.href = image.imageData;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`${filename} downloaded!`);
+  };
 
   const generateZip = async () => {
     setIsGenerating(true);
@@ -233,11 +289,190 @@ export default function ReleaseKit() {
         </Card>
       </motion.div>
 
-      {/* Section C: Visual Assets Required */}
+      {/* Section C: Conjure the Visuals */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+        transition={{ delay: 0.25, duration: 0.4 }}
+      >
+        <Card variant="glass" className="border-accent/20">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-accent/10">
+                <Wand2 className="h-6 w-6 text-accent-dark" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">Conjure the Visuals</CardTitle>
+                <CardDescription>AI-generated marketing assets for Chrome Web Store</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Small Promo Tile */}
+            <div className="p-4 rounded-xl bg-muted/30 border space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Small Promo Tile</h4>
+                  <p className="text-sm text-muted-foreground">440×280px — Store listing thumbnail</p>
+                </div>
+                <Button 
+                  onClick={() => generateImage('small-tile')}
+                  disabled={generatingType !== null}
+                  variant={generatedImages['small-tile'] ? 'outline' : 'default'}
+                >
+                  {generatingType === 'small-tile' ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Conjuring...
+                    </>
+                  ) : generatedImages['small-tile'] ? (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Regenerate
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Conjure
+                    </>
+                  )}
+                </Button>
+              </div>
+              {generatedImages['small-tile'] && (
+                <div className="space-y-3">
+                  <div className="rounded-lg overflow-hidden border bg-slate-950">
+                    <img 
+                      src={generatedImages['small-tile'].imageData} 
+                      alt="Small Promo Tile" 
+                      className="w-full max-w-[440px] mx-auto"
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => downloadImage(generatedImages['small-tile']!, 'zero-hero-small-tile-440x280.png')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PNG
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Marquee Promo */}
+            <div className="p-4 rounded-xl bg-muted/30 border space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Marquee Promo</h4>
+                  <p className="text-sm text-muted-foreground">1280×800px — Featured placement banner</p>
+                </div>
+                <Button 
+                  onClick={() => generateImage('marquee')}
+                  disabled={generatingType !== null}
+                  variant={generatedImages['marquee'] ? 'outline' : 'default'}
+                >
+                  {generatingType === 'marquee' ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Conjuring...
+                    </>
+                  ) : generatedImages['marquee'] ? (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Regenerate
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Conjure
+                    </>
+                  )}
+                </Button>
+              </div>
+              {generatedImages['marquee'] && (
+                <div className="space-y-3">
+                  <div className="rounded-lg overflow-hidden border bg-slate-950">
+                    <img 
+                      src={generatedImages['marquee'].imageData} 
+                      alt="Marquee Promo" 
+                      className="w-full"
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => downloadImage(generatedImages['marquee']!, 'zero-hero-marquee-1280x800.png')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PNG
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Store Icon */}
+            <div className="p-4 rounded-xl bg-muted/30 border space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Store Icon</h4>
+                  <p className="text-sm text-muted-foreground">128×128px — Extension icon (resize to 16, 48, 128)</p>
+                </div>
+                <Button 
+                  onClick={() => generateImage('icon-128')}
+                  disabled={generatingType !== null}
+                  variant={generatedImages['icon-128'] ? 'outline' : 'default'}
+                >
+                  {generatingType === 'icon-128' ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Conjuring...
+                    </>
+                  ) : generatedImages['icon-128'] ? (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Regenerate
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Conjure
+                    </>
+                  )}
+                </Button>
+              </div>
+              {generatedImages['icon-128'] && (
+                <div className="space-y-3">
+                  <div className="rounded-lg overflow-hidden border bg-slate-950 p-4 flex justify-center">
+                    <img 
+                      src={generatedImages['icon-128'].imageData} 
+                      alt="Store Icon" 
+                      className="w-32 h-32"
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => downloadImage(generatedImages['icon-128']!, 'zero-hero-icon-128x128.png')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PNG
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Generated images may need minor adjustments. Resize icons to 16px and 48px variants before including in bundle.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Section D: Visual Assets Required */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.4 }}
       >
         <Card variant="glass">
           <CardHeader>

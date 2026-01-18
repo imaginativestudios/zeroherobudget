@@ -6,7 +6,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { Compass, Lock } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SurplusPowerCard } from '@/components/behavioral/SurplusPowerCard';
 import { StreakTrackerWidget } from '@/components/behavioral/StreakTrackerWidget';
@@ -29,8 +29,8 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
     },
   },
 } as const;
@@ -129,34 +129,6 @@ export function IntelFeed({
         </motion.div>
       )}
 
-      {/* Unlock Hints */}
-      {(!canShowConsistencyXP || !canShowShadowBudget) && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 mt-4"
-        >
-          {!canShowConsistencyXP && (
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
-              <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Consistency XP</p>
-                <p className="text-xs text-muted-foreground/70">Wisdom unlocks after 48 hours on your quest</p>
-              </div>
-            </div>
-          )}
-          {!canShowShadowBudget && (
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
-              <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Shadow Budget</p>
-                <p className="text-xs text-muted-foreground/70">Reveal the shadow after 3 transactions logged</p>
-              </div>
-            </div>
-          )}
-        </motion.div>
-      )}
     </div>
   );
 }

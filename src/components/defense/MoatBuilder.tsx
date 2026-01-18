@@ -169,15 +169,14 @@ export function MoatBuilder({
 
   return (
     <Card 
-      variant="glass"
       className={cn(
-        "transition-all duration-500 overflow-hidden hover-lift",
-        moatHealth.status === 'secure' && "ring-2 ring-success/50 bg-gradient-to-br from-success/5 to-transparent",
-        showPrimaryQuestBadge && "ring-2 ring-warning/50",
+        "shadow-royal hover-lift overflow-hidden",
+        moatHealth.status === 'secure' && "ring-1 ring-success/30",
+        showPrimaryQuestBadge && "ring-1 ring-warning/30",
         variant === 'full' && "col-span-full"
       )}
     >
-      <CardHeader className={cn("pb-2", variant === 'full' && "pb-4")}>
+      <CardHeader className={cn("p-6 pb-2", variant === 'full' && "pb-4")}>
         <CardTitle className={cn(
           "font-medium flex items-center justify-between",
           variant === 'full' ? "text-lg" : "text-sm"
@@ -197,7 +196,7 @@ export function MoatBuilder({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className={cn("space-y-4", variant === 'full' && "space-y-6")}>
+      <CardContent className={cn("p-6 pt-0 space-y-4", variant === 'full' && "space-y-6")}>
         {/* Castle Evolution and Water Reservoir */}
         <div className={cn(
           "flex gap-4",

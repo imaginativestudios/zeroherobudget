@@ -69,27 +69,13 @@ export function BossCard({
   return (
     <>
       <Card 
-        variant="glass"
         className={cn(
-          "relative overflow-hidden transition-all duration-300 hover-lift",
-          isHighInterest && "ring-2 ring-destructive/30"
+          "relative overflow-hidden shadow-royal hover-lift",
+          isHighInterest && "ring-1 ring-destructive/20"
         )}
       >
-        {/* Animated background effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5"
-          animate={{ 
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] 
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity, 
-            ease: 'linear' 
-          }}
-          style={{ backgroundSize: '200% 100%' }}
-        />
         
-        <CardHeader className="relative pb-2">
+        <CardHeader className="p-6 pb-2">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className={cn(
@@ -121,7 +107,7 @@ export function BossCard({
           </div>
         </CardHeader>
         
-        <CardContent className="relative space-y-6">
+        <CardContent className="p-6 pt-0 space-y-6">
           {/* Debt Name & Balance */}
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-bold text-foreground">

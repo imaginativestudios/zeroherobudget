@@ -77,10 +77,8 @@ export const FinancialCard = ({
 
   const cardContent = (
     <Card className={cn(
-      "h-full flex flex-col shadow-elegant transition-all duration-300 ease-out animate-fade-in",
+      "h-full flex flex-col shadow-royal hover-lift transition-all duration-300 ease-out",
       to && "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      to && "hover:shadow-royal hover:-translate-y-1 hover:scale-[1.02]",
-      "active:scale-[0.98] active:translate-y-0",
       className
     )}>
       <CardHeader className="pb-2 p-4 sm:p-5">

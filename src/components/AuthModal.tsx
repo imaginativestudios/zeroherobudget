@@ -196,8 +196,8 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
               <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
                 <TabsTrigger 
                   value="login"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                             bg-background text-foreground/70 font-medium
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-2 sm:px-4 py-2 sm:py-3 
+                             bg-background text-foreground/70 font-medium text-sm
                              border-r border-border last:border-r-0
                              hover:bg-muted hover:text-foreground
                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
@@ -209,8 +209,8 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                             bg-background text-foreground/70 font-medium
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-2 sm:px-4 py-2 sm:py-3 
+                             bg-background text-foreground/70 font-medium text-sm
                              border-r border-border last:border-r-0
                              hover:bg-muted hover:text-foreground
                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2

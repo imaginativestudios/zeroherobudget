@@ -509,30 +509,30 @@ export const Transactions = () => {
           {filteredTransactions.length === 0 ? <div className="text-center py-8 text-muted-foreground">
               No transactions found for this month.
             </div> : <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b">
                     <th className="text-left p-3 font-semibold">Date</th>
                     <th className="text-left p-3 font-semibold">Description</th>
                     <th className="text-left p-3 font-semibold">Amount</th>
-                    <th className="text-left p-3 font-semibold">Account</th>
+                    <th className="text-left p-3 font-semibold hidden sm:table-cell">Account</th>
                     <th className="text-left p-3 font-semibold">Category</th>
-                    <th className="text-left p-3 font-semibold">Budget Line</th>
+                    <th className="text-left p-3 font-semibold hidden md:table-cell">Budget Line</th>
                     <th className="text-center p-3 font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredTransactions.map(transaction => <tr key={transaction.id} className="border-b hover:bg-muted/50">
                       <td className="p-3">{formatDisplayDate(transaction.date)}</td>
-                      <td className="p-3 break-anywhere">{transaction.description}</td>
+                      <td className="p-3 break-anywhere max-w-[200px]">{transaction.description}</td>
                       <td className="p-3 font-medium">
-                        <span className={transaction.flow === 'in' ? 'text-green-600' : 'text-red-600'}>
+                        <span className={transaction.flow === 'in' ? 'text-success' : 'text-destructive'}>
                           {transaction.flow === 'in' ? '+' : '-'}{formatCurrency(transaction.amount)}
                         </span>
                       </td>
-                      <td className="p-3">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
+                      <td className="p-3 hidden sm:table-cell">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
                       <td className="p-3 break-anywhere">{transaction.category}</td>
-                      <td className="p-3">
+                      <td className="p-3 hidden md:table-cell">
                         {transaction.expenseId ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown" : "-"}
                       </td>
                       <td className="p-3 text-center">

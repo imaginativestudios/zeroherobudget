@@ -80,10 +80,10 @@ const HelpSupport = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
           <button
             onClick={() => scrollToSection("getting-started")}
-            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
+            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors h-full"
           >
             <BookOpen className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Getting Started</h3>
@@ -91,7 +91,7 @@ const HelpSupport = () => {
           </button>
           <button
             onClick={() => scrollToSection("features")}
-            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
+            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors h-full"
           >
             <Target className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Features</h3>
@@ -99,7 +99,7 @@ const HelpSupport = () => {
           </button>
           <button
             onClick={() => scrollToSection("faq")}
-            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
+            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors h-full"
           >
             <MessageCircleQuestion className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">FAQ</h3>
@@ -107,7 +107,7 @@ const HelpSupport = () => {
           </button>
           <Link
             to="/data-privacy"
-            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
+            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors h-full"
           >
             <Shield className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Data Privacy</h3>
@@ -115,7 +115,7 @@ const HelpSupport = () => {
           </Link>
           <button
             onClick={() => scrollToSection("contact")}
-            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors"
+            className="bg-card border border-border rounded-lg p-6 text-left hover:bg-muted/50 transition-colors h-full"
           >
             <Mail className="h-6 w-6 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-1">Contact Us</h3>

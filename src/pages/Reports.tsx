@@ -93,11 +93,11 @@ export const Reports = () => {
   return <div className="pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Intel Center</h1>
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-primary-foreground">
+        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
           <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Label className="text-sm font-medium">Month:</Label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-full sm:w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

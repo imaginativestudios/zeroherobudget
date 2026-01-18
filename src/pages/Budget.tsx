@@ -220,7 +220,7 @@ export const Budget = () => {
             <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-44">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

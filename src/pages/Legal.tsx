@@ -49,7 +49,7 @@ const Legal = () => {
           <TabsList className="grid w-full grid-cols-3 h-auto p-1 mb-8">
             <TabsTrigger 
               value="privacy" 
-              className="flex items-center gap-2 py-3 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Heart className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">The Fortress Pledge</span>
@@ -57,7 +57,7 @@ const Legal = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="terms" 
-              className="flex items-center gap-2 py-3 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Scroll className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Terms of Engagement</span>
@@ -65,7 +65,7 @@ const Legal = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="connector" 
-              className="flex items-center gap-2 py-3 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Compass className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">The Scout Protocol</span>

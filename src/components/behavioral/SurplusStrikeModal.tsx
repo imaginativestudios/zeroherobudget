@@ -117,20 +117,20 @@ export function SurplusStrikeModal({ data, onDismiss, onStrike }: SurplusStrikeM
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={onStrike}
+            className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90 order-first"
+          >
+            <Zap className="h-4 w-4 mr-2" />
+            Strike!
+          </Button>
           <Button
             variant="outline"
             onClick={onDismiss}
             className="flex-1"
           >
             Maybe Later
-          </Button>
-          <Button
-            onClick={onStrike}
-            className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-          >
-            <Zap className="h-4 w-4 mr-2" />
-            Strike!
           </Button>
         </div>
       </DialogContent>

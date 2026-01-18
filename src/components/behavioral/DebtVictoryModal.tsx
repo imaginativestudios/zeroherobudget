@@ -137,15 +137,15 @@ export function DebtVictoryModal({
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-            Celebrate Later
-          </Button>
           {onViewBattlePlan && (
-            <Button onClick={onViewBattlePlan} className="flex-1">
+            <Button onClick={onViewBattlePlan} className="flex-1 order-first sm:order-last">
               View Battle Plan
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           )}
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+            Celebrate Later
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

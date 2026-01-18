@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Scroll, Image, Copy, Check, Download, Package, FileText, Shield, AlertCircle, Wand2, Loader2 } from 'lucide-react';
+import { Hammer, Scroll, ImageIcon, Copy, Check, Download, Package, FileText, Shield, AlertCircle, Wand2, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,16 +8,16 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import JSZip from 'jszip';
 import { supabase } from '@/integrations/supabase/client';
+import connectorShieldSvg from '@/assets/connector-shield.svg';
 import {
   MANIFEST_JSON_PROD,
   CONTENT_JS,
   POPUP_HTML,
-  ICON_README,
   STORE_LISTING,
   VISUAL_ASSETS,
 } from '@/lib/extensionCode';
 
-type ImageType = 'small-tile' | 'marquee' | 'icon-128';
+type ImageType = 'small-tile' | 'marquee';
 
 interface GeneratedImage {
   type: ImageType;
@@ -71,9 +71,35 @@ export default function ReleaseKit() {
   const [generatingType, setGeneratingType] = useState<ImageType | null>(null);
   const [generatedImages, setGeneratedImages] = useState<Record<ImageType, GeneratedImage | null>>({
     'small-tile': null,
-    'marquee': null,
-    'icon-128': null
+    'marquee': null
   });
+
+  // Convert SVG to PNG at specified size
+  const svgToPng = (svgUrl: string, size: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement('img');
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, size, size);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, 'image/png');
+      };
+      img.onerror = () => reject(new Error('Failed to load SVG'));
+      img.src = svgUrl;
+    });
+  };
 
   const generateImage = async (type: ImageType) => {
     setGeneratingType(type);
@@ -127,31 +153,6 @@ export default function ReleaseKit() {
     return new Blob([bytes], { type: 'image/png' });
   };
 
-  const resizeIcon = (base64: string, size: number): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = document.createElement('img');
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Failed to get canvas context'));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, size, size);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
-        }, 'image/png');
-      };
-      img.onerror = () => reject(new Error('Failed to load image'));
-      img.src = base64;
-    });
-  };
 
   const generateZip = async () => {
     setIsGenerating(true);
@@ -164,23 +165,14 @@ export default function ReleaseKit() {
       zip.file('content.js', CONTENT_JS);
       zip.file('popup.html', POPUP_HTML);
       
-      // Check if icons have been generated
-      const iconImage = generatedImages['icon-128'];
-      if (iconImage) {
-        // Add 128px icon directly
-        const icon128Blob = base64ToBlob(iconImage.imageData);
-        zip.file('icon128.png', icon128Blob);
-        
-        // Generate and add resized versions
-        const icon48Blob = await resizeIcon(iconImage.imageData, 48);
-        const icon16Blob = await resizeIcon(iconImage.imageData, 16);
-        
-        zip.file('icon48.png', icon48Blob);
-        zip.file('icon16.png', icon16Blob);
-      } else {
-        // No icons generated - include README
-        zip.file('README-ICONS.txt', ICON_README);
-      }
+      // Always generate icons from SVG asset
+      const icon128Blob = await svgToPng(connectorShieldSvg, 128);
+      const icon48Blob = await svgToPng(connectorShieldSvg, 48);
+      const icon16Blob = await svgToPng(connectorShieldSvg, 16);
+      
+      zip.file('icon128.png', icon128Blob);
+      zip.file('icon48.png', icon48Blob);
+      zip.file('icon16.png', icon16Blob);
       
       // Add promotional images to store-assets folder
       const storeAssetsFolder = zip.folder('store-assets');
@@ -218,12 +210,9 @@ export default function ReleaseKit() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      // Count generated assets
-      const assetsCount = [iconImage, smallTile, marquee].filter(Boolean).length;
-      toast.success(assetsCount > 0 
-        ? `Production ZIP generated with ${assetsCount} asset(s)!` 
-        : 'Production ZIP generated! (Generate assets to include them)'
-      );
+      // Count generated promotional assets
+      const promoCount = [smallTile, marquee].filter(Boolean).length;
+      toast.success(`Production ZIP generated with shield icons + ${promoCount} promo asset(s)!`);
     } catch (error) {
       toast.error('Failed to generate ZIP file');
       console.error(error);
@@ -304,17 +293,8 @@ export default function ReleaseKit() {
                   <code className="bg-muted px-2 py-0.5 rounded text-xs">popup.html</code> — Extension popup UI
                 </li>
                 <li className="flex items-center gap-2">
-                  {generatedImages['icon-128'] ? (
-                    <>
-                      <Check className="h-3 w-3 text-success" />
-                      <code className="bg-muted px-2 py-0.5 rounded text-xs">icon16.png, icon48.png, icon128.png</code> — Generated icons (auto-resized)
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="h-3 w-3 text-amber-500" />
-                      <code className="bg-muted px-2 py-0.5 rounded text-xs">icons</code> — Generate below to include
-                    </>
-                  )}
+                  <Check className="h-3 w-3 text-success" />
+                  <code className="bg-muted px-2 py-0.5 rounded text-xs">icon16.png, icon48.png, icon128.png</code> — Shield icons (auto-generated from SVG)
                 </li>
                 
                 {/* Store Assets Folder */}
@@ -534,59 +514,27 @@ export default function ReleaseKit() {
               )}
             </div>
 
-            {/* Store Icon */}
+            {/* Icon Preview */}
             <div className="p-4 rounded-xl bg-muted/30 border space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">Store Icon</h4>
-                  <p className="text-sm text-muted-foreground">128×128px — Extension icon (resize to 16, 48, 128)</p>
+                  <h4 className="font-medium">Extension Icons</h4>
+                  <p className="text-sm text-muted-foreground">Auto-generated from connector-shield.svg (16, 48, 128px)</p>
                 </div>
-                <Button 
-                  onClick={() => generateImage('icon-128')}
-                  disabled={generatingType !== null}
-                  variant={generatedImages['icon-128'] ? 'outline' : 'default'}
-                >
-                  {generatingType === 'icon-128' ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Conjuring...
-                    </>
-                  ) : generatedImages['icon-128'] ? (
-                    <>
-                      <Wand2 className="h-4 w-4 mr-2" />
-                      Regenerate
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="h-4 w-4 mr-2" />
-                      Conjure
-                    </>
-                  )}
-                </Button>
+                <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+                  <Check className="h-3 w-3 mr-1" />
+                  Included in ZIP
+                </Badge>
               </div>
-              {generatedImages['icon-128'] && (
-                <div className="space-y-3">
-                  <div className="rounded-lg overflow-hidden border bg-slate-950 p-4 flex justify-center">
-                    <img 
-                      src={generatedImages['icon-128'].imageData} 
-                      alt="Store Icon" 
-                      className="w-32 h-32"
-                    />
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => downloadImage(generatedImages['icon-128']!, 'zero-hero-icon-128x128.png')}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PNG
-                  </Button>
-                </div>
-              )}
+              <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-950 justify-center">
+                <img src={connectorShieldSvg} alt="Icon 16" className="w-4 h-4" />
+                <img src={connectorShieldSvg} alt="Icon 48" className="w-12 h-12" />
+                <img src={connectorShieldSvg} alt="Icon 128" className="w-32 h-32" />
+              </div>
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              Generated images may need minor adjustments. Resize icons to 16px and 48px variants before including in bundle.
+              Promotional images may need minor adjustments. Icons are automatically generated from the branded SVG.
             </p>
           </CardContent>
         </Card>
@@ -602,7 +550,7 @@ export default function ReleaseKit() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-success/10">
-                <Image className="h-6 w-6 text-success" />
+                <ImageIcon className="h-6 w-6 text-success" />
               </div>
               <div>
                 <CardTitle className="text-xl">Visual Assets Required</CardTitle>

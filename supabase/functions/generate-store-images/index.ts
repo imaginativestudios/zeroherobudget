@@ -3,43 +3,46 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Image generation prompts
+// Image generation prompts - Zero Hero branding with "Sophisticated Adventure" theme
 const PROMPTS: Record<string, string> = {
-  'small-tile': `Create a clean promotional banner for a browser extension called "Zero Hero Connector". 
+  'small-tile': `Create a promotional banner for the "Zero Hero Connector" browser extension.
 Dimensions: 440x280 pixels aspect ratio.
-Background: Dark navy/slate gradient (#0f172a to #1e293b).
-Center: A minimalist teal (#0D7377) shield icon with a lock symbol inside.
-Text below: "Privacy-First Bank Scout" in white, clean sans-serif font.
-Subtitle: "Your data stays local" in smaller gray text.
-Style: Professional, modern, trust-inspiring.
+Background: Rich dark teal gradient (#0D7377 to #0A5B5E) with subtle depth.
+
+CENTER COMPOSITION:
+- Top: The text "ZERO HERO" as the main logo in elegant white serif font (like Cinzel or Playfair Display), with a distinctive slashed zero "Ø" character. This is the brand logo.
+- Below logo: A minimalist white shield icon with a teal lock symbol inside.
+- Below shield: "CONNECTOR" in smaller white sans-serif tracking.
+
+Bottom area: Tagline "Privacy-First Bank Scout" in gold/amber (#F4A259) text.
+
+Style: Premium, sophisticated adventure aesthetic. Clean and professional.
 No busy backgrounds, no people. Ultra high resolution.`,
 
-  'marquee': `Create a wide promotional hero banner for a browser extension called "Zero Hero Connector".
+  'marquee': `Create a wide promotional hero banner for "Zero Hero" browser extension.
 Dimensions: 1280x800 pixels, 16:10 aspect ratio.
-Layout: Dark slate background (#0f172a) with subtle gradient.
-Left side: Large teal (#0D7377) shield icon with a lock/privacy symbol, glowing subtly.
-Right side: 
-- Headline: "ZERO HERO CONNECTOR" in bold white text
-- Tagline: "Privacy-First Bank Scout" in orange (#F4A259)
-- Bullet points in white: "No servers • No Plaid • No passwords shared"
-- Small text: "100% local. You control your data."
-Style: Clean, modern, enterprise-grade privacy feel.
-Keep edges clean with padding (no text near borders).
-Ultra high resolution.`,
+Background: Dark slate (#0f172a) with subtle teal gradient accent.
 
-  'icon-128': `Create a square app icon for a browser extension.
-Dimensions: 128x128 pixels, 1:1 aspect ratio.
-Design: Teal (#0D7377) circular or rounded square background.
-Center: White minimalist shield with a small lock or keyhole symbol inside.
-Style: Flat design, minimal gradients, very clear and recognizable at small sizes.
-Simple, bold, professional. Ultra high resolution.`
+LAYOUT:
+LEFT SIDE (40%): 
+- Large teal (#0D7377) shield icon with a white lock symbol, subtle glow effect.
+
+RIGHT SIDE (60%):
+- TOP: "ZERO HERO" as the main brand logo in elegant white serif font (like Cinzel or Playfair Display). The zero should be a slashed "Ø" character for distinctive branding.
+- BELOW LOGO: "CONNECTOR" in smaller white uppercase letters with wide tracking.
+- TAGLINE: "Privacy-First Bank Scout" in gold/amber (#F4A259) italic text.
+- BULLET POINTS in white: "• No servers • No Plaid • No passwords shared"
+- FOOTER TEXT: "100% local. You control your data." in gray text.
+
+Style: Sophisticated adventure aesthetic, premium feel, trust-inspiring.
+Clean edges with ample padding (no text near borders).
+Ultra high resolution.`
 };
 
-// Dimension configs
+// Dimension configs (icons now generated from SVG on client)
 const DIMENSIONS: Record<string, { width: number; height: number }> = {
   'small-tile': { width: 448, height: 288 },
-  'marquee': { width: 1280, height: 800 },
-  'icon-128': { width: 512, height: 512 }
+  'marquee': { width: 1280, height: 800 }
 };
 
 Deno.serve(async (req) => {

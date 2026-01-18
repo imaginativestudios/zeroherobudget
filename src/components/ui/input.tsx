@@ -9,7 +9,16 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         type={type}
         className={cn(
           // h-11 (44px) on mobile, h-10 (40px) on desktop for WCAG 2.1 touch targets
-          "flex h-11 sm:h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          // Premium "artifact" styling with subtle gold focus glow
+          "flex h-11 sm:h-10 w-full rounded-xl border border-input/50 bg-muted/30 px-4 py-2 text-base",
+          "ring-offset-background transition-all duration-200",
+          "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
+          "placeholder:text-muted-foreground",
+          "hover:border-border hover:bg-muted/50",
+          "focus-visible:outline-none focus-visible:bg-background focus-visible:border-accent/50",
+          "focus-visible:ring-2 focus-visible:ring-accent/20 focus-visible:ring-offset-0",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          "md:text-sm",
           className
         )}
         ref={ref}

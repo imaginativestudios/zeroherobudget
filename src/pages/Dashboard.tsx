@@ -6,6 +6,7 @@
  */
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "framer-motion";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
@@ -312,9 +313,15 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className={cn("space-y-6 lg:space-y-8", showRegroupingTheme && "regrouping-theme")}>
+    <div className={cn("space-y-8 lg:space-y-10", showRegroupingTheme && "regrouping-theme")}>
       {/* Header */}
-      <div className="flex flex-col gap-4" data-tour="welcome-area">
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col gap-4" 
+        data-tour="welcome-area"
+      >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="pt-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -326,7 +333,7 @@ export const Dashboard = () => {
             <Button 
               variant="default" 
               size="lg" 
-              className="w-full sm:w-auto min-w-[140px] font-semibold"
+              className="w-full sm:w-auto min-w-[140px] font-semibold rounded-xl"
               asChild
             >
               <Link to="/reports">
@@ -336,7 +343,7 @@ export const Dashboard = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Trial Countdown Banner */}
       {isTrialing && trialEnd && (
@@ -361,7 +368,12 @@ export const Dashboard = () => {
       {/* ========================================= */}
       {/* 3-ZONE LAYOUT: Defense + Offense         */}
       {/* ========================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"
+      >
         {/* THE SANCTUARY (Defense) - Left Column */}
         <div className="lg:col-span-1 space-y-4">
           {moatHealth.isPrimaryQuest && (
@@ -387,21 +399,21 @@ export const Dashboard = () => {
               allDebts={debts}
             />
           ) : (
-            <Card className="h-full flex items-center justify-center p-8">
+            <Card variant="glass" className="h-full flex items-center justify-center p-8">
               <div className="text-center space-y-4">
                 <Target className="h-12 w-12 text-muted-foreground mx-auto" />
                 <h3 className="text-lg font-semibold">All Debts Vanquished!</h3>
                 <p className="text-muted-foreground">
                   Congratulations! You have no active debts. Focus on building your Moat.
                 </p>
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="rounded-xl">
                   <Link to="/debts">View Battle History</Link>
                 </Button>
               </div>
             </Card>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* ========================================= */}
       {/* INTEL FEED - Progressive Behavioral Cards */}
@@ -425,13 +437,18 @@ export const Dashboard = () => {
       />
 
       {/* Financial Overview Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border"></div>
-          <h2 className="text-lg font-semibold text-muted-foreground">Financial Overview</h2>
-          <div className="h-px flex-1 bg-border"></div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-4">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground tracking-wide">Financial Overview</h2>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch" data-tour="financial-overview">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
         {isCriticalLoading ? (
           <>
             <FinancialCardSkeleton />
@@ -490,18 +507,23 @@ export const Dashboard = () => {
           </>
         )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Analytics Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
-          <h2 className={`text-lg font-semibold text-muted-foreground transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
-            Analytics {isSecondaryLoading && <span className="text-xs ml-2">Loading...</span>}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-4">
+          <div className={`h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-lg font-semibold text-muted-foreground tracking-wide transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+            Analytics {isSecondaryLoading && <span className="text-xs ml-2 opacity-70">Loading...</span>}
           </h2>
-          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <div className={`h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
         {isSecondaryLoading ? (
           <>
             <ChartCardSkeleton />
@@ -510,14 +532,14 @@ export const Dashboard = () => {
         ) : (
           <>
         {/* Financial Stamina Wheel */}
-        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
-          <CardHeader className="p-4 sm:p-5">
+        <Card variant="elevated" className="overflow-hidden h-full animate-fade-in">
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
               <Heart className="h-5 w-5 text-success" aria-hidden="true" />
               Financial Stamina
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0 flex flex-col items-center">
+          <CardContent className="p-5 sm:p-6 pt-0 flex flex-col items-center">
             <StaminaWheel
               incomeTotal={surplusPower.totalIncome}
               fixedExpenses={surplusPower.survivalExpenses}
@@ -535,14 +557,14 @@ export const Dashboard = () => {
         </Card>
 
         {/* Spending by Category Chart */}
-        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
-          <CardHeader className="p-4 sm:p-5">
+        <Card variant="elevated" className="overflow-hidden h-full animate-fade-in">
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-accent" aria-hidden="true" />
               Spending by Category
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent className="p-5 sm:p-6 pt-0">
             {hasAnyTransactions ? (
               <>
                 <div className="h-[350px] sm:h-[400px]">
@@ -600,14 +622,14 @@ export const Dashboard = () => {
         </Card>
 
         {/* Debt Payoff Projection */}
-        <Card className="shadow-royal overflow-hidden h-full animate-fade-in">
-          <CardHeader className="p-4 sm:p-5">
+        <Card variant="elevated" className="overflow-hidden h-full animate-fade-in">
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle className="text-base sm:text-lg text-foreground flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-accent" />
               Debt Payoff Projection
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent className="p-5 sm:p-6 pt-0">
             {hasAnyTransactions && schedule.timeline.length > 0 ? (
               <>
                 <CustomLineLegend items={[{ label: "Total Balance", color: "hsl(var(--primary))" }]} />
@@ -666,19 +688,24 @@ export const Dashboard = () => {
           </>
         )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Achievements Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
-          <h2 className={`text-lg font-semibold text-muted-foreground transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-4">
+          <div className={`h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <h2 className={`text-lg font-semibold text-muted-foreground tracking-wide transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse' : ''}`}>
             Victories & Achievements
           </h2>
-          <div className={`h-px flex-1 bg-border transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
+          <div className={`h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${isSecondaryLoading ? 'animate-pulse opacity-70' : ''}`}></div>
         </div>
         
-        <Card className="shadow-royal animate-fade-in">
+        <Card variant="elevated" className="animate-fade-in">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
               <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
@@ -688,9 +715,9 @@ export const Dashboard = () => {
               </span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-5 sm:p-6 pt-0">
             {achievements.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
                 {achievements.map(achievement => (
                   <AchievementCard key={achievement.id} achievement={achievement} />
                 ))}
@@ -700,9 +727,9 @@ export const Dashboard = () => {
                 Start tracking debts to unlock achievements!
               </p>
             )}
-            <div className="mt-6">
+            <div className="mt-8">
               <Link to="/achievements">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full rounded-xl">
                   <Trophy className="h-4 w-4 mr-2" />
                   View All Achievements
                 </Button>
@@ -710,23 +737,28 @@ export const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Debt Progress Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border"></div>
-          <h2 className="text-lg font-semibold text-muted-foreground">Debt Progress</h2>
-          <div className="h-px flex-1 bg-border"></div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-4">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent"></div>
+          <h2 className="text-lg font-semibold text-muted-foreground tracking-wide">Debt Progress</h2>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent"></div>
         </div>
-        <Card className="shadow-royal">
+        <Card variant="elevated">
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl flex items-center gap-2 sm:gap-3">
             <Target className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
             Upcoming Payoffs ({strategy} Strategy)
           </CardTitle>
         </CardHeader>
-        <CardContent>
+          <CardContent className="p-5 sm:p-6 pt-0">
           {schedule.perDebt && schedule.perDebt.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
               {schedule.perDebt
@@ -738,7 +770,7 @@ export const Dashboard = () => {
                     : 0;
                   
                   return (
-                    <div key={debt.id} className="border border-border rounded-lg p-4 space-y-3">
+                    <div key={debt.id} className="border border-border/50 rounded-xl p-5 space-y-3 bg-card/50 hover-lift">
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-semibold">{debt.name}</h4>
@@ -774,7 +806,7 @@ export const Dashboard = () => {
           )}
           
           {leftover > 0 && (
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+            <div className="mt-8 p-5 bg-muted/30 rounded-xl border border-border/50">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h4 className="font-semibold text-foreground">Extra Payment Strategy</h4>
@@ -784,7 +816,7 @@ export const Dashboard = () => {
                 </div>
                 <Button 
                   variant="default" 
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto rounded-xl"
                   onClick={() => setOptimizeDialogOpen(true)}
                 >
                   Optimize Strategy
@@ -794,7 +826,7 @@ export const Dashboard = () => {
           )}
         </CardContent>
       </Card>
-      </div>
+      </motion.div>
 
       <OptimizeStrategyDialog
         open={optimizeDialogOpen}

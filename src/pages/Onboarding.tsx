@@ -463,7 +463,6 @@ export default function Onboarding() {
                       disabled={isCompleting}
                       className="w-full h-12"
                       size="lg"
-                      variant="gold"
                     >
                       {isCompleting ? (
                         <>
@@ -613,7 +612,6 @@ export default function Onboarding() {
                   <Button
                     onClick={handleEnterFortress}
                     size="lg"
-                    variant="gold"
                     className="w-full h-14 text-lg"
                   >
                     Enter the Fortress

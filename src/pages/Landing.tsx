@@ -140,8 +140,7 @@ export default function Landing() {
             >
               <Button
                 size="lg"
-                variant="gold"
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 text-primary-dark"
+                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 bg-white text-primary hover:bg-white/90"
                 onClick={beginQuest}
               >
                 Begin Your Quest
@@ -329,9 +328,8 @@ export default function Landing() {
             >
               <Button
                 size="lg"
-                variant="gold"
                 onClick={beginQuest}
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
+                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-white text-primary hover:bg-white/90"
               >
                 Begin Your Quest
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />

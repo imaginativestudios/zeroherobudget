@@ -202,7 +202,7 @@ export function BossCard({
                 "w-full h-14 text-lg font-bold gap-3",
                 "bg-gradient-to-r from-accent to-accent/80",
                 "hover:from-accent/90 hover:to-accent/70",
-                "shadow-lg shadow-accent/25"
+                "shadow-lg"
               )}
               onClick={() => setStrikeModalOpen(true)}
             >

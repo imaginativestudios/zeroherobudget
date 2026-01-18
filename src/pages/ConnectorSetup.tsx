@@ -284,7 +284,7 @@ export default function ConnectorSetup() {
         >
           <Button 
             size="lg" 
-            className="btn-glow text-lg px-8 py-6 h-auto rounded-xl font-semibold animate-subtle-pulse"
+            className="text-lg px-8 py-6 h-auto rounded-xl font-semibold"
             onClick={() => document.getElementById('setup-steps')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <Sparkles className="h-5 w-5 mr-2" />

@@ -556,7 +556,7 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 sm:p-8 pt-0 flex flex-col items-center">
-            <div className="stamina-glow">
+            <div>
               <StaminaWheel
                 incomeTotal={surplusPower.totalIncome}
                 fixedExpenses={surplusPower.survivalExpenses}
@@ -689,7 +689,7 @@ export const Dashboard = () => {
                         dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
                         activeDot={{ r: 6, fill: "hsl(var(--primary))", strokeWidth: 2 }}
                         stroke="hsl(var(--primary))"
-                        filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))"
+                        
                       />
                     </LineChart>
                   </ResponsiveContainer>

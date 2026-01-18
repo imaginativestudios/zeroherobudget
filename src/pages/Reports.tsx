@@ -195,8 +195,8 @@ export const Reports = () => {
                   fontSize: "12px",
                   color: "hsl(var(--foreground))"
                 }} />
-                    <Bar dataKey="planned" name="Planned" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--primary))" filter="drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))" />
-                    <Bar dataKey="actual" name="Actual" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--accent))" filter="drop-shadow(0 2px 4px hsl(var(--accent) / 0.2))" />
+                    <Bar dataKey="planned" name="Planned" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--primary))" />
+                    <Bar dataKey="actual" name="Actual" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} strokeWidth={1} stroke="hsl(var(--accent))" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

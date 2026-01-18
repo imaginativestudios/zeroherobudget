@@ -21,7 +21,7 @@ const Legal = () => {
       <header className="sticky top-0 z-50 bg-card/50 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
-            <Logo className="h-8 w-auto" />
+            <Logo className="h-8 w-auto" variant="dark" />
           </Link>
           <Button variant="ghost" size="sm" asChild>
             <Link to="/" className="flex items-center gap-2">

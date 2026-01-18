@@ -232,13 +232,13 @@ export function Subscriptions() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         <Card className="h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Monthly Spend</CardTitle>
             <CreditCard className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(monthlySpend)}</div>
             <p className="text-xs text-muted-foreground">
               From {activeSubscriptions.length} active subscription{activeSubscriptions.length !== 1 ? 's' : ''}
@@ -247,11 +247,11 @@ export function Subscriptions() {
         </Card>
 
         <Card className="h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
             <Play className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{activeSubscriptions.length}</div>
             <p className="text-xs text-muted-foreground">
               {formattedSubscriptions.filter(s => s.status === 'paused').length} paused, {formattedSubscriptions.filter(s => s.status === 'canceled').length} canceled
@@ -260,11 +260,11 @@ export function Subscriptions() {
         </Card>
 
         <Card className="h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Upcoming Renewals</CardTitle>
             <Calendar className="h-5 w-5 text-accent" aria-hidden="true" />
           </CardHeader>
-          <CardContent className="p-4 sm:p-5 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{upcomingRenewals.length}</div>
             <p className="text-xs text-muted-foreground">
               In the next 14 days

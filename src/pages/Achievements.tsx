@@ -54,11 +54,11 @@ export const Achievements = () => {
       </div>
 
       {/* Overall Progress */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="shadow-royal">
-          <CardHeader className="pb-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="h-full">
+          <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
+              <Trophy className="h-5 w-5" />
               Completion
             </CardTitle>
           </CardHeader>
@@ -75,10 +75,10 @@ export const Achievements = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-royal">
-          <CardHeader className="pb-3">
+        <Card className="h-full">
+          <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
+              <TrendingUp className="h-5 w-5" />
               Debt Reduction
             </CardTitle>
           </CardHeader>
@@ -95,10 +95,10 @@ export const Achievements = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-royal">
-          <CardHeader className="pb-3">
+        <Card className="h-full">
+          <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Target className="h-4 w-4" />
+              <Target className="h-5 w-5" />
               Debts Eliminated
             </CardTitle>
           </CardHeader>
@@ -116,7 +116,7 @@ export const Achievements = () => {
       </div>
 
       {/* Achievement Timeline */}
-      <Card className="shadow-royal">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-accent" />
@@ -165,7 +165,7 @@ export const Achievements = () => {
 
       {/* Motivational Message */}
       {unlockedCount < totalCount && (
-        <Card className="shadow-royal border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <Trophy className="h-12 w-12 mx-auto text-accent" />
@@ -182,7 +182,7 @@ export const Achievements = () => {
       )}
 
       {unlockedCount === totalCount && totalCount > 0 && (
-        <Card className="shadow-royal border-accent/50 bg-gradient-to-br from-accent/10 to-primary/10">
+        <Card className="border-accent/50 bg-gradient-to-br from-accent/10 to-primary/10">
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <Trophy className="h-16 w-16 mx-auto text-accent animate-pulse" />

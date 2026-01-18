@@ -382,9 +382,9 @@ const AccountSettings = () => {
       {/* Quick Links Section */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Quick Links</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {quickLinks.map((link) => (
-            <Card key={link.href} className="hover:bg-accent/50 transition-colors">
+            <Card key={link.href} className="hover:bg-accent/50 transition-colors h-full">
               <Link to={link.href}>
                 <CardContent className="flex items-center gap-4 p-6">
                   <div className="p-3 rounded-lg bg-primary/10">

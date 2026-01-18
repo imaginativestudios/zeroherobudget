@@ -182,6 +182,31 @@ export default function ReleaseKit() {
         zip.file('README-ICONS.txt', ICON_README);
       }
       
+      // Add promotional images to store-assets folder
+      const storeAssetsFolder = zip.folder('store-assets');
+      const smallTile = generatedImages['small-tile'];
+      const marquee = generatedImages['marquee'];
+      
+      if (smallTile) {
+        const smallTileBlob = base64ToBlob(smallTile.imageData);
+        storeAssetsFolder?.file('promo-small-440x280.png', smallTileBlob);
+      }
+      
+      if (marquee) {
+        const marqueeBlob = base64ToBlob(marquee.imageData);
+        storeAssetsFolder?.file('promo-marquee-1280x800.png', marqueeBlob);
+      }
+      
+      // If no store assets, add a README
+      if (!smallTile && !marquee) {
+        storeAssetsFolder?.file('README.txt', 
+          'Generate promotional images using the "Conjure the Visuals" section on the Release Kit page.\n\n' +
+          'Required assets:\n' +
+          '- Small Promo Tile: 440x280px (PNG)\n' +
+          '- Marquee Promo: 1280x800px (PNG)\n'
+        );
+      }
+      
       // Generate and download
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
@@ -193,9 +218,11 @@ export default function ReleaseKit() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      toast.success(iconImage 
-        ? 'Production ZIP generated with icons!' 
-        : 'Production ZIP generated! (Generate icons first to include them)'
+      // Count generated assets
+      const assetsCount = [iconImage, smallTile, marquee].filter(Boolean).length;
+      toast.success(assetsCount > 0 
+        ? `Production ZIP generated with ${assetsCount} asset(s)!` 
+        : 'Production ZIP generated! (Generate assets to include them)'
       );
     } catch (error) {
       toast.error('Failed to generate ZIP file');
@@ -286,6 +313,37 @@ export default function ReleaseKit() {
                     <>
                       <AlertCircle className="h-3 w-3 text-amber-500" />
                       <code className="bg-muted px-2 py-0.5 rounded text-xs">icons</code> — Generate below to include
+                    </>
+                  )}
+                </li>
+                
+                {/* Store Assets Folder */}
+                <li className="flex items-center gap-2 mt-3 pt-3 border-t border-border/50">
+                  <span className="text-xs font-medium text-muted-foreground">store-assets/</span>
+                </li>
+                <li className="flex items-center gap-2 pl-4">
+                  {generatedImages['small-tile'] ? (
+                    <>
+                      <Check className="h-3 w-3 text-success" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">promo-small-440x280.png</code>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-3 w-3 text-amber-500" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">small tile</code> — Generate below
+                    </>
+                  )}
+                </li>
+                <li className="flex items-center gap-2 pl-4">
+                  {generatedImages['marquee'] ? (
+                    <>
+                      <Check className="h-3 w-3 text-success" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">promo-marquee-1280x800.png</code>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-3 w-3 text-amber-500" />
+                      <code className="bg-muted px-2 py-0.5 rounded text-xs">marquee</code> — Generate below
                     </>
                   )}
                 </li>

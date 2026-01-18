@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Teal rounded square background -->
+  <rect width="128" height="128" rx="24" fill="#0D7377"/>
+  
+  <!-- White shield shape -->
+  <path 
+    d="M64 20C64 20 40 28 32 32V60C32 80 48 100 64 108C80 100 96 80 96 60V32C88 28 64 20 64 20Z" 
+    fill="white"
+    stroke="white"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  
+  <!-- Lock body (teal) -->
+  <rect x="52" y="58" width="24" height="20" rx="3" fill="#0D7377"/>
+  
+  <!-- Lock shackle (teal) -->
+  <path 
+    d="M56 58V52C56 47.5817 59.5817 44 64 44C68.4183 44 72 47.5817 72 52V58" 
+    stroke="#0D7377" 
+    stroke-width="4" 
+    stroke-linecap="round"
+    fill="none"
+  />
+  
+  <!-- Keyhole -->
+  <circle cx="64" cy="66" r="3" fill="white"/>
+  <rect x="62.5" y="66" width="3" height="6" rx="1" fill="white"/>
+</svg>

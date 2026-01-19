@@ -74,15 +74,15 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn('w-full', className)}
     >
-      <Card className="border-2 overflow-hidden border-amber-200 bg-slate-100">
+      <Card className="border-2 overflow-hidden border-primary/30 bg-muted/50">
         {/* Header */}
-        <div className="px-4 py-3 flex items-center justify-between bg-amber-50/80">
+        <div className="px-4 py-3 flex items-center justify-between bg-primary/10">
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-amber-600" />
-            <span className="font-bold uppercase tracking-wide text-sm text-amber-700">
+            <Shield className="h-5 w-5 text-primary" />
+            <span className="font-bold uppercase tracking-wide text-sm text-primary">
               Status: Regrouping
             </span>
-            <Badge variant="outline" className="text-xs border-amber-300 text-amber-700">
+            <Badge variant="outline" className="text-xs border-primary/50 text-primary">
               Defenses Active
             </Badge>
           </div>
@@ -100,8 +100,8 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
         <CardContent className="p-4 space-y-4">
           {/* Main Message */}
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-amber-100">
-              <Shield className="h-6 w-6 text-amber-600" />
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Shield className="h-6 w-6 text-primary" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-foreground">
@@ -115,20 +115,20 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
           </div>
           
           {/* Repair Progress Bar */}
-          <div className="space-y-2 p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+          <div className="space-y-2 p-3 bg-muted/50 rounded-lg border border-border">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-foreground">
                 {formatCurrency(currentBalance)} of {formatCurrency(targetBalance)}
               </span>
-              <span className="text-amber-700 font-semibold">
+              <span className="text-primary font-semibold">
                 {progressPercent}%
               </span>
             </div>
             
             {/* Animated Progress Bar */}
-            <div className="relative h-3 w-full overflow-hidden rounded-full bg-amber-100">
+            <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
               <motion.div
-                className="h-full bg-gradient-to-r from-amber-400 to-primary rounded-full"
+                className="h-full bg-primary rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercent}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}

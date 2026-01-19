@@ -154,7 +154,7 @@ const Install = () => {
           {/* Back to App */}
           <div className="text-center">
             <Link to="/dashboard">
-              <Button variant="outline" className="border-white/30 bg-accent text-primary-dark">
+              <Button variant="inverse-outline">
                 Continue to Dashboard
               </Button>
             </Link>

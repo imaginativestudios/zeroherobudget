@@ -140,7 +140,8 @@ export default function Landing() {
             >
               <Button
                 size="lg"
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 bg-white text-primary hover:bg-white/90"
+                variant="inverse"
+                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12"
                 onClick={beginQuest}
               >
                 Begin Your Quest
@@ -148,8 +149,8 @@ export default function Landing() {
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 border-2 border-white text-primary-dark hover:bg-white/20 hover:border-white hover:text-white"
+                variant="inverse-outline"
+                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12"
                 onClick={() => openAuth('login')}
               >
                 Sign In
@@ -328,8 +329,9 @@ export default function Landing() {
             >
               <Button
                 size="lg"
+                variant="inverse"
                 onClick={beginQuest}
-                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-white text-primary hover:bg-white/90"
+                className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
               >
                 Begin Your Quest
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />

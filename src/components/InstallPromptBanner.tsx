@@ -53,7 +53,7 @@ const InstallPromptBanner = () => {
           </div>
           <div className="min-w-0">
             <p className="font-semibold text-white text-sm truncate">Install Zero Hero</p>
-            <p className="text-xs text-white/70 truncate">Get the full app experience</p>
+            <p className="text-xs text-white/80 truncate">Get the full app experience</p>
           </div>
         </div>
         
@@ -81,7 +81,7 @@ const InstallPromptBanner = () => {
             size="icon" 
             variant="ghost" 
             onClick={handleDismiss}
-            className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10"
+            className="h-8 w-8 text-white hover:text-white hover:bg-white/20"
           >
             <X className="h-4 w-4" />
           </Button>

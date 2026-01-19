@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { HouseholdInviteEmail } from "./_templates/household-invite.tsx";
+import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -41,6 +42,12 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Initialize admin client for email logging
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
     // Verify the user's token and get claims
@@ -115,6 +122,20 @@ const handler = async (req: Request): Promise<Response> => {
     const inviterProfile = invitation.profiles as any;
     const inviterName = inviterProfile?.display_name || inviterProfile?.first_name || inviterProfile?.email || "A Zero Hero user";
 
+    // Log email attempt as pending
+    const logId = await logEmail(supabaseAdmin, {
+      userId: userId,
+      recipientEmail: inviteeEmail,
+      emailType: 'household_invite',
+      status: 'pending',
+      metadata: { 
+        household_id: invitation.household_id, 
+        invitation_id: invitationId,
+        household_name: householdName,
+        role: invitation.role,
+      },
+    });
+
     // Render the React email template to HTML
     const html = await renderAsync(
       React.createElement(HouseholdInviteEmail, {
@@ -136,7 +157,24 @@ const handler = async (req: Request): Promise<Response> => {
       text: `You've been invited to join ${householdName} on Zero Hero!\n\n${inviterName} has invited you to join their household "${householdName}" as a ${invitation.role || "member"}.\n\nAccept your invitation here: ${inviteUrl}\n\nThis invitation expires in 7 days.\n\n- The Zero Hero Team`,
     });
 
-    console.log("Invitation email sent successfully:", emailResponse);
+    // Update email log based on response
+    if (logId) {
+      if (emailResponse.error) {
+        await updateEmailStatus(supabaseAdmin, logId, 'failed', {
+          errorMessage: emailResponse.error.message,
+        });
+        console.error("Invitation email failed:", emailResponse.error);
+        return new Response(
+          JSON.stringify({ error: "Failed to send invitation email. Please try again." }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      } else {
+        await updateEmailStatus(supabaseAdmin, logId, 'sent', {
+          resendId: emailResponse.data?.id,
+        });
+        console.log("Invitation email sent successfully:", emailResponse);
+      }
+    }
 
     return new Response(JSON.stringify(emailResponse), {
       status: 200,

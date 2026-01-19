@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { WaitlistWelcomeEmail } from "./_templates/waitlist-welcome.tsx";
+import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const audienceId = Deno.env.get("RESEND_AUDIENCE_ID");
@@ -73,6 +74,14 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Signup saved to database:", signupData);
     }
 
+    // Log email attempt as pending
+    const logId = await logEmail(supabase, {
+      recipientEmail: email,
+      emailType: 'waitlist_welcome',
+      status: 'pending',
+      metadata: { source: 'coming_soon', ip_address: ipAddress },
+    });
+
     // Generate unsubscribe URL with base64-encoded email
     const encodedEmail = btoa(email);
     const unsubscribeUrl = `${supabaseUrl}/functions/v1/unsubscribe-waitlist?email=${encodedEmail}`;
@@ -96,7 +105,20 @@ const handler = async (req: Request): Promise<Response> => {
       text: `Zero Hero Waitlist\n\nThanks for signing up. We'll email you when we launch.\n\n- The Zero Hero Team\n\nTo unsubscribe: ${unsubscribeUrl}`,
     });
 
-    console.log("Welcome email sent successfully:", emailResponse);
+    // Update email log based on response
+    if (logId) {
+      if (emailResponse.error) {
+        await updateEmailStatus(supabase, logId, 'failed', {
+          errorMessage: emailResponse.error.message,
+        });
+        console.error("Email send failed:", emailResponse.error);
+      } else {
+        await updateEmailStatus(supabase, logId, 'sent', {
+          resendId: emailResponse.data?.id,
+        });
+        console.log("Welcome email sent successfully:", emailResponse);
+      }
+    }
 
     // Add contact to Resend Audience
     if (audienceId) {
@@ -110,6 +132,21 @@ const handler = async (req: Request): Promise<Response> => {
         // Log but don't fail the request if audience addition fails
         console.error("Failed to add contact to audience:", audienceError);
       }
+    }
+
+    // If email failed but we got this far, still return success for DB entry
+    if (emailResponse.error) {
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Signed up to waitlist (email delivery pending)",
+          warning: "Email delivery may be delayed"
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
     }
 
     return new Response(

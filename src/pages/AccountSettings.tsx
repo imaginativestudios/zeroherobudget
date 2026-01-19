@@ -16,7 +16,8 @@ import {
   Beaker,
   Play,
   Square,
-  RotateCcw
+  RotateCcw,
+  Mail
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ import { useRealProfile } from '@/hooks/useRealProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { EmailLogsTable } from '@/components/admin/EmailLogsTable';
 
 const AccountSettings = () => {
   const { user, session } = useAuth();
@@ -444,6 +446,24 @@ const AccountSettings = () => {
                 Clear Subscription
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Email Delivery Logs (Dev only) */}
+      {import.meta.env.DEV && (
+        <Card className="border-slate-500/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" aria-hidden="true" />
+              Email Delivery Logs
+            </CardTitle>
+            <CardDescription>
+              Track email delivery status for debugging
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <EmailLogsTable />
           </CardContent>
         </Card>
       )}

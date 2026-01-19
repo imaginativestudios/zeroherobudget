@@ -176,7 +176,16 @@ export function MoatBuilder({
         variant === 'full' && "col-span-full"
       )}
     >
-      <CardHeader className={cn("p-6 pb-2", variant === 'full' && "pb-4")}>
+      {/* Current Quest Badge - inside the card */}
+      {showPrimaryQuestBadge && (
+        <div className="px-6 pt-4 pb-0">
+          <span className="inline-flex items-center gap-2 px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full">
+            🌟 CURRENT QUEST
+          </span>
+        </div>
+      )}
+      
+      <CardHeader className={cn("p-6 pb-2", showPrimaryQuestBadge && "pt-3", variant === 'full' && "pb-4")}>
         <CardTitle className={cn(
           "font-medium flex items-center justify-between",
           variant === 'full' ? "text-lg" : "text-sm"

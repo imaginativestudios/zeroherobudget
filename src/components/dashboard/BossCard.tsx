@@ -74,8 +74,14 @@ export function BossCard({
           isHighInterest && "ring-1 ring-destructive/20"
         )}
       >
+        {/* Placeholder to match MoatBuilder badge space for consistent alignment */}
+        <div className="px-6 pt-4 pb-0" aria-hidden="true">
+          <span className="inline-flex items-center gap-2 px-3 py-1 text-sm font-semibold invisible">
+            &nbsp;
+          </span>
+        </div>
         
-        <CardHeader className="p-6 pb-2">
+        <CardHeader className="p-6 pb-2 pt-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className={cn(

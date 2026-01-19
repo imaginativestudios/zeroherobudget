@@ -333,18 +333,18 @@ export const Dashboard = () => {
               Welcome, {greetingName}
             </h1>
             <p className="text-muted-foreground">
-              Your quest continues. Stay focused on the path ahead.
+              Your financial journey continues. Stay focused on the path ahead.
             </p>
           </div>
           
-          {/* Right: Next Objective */}
+          {/* Right: Next Target */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="text-left sm:text-right">
-              <p className="text-sm text-muted-foreground uppercase tracking-wide">Next Objective</p>
+              <p className="text-sm text-muted-foreground uppercase tracking-wide">Next Target</p>
               <p className="text-lg font-semibold text-primary">
                 {dashboardState.currentBoss 
-                  ? `Clear the Shadow on ${dashboardState.currentBoss.name}` 
-                  : 'Build your Sanctuary'}
+                  ? `Pay off ${dashboardState.currentBoss.name}` 
+                  : 'Build your emergency fund'}
               </p>
             </div>
             <HouseholdViewToggle />

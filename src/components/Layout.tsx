@@ -18,16 +18,16 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-// Adventure navigation names for the Restoration Journey theme
+// Navigation items - Thematic Headers, Functional Names
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "The Atlas", href: "/budgets", icon: Compass },
-  { name: "Shadow Path", href: "/debts", icon: Cloud },
-  { name: "Journey Log", href: "/transactions", icon: Scroll },
+  { name: "Budget", href: "/budgets", icon: Compass },
+  { name: "Debt Strategy", href: "/debts", icon: Cloud },
+  { name: "Transactions", href: "/transactions", icon: Scroll },
   { name: "Data Management", href: "/data", icon: Database },
   { name: "Milestones", href: "/achievements", icon: Trophy },
-  { name: "Traveler's Guide", href: "/learn", icon: Lightbulb },
-  { name: "Discoveries", href: "/reports", icon: BarChart3 },
+  { name: "Financial Tips", href: "/learn", icon: Lightbulb },
+  { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
 
 export const Layout = ({ children }: LayoutProps) => {

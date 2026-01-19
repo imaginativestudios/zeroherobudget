@@ -24,13 +24,19 @@ const stepIcons = {
 
 const stepTitles = {
   1: 'Define Your Life Value',
-  2: 'Name Your Primary Debt Boss',
-  3: 'Set Your Moat Depth',
+  2: 'Name Your Primary Debt',
+  3: 'Set Your Emergency Fund Goal',
+};
+
+const stepSubtitles = {
+  1: 'Enter your hourly wage',
+  2: 'Enter your largest or highest-interest debt',
+  3: 'Choose your savings target',
 };
 
 const stepQuestions = {
-  1: 'What is one hour of your life worth?',
-  2: 'Every Hero needs a villain to defeat.',
+  1: 'We use this to calculate how much life you trade for money.',
+  2: 'Naming your debt makes it an enemy you can defeat.',
   3: 'How much protection do you want from life\'s surprises?',
 };
 
@@ -278,10 +284,13 @@ export default function Onboarding() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.15 }}
                 >
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                     {stepTitles[currentStep as 1 | 2 | 3]}
                   </h1>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm font-medium text-primary mb-1">
+                    {stepSubtitles[currentStep as 1 | 2 | 3]}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
                     {stepQuestions[currentStep as 1 | 2 | 3]}
                   </p>
                 </motion.div>
@@ -467,11 +476,11 @@ export default function Onboarding() {
                       {isCompleting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Calculating your path...
+                          Calculating your timeline...
                         </>
                       ) : (
                         <>
-                          See My Freedom Path
+                          See My Payoff Timeline
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </>
                       )}

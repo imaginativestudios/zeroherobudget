@@ -64,14 +64,13 @@ export function InitializeMissionCard() {
             <Swords className="w-10 h-10 text-primary" />
           </motion.div>
           <CardTitle className="text-2xl sm:text-3xl font-bold text-foreground">
-            Initialize Your Mission
+            Get Started
           </CardTitle>
         </CardHeader>
         
         <CardContent className="space-y-6 text-center">
           <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            Before a hero can fight, they must know their enemy. 
-            Add your first debt to begin the battle plan.
+            No debts tracked yet. Add your first debt to see your payoff strategy and unlock the full dashboard.
           </p>
 
           {/* Primary CTA */}

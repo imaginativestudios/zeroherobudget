@@ -190,10 +190,13 @@ export function MoatBuilder({
           "font-medium flex items-center justify-between",
           variant === 'full' ? "text-lg" : "text-sm"
         )}>
-          <span className="flex items-center gap-2">
-            <Castle className="h-5 w-5 text-primary" />
-            Grow Your Sanctuary
-          </span>
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-2">
+              <Castle className="h-5 w-5 text-primary" />
+              The Sanctuary
+            </span>
+            <span className="text-xs font-normal text-muted-foreground">Your Emergency Fund</span>
+          </div>
           <FortressLevelBadge 
             level={moatHealth.castleLevel}
             isSecure={moatHealth.status === 'secure'}
@@ -358,14 +361,14 @@ export function MoatBuilder({
                 <DialogTrigger asChild>
                   <Button variant="default" className="flex-1 min-h-[44px]">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add to Moat
+                    Add Savings
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <Castle className="h-5 w-5 text-primary" />
-                      Fortify Your Moat
+                      Add to Emergency Fund
                     </DialogTitle>
                     <DialogDescription>
                       How much have you saved toward your emergency fund?
@@ -403,7 +406,7 @@ export function MoatBuilder({
               
               <Button variant="outline" className="flex-1 min-h-[44px]" asChild>
                 <Link to="/debts">
-                  View Battle Plan
+                  View Debt Strategy
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
               </Button>

@@ -324,7 +324,6 @@ export const Dashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         className="p-6 sm:p-8 rounded-2xl bg-card border shadow-royal"
-        data-tour="welcome-area"
       >
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Welcome + Consistency */}

@@ -15,8 +15,6 @@ import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constant
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
-import { BudgetOnboardingTour } from "@/components/budget/BudgetOnboardingTour";
-import { useBudgetTour } from "@/hooks/useBudgetTour";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { cn } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
@@ -24,7 +22,6 @@ import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChar
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 
 export const Budget = () => {
-  const { startTour } = useBudgetTour();
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
@@ -197,23 +194,10 @@ export const Budget = () => {
   };
 
   return <div className="space-y-8">
-      <BudgetOnboardingTour hasExpenses={expenses.length > 0} />
-      
       {/* Header */}
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-foreground">The Atlas</h1>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={startTour}
-              className="text-muted-foreground hover:text-foreground"
-              title="Restart tour"
-            >
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-          </div>
+          <h1 className="text-3xl font-bold text-foreground">The Atlas</h1>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}

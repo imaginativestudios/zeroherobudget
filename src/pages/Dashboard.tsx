@@ -384,14 +384,7 @@ export const Dashboard = () => {
         className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"
       >
         {/* THE SANCTUARY (Defense) - Left Column */}
-        <div className="flex flex-col">
-          {moatHealth.isPrimaryQuest && (
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
-                🌟 CURRENT QUEST
-              </span>
-            </div>
-          )}
+        <div className="flex flex-col h-full">
           <MoatBuilder 
             variant="full" 
             showPrimaryQuestBadge={moatHealth.isPrimaryQuest} 

@@ -62,7 +62,7 @@ export function GettingStartedChecklist({
     { 
       id: 'expense', 
       title: 'Add your first expense', 
-      description: 'Track where your gold flows',
+      description: 'Track where your money goes',
       icon: Receipt,
       isComplete: expenses.length > 0, 
       href: '/budgets'
@@ -70,15 +70,15 @@ export function GettingStartedChecklist({
     { 
       id: 'debt', 
       title: 'Track a debt', 
-      description: 'Know your shadow to defeat it',
+      description: 'Add a debt to build your payoff plan',
       icon: Target,
       isComplete: debts.length > 0, 
       href: '/debts'
     },
     { 
       id: 'moat', 
-      title: 'Build your Sanctuary', 
-      description: 'Start your emergency reserve',
+      title: 'Start your emergency fund', 
+      description: 'Build your financial safety net',
       icon: Heart,
       isComplete: moatCurrent > 0
     },

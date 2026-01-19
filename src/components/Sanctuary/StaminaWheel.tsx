@@ -138,7 +138,7 @@ export function StaminaWheel({
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-card border shadow-lg">
-              <p className="font-medium">Shadow Burden</p>
+              <p className="font-medium">Debt Payments</p>
               <p className="text-sm text-muted-foreground">
                 {formatCurrency(debtPayments)}/mo required
               </p>
@@ -168,7 +168,7 @@ export function StaminaWheel({
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-card border shadow-lg">
-              <p className="font-medium">Essential Provisions</p>
+              <p className="font-medium">Fixed Expenses</p>
               <p className="text-sm text-muted-foreground">
                 {formatCurrency(fixedExpenses)}/mo committed
               </p>
@@ -235,7 +235,7 @@ export function StaminaWheel({
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-card border shadow-lg">
-              <p className="font-medium text-success">Vitality Remaining</p>
+              <p className="font-medium text-success">Discretionary Budget</p>
               <p className="text-sm text-muted-foreground">
                 {formatCurrency(vitality)} available
               </p>
@@ -261,7 +261,7 @@ export function StaminaWheel({
           {formatCurrency(vitality)}
         </motion.span>
         <span className="text-sm text-muted-foreground font-medium">
-          {isDepleted ? "Depleted" : isLowVitality ? "Low Stamina" : "Safe to Spend"}
+          {isDepleted ? "Depleted" : isLowVitality ? "Low Buffer" : "Safe to Spend"}
         </span>
         
         {/* Percentage indicator */}

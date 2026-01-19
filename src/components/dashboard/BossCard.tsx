@@ -150,7 +150,7 @@ export function BossCard({
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                Time to Slay
+                Payoff Timeline
               </p>
               <p className="text-lg font-semibold">
                 {monthsToPayoff !== null 
@@ -200,7 +200,7 @@ export function BossCard({
               onClick={() => setStrikeModalOpen(true)}
             >
               <Zap className="w-6 h-6" />
-              CLEAR SHADOW — Make Extra Payment
+              Make Extra Payment
             </Button>
           </motion.div>
         </CardContent>

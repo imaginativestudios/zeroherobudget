@@ -386,45 +386,41 @@ export const Dashboard = () => {
       {/* ========================================= */}
       {/* 3-ZONE LAYOUT: Defense + Offense         */}
       {/* ========================================= */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"
-      >
-        {/* THE SANCTUARY (Defense) - Left Column */}
-        <div className="flex flex-col h-full">
-          <MoatBuilder 
-            variant="full" 
-            showPrimaryQuestBadge={moatHealth.isPrimaryQuest} 
-          />
-        </div>
-
-        {/* THE BOSS (Offense) - Right Column */}
-        <div className="flex flex-col">
-          {dashboardState.currentBoss ? (
-            <BossCard
-              debt={dashboardState.currentBoss}
-              strategy={dashboardState.strategy}
-              extraBudget={leftover}
-              allDebts={debts}
-            />
-          ) : (
-            <Card variant="glass" className="h-full flex items-center justify-center p-8">
-              <div className="text-center space-y-4">
-                <Target className="h-12 w-12 text-muted-foreground mx-auto" />
-                <h3 className="text-lg font-semibold">All Debts Vanquished!</h3>
-                <p className="text-muted-foreground">
-                  Congratulations! You have no active debts. Focus on building your Moat.
-                </p>
-                <Button asChild variant="outline" className="rounded-xl">
-                  <Link to="/debts">View Battle History</Link>
-                </Button>
-              </div>
-            </Card>
+      {(dashboardState.canShowMoatBuilder || dashboardState.canShowBoss) && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className={cn(
+            "grid gap-6 items-stretch",
+            dashboardState.canShowMoatBuilder && dashboardState.canShowBoss 
+              ? "grid-cols-1 lg:grid-cols-2" 
+              : "grid-cols-1 max-w-2xl"
           )}
-        </div>
-      </motion.div>
+        >
+          {/* THE SANCTUARY (Defense) - Left Column */}
+          {dashboardState.canShowMoatBuilder && (
+            <div className="flex flex-col h-full">
+              <MoatBuilder 
+                variant="full" 
+                showPrimaryQuestBadge={moatHealth.isPrimaryQuest} 
+              />
+            </div>
+          )}
+
+          {/* THE BOSS (Offense) - Right Column */}
+          {dashboardState.canShowBoss && dashboardState.currentBoss && (
+            <div className="flex flex-col">
+              <BossCard
+                debt={dashboardState.currentBoss}
+                strategy={dashboardState.strategy}
+                extraBudget={leftover}
+                allDebts={debts}
+              />
+            </div>
+          )}
+        </motion.div>
+      )}
 
       {/* ========================================= */}
       {/* INTEL FEED - Progressive Behavioral Cards */}
@@ -448,280 +444,310 @@ export const Dashboard = () => {
       />
 
       {/* Financial Overview Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="space-y-6"
-      >
-        <div className="flex items-center gap-4">
-          <div className="h-px bg-border flex-1"></div>
-          <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Financial Overview</h2>
-          <div className="h-px bg-border flex-1"></div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" data-tour="financial-overview">
-        {isCriticalLoading ? (
-          <>
-            <FinancialCardSkeleton />
-            <FinancialCardSkeleton />
-            <FinancialCardSkeleton />
-            <FinancialCardSkeleton />
-          </>
-        ) : (
-          <>
-            <FinancialCard
-              title="Monthly Income"
-              amount={income}
-              icon={DollarSign}
-              trend="up"
-              to="/reports/income"
-              previousAmount={insightData.previousIncome}
-              insight={insights.income}
-            />
-            <FinancialCard
-              title="Planned Expenses"
-              amount={totalExpenses}
-              icon={TrendingUp}
-              trend="neutral"
-              to="/reports/expenses"
-              previousAmount={insightData.previousExpenses}
-              insight={insights.expenses}
-            />
-            <FinancialCard
-              title="Available for Debt"
-              amount={leftover}
-              icon={Target}
-              trend="up"
-              to="/reports/available"
-              previousAmount={insightData.previousAvailableForDebt}
-              insight={insights.availableForDebt}
-            />
-            <FinancialCard
-              title="Net Worth"
-              amount={netWorth}
-              icon={AlertTriangle}
-              trend={netWorth >= 0 ? "up" : "down"}
-              to="/reports/net-worth"
-              previousAmount={insightData.previousNetWorth}
-              insight={insights.netWorth}
-            />
-          </>
-        )}
-        </div>
-      </motion.div>
+      {dashboardState.canShowFinancialOverview && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-px bg-border flex-1"></div>
+            <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Financial Overview</h2>
+            <div className="h-px bg-border flex-1"></div>
+          </div>
+          <div 
+            className={cn(
+              "grid gap-6 items-stretch",
+              dashboardState.visibleFinancialCardCount === 4 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+              dashboardState.visibleFinancialCardCount === 3 && "grid-cols-1 sm:grid-cols-3",
+              dashboardState.visibleFinancialCardCount === 2 && "grid-cols-1 sm:grid-cols-2",
+              dashboardState.visibleFinancialCardCount === 1 && "grid-cols-1 max-w-md"
+            )} 
+            data-tour="financial-overview"
+          >
+          {isCriticalLoading ? (
+            <>
+              <FinancialCardSkeleton />
+              <FinancialCardSkeleton />
+              <FinancialCardSkeleton />
+              <FinancialCardSkeleton />
+            </>
+          ) : (
+            <>
+              {dashboardState.canShowIncomeCard && (
+                <FinancialCard
+                  title="Monthly Income"
+                  amount={income}
+                  icon={DollarSign}
+                  trend="up"
+                  to="/reports/income"
+                  previousAmount={insightData.previousIncome}
+                  insight={insights.income}
+                />
+              )}
+              {dashboardState.canShowExpenseCard && (
+                <FinancialCard
+                  title="Planned Expenses"
+                  amount={totalExpenses}
+                  icon={TrendingUp}
+                  trend="neutral"
+                  to="/reports/expenses"
+                  previousAmount={insightData.previousExpenses}
+                  insight={insights.expenses}
+                />
+              )}
+              {dashboardState.canShowAvailableCard && (
+                <FinancialCard
+                  title="Available for Debt"
+                  amount={leftover}
+                  icon={Target}
+                  trend="up"
+                  to="/reports/available"
+                  previousAmount={insightData.previousAvailableForDebt}
+                  insight={insights.availableForDebt}
+                />
+              )}
+              {dashboardState.canShowNetWorthCard && (
+                <FinancialCard
+                  title="Net Worth"
+                  amount={netWorth}
+                  icon={AlertTriangle}
+                  trend={netWorth >= 0 ? "up" : "down"}
+                  to="/reports/net-worth"
+                  previousAmount={insightData.previousNetWorth}
+                  insight={insights.netWorth}
+                />
+              )}
+            </>
+          )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Insights & Analytics Section - Tabbed Interface */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="space-y-6"
-      >
-        <div className="flex items-center gap-4">
-          <div className="h-px bg-border flex-1"></div>
-          <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">
-            Insights & Progress
-          </h2>
-          <div className="h-px bg-border flex-1"></div>
-        </div>
+      {(dashboardState.canShowAnalytics || dashboardState.canShowAchievements) && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-px bg-border flex-1"></div>
+            <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">
+              Insights & Progress
+            </h2>
+            <div className="h-px bg-border flex-1"></div>
+          </div>
 
-        <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="analytics" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
-            <TabsTrigger value="achievements" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Victories
-            </TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue={dashboardState.canShowAnalytics ? "analytics" : "achievements"} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="analytics" className="gap-2" disabled={!dashboardState.canShowAnalytics}>
+                <BarChart3 className="h-4 w-4" />
+                Analytics
+              </TabsTrigger>
+              <TabsTrigger value="achievements" className="gap-2" disabled={!dashboardState.canShowAchievements}>
+                <Trophy className="h-4 w-4" />
+                Victories
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="analytics" className="space-y-6">
-            {isSecondaryLoading ? (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
-                <ChartCardSkeleton />
-                <ChartCardSkeleton />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
-                {/* Financial Stamina Wheel */}
-                <Card className="overflow-hidden h-full shadow-royal hover-lift">
-                  <CardHeader className="p-6">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <Heart className="h-5 w-5 text-success" aria-hidden="true" />
-                      Financial Stamina
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0 flex flex-col items-center">
-                    <StaminaWheel
-                      incomeTotal={surplusPower.totalIncome}
-                      fixedExpenses={surplusPower.survivalExpenses}
-                      debtPayments={surplusPower.debtMinimums}
-                      currentSpend={currentMonthSpend}
-                      size={320}
-                    />
-                    <div className="mt-4 w-full">
-                      <ChartInsight 
-                        insight={surplusPower.heroMessage} 
-                        type={surplusPower.isPositive ? "success" : "warning"} 
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Spending by Category Chart */}
-                <Card className="overflow-hidden h-full shadow-royal hover-lift">
-                  <CardHeader className="p-6">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5 text-primary" aria-hidden="true" />
-                      Spending by Category
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0">
-                    {hasAnyTransactions ? (
-                      <>
-                        <div className="h-[300px]">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie
-                                data={spendingByCategory}
-                                dataKey="value"
-                                nameKey="name"
-                                cx="50%"
-                                cy="50%"
-                                outerRadius="75%"
-                                innerRadius="30%"
-                                stroke="hsl(var(--background))"
-                                strokeWidth={2}
-                                label={false}
-                              >
-                                {spendingByCategory.map((_, index) => (
-                                  <Cell 
-                                    key={index} 
-                                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                                  />
-                                ))}
-                              </Pie>
-                              <Tooltip 
-                                formatter={currencyFormatter}
-                                contentStyle={STANDARD_TOOLTIP_STYLE}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <CustomPieLegend data={pieLegendData} />
-                        {spendingInsight && (
-                          <div className="mt-4">
-                            <ChartInsight insight={spendingInsight} type="info" />
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <EmptyChartNotice />
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Debt Payoff Projection - Full Width */}
-                <Card className="overflow-hidden h-full shadow-royal hover-lift xl:col-span-2">
-                  <CardHeader className="p-6">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <TrendingDown className="h-5 w-5 text-primary" />
-                      Debt Payoff Projection
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0">
-                    {hasAnyTransactions && schedule.timeline.length > 0 ? (
-                      <>
-                        <CustomLineLegend items={[{ label: "Total Balance", color: "hsl(var(--primary))" }]} />
-                        <div className="h-[280px]">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={schedule.timeline} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                              <CartesianGrid 
-                                strokeDasharray="3 3" 
-                                stroke="hsl(var(--border))" 
-                                strokeOpacity={0.5}
-                              />
-                              <XAxis 
-                                dataKey="label" 
-                                stroke="hsl(var(--muted-foreground))"
-                                fontSize={12}
-                                tick={{ fill: "hsl(var(--muted-foreground))" }}
-                              />
-                              <YAxis 
-                                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                                stroke="hsl(var(--muted-foreground))"
-                                fontSize={12}
-                                tick={{ fill: "hsl(var(--muted-foreground))" }}
-                              />
-                              <Tooltip 
-                                formatter={currencyFormatter}
-                                contentStyle={STANDARD_TOOLTIP_STYLE}
-                              />
-                              <Line 
-                                type="monotone" 
-                                dataKey="totalBalance" 
-                                name="Total Balance" 
-                                strokeWidth={3} 
-                                dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 3 }}
-                                activeDot={{ r: 5, fill: "hsl(var(--primary))", strokeWidth: 2 }}
-                                stroke="hsl(var(--primary))"
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="mt-4">
-                          <ChartInsight insight={debtInsight} type="info" />
-                        </div>
-                      </>
-                    ) : (
-                      <EmptyChartNotice />
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="achievements">
-            <Card className="shadow-royal hover-lift">
-              <CardHeader className="p-6">
-                <CardTitle className="text-sm font-medium flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-primary" />
-                    Your Progress Milestones
-                  </span>
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {unlockedCount} / {totalCount} Unlocked
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                {achievements.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {achievements.map(achievement => (
-                      <AchievementCard key={achievement.id} achievement={achievement} />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">
-                    Start tracking debts to unlock achievements!
-                  </p>
-                )}
-                <div className="mt-6">
-                  <Link to="/achievements">
-                    <Button variant="outline" className="w-full rounded-xl">
-                      <Trophy className="h-4 w-4 mr-2" />
-                      View All Achievements
-                    </Button>
-                  </Link>
+            <TabsContent value="analytics" className="space-y-6">
+              {isSecondaryLoading ? (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
+                  <ChartCardSkeleton />
+                  <ChartCardSkeleton />
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </motion.div>
+              ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
+                  {/* Financial Stamina Wheel */}
+                  {dashboardState.canShowStaminaWheel && (
+                    <Card className="overflow-hidden h-full shadow-royal hover-lift">
+                      <CardHeader className="p-6">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                          <Heart className="h-5 w-5 text-success" aria-hidden="true" />
+                          Financial Stamina
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6 pt-0 flex flex-col items-center">
+                        <StaminaWheel
+                          incomeTotal={surplusPower.totalIncome}
+                          fixedExpenses={surplusPower.survivalExpenses}
+                          debtPayments={surplusPower.debtMinimums}
+                          currentSpend={currentMonthSpend}
+                          size={320}
+                        />
+                        <div className="mt-4 w-full">
+                          <ChartInsight 
+                            insight={surplusPower.heroMessage} 
+                            type={surplusPower.isPositive ? "success" : "warning"} 
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Spending by Category Chart */}
+                  {dashboardState.canShowSpendingChart && (
+                    <Card className="overflow-hidden h-full shadow-royal hover-lift">
+                      <CardHeader className="p-6">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                          <BarChart3 className="h-5 w-5 text-primary" aria-hidden="true" />
+                          Spending by Category
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6 pt-0">
+                        {hasAnyTransactions ? (
+                          <>
+                            <div className="h-[300px]">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                  <Pie
+                                    data={spendingByCategory}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius="75%"
+                                    innerRadius="30%"
+                                    stroke="hsl(var(--background))"
+                                    strokeWidth={2}
+                                    label={false}
+                                  >
+                                    {spendingByCategory.map((_, index) => (
+                                      <Cell 
+                                        key={index} 
+                                        fill={CHART_COLORS[index % CHART_COLORS.length]}
+                                      />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip 
+                                    formatter={currencyFormatter}
+                                    contentStyle={STANDARD_TOOLTIP_STYLE}
+                                  />
+                                </PieChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <CustomPieLegend data={pieLegendData} />
+                            {spendingInsight && (
+                              <div className="mt-4">
+                                <ChartInsight insight={spendingInsight} type="info" />
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <EmptyChartNotice />
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Debt Payoff Projection - Full Width */}
+                  {dashboardState.canShowDebtProjection && (
+                    <Card className={cn(
+                      "overflow-hidden h-full shadow-royal hover-lift",
+                      dashboardState.canShowStaminaWheel && dashboardState.canShowSpendingChart && "xl:col-span-2"
+                    )}>
+                      <CardHeader className="p-6">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                          <TrendingDown className="h-5 w-5 text-primary" />
+                          Debt Payoff Projection
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6 pt-0">
+                        {schedule.timeline.length > 0 ? (
+                          <>
+                            <CustomLineLegend items={[{ label: "Total Balance", color: "hsl(var(--primary))" }]} />
+                            <div className="h-[280px]">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={schedule.timeline} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                  <CartesianGrid 
+                                    strokeDasharray="3 3" 
+                                    stroke="hsl(var(--border))" 
+                                    strokeOpacity={0.5}
+                                  />
+                                  <XAxis 
+                                    dataKey="label" 
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                                  />
+                                  <YAxis 
+                                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                                  />
+                                  <Tooltip 
+                                    formatter={currencyFormatter}
+                                    contentStyle={STANDARD_TOOLTIP_STYLE}
+                                  />
+                                  <Line 
+                                    type="monotone" 
+                                    dataKey="totalBalance" 
+                                    name="Total Balance" 
+                                    strokeWidth={3} 
+                                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 3 }}
+                                    activeDot={{ r: 5, fill: "hsl(var(--primary))", strokeWidth: 2 }}
+                                    stroke="hsl(var(--primary))"
+                                  />
+                                </LineChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <div className="mt-4">
+                              <ChartInsight insight={debtInsight} type="info" />
+                            </div>
+                          </>
+                        ) : (
+                          <EmptyChartNotice />
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="achievements">
+              <Card className="shadow-royal hover-lift">
+                <CardHeader className="p-6">
+                  <CardTitle className="text-sm font-medium flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-primary" />
+                      Your Progress Milestones
+                    </span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {unlockedCount} / {totalCount} Unlocked
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 pt-0">
+                  {achievements.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {achievements.map(achievement => (
+                        <AchievementCard key={achievement.id} achievement={achievement} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Start tracking debts to unlock achievements!
+                    </p>
+                  )}
+                  <div className="mt-6">
+                    <Link to="/achievements">
+                      <Button variant="outline" className="w-full rounded-xl">
+                        <Trophy className="h-4 w-4 mr-2" />
+                        View All Achievements
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </motion.div>
+      )}
 
       <OptimizeStrategyDialog
         open={optimizeDialogOpen}

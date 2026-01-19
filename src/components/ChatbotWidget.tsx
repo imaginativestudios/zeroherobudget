@@ -230,7 +230,10 @@ export const ChatbotWidget = () => {
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
               <Wand2 className="h-5 w-5 text-white" aria-hidden="true" />
-              <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
+              <div>
+                <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
+                <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -249,7 +252,10 @@ export const ChatbotWidget = () => {
               <div className="space-y-4">
                 <div className="bg-muted/50 rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-3">
-                    👋 Hi! I'm your Zero Hero assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
+                    👋 Hi! I'm your AI-powered Zero Hero assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/80 mb-3 italic border-l-2 border-muted pl-2">
+                    Note: I may occasionally provide inaccurate information. My responses are for educational purposes only and do not constitute personalized financial, legal, or tax advice.
                   </p>
                   <div className="space-y-2">
                     <p className="text-xs font-medium text-muted-foreground mb-2">
@@ -300,6 +306,9 @@ export const ChatbotWidget = () => {
 
           {/* Input Area */}
           <form onSubmit={handleSubmit} className="p-4 border-t border-border">
+            <p className="text-[10px] text-muted-foreground/60 text-center mb-2">
+              AI responses may contain errors. Verify with a professional.
+            </p>
             <div className="flex gap-2">
               <Input
                 value={inputValue}

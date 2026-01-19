@@ -119,6 +119,21 @@ export default function FinancialTips() {
         </CardContent>
       </Card>
 
+      {/* Educational Disclaimer - Prominently Placed */}
+      <Card className="bg-muted/50 border-primary/20">
+        <CardContent className="py-5">
+          <div className="flex gap-3">
+            <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-foreground">Educational Content Disclaimer</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                The information presented here reflects widely-recognized personal finance principles compiled from publicly available educational resources, government publications, and established financial literacy frameworks. This content is provided for general informational purposes only and does not constitute personalized financial, legal, or tax advice. Individual circumstances vary significantly. Before making financial decisions, consult a qualified financial advisor, accountant, or attorney licensed in your jurisdiction.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Categories with Individual Tip Cards */}
       <div className="space-y-8">
         {filteredCategories.map((category) => (
@@ -185,19 +200,6 @@ export default function FinancialTips() {
         </Card>
       )}
 
-      {/* Attribution Footer */}
-      <Card className="bg-muted/50">
-        <CardContent className="py-6">
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <Info className="h-5 w-5 text-muted-foreground shrink-0" />
-            <p className="text-sm text-muted-foreground text-center sm:text-left">
-              These tips synthesize widely-accepted financial principles from experts including Dave Ramsey, Elizabeth Warren, Ramit Sethi, 
-              and guidance from NerdWallet, Investopedia, and the Consumer Financial Protection Bureau (CFPB). 
-              This information is educational and not personalized financial advice. For complex situations, consult a financial professional.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

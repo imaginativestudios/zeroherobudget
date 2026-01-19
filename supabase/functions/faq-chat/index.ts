@@ -126,7 +126,7 @@ Even saving $25-50 per paycheck adds up. Automate transfers on payday—treat sa
 
 ## The 50/30/20 Rule
 
-Popularized by Elizabeth Warren, this simple budgeting framework allocates:
+This widely-recognized budgeting framework allocates:
 - **50% to Needs:** Housing, utilities, food, insurance, minimum debt payments
 - **30% to Wants:** Entertainment, dining out, hobbies, subscriptions
 - **20% to Savings & Debt:** Emergency fund, retirement, extra debt payments
@@ -135,7 +135,7 @@ Popularized by Elizabeth Warren, this simple budgeting framework allocates:
 
 ## Debt Payoff Strategies
 
-**Debt Snowball (Dave Ramsey method):**
+**Debt Snowball Method:**
 Pay smallest balances first regardless of interest rate. Quick wins provide psychological motivation and momentum. Best for those needing encouragement and visible progress.
 
 **Debt Avalanche (Mathematically optimal):**

@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
-import { OnboardingTourProvider } from "@/contexts/OnboardingTourContext";
-import { BudgetTourProvider } from "@/contexts/BudgetTourContext";
 import { HouseholdViewProvider } from "@/contexts/HouseholdViewContext";
 import { BehavioralTriggerProvider } from "@/contexts/BehavioralTriggerContext";
 import { Dashboard } from "@/pages/Dashboard";
@@ -51,8 +49,6 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <OnboardingTourProvider>
-        <BudgetTourProvider>
           <HouseholdViewProvider>
             <Toaster />
             <Sonner />
@@ -113,8 +109,6 @@ const App = () => (
             </BehavioralTriggerProvider>
           </BrowserRouter>
           </HouseholdViewProvider>
-        </BudgetTourProvider>
-      </OnboardingTourProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

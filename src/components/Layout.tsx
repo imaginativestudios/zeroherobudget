@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 import { Logo } from "./Logo";
-import { OnboardingTour } from "./OnboardingTour";
-import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useKeyboardShortcuts, ShortcutConfig } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
@@ -40,7 +38,6 @@ export const Layout = ({ children }: LayoutProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
-  const { resetTour } = useOnboardingTour();
 
   const handleManageSubscription = async () => {
     setIsManagingSubscription(true);
@@ -376,12 +373,6 @@ export const Layout = ({ children }: LayoutProps) => {
           </div>
         </footer>
       </main>
-      
-      {/* Onboarding Tour */}
-      <OnboardingTour 
-        setMobileMenuOpen={setIsMobileMenuOpen}
-        isMobileMenuOpen={isMobileMenuOpen}
-      />
       
       {/* Keyboard Shortcuts Dialog */}
       <KeyboardShortcutsDialog

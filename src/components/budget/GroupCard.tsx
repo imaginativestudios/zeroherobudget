@@ -174,7 +174,6 @@ export function GroupCard({
                         e.stopPropagation();
                         onAddExpense(groupName);
                       }}
-                      {...(isFirstGroup ? { 'data-tour': 'budget-add-expense' } : {})}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>

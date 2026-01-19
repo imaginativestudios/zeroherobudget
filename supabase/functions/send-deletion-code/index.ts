@@ -4,6 +4,7 @@ import { Resend } from "npm:resend@2.0.0";
 import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { DeletionCodeEmail } from "./_templates/deletion-code.tsx";
+import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -132,6 +133,15 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Log email attempt as pending
+    const logId = await logEmail(supabaseAdmin, {
+      userId: user.id,
+      recipientEmail: email,
+      emailType: 'deletion_code',
+      status: 'pending',
+      metadata: { expires_at: expiresAt },
+    });
+
     // Render React Email template
     const emailHtml = await renderAsync(
       React.createElement(DeletionCodeEmail, { code })
@@ -147,7 +157,24 @@ const handler = async (req: Request): Promise<Response> => {
       text: `Account Deletion Request\n\nYour confirmation code is: ${code}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.\n\nWarning: Account deletion is permanent and cannot be undone.\n\n- The Zero Hero Team`,
     });
 
-    console.log("Deletion code email sent:", emailResponse);
+    // Update email log based on response
+    if (logId) {
+      if (emailResponse.error) {
+        await updateEmailStatus(supabaseAdmin, logId, 'failed', {
+          errorMessage: emailResponse.error.message,
+        });
+        console.error("Deletion code email failed:", emailResponse.error);
+        return new Response(
+          JSON.stringify({ error: "Failed to send confirmation code. Please try again." }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      } else {
+        await updateEmailStatus(supabaseAdmin, logId, 'sent', {
+          resendId: emailResponse.data?.id,
+        });
+        console.log("Deletion code email sent:", emailResponse);
+      }
+    }
 
     return new Response(
       JSON.stringify({ success: true }),

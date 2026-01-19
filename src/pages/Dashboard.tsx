@@ -57,6 +57,7 @@ import { IntelFeed } from "@/components/dashboard/IntelFeed";
 import { StatusBanner } from "@/components/dashboard/StatusBanner";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
+import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format } from "date-fns";
 import { getSurvivalCategories } from "@/lib/behavioralEngine";
@@ -361,6 +362,15 @@ export const Dashboard = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Getting Started Checklist - Progressive onboarding */}
+      <GettingStartedChecklist
+        income={income || 0}
+        expenses={expenses}
+        debts={debts}
+        transactions={transactions}
+        moatCurrent={heroProfile.moat_current || 0}
+      />
 
       {/* Unified Status Banner - Single priority slot */}
       <StatusBanner

@@ -48,8 +48,8 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Button 
             size="lg" 
-            asChild 
-            className="bg-white text-primary hover:bg-white/90"
+            variant="inverse"
+            asChild
           >
             <Link to="/">
               <Home className="mr-2 h-5 w-5" />
@@ -59,9 +59,8 @@ const NotFound = () => {
           
           <Button 
             size="lg" 
-            variant="outline" 
+            variant="inverse-outline" 
             asChild
-            className="border-2 border-white text-white hover:bg-white/20"
           >
             <Link to="/dashboard">
               <LayoutDashboard className="mr-2 h-5 w-5" />

@@ -170,7 +170,8 @@ const ComingSoon = () => {
           >
             <Button
               size="lg"
-              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 bg-white text-primary hover:bg-white/90 w-full sm:w-auto"
+              variant="inverse"
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12 w-full sm:w-auto"
               onClick={async () => {
                 // Safety check: Ensure user is logged out before entering demo mode
                 const { data: { session } } = await supabase.auth.getSession();
@@ -230,8 +231,9 @@ const ComingSoon = () => {
                   <Button
                     type="submit"
                     size="lg"
+                    variant="inverse"
                     disabled={isLoading}
-                    className="h-12 bg-white text-primary hover:bg-white/90 font-semibold shadow-lg disabled:opacity-50"
+                    className="h-12 font-semibold shadow-lg disabled:opacity-50"
                   >
                     {isLoading ? "Subscribing..." : "Notify Me"}
                   </Button>
@@ -438,7 +440,8 @@ const ComingSoon = () => {
           >
             <Button
               size="lg"
-              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-white text-primary hover:bg-white/90"
+              variant="inverse"
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
               onClick={async () => {
                 // Safety check: Ensure user is logged out before entering demo mode
                 const { data: { session } } = await supabase.auth.getSession();

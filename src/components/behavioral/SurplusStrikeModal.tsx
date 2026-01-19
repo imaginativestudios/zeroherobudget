@@ -120,7 +120,7 @@ export function SurplusStrikeModal({ data, onDismiss, onStrike }: SurplusStrikeM
         <div className="flex flex-col sm:flex-row gap-3">
           <Button
             onClick={onStrike}
-            className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90 order-first"
+            className="flex-1 min-h-[44px] bg-gradient-to-r from-primary to-accent hover:opacity-90 order-first"
           >
             <Zap className="h-4 w-4 mr-2" />
             Strike!
@@ -128,7 +128,7 @@ export function SurplusStrikeModal({ data, onDismiss, onStrike }: SurplusStrikeM
           <Button
             variant="outline"
             onClick={onDismiss}
-            className="flex-1"
+            className="flex-1 min-h-[44px]"
           >
             Maybe Later
           </Button>

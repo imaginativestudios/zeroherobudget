@@ -157,17 +157,17 @@ export function LevelUpModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Button
             variant="outline"
             onClick={handleDismiss}
-            className="flex-1"
+            className="flex-1 min-h-[44px]"
           >
             Stay the Course
           </Button>
           <Button
             onClick={handleSwitch}
-            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
+            className="flex-1 min-h-[44px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
           >
             <Swords className="h-4 w-4 mr-2" />
             Adopt Expert Strategy

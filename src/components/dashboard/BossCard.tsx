@@ -70,7 +70,7 @@ export function BossCard({
     <>
       <Card 
         className={cn(
-          "relative overflow-hidden shadow-royal hover-lift",
+          "relative overflow-hidden shadow-royal hover-lift h-full flex flex-col",
           isHighInterest && "ring-1 ring-destructive/20"
         )}
       >
@@ -107,7 +107,7 @@ export function BossCard({
           </div>
         </CardHeader>
         
-        <CardContent className="p-6 pt-0 space-y-6">
+        <CardContent className="p-6 pt-0 space-y-6 flex-1 flex flex-col">
           {/* Debt Name & Balance */}
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-bold text-foreground">
@@ -179,6 +179,7 @@ export function BossCard({
 
           {/* CLEAR SHADOW Button */}
           <motion.div
+            className="mt-auto pt-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

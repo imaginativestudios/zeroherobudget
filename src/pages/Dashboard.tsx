@@ -381,10 +381,10 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"
       >
         {/* THE SANCTUARY (Defense) - Left Column */}
-        <div className="lg:col-span-1 space-y-4">
+        <div className="flex flex-col">
           {moatHealth.isPrimaryQuest && (
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full flex items-center gap-2">
@@ -399,7 +399,7 @@ export const Dashboard = () => {
         </div>
 
         {/* THE BOSS (Offense) - Right Column */}
-        <div className="lg:col-span-2">
+        <div className="flex flex-col">
           {dashboardState.currentBoss ? (
             <BossCard
               debt={dashboardState.currentBoss}
@@ -457,7 +457,7 @@ export const Dashboard = () => {
           <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">Financial Overview</h2>
           <div className="h-px bg-border flex-1"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch" data-tour="financial-overview">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" data-tour="financial-overview">
         {isCriticalLoading ? (
           <>
             <FinancialCardSkeleton />

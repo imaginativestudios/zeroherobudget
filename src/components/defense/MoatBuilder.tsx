@@ -170,7 +170,7 @@ export function MoatBuilder({
   return (
     <Card 
       className={cn(
-        "shadow-royal hover-lift overflow-hidden",
+        "shadow-royal hover-lift overflow-hidden h-full flex flex-col",
         moatHealth.status === 'secure' && "ring-1 ring-success/30",
         showPrimaryQuestBadge && "ring-1 ring-warning/30",
         variant === 'full' && "col-span-full"
@@ -182,10 +182,7 @@ export function MoatBuilder({
           variant === 'full' ? "text-lg" : "text-sm"
         )}>
           <span className="flex items-center gap-2">
-            <Castle className={cn(
-              "text-primary",
-              variant === 'full' ? "h-5 w-5" : "h-4 w-4"
-            )} />
+            <Castle className="h-5 w-5 text-primary" />
             Grow Your Sanctuary
           </span>
           <FortressLevelBadge 
@@ -196,7 +193,7 @@ export function MoatBuilder({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className={cn("p-6 pt-0 space-y-4", variant === 'full' && "space-y-6")}>
+      <CardContent className={cn("p-6 pt-0 space-y-4 flex-1 flex flex-col", variant === 'full' && "space-y-6")}>
         {/* Castle Evolution and Water Reservoir */}
         <div className={cn(
           "flex gap-4",
@@ -339,12 +336,9 @@ export function MoatBuilder({
         </p>
         
         {/* Actions */}
-        <div className={cn(
-          "flex gap-2",
-          variant === 'full' ? "flex-row" : "flex-col"
-        )}>
+        <div className="flex flex-col sm:flex-row gap-3 pt-2 mt-auto">
           {moatHealth.status === 'secure' ? (
-            <div className="flex items-center justify-center gap-2 py-2 text-success w-full">
+            <div className="flex items-center justify-center gap-2 py-2 text-success w-full min-h-[44px]">
               <Sparkles className="h-4 w-4" />
               <span className="font-medium text-sm">Fortress Secured!</span>
               <Sparkles className="h-4 w-4" />
@@ -353,7 +347,7 @@ export function MoatBuilder({
             <>
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="default" size="sm" className="flex-1">
+                  <Button variant="default" className="flex-1 min-h-[44px]">
                     <Plus className="h-4 w-4 mr-2" />
                     Add to Moat
                   </Button>
@@ -398,14 +392,12 @@ export function MoatBuilder({
                 </DialogContent>
               </Dialog>
               
-              {variant === 'full' && (
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/debts">
-                    View Battle Plan
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </Button>
-              )}
+              <Button variant="outline" className="flex-1 min-h-[44px]" asChild>
+                <Link to="/debts">
+                  View Battle Plan
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
             </>
           )}
         </div>

@@ -1,6 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { Resend } from "npm:resend@4.0.0";
+import * as React from "npm:react@18.3.1";
+import { renderAsync } from "npm:@react-email/components@0.0.22";
+import { SubscriptionWelcomeEmail } from "./_templates/subscription-welcome.tsx";
+import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[STRIPE-WEBHOOK] ${step}`, details ? JSON.stringify(details) : '');
@@ -97,6 +102,64 @@ serve(async (req) => {
         } else {
           logStep("Profile updated after checkout", { email: customerEmail, status, tier: getTierName(amountCents) });
         }
+
+        // Send welcome email
+        const resendKey = Deno.env.get("RESEND_API_KEY");
+        if (resendKey) {
+          try {
+            const resend = new Resend(resendKey);
+            const isTrialing = status === 'trialing';
+            const trialEndDate = new Date(subscription.current_period_end * 1000).toISOString();
+            const dashboardUrl = "https://zeroherobudget.lovable.app/dashboard";
+            const portalUrl = "https://zeroherobudget.lovable.app/account-settings";
+
+            // Log email attempt
+            const logId = await logEmail(supabase, {
+              recipientEmail: customerEmail,
+              emailType: 'subscription_welcome',
+              status: 'pending',
+              metadata: { tier: getTierName(amountCents), amount: amountCents / 100 },
+            });
+
+            // Render email template
+            const html = await renderAsync(
+              React.createElement(SubscriptionWelcomeEmail, {
+                email: customerEmail,
+                tierName: getTierName(amountCents),
+                tierEmoji: getTierEmoji(amountCents),
+                amount: amountCents / 100,
+                isTrialing,
+                trialEndDate,
+                dashboardUrl,
+                portalUrl,
+              })
+            );
+
+            // Send email
+            const emailResponse = await resend.emails.send({
+              from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+              to: [customerEmail],
+              subject: "🏆 Your Quest Begins - Welcome to Zero Hero!",
+              html,
+            });
+
+            // Update log with result
+            if (logId) {
+              if (emailResponse.error) {
+                logStep("ERROR: Failed to send welcome email", { error: emailResponse.error.message });
+                await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
+              } else {
+                logStep("Welcome email sent", { email: customerEmail, resendId: emailResponse.data?.id });
+                await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
+              }
+            }
+          } catch (emailErr) {
+            logStep("ERROR: Exception sending welcome email", { error: emailErr.message });
+          }
+        } else {
+          logStep("RESEND_API_KEY not configured, skipping welcome email");
+        }
+
         break;
       }
 

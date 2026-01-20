@@ -250,6 +250,39 @@ interface DeletionCodeEmailProps {
 
 ---
 
+### 4. Subscription Welcome
+
+**Location:** `supabase/functions/stripe-webhook/_templates/subscription-welcome.tsx`
+
+**Type:** Transactional
+
+| Property | Value |
+|----------|-------|
+| Subject | `🏆 Your Quest Begins - Welcome to Zero Hero!` |
+| Preview | `Welcome to Zero Hero, brave adventurer. Your quest begins now!` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
+| Trigger | Stripe `checkout.session.completed` webhook |
+
+**Props:**
+- `email`: string - User's email address
+- `tierName`: string - Subscription tier (Starter, Supporter, Champion, Hero)
+- `tierEmoji`: string - Emoji for tier (🌱, 💪, 🏆, ⚔️)
+- `amount`: number - Monthly amount in dollars
+- `isTrialing`: boolean - Whether user is on trial
+- `trialEndDate`: string - ISO date string for trial end
+- `dashboardUrl`: string - Link to dashboard
+- `portalUrl`: string - Link to account settings
+
+**Styling Notes:**
+- Teal header (`#0D7377`) for brand consistency
+- Trophy emoji (🏆) in subject and body for adventure theme
+- Tier badge with emoji and pricing
+- Features list with checkmarks
+- Trial info prominently displayed when applicable
+- Primary CTA: "Enter the Fortress" linking to dashboard
+
+---
+
 ## Supabase Auth Templates
 
 These templates are configured in the Supabase Dashboard under **Authentication → Email Templates**.

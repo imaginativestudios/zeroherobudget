@@ -35,6 +35,7 @@ import DataPrivacyFAQ from "./pages/DataPrivacyFAQ";
 import IconStyleGuide from "./pages/IconStyleGuide";
 import ColorPaletteGuide from "./pages/ColorPaletteGuide";
 import Pricing from "./pages/Pricing";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import { Household } from "./pages/Household";
 import { AcceptInvite } from "./pages/AcceptInvite";
 import { Subscriptions } from "./pages/Subscriptions";
@@ -69,6 +70,7 @@ const App = () => (
           <Route path="/style-guide/icons" element={<IconStyleGuide />} />
           <Route path="/style-guide/colors" element={<ColorPaletteGuide />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/checkout-success" element={<CheckoutSuccess />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           <Route path="/install" element={<Install />} />
           

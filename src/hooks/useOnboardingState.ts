@@ -55,13 +55,9 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const savedData = profile.onboarding_data;
   
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(() => {
-    // Check for Stripe redirect
-    const success = searchParams.get('success');
+    // Check for Stripe redirect (canceled only - success now goes to /checkout-success)
     const canceled = searchParams.get('canceled');
     
-    if (success === 'true') {
-      return 6; // Go to ceremony
-    }
     if (canceled === 'true') {
       return 5; // Stay on pricing
     }
@@ -83,28 +79,18 @@ export function useOnboardingState(): UseOnboardingStateResult {
     moatTarget: savedData?.moatTarget || 1000,
   }));
 
-  // Handle Stripe redirect
+  // Handle Stripe redirect (canceled only - success now goes to /checkout-success)
   useEffect(() => {
-    const success = searchParams.get('success');
     const canceled = searchParams.get('canceled');
     
-    if (success === 'true') {
-      // User completed checkout
-      setTrialStarted(true);
-      localStorage.removeItem('bdt_checkout_in_progress');
-      toast.success('Welcome to Zero Hero!', {
-        description: 'Your 7-day free trial has started.',
-      });
-      // Clean URL
-      navigate('/onboarding', { replace: true });
-    } else if (canceled === 'true') {
+    if (canceled === 'true') {
       localStorage.removeItem('bdt_checkout_in_progress');
       toast.info('No worries!', {
         description: 'You can still explore in demo mode.',
       });
       navigate('/onboarding', { replace: true });
     }
-  }, [searchParams, navigate, setTrialStarted]);
+  }, [searchParams, navigate]);
 
   // Show welcome back toast for returning users
   useEffect(() => {

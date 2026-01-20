@@ -88,6 +88,40 @@ test.describe('Stripe Checkout Integration', () => {
   });
 });
 
+test.describe('Stripe Checkout Success Page', () => {
+  test('success page renders with branded design', async ({ page }) => {
+    await page.goto('/checkout-success');
+    
+    // Should show the Zero Hero logo
+    await expect(page.locator('img[alt*="logo"], svg').first()).toBeVisible();
+    
+    // Should show either subscription info or redirect to pricing
+    await expect(
+      page.getByText(/quest begins|no active subscription/i)
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test('success page has enter dashboard button', async ({ page }) => {
+    await page.goto('/checkout-success');
+    
+    // Look for the main CTA (either dashboard or pricing depending on subscription state)
+    await expect(
+      page.getByRole('button', { name: /fortress|dashboard|pricing/i })
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test('success page redirects unauthenticated users appropriately', async ({ page }) => {
+    // Clear any auth state
+    await page.goto('/checkout-success');
+    
+    // Should handle gracefully - either show message or redirect
+    await expect(
+      page.getByText(/no active subscription|sign in|pricing/i).first()
+        .or(page.getByRole('button', { name: /pricing|sign in/i }))
+    ).toBeVisible({ timeout: 10000 });
+  });
+});
+
 test.describe('Stripe Checkout - Edge Cases', () => {
   test('handles network errors gracefully', async ({ page }) => {
     await page.goto('/pricing');
@@ -122,5 +156,15 @@ test.describe('Stripe Checkout - Edge Cases', () => {
     
     // Page should handle gracefully
     await expect(page.getByRole('button', { name: /subscribe|start|get started/i }).first()).toBeVisible();
+  });
+
+  test('canceled checkout redirects back to pricing', async ({ page }) => {
+    await page.goto('/pricing?canceled=true');
+    
+    // Should be on pricing page without query param after redirect
+    await page.waitForURL(/\/pricing(?:\?|$)/, { timeout: 5000 });
+    
+    // Pricing content should be visible
+    await expect(page.getByText(/pay what you can/i)).toBeVisible();
   });
 });

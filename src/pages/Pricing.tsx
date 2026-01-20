@@ -58,19 +58,11 @@ const Pricing = () => {
     return Math.max(0, diffDays);
   };
 
-  // Handle success/cancel redirects
+  // Handle cancel redirect (success now goes to /checkout-success)
   useEffect(() => {
-    const success = searchParams.get('success');
     const canceled = searchParams.get('canceled');
 
-    if (success === 'true') {
-      toast({
-        title: 'Welcome to Zero Hero! 🎉',
-        description: 'Your 7-day free trial has started. Enjoy all features!',
-      });
-      checkSubscription();
-      navigate('/pricing', { replace: true });
-    } else if (canceled === 'true') {
+    if (canceled === 'true') {
       toast({
         title: 'Checkout canceled',
         description: 'No worries! Come back anytime when you\'re ready.',
@@ -78,7 +70,7 @@ const Pricing = () => {
       });
       navigate('/pricing', { replace: true });
     }
-  }, [searchParams, checkSubscription, navigate]);
+  }, [searchParams, navigate]);
 
   const handleSubscribe = async () => {
     if (!user) {

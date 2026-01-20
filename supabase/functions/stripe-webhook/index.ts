@@ -6,6 +6,7 @@ import * as React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { SubscriptionWelcomeEmail } from "./_templates/subscription-welcome.tsx";
 import { PaymentFailedEmail } from "./_templates/payment-failed.tsx";
+import { SubscriptionCanceledEmail } from "./_templates/subscription-canceled.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
@@ -214,13 +215,18 @@ serve(async (req) => {
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !customer.email) break;
 
+        // Get tier info before clearing it
+        const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
+        const tierName = getTierName(amountCents);
+        const accessEndDate = new Date(subscription.current_period_end * 1000).toISOString();
+
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
             subscription_status: 'canceled',
             subscription_tier: null,
             subscription_amount: null,
-            subscription_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            subscription_end: accessEndDate,
             updated_at: new Date().toISOString(),
           })
           .eq('email', customer.email.toLowerCase());
@@ -230,6 +236,58 @@ serve(async (req) => {
         } else {
           logStep("Subscription canceled", { email: customer.email });
         }
+
+        // Send cancellation confirmation email
+        const resendKey = Deno.env.get("RESEND_API_KEY");
+        if (resendKey) {
+          try {
+            const resend = new Resend(resendKey);
+            const pricingUrl = "https://zeroherobudget.lovable.app/pricing";
+            const supportEmail = "support@zeroherobudget.com";
+
+            // Log email attempt
+            const logId = await logEmail(supabase, {
+              recipientEmail: customer.email,
+              emailType: 'subscription_canceled',
+              status: 'pending',
+              metadata: { tier: tierName, accessEndDate },
+            });
+
+            // Render email
+            const html = await renderAsync(
+              React.createElement(SubscriptionCanceledEmail, {
+                email: customer.email,
+                tierName,
+                accessEndDate,
+                pricingUrl,
+                supportEmail,
+              })
+            );
+
+            // Send email
+            const emailResponse = await resend.emails.send({
+              from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+              to: [customer.email],
+              subject: "👋 Your Quest is Paused - We'll Miss You!",
+              html,
+            });
+
+            if (logId) {
+              if (emailResponse.error) {
+                logStep("ERROR: Failed to send cancellation email", { error: emailResponse.error.message });
+                await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
+              } else {
+                logStep("Cancellation email sent", { email: customer.email, resendId: emailResponse.data?.id });
+                await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
+              }
+            }
+          } catch (emailErr) {
+            logStep("ERROR: Exception sending cancellation email", { error: emailErr.message });
+          }
+        } else {
+          logStep("RESEND_API_KEY not configured, skipping cancellation email");
+        }
+
         break;
       }
 

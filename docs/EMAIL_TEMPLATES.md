@@ -345,6 +345,36 @@ interface DeletionCodeEmailProps {
 
 ---
 
+### 7. Subscription Canceled
+
+**Location:** `supabase/functions/stripe-webhook/_templates/subscription-canceled.tsx`
+
+**Type:** Transactional
+
+| Property | Value |
+|----------|-------|
+| Subject | `👋 Your Quest is Paused - We'll Miss You!` |
+| Preview | `Thank you for being part of Zero Hero. Your quest is paused, but we'll be here when you're ready to continue.` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
+| Trigger | Stripe `customer.subscription.deleted` webhook |
+
+**Props:**
+- `email`: string - User's email address
+- `tierName`: string - Previous subscription tier name
+- `accessEndDate`: string - ISO date when access ends
+- `pricingUrl`: string - Link to pricing page to resubscribe
+- `supportEmail`: string - Support email address
+
+**Styling Notes:**
+- Wave emoji (👋) for friendly farewell
+- Teal info box with access end date and data reassurance
+- Amber "welcome back" box encouraging return
+- No guilt-tripping - respectful, warm tone
+- CTA: "Start a New Quest" linking to pricing page
+- Support contact for feedback
+
+---
+
 ## Supabase Auth Templates
 
 These templates are configured in the Supabase Dashboard under **Authentication → Email Templates**.

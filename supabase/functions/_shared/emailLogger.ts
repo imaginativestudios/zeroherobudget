@@ -1,6 +1,6 @@
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-export type EmailType = 'waitlist_welcome' | 'household_invite' | 'deletion_code' | 'subscription_welcome' | 'trial_ending_reminder' | 'payment_failed';
+export type EmailType = 'waitlist_welcome' | 'household_invite' | 'deletion_code' | 'subscription_welcome' | 'trial_ending_reminder' | 'payment_failed' | 'subscription_canceled';
 export type EmailStatus = 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced';
 
 export interface EmailLogEntry {

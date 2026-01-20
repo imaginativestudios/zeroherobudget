@@ -7,11 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
-};
-
 // Get tier name based on amount in cents
 const getTierName = (amountCents: number): string => {
   if (amountCents <= 500) return "Starter";
@@ -39,15 +34,11 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
-
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
-    logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
@@ -55,13 +46,11 @@ serve(async (req) => {
     
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
-      logStep("No customer found");
       return new Response(JSON.stringify({ 
         subscribed: false,
         is_trialing: false,
@@ -77,7 +66,6 @@ serve(async (req) => {
     }
 
     const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
 
     // Check for active subscriptions first
     const activeSubscriptions = await stripe.subscriptions.list({
@@ -97,7 +85,6 @@ serve(async (req) => {
     const subscription = activeSubscriptions.data[0] || trialingSubscriptions.data[0];
 
     if (!subscription) {
-      logStep("No active or trialing subscription found");
       return new Response(JSON.stringify({ 
         subscribed: false,
         is_trialing: false,
@@ -125,15 +112,6 @@ serve(async (req) => {
     if (subscription.trial_end && typeof subscription.trial_end === 'number') {
       trialEnd = new Date(subscription.trial_end * 1000).toISOString();
     }
-    
-    logStep("Subscription found", { 
-      subscriptionId: subscription.id,
-      status: subscription.status,
-      isTrialing,
-      amountCents,
-      endDate: subscriptionEnd,
-      trialEnd,
-    });
 
     return new Response(JSON.stringify({
       subscribed: true,

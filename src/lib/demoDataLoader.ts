@@ -457,7 +457,6 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     }));
     
     const summary = `Loaded ${expenses.length} expenses, ${debts.length} debts, ${transactions.length} transactions, ${subscriptions.length} subscriptions`;
-    console.log('[Demo Data]', summary);
     
     return { loaded: true, summary };
   } catch (error) {
@@ -481,7 +480,6 @@ export function clearDemoData(): void {
   }
   
   keysToRemove.forEach(key => localStorage.removeItem(key));
-  console.log('[Demo Data] Cleared demo data:', keysToRemove.length, 'keys removed');
 }
 
 /**

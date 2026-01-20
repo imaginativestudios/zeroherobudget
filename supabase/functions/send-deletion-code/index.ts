@@ -172,7 +172,6 @@ const handler = async (req: Request): Promise<Response> => {
         await updateEmailStatus(supabaseAdmin, logId, 'sent', {
           resendId: emailResponse.data?.id,
         });
-        console.log("Deletion code email sent:", emailResponse);
       }
     }
 

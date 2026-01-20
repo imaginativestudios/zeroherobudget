@@ -9,10 +9,6 @@ import { PaymentFailedEmail } from "./_templates/payment-failed.tsx";
 import { SubscriptionCanceledEmail } from "./_templates/subscription-canceled.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
-const logStep = (step: string, details?: Record<string, unknown>) => {
-  console.log(`[STRIPE-WEBHOOK] ${step}`, details ? JSON.stringify(details) : '');
-};
-
 const getTierName = (amountCents: number): string => {
   if (amountCents <= 500) return "Starter";
   if (amountCents <= 900) return "Supporter";
@@ -34,7 +30,7 @@ serve(async (req) => {
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   if (!stripeKey || !webhookSecret || !supabaseUrl || !serviceRoleKey) {
-    logStep("ERROR: Missing environment variables");
+    console.error("Missing environment variables");
     return new Response(JSON.stringify({ error: "Server configuration error" }), { status: 500 });
   }
 
@@ -50,7 +46,6 @@ serve(async (req) => {
     const signature = req.headers.get("stripe-signature");
     
     if (!signature) {
-      logStep("ERROR: Missing stripe-signature header");
       return new Response(JSON.stringify({ error: "Missing signature" }), { status: 400 });
     }
 
@@ -60,11 +55,9 @@ serve(async (req) => {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      logStep("ERROR: Signature verification failed", { error: err.message });
+      console.error("Signature verification failed:", err.message);
       return new Response(JSON.stringify({ error: "Invalid signature" }), { status: 400 });
     }
-    
-    logStep("Event received", { type: event.type, id: event.id });
 
     switch (event.type) {
       case "checkout.session.completed": {
@@ -73,13 +66,11 @@ serve(async (req) => {
         const customerId = session.customer as string;
         
         if (!customerEmail) {
-          logStep("No customer email in session");
           break;
         }
 
         const subscriptionId = session.subscription as string;
         if (!subscriptionId) {
-          logStep("No subscription ID in session - might be a one-time payment");
           break;
         }
 
@@ -100,9 +91,7 @@ serve(async (req) => {
           .eq('email', customerEmail.toLowerCase());
 
         if (updateError) {
-          logStep("ERROR: Failed to update profile", { error: updateError.message });
-        } else {
-          logStep("Profile updated after checkout", { email: customerEmail, status, tier: getTierName(amountCents) });
+          console.error("Failed to update profile:", updateError.message);
         }
 
         // Send welcome email
@@ -148,18 +137,15 @@ serve(async (req) => {
             // Update log with result
             if (logId) {
               if (emailResponse.error) {
-                logStep("ERROR: Failed to send welcome email", { error: emailResponse.error.message });
+                console.error("Failed to send welcome email:", emailResponse.error.message);
                 await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
               } else {
-                logStep("Welcome email sent", { email: customerEmail, resendId: emailResponse.data?.id });
                 await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
               }
             }
           } catch (emailErr) {
-            logStep("ERROR: Exception sending welcome email", { error: emailErr.message });
+            console.error("Exception sending welcome email:", emailErr.message);
           }
-        } else {
-          logStep("RESEND_API_KEY not configured, skipping welcome email");
         }
 
         break;
@@ -171,7 +157,6 @@ serve(async (req) => {
         
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !customer.email) {
-          logStep("Customer deleted or no email");
           break;
         }
 
@@ -201,9 +186,7 @@ serve(async (req) => {
           .eq('email', customer.email.toLowerCase());
 
         if (updateError) {
-          logStep("ERROR: Failed to update subscription", { error: updateError.message });
-        } else {
-          logStep("Subscription updated", { email: customer.email, status: subscriptionStatus });
+          console.error("Failed to update subscription:", updateError.message);
         }
         break;
       }
@@ -232,9 +215,7 @@ serve(async (req) => {
           .eq('email', customer.email.toLowerCase());
 
         if (updateError) {
-          logStep("ERROR: Failed to mark subscription as canceled", { error: updateError.message });
-        } else {
-          logStep("Subscription canceled", { email: customer.email });
+          console.error("Failed to mark subscription as canceled:", updateError.message);
         }
 
         // Send cancellation confirmation email
@@ -274,18 +255,15 @@ serve(async (req) => {
 
             if (logId) {
               if (emailResponse.error) {
-                logStep("ERROR: Failed to send cancellation email", { error: emailResponse.error.message });
+                console.error("Failed to send cancellation email:", emailResponse.error.message);
                 await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
               } else {
-                logStep("Cancellation email sent", { email: customer.email, resendId: emailResponse.data?.id });
                 await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
               }
             }
           } catch (emailErr) {
-            logStep("ERROR: Exception sending cancellation email", { error: emailErr.message });
+            console.error("Exception sending cancellation email:", emailErr.message);
           }
-        } else {
-          logStep("RESEND_API_KEY not configured, skipping cancellation email");
         }
 
         break;
@@ -314,7 +292,7 @@ serve(async (req) => {
             // Calculate next retry date (Stripe typically retries after 3-5 days)
             nextRetryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
           } catch (subErr) {
-            logStep("Could not retrieve subscription details", { error: subErr.message });
+            console.error("Could not retrieve subscription details:", subErr.message);
           }
         }
 
@@ -327,9 +305,7 @@ serve(async (req) => {
           .eq('email', customer.email.toLowerCase());
 
         if (updateError) {
-          logStep("ERROR: Failed to mark as past_due", { error: updateError.message });
-        } else {
-          logStep("Payment failed, marked past_due", { email: customer.email });
+          console.error("Failed to mark as past_due:", updateError.message);
         }
 
         // Send payment failed email
@@ -370,25 +346,23 @@ serve(async (req) => {
 
             if (logId) {
               if (emailResponse.error) {
-                logStep("ERROR: Failed to send payment failed email", { error: emailResponse.error.message });
+                console.error("Failed to send payment failed email:", emailResponse.error.message);
                 await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
               } else {
-                logStep("Payment failed email sent", { email: customer.email, resendId: emailResponse.data?.id });
                 await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
               }
             }
           } catch (emailErr) {
-            logStep("ERROR: Exception sending payment failed email", { error: emailErr.message });
+            console.error("Exception sending payment failed email:", emailErr.message);
           }
-        } else {
-          logStep("RESEND_API_KEY not configured, skipping payment failed email");
         }
 
         break;
       }
 
       default:
-        logStep("Unhandled event type", { type: event.type });
+        // Unhandled event type
+        break;
     }
 
     return new Response(JSON.stringify({ received: true }), {

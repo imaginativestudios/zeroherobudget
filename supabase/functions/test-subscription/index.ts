@@ -6,10 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: Record<string, unknown>) => {
-  console.log(`[TEST-SUBSCRIPTION] ${step}`, details ? JSON.stringify(details) : '');
-};
-
 const getTierName = (amountCents: number): string => {
   if (amountCents <= 500) return "Starter";
   if (amountCents <= 900) return "Supporter";
@@ -26,7 +22,6 @@ serve(async (req) => {
   // SECURITY: Block in production environment
   const environment = Deno.env.get("ENVIRONMENT");
   if (environment === "production") {
-    logStep("BLOCKED: Production environment");
     return new Response(JSON.stringify({ error: "Endpoint disabled in production" }), {
       status: 403,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -68,7 +63,6 @@ serve(async (req) => {
     const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
     
     if (claimsError || !claimsData?.claims?.sub) {
-      logStep("Auth failed", { error: claimsError?.message });
       return new Response(JSON.stringify({ error: "Not authenticated" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -89,20 +83,15 @@ serve(async (req) => {
     
     // Only allow if in dev environment OR user is admin
     if (!isAdmin && environment !== "development") {
-      logStep("BLOCKED: Non-admin user in non-dev environment", { userId });
       return new Response(JSON.stringify({ error: "Admin access required" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    logStep("User authenticated", { userId, isAdmin });
-
     const { action, tier, amount } = await req.json();
     const amountCents = amount || 1500;
     const tierName = tier || getTierName(amountCents);
-
-    logStep("Processing action", { action, tier: tierName, amount: amountCents });
 
     let updateData: Record<string, unknown>;
 
@@ -149,8 +138,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    logStep("Profile updated successfully", { action, userId });
 
     return new Response(JSON.stringify({ success: true, action }), {
       status: 200,

@@ -7,11 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -23,11 +18,8 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
-
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
@@ -38,7 +30,6 @@ serve(async (req) => {
     
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { amount } = await req.json();
     
@@ -47,7 +38,6 @@ serve(async (req) => {
     if (amountCents < 300 || amountCents > 1500) {
       throw new Error("Amount must be between $3 and $15");
     }
-    logStep("Amount validated", { amountCents });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -58,7 +48,6 @@ serve(async (req) => {
     
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
       
       // Check if they already have an active or trialing subscription
       const activeSubscriptions = await stripe.subscriptions.list({
@@ -83,7 +72,6 @@ serve(async (req) => {
         limit: 1,
       });
       hasHadSubscription = allSubscriptions.data.length > 0;
-      logStep("Checked subscription history", { hasHadSubscription });
     }
 
     const origin = req.headers.get("origin") || "https://ukpejgrghpewwdfztryg.lovableproject.com";
@@ -119,14 +107,9 @@ serve(async (req) => {
       sessionConfig.subscription_data = {
         trial_period_days: 7,
       };
-      logStep("Adding 7-day trial for new customer");
-    } else {
-      logStep("Skipping trial for returning customer");
     }
     
     const session = await stripe.checkout.sessions.create(sessionConfig);
-
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

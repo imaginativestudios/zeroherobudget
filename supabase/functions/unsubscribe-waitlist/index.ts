@@ -42,8 +42,6 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    console.log("Processing unsubscribe request for:", email);
-
     // Update database to mark as unsubscribed
     const { error: dbError } = await supabase
       .from("waitlist_signups")
@@ -52,8 +50,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (dbError) {
       console.error("Database error:", dbError);
-    } else {
-      console.log("Marked as unsubscribed in database:", email);
     }
 
     // Remove from Resend Audience
@@ -63,7 +59,6 @@ const handler = async (req: Request): Promise<Response> => {
           email: email,
           audienceId: audienceId,
         });
-        console.log("Removed from Resend audience:", email);
       } catch (audienceError: any) {
         console.error("Failed to remove from audience:", audienceError);
       }

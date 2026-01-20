@@ -25,7 +25,6 @@ export const useRealAuth = () => {
         if (event === 'SIGNED_IN' && session?.user) {
           if (isDemoDataLoaded()) {
             clearDemoData();
-            console.log('[Auth] Cleared demo data for new authenticated session');
           }
         }
         

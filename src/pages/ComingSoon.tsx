@@ -363,10 +363,10 @@ const ComingSoon = () => {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-foreground">
-              What's Coming
+              Your Arsenal
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powerful tools designed for your financial freedom
+              Powerful tools for your quest to financial freedom
             </p>
           </div>
 
@@ -378,7 +378,7 @@ const ComingSoon = () => {
                 icon: TrendingDown,
               },
               {
-                title: 'War Map Budget',
+                title: 'The Atlas',
                 description: 'Visualize your spending with tactical precision',
                 icon: Target,
               },
@@ -486,8 +486,14 @@ const ComingSoon = () => {
               © 2026 Zero Hero. From balances due to a more balanced you.
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
+              <Link to="/pricing" className="hover:text-foreground transition-colors">
+                Pricing
+              </Link>
               <Link to="/legal" className="hover:text-foreground transition-colors">
                 Legal
+              </Link>
+              <Link to="/help" className="hover:text-foreground transition-colors">
+                Support
               </Link>
             </div>
           </div>

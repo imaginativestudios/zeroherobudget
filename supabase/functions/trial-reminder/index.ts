@@ -12,10 +12,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: Record<string, unknown>) => {
-  console.log(`[TRIAL-REMINDER] ${step}`, details ? JSON.stringify(details) : '');
-};
-
 const getTierName = (amountCents: number): string => {
   if (amountCents <= 500) return "Starter";
   if (amountCents <= 900) return "Supporter";
@@ -34,7 +30,7 @@ serve(async (req) => {
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   if (!stripeKey || !supabaseUrl || !serviceRoleKey) {
-    logStep("ERROR: Missing environment variables");
+    console.error("Missing environment variables");
     return new Response(JSON.stringify({ error: "Server configuration error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -47,25 +43,17 @@ serve(async (req) => {
   });
 
   try {
-    logStep("Starting trial reminder check");
-
     // Calculate the date 2 days from now (target trial end date)
     const now = new Date();
     const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
     const twoDaysFromNowStart = Math.floor(twoDaysFromNow.setHours(0, 0, 0, 0) / 1000);
     const twoDaysFromNowEnd = Math.floor(twoDaysFromNow.setHours(23, 59, 59, 999) / 1000);
 
-    logStep("Checking for trials ending", { 
-      targetDate: new Date(twoDaysFromNowStart * 1000).toISOString(),
-    });
-
     // Fetch all trialing subscriptions
     const subscriptions = await stripe.subscriptions.list({
       status: "trialing",
       limit: 100,
     });
-
-    logStep("Found trialing subscriptions", { count: subscriptions.data.length });
 
     let emailsSent = 0;
     let emailsFailed = 0;
@@ -80,7 +68,6 @@ serve(async (req) => {
         const customer = await stripe.customers.retrieve(customerId);
         
         if (customer.deleted || !customer.email) {
-          logStep("Skipping deleted customer or no email", { customerId });
           continue;
         }
 
@@ -88,14 +75,7 @@ serve(async (req) => {
         const trialEndDate = new Date(trialEnd * 1000).toISOString();
         const daysRemaining = Math.ceil((trialEnd * 1000 - Date.now()) / (24 * 60 * 60 * 1000));
 
-        logStep("Sending trial reminder", { 
-          email: customer.email, 
-          daysRemaining,
-          trialEndDate,
-        });
-
         if (!resendKey) {
-          logStep("RESEND_API_KEY not configured, skipping email");
           continue;
         }
 
@@ -135,23 +115,20 @@ serve(async (req) => {
 
           if (logId) {
             if (emailResponse.error) {
-              logStep("ERROR: Failed to send reminder", { error: emailResponse.error.message });
+              console.error("Failed to send reminder:", emailResponse.error.message);
               await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
               emailsFailed++;
             } else {
-              logStep("Reminder sent", { email: customer.email, resendId: emailResponse.data?.id });
               await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
               emailsSent++;
             }
           }
         } catch (emailErr) {
-          logStep("ERROR: Exception sending reminder", { error: emailErr.message });
+          console.error("Exception sending reminder:", emailErr.message);
           emailsFailed++;
         }
       }
     }
-
-    logStep("Trial reminder check complete", { emailsSent, emailsFailed });
 
     return new Response(JSON.stringify({ 
       success: true, 

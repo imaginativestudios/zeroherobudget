@@ -109,15 +109,12 @@ export const useSubscriptionStatus = () => {
           table: 'profiles',
           filter: `id=eq.${user.id}`,
         },
-        (payload) => {
-          console.log('[useSubscriptionStatus] Profile updated via realtime:', payload);
+        () => {
           // Immediately refresh subscription status when profile changes
           checkSubscription();
         }
       )
-      .subscribe((status) => {
-        console.log('[useSubscriptionStatus] Realtime subscription status:', status);
-      });
+      .subscribe();
 
     channelRef.current = channel;
 

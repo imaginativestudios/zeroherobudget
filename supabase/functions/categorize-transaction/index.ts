@@ -149,8 +149,6 @@ Examples:
       ? `Transaction: "${description}", Amount: $${amount.toFixed(2)}`
       : `Transaction: "${description}"`;
 
-    console.log("Categorizing transaction:", userPrompt);
-
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -194,8 +192,6 @@ Examples:
     const data = await response.json();
     let suggestedCategory = data.choices?.[0]?.message?.content?.trim() || "";
     
-    console.log("AI suggested category:", suggestedCategory);
-    
     // Validate the category is one of our allowed categories
     if (!CATEGORIES.includes(suggestedCategory)) {
       // Try to find a partial match
@@ -204,7 +200,6 @@ Examples:
         cat.toLowerCase().includes(suggestedCategory.toLowerCase())
       );
       suggestedCategory = match || "Miscellaneous";
-      console.log("Adjusted category to:", suggestedCategory);
     }
 
     return new Response(

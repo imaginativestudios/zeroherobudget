@@ -393,7 +393,7 @@ export const NetWorthReport = () => {
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button variant="outline" asChild>
-              <Link to="/budgets">Update War Map</Link>
+              <Link to="/budgets">Update The Atlas</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link to="/debts">Optimize Battle Strategy</Link>

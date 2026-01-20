@@ -283,6 +283,68 @@ interface DeletionCodeEmailProps {
 
 ---
 
+### 5. Trial Ending Reminder
+
+**Location:** `supabase/functions/stripe-webhook/_templates/trial-ending-reminder.tsx`
+
+**Type:** Transactional (Automated)
+
+| Property | Value |
+|----------|-------|
+| Subject | `⏳ Your Zero Hero trial ends in {daysRemaining} days` |
+| Preview | `Your Zero Hero trial ends in X days - continue your quest!` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
+| Trigger | Daily cron job via `trial-reminder` edge function |
+
+**Props:**
+- `email`: string - User's email address
+- `daysRemaining`: number - Days until trial expires
+- `trialEndDate`: string - ISO date string for trial end
+- `tierName`: string - Subscription tier name
+- `amount`: number - Monthly amount in dollars
+- `dashboardUrl`: string - Link to dashboard
+- `portalUrl`: string - Link to account settings
+
+**Styling Notes:**
+- Amber/warning color scheme for urgency (`#d97706`)
+- Hourglass emoji (⏳) for visual urgency
+- Urgency box with amber left border
+- Clear explanation of what happens next
+- Cancel option prominently mentioned
+
+---
+
+### 6. Payment Failed
+
+**Location:** `supabase/functions/stripe-webhook/_templates/payment-failed.tsx`
+
+**Type:** Transactional
+
+| Property | Value |
+|----------|-------|
+| Subject | `⚠️ Action needed: We couldn't process your payment` |
+| Preview | `Action needed: We couldn't process your Zero Hero payment` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
+| Trigger | Stripe `invoice.payment_failed` webhook |
+
+**Props:**
+- `email`: string - User's email address
+- `tierName`: string - Subscription tier name
+- `amount`: number - Monthly amount in dollars
+- `nextRetryDate`: string (optional) - When payment will be retried
+- `portalUrl`: string - Link to update payment method
+- `supportEmail`: string - Support email address
+
+**Styling Notes:**
+- Red accent color for alert (`#dc2626`)
+- Warning emoji (⚠️) in subject
+- Clear explanation of common failure reasons
+- Reassuring tone about data safety
+- Prominent CTA to update payment method
+- Grace period note in amber box
+
+---
+
 ## Supabase Auth Templates
 
 These templates are configured in the Supabase Dashboard under **Authentication → Email Templates**.

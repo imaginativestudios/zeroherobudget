@@ -5,6 +5,7 @@ import { Resend } from "npm:resend@4.0.0";
 import * as React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { SubscriptionWelcomeEmail } from "./_templates/subscription-welcome.tsx";
+import { PaymentFailedEmail } from "./_templates/payment-failed.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
@@ -239,6 +240,26 @@ serve(async (req) => {
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !customer.email) break;
 
+        // Get subscription details for the email
+        const subscriptionId = invoice.subscription as string;
+        let tierName = "Starter";
+        let amount = 3;
+        let nextRetryDate: string | undefined;
+
+        if (subscriptionId) {
+          try {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
+            tierName = getTierName(amountCents);
+            amount = amountCents / 100;
+            
+            // Calculate next retry date (Stripe typically retries after 3-5 days)
+            nextRetryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+          } catch (subErr) {
+            logStep("Could not retrieve subscription details", { error: subErr.message });
+          }
+        }
+
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
@@ -252,6 +273,59 @@ serve(async (req) => {
         } else {
           logStep("Payment failed, marked past_due", { email: customer.email });
         }
+
+        // Send payment failed email
+        const resendKey = Deno.env.get("RESEND_API_KEY");
+        if (resendKey) {
+          try {
+            const resend = new Resend(resendKey);
+            const portalUrl = "https://zeroherobudget.lovable.app/account-settings";
+            const supportEmail = "support@zeroherobudget.com";
+
+            // Log email attempt
+            const logId = await logEmail(supabase, {
+              recipientEmail: customer.email,
+              emailType: 'payment_failed',
+              status: 'pending',
+              metadata: { tier: tierName, amount, invoiceId: invoice.id },
+            });
+
+            // Render email
+            const html = await renderAsync(
+              React.createElement(PaymentFailedEmail, {
+                email: customer.email,
+                tierName,
+                amount,
+                nextRetryDate,
+                portalUrl,
+                supportEmail,
+              })
+            );
+
+            // Send email
+            const emailResponse = await resend.emails.send({
+              from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
+              to: [customer.email],
+              subject: "⚠️ Action needed: We couldn't process your payment",
+              html,
+            });
+
+            if (logId) {
+              if (emailResponse.error) {
+                logStep("ERROR: Failed to send payment failed email", { error: emailResponse.error.message });
+                await updateEmailStatus(supabase, logId, 'failed', { errorMessage: emailResponse.error.message });
+              } else {
+                logStep("Payment failed email sent", { email: customer.email, resendId: emailResponse.data?.id });
+                await updateEmailStatus(supabase, logId, 'sent', { resendId: emailResponse.data?.id });
+              }
+            }
+          } catch (emailErr) {
+            logStep("ERROR: Exception sending payment failed email", { error: emailErr.message });
+          }
+        } else {
+          logStep("RESEND_API_KEY not configured, skipping payment failed email");
+        }
+
         break;
       }
 

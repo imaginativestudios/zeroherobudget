@@ -13,8 +13,8 @@ import * as React from "npm:react@18.3.1";
 
 interface SubscriptionWelcomeEmailProps {
   email: string;
-  tierName: string;
-  tierEmoji: string;
+  planType: 'monthly' | 'annual';
+  planDisplayName: string;
   amount: number;
   isTrialing: boolean;
   trialEndDate: string;
@@ -24,8 +24,8 @@ interface SubscriptionWelcomeEmailProps {
 
 export const SubscriptionWelcomeEmail = ({
   email,
-  tierName,
-  tierEmoji,
+  planType,
+  planDisplayName,
   amount,
   isTrialing,
   trialEndDate,
@@ -61,10 +61,10 @@ export const SubscriptionWelcomeEmail = ({
                 : " Your subscription is now active."}
             </Text>
 
-            {/* Tier Badge */}
+            {/* Plan Badge */}
             <Section style={tierBadge}>
               <Text style={tierText}>
-                {tierEmoji} {tierName} Tier • ${amount}/mo
+                ✨ {planDisplayName} • {planType === 'annual' ? `$${amount}/year` : `$${amount}/month`}
               </Text>
             </Section>
 
@@ -84,7 +84,7 @@ export const SubscriptionWelcomeEmail = ({
               <Text style={trialInfo}>
                 Trial ends: <strong>{formattedTrialEnd}</strong>
                 <br />
-                First charge: ${amount}/mo after trial
+                First charge: {planType === 'annual' ? `$${amount}/year` : `$${amount}/month`} after trial
               </Text>
             )}
 

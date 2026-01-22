@@ -13,7 +13,8 @@ import * as React from "npm:react@18.3.1";
 
 interface PaymentFailedEmailProps {
   email: string;
-  tierName: string;
+  planDisplayName: string;
+  planType: 'monthly' | 'annual';
   amount: number;
   nextRetryDate?: string;
   portalUrl: string;
@@ -22,7 +23,8 @@ interface PaymentFailedEmailProps {
 
 export const PaymentFailedEmail = ({
   email,
-  tierName,
+  planDisplayName,
+  planType,
   amount,
   nextRetryDate,
   portalUrl,
@@ -52,7 +54,7 @@ export const PaymentFailedEmail = ({
             <Text style={iconStyle}>⚠️</Text>
             <Heading style={title}>We Couldn't Process Your Payment</Heading>
             <Text style={subtitle}>
-              Hi there, we tried to charge your payment method for your {tierName} subscription (${amount}/mo), but the payment didn't go through.
+              Hi there, we tried to charge your payment method for your {planDisplayName} ({planType === 'annual' ? `$${amount}/year` : `$${amount}/month`}), but the payment didn't go through.
             </Text>
 
             {/* What happened box */}

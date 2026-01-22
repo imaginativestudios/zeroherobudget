@@ -33,6 +33,7 @@ export const FUNCTIONAL_COPY = {
   shadowPath: 'Debt Strategy',
   strike: 'Extra Payment',
   clearShadow: 'Pay Debt',
+  strategy: 'Payoff Strategy',
   
   // Emergency Fund Terms
   emergencyFund: 'Emergency Fund',
@@ -104,6 +105,7 @@ export const HEROIC_SUBTEXTS = {
   debts: 'Conquer the Shadow',
   emergencyFund: 'Your Financial Sanctuary',
   debtStrategy: 'Chart Your Freedom',
+  strategy: 'Chart Your Freedom',
   transactions: 'Your Journey Log',
   achievements: 'Your Milestones',
   reports: 'Your Discoveries',

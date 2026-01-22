@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale, Snowflake, Flame, ArrowRight } from "lucide-react";
+import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale, Snowflake, Flame, ArrowRight, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip as UITooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
 import { useTransactions } from "@/hooks/useTransactions";
 import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
@@ -118,7 +119,7 @@ export const DebtSnowball = () => {
     <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Clear Your Shadows</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Your Debts</h1>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={exportDebts} aria-label="Export debts to CSV">
               <Download className="h-4 w-4" aria-hidden="true" />
@@ -306,9 +307,23 @@ export const DebtSnowball = () => {
           </Card>
 
       {/* Debt Management */}
-      <Card>
+      <Card className="card-debt">
         <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Debt Management</CardTitle>
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            Your Debts
+            <UITooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs">
+                <p className="font-medium">What counts as debt?</p>
+                <p className="text-sm text-muted-foreground">
+                  Loans and credit balances you are actively paying off to zero — 
+                  credit cards, student loans, mortgages, car loans, personal loans.
+                </p>
+              </TooltipContent>
+            </UITooltip>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">

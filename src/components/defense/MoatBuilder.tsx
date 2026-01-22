@@ -193,9 +193,9 @@ export function MoatBuilder({
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-2">
               <Castle className="h-5 w-5 text-primary" />
-              The Sanctuary
+              Emergency Fund
             </span>
-            <span className="text-xs font-normal text-muted-foreground">Your Emergency Fund</span>
+            <span className="text-xs font-normal text-muted-foreground">Build your $1,000 safety net</span>
           </div>
           <FortressLevelBadge 
             level={moatHealth.castleLevel}
@@ -352,7 +352,7 @@ export function MoatBuilder({
           {moatHealth.status === 'secure' ? (
             <div className="flex items-center justify-center gap-2 py-2 text-success w-full min-h-[44px]">
               <Sparkles className="h-4 w-4" />
-              <span className="font-medium text-sm">Fortress Secured!</span>
+              <span className="font-medium text-sm">Emergency Fund Complete!</span>
               <Sparkles className="h-4 w-4" />
             </div>
           ) : (
@@ -406,7 +406,7 @@ export function MoatBuilder({
               
               <Button variant="outline" className="flex-1 min-h-[44px]" asChild>
                 <Link to="/debts">
-                  View The Shadow Path
+                  View Debt Strategy
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
               </Button>

@@ -497,4 +497,80 @@ All colors MUST be HSL.
     font-family: 'Playfair Display', Georgia, serif;
     letter-spacing: -0.02em;
   }
+
+  /* ====================================== */
+  /* Debt vs Expense Visual Distinction     */
+  /* Cognitive support for user clarity     */
+  /* ====================================== */
+  
+  /* Debt inputs - Purple accent for clear distinction */
+  .input-debt {
+    border-color: hsl(280 30% 50% / 0.3);
+  }
+  
+  .input-debt:focus,
+  .input-debt:focus-within {
+    border-color: hsl(280 30% 50%);
+    box-shadow: 0 0 0 2px hsl(280 30% 50% / 0.15);
+  }
+  
+  /* Debt card styling */
+  .card-debt {
+    border-left: 3px solid hsl(280 30% 50% / 0.5);
+  }
+  
+  .card-debt:hover {
+    border-left-color: hsl(280 30% 50%);
+  }
+  
+  /* Expense inputs - Blue/Slate accent */
+  .input-expense {
+    border-color: hsl(220 40% 55% / 0.3);
+  }
+  
+  .input-expense:focus,
+  .input-expense:focus-within {
+    border-color: hsl(220 40% 55%);
+    box-shadow: 0 0 0 2px hsl(220 40% 55% / 0.15);
+  }
+  
+  /* Expense card styling */
+  .card-expense {
+    border-left: 3px solid hsl(220 40% 55% / 0.5);
+  }
+  
+  .card-expense:hover {
+    border-left-color: hsl(220 40% 55%);
+  }
+
+  /* ====================================== */
+  /* Save Button Animation                  */
+  /* ====================================== */
+  
+  @keyframes pulse-once {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  
+  .animate-pulse-once {
+    animation: pulse-once 0.3s ease-in-out;
+  }
+
+  /* Success flash for saved state */
+  @keyframes success-flash {
+    0% {
+      background-color: hsl(var(--success) / 0.2);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  
+  .animate-success-flash {
+    animation: success-flash 0.5s ease-out;
+  }
 }

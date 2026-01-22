@@ -235,7 +235,7 @@ export function StaminaWheel({
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-card border shadow-lg">
-              <p className="font-medium text-success">Discretionary Budget</p>
+              <p className="font-medium text-success">Left to Spend</p>
               <p className="text-sm text-muted-foreground">
                 {formatCurrency(vitality)} available
               </p>

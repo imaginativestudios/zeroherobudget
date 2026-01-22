@@ -12,11 +12,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const getTierName = (amountCents: number): string => {
-  if (amountCents <= 500) return "Starter";
-  if (amountCents <= 900) return "Supporter";
-  if (amountCents <= 1200) return "Champion";
-  return "Hero";
+// Helper to determine plan type from Stripe subscription
+const getPlanType = (subscription: Stripe.Subscription): 'monthly' | 'annual' => {
+  const recurringInterval = subscription.items.data[0]?.price?.recurring?.interval;
+  return recurringInterval === 'year' ? 'annual' : 'monthly';
+};
+
+// Helper to get display name for plan
+const getPlanDisplayName = (planType: 'monthly' | 'annual'): string => {
+  return planType === 'annual' ? 'Annual Plan' : 'Monthly Plan';
+};
+
+// Helper to format amount with billing period
+const formatPlanAmount = (planType: 'monthly' | 'annual', amountCents: number): string => {
+  const amount = amountCents / 100;
+  return planType === 'annual' ? `$${amount}/year` : `$${amount}/month`;
 };
 
 serve(async (req) => {
@@ -71,7 +81,9 @@ serve(async (req) => {
           continue;
         }
 
-        const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
+        const amountCents = subscription.items.data[0]?.price?.unit_amount || 500;
+        const planType = getPlanType(subscription);
+        const planDisplayName = getPlanDisplayName(planType);
         const trialEndDate = new Date(trialEnd * 1000).toISOString();
         const daysRemaining = Math.ceil((trialEnd * 1000 - Date.now()) / (24 * 60 * 60 * 1000));
 
@@ -89,7 +101,7 @@ serve(async (req) => {
             recipientEmail: customer.email,
             emailType: 'trial_ending_reminder',
             status: 'pending',
-            metadata: { daysRemaining, tier: getTierName(amountCents) },
+            metadata: { daysRemaining, planType, planDisplayName },
           });
 
           // Render email
@@ -98,7 +110,8 @@ serve(async (req) => {
               email: customer.email,
               daysRemaining,
               trialEndDate,
-              tierName: getTierName(amountCents),
+              planType,
+              planDisplayName,
               amount: amountCents / 100,
               dashboardUrl,
               portalUrl,

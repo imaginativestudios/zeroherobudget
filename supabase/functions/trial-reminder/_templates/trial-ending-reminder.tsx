@@ -15,7 +15,8 @@ interface TrialEndingReminderEmailProps {
   email: string;
   daysRemaining: number;
   trialEndDate: string;
-  tierName: string;
+  planType: 'monthly' | 'annual';
+  planDisplayName: string;
   amount: number;
   dashboardUrl: string;
   portalUrl: string;
@@ -25,7 +26,8 @@ export const TrialEndingReminderEmail = ({
   email,
   daysRemaining,
   trialEndDate,
-  tierName,
+  planType,
+  planDisplayName,
   amount,
   dashboardUrl,
   portalUrl,
@@ -35,6 +37,10 @@ export const TrialEndingReminderEmail = ({
     month: 'long',
     day: 'numeric',
   });
+
+  const formattedAmount = planType === 'annual' 
+    ? `$${amount}/year` 
+    : `$${amount}/month`;
 
   return (
     <Html>
@@ -67,7 +73,7 @@ export const TrialEndingReminderEmail = ({
             <Section style={infoBox}>
               <Text style={infoTitle}>What happens next?</Text>
               <Text style={infoItem}>
-                ✓ Your {tierName} subscription ({`$${amount}/mo`}) begins automatically
+                ✓ Your {planDisplayName} ({formattedAmount}) begins automatically
               </Text>
               <Text style={infoItem}>
                 ✓ All your data and progress stays exactly where it is

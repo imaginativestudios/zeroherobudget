@@ -55,11 +55,12 @@ import { InitializeMissionCard } from "@/components/dashboard/InitializeMissionC
 import { BossCard } from "@/components/dashboard/BossCard";
 import { IntelFeed } from "@/components/dashboard/IntelFeed";
 import { StatusBanner } from "@/components/dashboard/StatusBanner";
+import { CommandCenter } from "@/components/dashboard/CommandCenter";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
-import { format } from "date-fns";
+import { format, addMonths } from "date-fns";
 import { getSurvivalCategories } from "@/lib/behavioralEngine";
 
 export const Dashboard = () => {
@@ -147,6 +148,13 @@ export const Dashboard = () => {
       type: d.type as 'card' | 'loan'
     })), leftover, strategy as "Snowball" | "Avalanche"), [debts, leftover, strategy]
   );
+
+  // Calculate freedom date from schedule
+  const freedomDate = useMemo(() => {
+    if (schedule.timeline.length === 0) return 'Debt Free!';
+    const lastEntry = schedule.timeline[schedule.timeline.length - 1];
+    return lastEntry?.label || 'Calculating...';
+  }, [schedule]);
 
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
@@ -383,55 +391,26 @@ export const Dashboard = () => {
       />
 
       {/* ========================================= */}
-      {/* 3-ZONE LAYOUT: Defense + Offense         */}
+      {/* 3-COLUMN COMMAND CENTER                  */}
       {/* ========================================= */}
-      {(dashboardState.canShowMoatBuilder || dashboardState.canShowBoss) && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className={cn(
-            "grid gap-6 items-stretch",
-            dashboardState.canShowMoatBuilder && dashboardState.canShowBoss 
-              ? "grid-cols-1 lg:grid-cols-2" 
-              : "grid-cols-1"
-          )}
-        >
-          {/* THE SANCTUARY (Defense) - Left Column */}
-          {dashboardState.canShowMoatBuilder && (
-            <div className="flex flex-col h-full">
-              <MoatBuilder 
-                variant="full" 
-                showPrimaryQuestBadge={moatHealth.isPrimaryQuest} 
-              />
-            </div>
-          )}
-
-          {/* THE BOSS (Offense) - Right Column */}
-          {dashboardState.canShowBoss && dashboardState.currentBoss && (
-            <div className="flex flex-col">
-              <BossCard
-                debt={dashboardState.currentBoss}
-                strategy={dashboardState.strategy}
-                extraBudget={leftover}
-                allDebts={debts}
-              />
-            </div>
-          )}
-        </motion.div>
-      )}
-
-      {/* ========================================= */}
-      {/* INTEL FEED - Progressive Behavioral Cards */}
-      {/* ========================================= */}
-      <IntelFeed
-        canShowConsistencyXP={dashboardState.canShowConsistencyXP}
-        canShowShadowBudget={dashboardState.canShowShadowBudget}
-        canShowFreedom={dashboardState.canShowBoss}
-        debts={debtItems}
-        extraBudget={leftover}
-        strategy={dashboardState.strategy}
-      />
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <CommandCenter
+          debts={debts}
+          debtItems={debtItems}
+          income={income || 0}
+          expenses={expenses}
+          leftover={leftover}
+          strategy={dashboardState.strategy}
+          moatCurrent={heroProfile.moat_current || 0}
+          moatTarget={heroProfile.moat_target || 1000}
+          currentBoss={dashboardState.currentBoss}
+          freedomDate={freedomDate}
+        />
+      </motion.div>
 
       {/* Debt Victory Modal */}
       <DebtVictoryModal

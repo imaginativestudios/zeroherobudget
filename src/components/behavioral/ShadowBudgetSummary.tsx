@@ -104,7 +104,7 @@ export function ShadowBudgetSummary() {
 
         <Button variant="ghost" size="sm" asChild className="w-full justify-between">
           <Link to="/transactions">
-            View All Transactions
+            View Journey Log
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>

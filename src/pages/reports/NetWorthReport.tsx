@@ -396,7 +396,7 @@ export const NetWorthReport = () => {
               <Link to="/budgets">Update The Atlas</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link to="/debts">Optimize Battle Strategy</Link>
+              <Link to="/debts">View The Shadow Path</Link>
             </Button>
           </div>
         </CardContent>

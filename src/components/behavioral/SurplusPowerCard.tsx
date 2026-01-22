@@ -98,8 +98,8 @@ export function SurplusPowerCard() {
         </p>
 
         <Button variant="ghost" size="sm" asChild className="w-full justify-between">
-          <Link to="/budget">
-            Optimize Budget
+          <Link to="/budgets">
+            Optimize The Atlas
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>

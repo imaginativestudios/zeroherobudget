@@ -56,16 +56,18 @@ import { BossCard } from "@/components/dashboard/BossCard";
 import { IntelFeed } from "@/components/dashboard/IntelFeed";
 import { StatusBanner } from "@/components/dashboard/StatusBanner";
 import { CommandCenter } from "@/components/dashboard/CommandCenter";
+import { QuickAddDebtDialog } from "@/components/dashboard/QuickAddDebtDialog";
 import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
+import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format, addMonths } from "date-fns";
 import { getSurvivalCategories } from "@/lib/behavioralEngine";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const [income] = useIncome();
+  const [income, setIncome] = useIncome();
   const [expenses, , isLoadingExpenses] = useExpenses();
   
   // Use the new dashboard state hook for progressive disclosure
@@ -75,11 +77,15 @@ export const Dashboard = () => {
   const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
   const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
   
+  // For inline expense editing
+  const { updateExpense } = useLocalExpenses('critical');
+  
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
   const [optimizeDialogOpen, setOptimizeDialogOpen] = useState(false);
   const [victoryModalOpen, setVictoryModalOpen] = useState(false);
   const [victoryDebtName, setVictoryDebtName] = useState('');
+  const [quickAddDebtOpen, setQuickAddDebtOpen] = useState(false);
   const previousPaidOffRef = useRef<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -137,6 +143,11 @@ export const Dashboard = () => {
   const leftover = useMemo(() => 
     Math.max(0, (income || 0) - totalExpenses), [income, totalExpenses]
   );
+  
+  // Handler for inline expense editing in Command Center
+  const handleExpenseChange = useCallback((id: string, newAmount: number) => {
+    updateExpense(id, { amount: newAmount });
+  }, [updateExpense]);
   
   const schedule = useMemo(() => 
     simulatePayoff(debts.map(d => ({
@@ -409,8 +420,17 @@ export const Dashboard = () => {
           moatTarget={heroProfile.moat_target || 1000}
           currentBoss={dashboardState.currentBoss}
           freedomDate={freedomDate}
+          onAddDebt={() => setQuickAddDebtOpen(true)}
+          onIncomeChange={setIncome}
+          onExpenseChange={handleExpenseChange}
         />
       </motion.div>
+
+      {/* Quick Add Debt Dialog */}
+      <QuickAddDebtDialog
+        open={quickAddDebtOpen}
+        onOpenChange={setQuickAddDebtOpen}
+      />
 
       {/* Debt Victory Modal */}
       <DebtVictoryModal

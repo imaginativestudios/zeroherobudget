@@ -107,7 +107,7 @@ export function AhaMomentStep({ hourlyWage, debt, onContinue }: AhaMomentStepPro
                 {freedomDate}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                When you'll defeat {targetDebtName}
+                When you'll pay off {targetDebtName}
               </p>
             </div>
 

@@ -80,10 +80,10 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
             <span className="font-bold uppercase tracking-wide text-sm text-primary">
-              Status: Regrouping
+              Status: Rebuilding
             </span>
             <Badge variant="outline" className="text-xs border-primary/50 text-primary">
-              Defenses Active
+              Fund Protected
             </Badge>
           </div>
           <Button
@@ -105,11 +105,11 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-foreground">
-                The Moat Has Done Its Duty
+                Your Emergency Fund Worked
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Your fortress protected you from new debt. Now, let's focus on 
-                tactical repairs to get your defenses back to 100%.
+                Your emergency fund protected you from new debt. Now, let's focus on 
+                rebuilding it back to your goal.
               </p>
             </div>
           </div>
@@ -137,7 +137,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
             
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                {formatCurrency(remaining)} remaining to restore full defenses
+                {formatCurrency(remaining)} remaining to reach your goal
               </p>
               {progressPercent >= 75 && (
                 <p className="text-xs text-primary font-medium">
@@ -157,7 +157,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
               >
                 <span className="flex items-center gap-2 text-sm font-medium">
                   <Wrench className="h-4 w-4" />
-                  View Repair Plan
+                  View Recovery Plan
                 </span>
                 {isExpanded ? (
                   <ChevronUp className="h-4 w-4" />
@@ -188,7 +188,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                            Suggested Tactical Shift (15%)
+                            Suggested Adjustment (15%)
                           </p>
                           <p className="text-lg font-bold text-success">
                             -{formatCurrency(repairPlan.suggestedCutAmount)}/mo
@@ -201,7 +201,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
                         <Calendar className="h-5 w-5 text-primary" />
                         <div>
                           <p className="text-sm font-medium">
-                            Estimated Repair Time
+                            Estimated Recovery Time
                           </p>
                           <p className="text-2xl font-bold text-primary">
                             {formatRepairTimeline(repairPlan.daysToRepair)}
@@ -251,14 +251,14 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
               className="flex-1 sm:flex-none"
             >
               <Wrench className="h-4 w-4 mr-2" />
-              Optimize for Repair
+              Focus on Recovery
             </Button>
             <Button 
               variant="ghost" 
               onClick={handleViewWarMap}
               className="flex-1 sm:flex-none text-muted-foreground"
             >
-              View War Map
+              View Budget
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>

@@ -36,7 +36,7 @@ const stepSubtitles = {
 
 const stepQuestions = {
   1: 'We use this to calculate how much life you trade for money.',
-  2: 'Naming your debt makes it an enemy you can defeat.',
+  2: 'Naming your debt makes it a goal you can tackle.',
   3: 'How much protection do you want from life\'s surprises?',
 };
 
@@ -425,7 +425,7 @@ export default function Onboarding() {
                       </div>
 
                       <HeroTip>
-                        Naming your debt makes it an enemy you can defeat. Most Heroes start with their highest-interest credit card.
+                        Naming your debt makes it a goal you can tackle. Most people start with their highest-interest credit card.
                       </HeroTip>
                     </div>
                   )}
@@ -435,7 +435,7 @@ export default function Onboarding() {
                       <MoatSelector value={data.moatTarget} onChange={setMoatTarget} />
 
                       <HeroTip>
-                        A $1,000 Moat protects 80% of Heroes from 'relapsing' into debt when life happens.
+                        A $1,000 emergency fund protects 80% of people from falling back into debt when life happens.
                       </HeroTip>
                     </div>
                   )}
@@ -565,7 +565,7 @@ export default function Onboarding() {
                   transition={{ delay: 0.4 }}
                   className="text-2xl sm:text-3xl font-bold text-foreground mb-2"
                 >
-                  Character Created
+                  Profile Created
                 </motion.h1>
 
                 {/* Subtitle */}
@@ -575,7 +575,7 @@ export default function Onboarding() {
                   transition={{ delay: 0.6 }}
                   className="text-lg sm:text-xl text-accent font-medium mb-6"
                 >
-                  Welcome to the Fortress, Hero.
+                  Welcome! You're ready to take control.
                 </motion.p>
 
                 {/* Quest Summary Card */}
@@ -586,16 +586,16 @@ export default function Onboarding() {
                   className="bg-muted/50 rounded-xl p-4 text-left space-y-2 mb-8"
                 >
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">
-                    Your Quest Awaits
+                    Your Goals
                   </h3>
                   {data.moatTarget && (
                     <p className="text-foreground">
-                      Moat Target: <span className="font-bold text-primary">${data.moatTarget.toLocaleString()}</span>
+                      Emergency Fund Goal: <span className="font-bold text-primary">${data.moatTarget.toLocaleString()}</span>
                     </p>
                   )}
                   {data.primaryDebt?.name && (
                     <p className="text-foreground">
-                      First Boss: <span className="font-bold text-destructive">{data.primaryDebt.name}</span>{' '}
+                      First Debt: <span className="font-bold text-destructive">{data.primaryDebt.name}</span>{' '}
                       <span className="text-muted-foreground">(${data.primaryDebt.balance.toLocaleString()})</span>
                     </p>
                   )}
@@ -623,7 +623,7 @@ export default function Onboarding() {
                     size="lg"
                     className="w-full h-14 text-lg"
                   >
-                    Enter the Fortress
+                    Go to Dashboard
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   

@@ -100,7 +100,7 @@ export function LevelUpModal({
           
           <div>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-              LEVEL UP, DEBT SLAYER!
+              LEVEL UP!
             </DialogTitle>
             <DialogDescription className="text-base mt-2">
               You've proven yourself a <span className="font-semibold text-foreground">Master of Discipline</span> with a{' '}
@@ -115,7 +115,7 @@ export function LevelUpModal({
             <div className="bg-muted/50 rounded-lg p-4 border border-destructive/20">
               <div className="flex items-center gap-2 text-sm font-medium text-destructive mb-2">
                 <Swords className="h-4 w-4" />
-                YOUR BIGGEST INTEREST FOE
+                YOUR HIGHEST INTEREST DEBT
               </div>
               <div className="flex items-center justify-between">
                 <div>

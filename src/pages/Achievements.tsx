@@ -186,7 +186,7 @@ export const Achievements = () => {
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <Trophy className="h-16 w-16 mx-auto text-accent animate-pulse" />
-              <h3 className="text-2xl font-bold">Legendary Debt Warrior!</h3>
+              <h3 className="text-2xl font-bold">Financial Freedom Champion!</h3>
               <p className="text-muted-foreground text-lg">
                 You've unlocked all achievements! You're a true champion of financial freedom!
               </p>

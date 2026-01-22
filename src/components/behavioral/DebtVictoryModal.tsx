@@ -82,11 +82,11 @@ export function DebtVictoryModal({
           </div>
           <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
             <Trophy className="h-6 w-6 text-warning" />
-            VANQUISHED!
+            PAID OFF!
             <Trophy className="h-6 w-6 text-warning" />
           </DialogTitle>
           <DialogDescription className="text-center text-lg pt-2">
-            You've slain <span className="font-semibold text-foreground">{debtName}</span>!
+            You've paid off <span className="font-semibold text-foreground">{debtName}</span>!
           </DialogDescription>
         </DialogHeader>
 
@@ -106,11 +106,11 @@ export function DebtVictoryModal({
           {/* Victory Message */}
           <div className="text-center space-y-2">
             <p className="text-sm text-muted-foreground">
-              One less balance foe standing between you and financial freedom.
+              One less debt standing between you and financial freedom.
             </p>
             <div className="flex items-center justify-center gap-2 text-warning">
               <Sparkles className="h-4 w-4" />
-              <span className="text-sm font-medium">Legendary Achievement Unlocked</span>
+              <span className="text-sm font-medium">Achievement Unlocked</span>
               <Sparkles className="h-4 w-4" />
             </div>
           </div>
@@ -137,9 +137,9 @@ export function DebtVictoryModal({
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-3">
-          {onViewBattlePlan && (
+        {onViewBattlePlan && (
             <Button onClick={onViewBattlePlan} className="flex-1 min-h-[44px] order-first sm:order-last">
-              View Battle Plan
+              View Debt Strategy
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           )}

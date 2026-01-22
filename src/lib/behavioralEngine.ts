@@ -411,10 +411,10 @@ export function calculateConsistencyScore(
       heroMessage = `🏆 LEGENDARY! ${currentStreak} days of consistent tracking! You've mastered financial awareness.`;
       break;
     case 'hero':
-      heroMessage = `🦸 Hero streak! ${currentStreak} days strong. Your consistency is building unstoppable momentum!`;
+      heroMessage = `🌟 Amazing streak! ${currentStreak} days strong. Your consistency is building unstoppable momentum!`;
       break;
     case 'warrior':
-      heroMessage = `⚔️ Warrior mode! ${currentStreak} day streak. Keep fighting for financial freedom!`;
+      heroMessage = `💪 Impressive! ${currentStreak} day streak. Keep pushing for financial freedom!`;
       break;
     case 'apprentice':
       heroMessage = `📈 Great start! ${currentStreak} days logged. You're building a powerful habit.`;
@@ -423,7 +423,7 @@ export function calculateConsistencyScore(
       if (!todayLogged) {
         heroMessage = "💪 Log today's transactions to start building your streak!";
       } else {
-        heroMessage = "🌱 Day 1 begins! Every hero's journey starts with a single step.";
+        heroMessage = "🌱 Day 1 begins! Every journey starts with a single step.";
       }
   }
 

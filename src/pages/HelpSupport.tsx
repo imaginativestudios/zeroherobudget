@@ -136,30 +136,30 @@ const HelpSupport = () => {
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">2</span>
-                  Setting Up Your War Map
+                  Setting Up Your Budget
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Navigate to the War Map page and start adding your monthly expenses. Organize them by category (Housing, Utilities, Food, etc.) and set planned amounts for each item. You can drag and drop to reorder items within categories.
+                  Navigate to the Budget page and start adding your monthly expenses. Organize them by category (Housing, Utilities, Food, etc.) and set planned amounts for each item. You can drag and drop to reorder items within categories.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">3</span>
-                  Adding Your Balance Foes
+                  Adding Your Debts
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Go to the Battle Plan page and add all your Balance Foes including credit cards, student loans, and personal loans. Enter the balance, interest rate, and minimum payment for each. Zero Hero will calculate the optimal strategy to vanquish them.
+                  Go to the Debt Strategy page and add all your debts including credit cards, student loans, and personal loans. Enter the balance, interest rate, and minimum payment for each. Zero Hero will calculate the optimal payoff strategy.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">4</span>
-                  Inviting Fellow Heroes
+                  Inviting Household Members
                 </h3>
                 <p className="text-muted-foreground ml-10">
-                  Visit the Household page to invite family members or partners. They&apos;ll receive an email invitation to join your household and collaborate on your shared financial quest.
+                  Visit the Household page to invite family members or partners. They&apos;ll receive an email invitation to join your household and collaborate on your shared financial goals.
                 </p>
               </div>
 

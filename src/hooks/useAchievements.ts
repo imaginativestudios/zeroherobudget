@@ -77,7 +77,7 @@ export function useAchievements(currentStats: DebtStats) {
       },
       {
         id: 'debt-slayer',
-        title: 'Debt Slayer',
+        title: 'Debt Eliminator',
         description: 'Paid off 3 or more debts',
         icon: '⚡',
         unlocked: currentStats.debtsPaidOff >= 3,

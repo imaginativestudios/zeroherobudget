@@ -202,8 +202,8 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const enterDashboard = useCallback(() => {
     markComplete();
     clearOnboardingProgress();
-    toast.success('Welcome, Hero! Your quest begins now.', {
-      description: 'Your character has been created. Time to conquer your debts!',
+    toast.success('Welcome! Your journey begins now.', {
+      description: 'Your profile has been created. Time to take control of your finances!',
     });
     navigate('/dashboard');
   }, [markComplete, clearOnboardingProgress, navigate]);

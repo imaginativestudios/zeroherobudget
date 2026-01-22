@@ -192,7 +192,7 @@ export function ShadowImpactCard({
             onClick={handleSkipAndPayDebt}
           >
             <Swords className="h-4 w-4" />
-            Skip & Slay Debt
+            Skip & Pay Debt
           </Button>
           <Button
             variant="outline"

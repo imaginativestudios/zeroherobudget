@@ -87,9 +87,9 @@ export function StrikePaymentModal({
         origin: { y: 0.6 },
         colors: ['#0D7377', '#FF6B35', '#14919B', '#FFD700'],
       });
-      toast.success('DEBT VANQUISHED!', {
+      toast.success('DEBT PAID OFF!', {
         description: `${debt.name} has been completely eliminated!`,
-        icon: '⚔️',
+        icon: '🎉',
         duration: 5000,
       });
     } else {

@@ -147,7 +147,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
         {/* Action Button */}
         <Button asChild variant="outline" className="w-full group">
           <Link to="/debts">
-            View The Shadow Path
+            View Debt Strategy
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </Button>

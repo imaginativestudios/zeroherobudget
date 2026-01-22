@@ -1,13 +1,14 @@
 /**
- * Shadow Budget Summary Card
+ * Hidden Costs Summary Card
  * 
  * Shows the monthly total of discretionary spending vs its true cost with debt interest.
  */
 
-import { Ghost, ArrowRight } from 'lucide-react';
+import { Ghost, ArrowRight, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useBehavioralEngine } from '@/hooks/useBehavioralEngine';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +21,7 @@ export function ShadowBudgetSummary() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Ghost className="h-4 w-4 text-muted-foreground" />
-            Shadow Budget
+            Hidden Costs
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -51,12 +52,12 @@ export function ShadowBudgetSummary() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Ghost className="h-4 w-4 text-muted-foreground" />
-            Shadow Budget
+            Hidden Costs
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No discretionary spending this month. You're keeping your shadow costs at zero! 🎉
+            No discretionary spending this month. You're keeping your hidden costs at zero! 🎉
           </p>
         </CardContent>
       </Card>
@@ -69,7 +70,19 @@ export function ShadowBudgetSummary() {
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Ghost className="h-4 w-4 text-muted-foreground" />
-            Shadow Budget
+            Hidden Costs
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs">
+                <p className="font-medium">What are hidden costs?</p>
+                <p className="text-sm text-muted-foreground">
+                  When you have debt, discretionary spending has a "hidden cost" — the interest 
+                  you'll pay on that amount over 12 months instead of putting it toward debt.
+                </p>
+              </TooltipContent>
+            </Tooltip>
           </span>
           <span className="text-xs text-destructive">
             +${hiddenCost.toFixed(0)} hidden
@@ -104,7 +117,7 @@ export function ShadowBudgetSummary() {
 
         <Button variant="ghost" size="sm" asChild className="w-full justify-between">
           <Link to="/transactions">
-            View Journey Log
+            View Transactions
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>

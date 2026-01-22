@@ -58,12 +58,12 @@ export function HeroMoatCard() {
 
   // Milestone messages
   const getMilestoneMessage = () => {
-    if (isMoatComplete) return "Your Sanctuary is safe! You're ready for life's unexpected turns.";
-    if (moatProgress >= 75) return "Almost there! Your safe haven is nearly complete.";
-    if (moatProgress >= 50) return "Halfway to peace of mind! Keep growing.";
-    if (moatProgress >= 25) return "Good progress! Your Sanctuary is taking shape.";
-    if (moatProgress > 0) return "Every dollar brings more peace of mind.";
-    return "Start building your Sanctuary today.";
+    if (isMoatComplete) return "Your emergency fund is complete! You're protected from unexpected expenses.";
+    if (moatProgress >= 75) return "Almost there! Your emergency fund is nearly complete.";
+    if (moatProgress >= 50) return "Halfway to your goal! Keep building.";
+    if (moatProgress >= 25) return "Good progress! Your emergency fund is growing.";
+    if (moatProgress > 0) return "Every dollar adds more security.";
+    return "Start building your emergency fund today.";
   };
 
   return (
@@ -75,7 +75,7 @@ export function HeroMoatCard() {
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Heart className="h-4 w-4 text-primary" />
-            The Sanctuary
+            Emergency Fund
           </span>
           {isMoatComplete ? (
             <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success flex items-center gap-1">
@@ -166,7 +166,7 @@ export function HeroMoatCard() {
         {isMoatComplete ? (
           <div className="flex items-center justify-center gap-2 py-2 text-success">
             <Sparkles className="h-4 w-4" />
-            <span className="font-medium text-sm">Castle Secured!</span>
+            <span className="font-medium text-sm">Fund Complete!</span>
             <Sparkles className="h-4 w-4" />
           </div>
         ) : (
@@ -174,14 +174,14 @@ export function HeroMoatCard() {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
-                Add to Sanctuary
+                Add Savings
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Heart className="h-5 w-5 text-primary" />
-                  Add to Your Sanctuary
+                  Add to Emergency Fund
                 </DialogTitle>
                 <DialogDescription>
                   How much have you saved toward your emergency fund?

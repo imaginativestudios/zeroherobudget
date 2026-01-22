@@ -25,7 +25,7 @@ const navigationItems = [
   { name: "Debt Strategy", href: "/debts", icon: Cloud },
   { name: "Transactions", href: "/transactions", icon: Scroll },
   { name: "Data Management", href: "/data", icon: Database },
-  { name: "Milestones", href: "/achievements", icon: Trophy },
+  { name: "Achievements", href: "/achievements", icon: Trophy },
   { name: "Financial Tips", href: "/learn", icon: Lightbulb },
   { name: "Reports", href: "/reports", icon: BarChart3 },
 ];

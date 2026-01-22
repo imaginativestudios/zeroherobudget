@@ -197,7 +197,7 @@ export const Budget = () => {
       {/* Header */}
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-foreground">The Atlas</h1>
+          <h1 className="text-3xl font-bold text-foreground">Monthly Budget</h1>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Compare Section */}

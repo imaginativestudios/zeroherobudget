@@ -1,8 +1,10 @@
 /**
- * Sanctuary Health Calculations
+ * Emergency Fund Health Calculations
  * 
- * Calculates the health/status of the user's emergency fund (Sanctuary)
+ * Calculates the health/status of the user's emergency fund
  * to determine if it should be the Current Quest on the Dashboard.
+ * 
+ * Uses functional terminology for clarity, with heroic flavor in descriptions only.
  */
 
 export type MoatStatus = 'vulnerable' | 'building' | 'fortified' | 'secure';
@@ -18,10 +20,10 @@ export interface MoatHealth {
 }
 
 /**
- * Calculate the health of the user's Sanctuary (emergency fund)
+ * Calculate the health of the user's Emergency Fund
  * 
- * @param moatCurrent - Current sanctuary balance
- * @param moatTarget - Target sanctuary amount (default $1,000)
+ * @param moatCurrent - Current emergency fund balance
+ * @param moatTarget - Target emergency fund amount (default $1,000)
  * @returns MoatHealth object with status, quest priority, and messaging
  */
 export function calculateMoatHealth(
@@ -30,27 +32,27 @@ export function calculateMoatHealth(
 ): MoatHealth {
   const percentage = Math.min(100, Math.max(0, (moatCurrent / moatTarget) * 100));
   
-  // Sanctuary is complete - no longer current quest
+  // Emergency fund is complete - no longer current quest
   if (moatCurrent >= moatTarget) {
     return {
       status: 'secure',
       isPrimaryQuest: false,
       percentage: 100,
-      message: "Your Sanctuary is safe! You're protected from the unexpected. Focus on clearing the next Shadow.",
+      message: "Your emergency fund is secure! You're protected from unexpected expenses. Focus on paying down your debt.",
       castleLevel: 4,
-      statusLabel: 'Sanctuary Safe',
+      statusLabel: 'Fund Secure',
     };
   }
   
-  // No sanctuary at all - vulnerable state
+  // No emergency fund at all - vulnerable state
   if (moatCurrent === 0) {
     return {
       status: 'vulnerable',
       isPrimaryQuest: true,
       percentage: 0,
-      message: "Your Sanctuary needs building. Create your $1,000 safe haven to protect your journey.",
+      message: "Start your emergency fund today. Build a $1,000 safety net to protect yourself from unexpected expenses.",
       castleLevel: 1,
-      statusLabel: 'Sanctuary Exposed',
+      statusLabel: 'Fund Vulnerable',
     };
   }
   
@@ -60,9 +62,9 @@ export function calculateMoatHealth(
       status: 'fortified',
       isPrimaryQuest: true,
       percentage,
-      message: "Almost there! Your Sanctuary is nearly complete. One final step to full protection!",
+      message: "Almost there! Your emergency fund is nearly complete. One final push to full protection!",
       castleLevel: 4,
-      statusLabel: 'Sanctuary Strengthening',
+      statusLabel: 'Fund Fortified',
     };
   }
   
@@ -74,10 +76,10 @@ export function calculateMoatHealth(
       isPrimaryQuest: true,
       percentage,
       message: percentage >= 51 
-        ? "Your Sanctuary grows stronger! Keep nurturing your safe haven."
-        : "Good progress, traveler! Your Sanctuary is taking shape.",
+        ? "Great progress! Your emergency fund is growing stronger. Keep it up!"
+        : "Good start! Your emergency fund is taking shape. Keep building!",
       castleLevel,
-      statusLabel: 'Sanctuary Growing',
+      statusLabel: 'Fund Building',
     };
   }
   
@@ -86,9 +88,9 @@ export function calculateMoatHealth(
     status: 'building',
     isPrimaryQuest: true,
     percentage,
-    message: "Every dollar brings more peace of mind. Keep building your Sanctuary!",
+    message: "Every dollar adds more security. Keep building your emergency fund!",
     castleLevel: 1,
-    statusLabel: 'Sanctuary Growing',
+    statusLabel: 'Fund Building',
   };
 }
 
@@ -105,17 +107,17 @@ export function getCastleIconType(level: CastleLevel): 'cabin' | 'tower' | 'cast
 }
 
 /**
- * Sanctuary level display labels for the badge
+ * Emergency fund level display labels for the badge
  */
 export const FORTRESS_LEVEL_LABELS: Record<CastleLevel, string> = {
-  1: 'Seedling',
-  2: 'Shelter',
-  3: 'Haven',
-  4: 'Sanctuary',
+  1: 'Starting',
+  2: 'Growing',
+  3: 'Strong',
+  4: 'Complete',
 };
 
 /**
- * Sanctuary Milestone definitions for celebrations
+ * Emergency Fund Milestone definitions for celebrations
  */
 export interface MoatMilestone {
   percentage: 25 | 50 | 75 | 100;
@@ -128,29 +130,29 @@ export interface MoatMilestone {
 export const MOAT_MILESTONES: Record<number, MoatMilestone> = {
   25: {
     percentage: 25,
-    title: "Seeds Planted!",
-    message: "Your Sanctuary is taking root! 25% of your goal is reached.",
+    title: "Great Start!",
+    message: "You've reached 25% of your emergency fund goal. Keep going!",
     icon: "🌱",
     celebrationLevel: 'basic',
   },
   50: {
     percentage: 50,
     title: "Halfway There!",
-    message: "Remarkable progress, traveler! Your Sanctuary is halfway complete.",
+    message: "Amazing progress! Your emergency fund is 50% complete.",
     icon: "🏕️",
     celebrationLevel: 'milestone',
   },
   75: {
     percentage: 75,
     title: "Almost Complete!",
-    message: "Your safe haven grows strong! Just a bit more to full peace of mind.",
+    message: "Your emergency fund is 75% complete. The finish line is in sight!",
     icon: "🏡",
     celebrationLevel: 'milestone',
   },
   100: {
     percentage: 100,
-    title: "Sanctuary Complete!",
-    message: "Your Sanctuary is safe! You're protected from life's unexpected turns.",
+    title: "Emergency Fund Complete!",
+    message: "Congratulations! You now have a $1,000 emergency fund. You're protected!",
     icon: "✨",
     celebrationLevel: 'epic',
   },

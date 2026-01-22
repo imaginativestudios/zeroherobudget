@@ -445,8 +445,8 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     // Monthly Income
     localStorage.setItem(`${prefix}bdt_income`, JSON.stringify(5800));
     
-    // Strategy
-    localStorage.setItem(`${prefix}strategy`, JSON.stringify('Snowball'));
+    // Strategy (key must match what DebtSnowball.tsx uses)
+    localStorage.setItem(`${prefix}bdt_strategy`, JSON.stringify('Snowball'));
     
     // Behavioral engine state (shows some history)
     localStorage.setItem(`${prefix}behavioral_engine`, JSON.stringify({

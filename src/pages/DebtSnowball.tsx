@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale } from "lucide-react";
+import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale, Snowflake, Flame, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -188,38 +188,122 @@ export const DebtSnowball = () => {
         <TabsContent value="overview" className="space-y-8 mt-8">
           {/* Strategy Selection */}
           <Card>
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Target className="h-5 w-5 text-accent" aria-hidden="true" />
-            Payoff Strategy
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div className="flex flex-col xs:flex-row border border-border rounded-lg overflow-hidden w-full xs:w-auto">
-              <Button
-                variant={strategy === "Snowball" ? "royal" : "ghost"}
-                className="rounded-none text-xs sm:text-sm"
-                onClick={() => setStrategy("Snowball")}
-              >
-                <span className="hidden sm:inline">Snowball (Smallest First)</span>
-                <span className="sm:hidden">Snowball</span>
-              </Button>
-              <Button
-                variant={strategy === "Avalanche" ? "royal" : "ghost"}
-                className="rounded-none text-xs sm:text-sm"
-                onClick={() => setStrategy("Avalanche")}
-              >
-                <span className="hidden sm:inline">Avalanche (Highest APR)</span>
-                <span className="sm:hidden">Avalanche</span>
-              </Button>
-            </div>
-            <div className="text-sm sm:text-base text-muted-foreground">
-              Extra Budget: <span className="font-bold text-accent-dark">{formatCurrency(leftover)}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Target className="h-5 w-5 text-accent" aria-hidden="true" />
+                Payoff Strategy
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Toggle and Extra Budget */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <div className="flex flex-col xs:flex-row border border-border rounded-lg overflow-hidden w-full xs:w-auto">
+                  <Button
+                    variant={strategy === "Snowball" ? "royal" : "ghost"}
+                    className="rounded-none text-xs sm:text-sm"
+                    onClick={() => setStrategy("Snowball")}
+                  >
+                    <Snowflake className="h-4 w-4 mr-1" aria-hidden="true" />
+                    <span className="hidden sm:inline">Snowball (Smallest First)</span>
+                    <span className="sm:hidden">Snowball</span>
+                  </Button>
+                  <Button
+                    variant={strategy === "Avalanche" ? "royal" : "ghost"}
+                    className="rounded-none text-xs sm:text-sm"
+                    onClick={() => setStrategy("Avalanche")}
+                  >
+                    <Flame className="h-4 w-4 mr-1" aria-hidden="true" />
+                    <span className="hidden sm:inline">Avalanche (Highest APR)</span>
+                    <span className="sm:hidden">Avalanche</span>
+                  </Button>
+                </div>
+                <div className="text-sm sm:text-base text-muted-foreground">
+                  Extra Budget: <span className="font-bold text-accent-dark">{formatCurrency(leftover)}</span>
+                </div>
+              </div>
+
+              {/* Strategy Explanation Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Snowball Card */}
+                <div 
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                    strategy === "Snowball" 
+                      ? "border-primary bg-primary/5" 
+                      : "border-border hover:border-muted-foreground/50"
+                  }`}
+                  onClick={() => setStrategy("Snowball")}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setStrategy("Snowball")}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Snowflake className={`h-5 w-5 ${strategy === "Snowball" ? "text-primary" : "text-muted-foreground"}`} />
+                    <h3 className={`font-semibold ${strategy === "Snowball" ? "text-primary" : "text-foreground"}`}>
+                      Snowball Method
+                    </h3>
+                    {strategy === "Snowball" && (
+                      <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Pay off your smallest balances first, then roll those payments into larger debts.
+                  </p>
+                  <div className="text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">Best for:</span> Quick psychological wins and staying motivated throughout your debt-free journey.
+                  </div>
+                </div>
+
+                {/* Avalanche Card */}
+                <div 
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                    strategy === "Avalanche" 
+                      ? "border-primary bg-primary/5" 
+                      : "border-border hover:border-muted-foreground/50"
+                  }`}
+                  onClick={() => setStrategy("Avalanche")}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setStrategy("Avalanche")}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Flame className={`h-5 w-5 ${strategy === "Avalanche" ? "text-primary" : "text-muted-foreground"}`} />
+                    <h3 className={`font-semibold ${strategy === "Avalanche" ? "text-primary" : "text-foreground"}`}>
+                      Avalanche Method
+                    </h3>
+                    {strategy === "Avalanche" && (
+                      <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Pay off highest interest rate debts first to minimize total interest paid over time.
+                  </p>
+                  <div className="text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">Best for:</span> Saving the most money mathematically by reducing costly interest charges.
+                  </div>
+                </div>
+              </div>
+
+              {/* Compare Tab Prompt */}
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+                <span>Want a detailed analysis for your specific debts?</span>
+                <a 
+                  href="#" 
+                  className="text-primary font-medium hover:underline inline-flex items-center gap-1"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.querySelector('[data-state][value="compare"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                  }}
+                >
+                  View Compare tab
+                  <ArrowRight className="h-3 w-3" />
+                </a>
+              </div>
+            </CardContent>
+          </Card>
 
       {/* Debt Management */}
       <Card>

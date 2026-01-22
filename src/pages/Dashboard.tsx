@@ -395,7 +395,7 @@ export const Dashboard = () => {
             "grid gap-6 items-stretch",
             dashboardState.canShowMoatBuilder && dashboardState.canShowBoss 
               ? "grid-cols-1 lg:grid-cols-2" 
-              : "grid-cols-1 max-w-2xl"
+              : "grid-cols-1"
           )}
         >
           {/* THE SANCTUARY (Defense) - Left Column */}

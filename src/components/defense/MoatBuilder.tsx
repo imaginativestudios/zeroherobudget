@@ -406,7 +406,7 @@ export function MoatBuilder({
               
               <Button variant="outline" className="flex-1 min-h-[44px]" asChild>
                 <Link to="/debts">
-                  View Debt Strategy
+                  View The Shadow Path
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
               </Button>

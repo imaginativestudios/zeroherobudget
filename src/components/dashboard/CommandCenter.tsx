@@ -17,7 +17,9 @@ import {
   ArrowRight,
   Castle,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Pencil,
+  Check
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { CurrencyInput } from '@/components/ui/currency-input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CompactDebtRow } from './CompactDebtRow';
 import { FreedomSlider } from '@/components/behavioral/FreedomSlider';
@@ -33,11 +36,18 @@ import { FUNCTIONAL_COPY, HEROIC_SUBTEXTS } from '@/lib/functionalVocabulary';
 import type { Debt } from '@/hooks/useLocalDebts';
 import type { DebtItem } from '@/lib/debtCalculations';
 
+interface ExpenseWithId {
+  id?: string;
+  category: string;
+  planned?: number;
+  name?: string;
+}
+
 interface CommandCenterProps {
   debts: Debt[];
   debtItems: DebtItem[];
   income: number;
-  expenses: Array<{ category: string; planned?: number; name?: string }>;
+  expenses: ExpenseWithId[];
   leftover: number;
   strategy: 'Snowball' | 'Avalanche';
   moatCurrent: number;
@@ -45,6 +55,9 @@ interface CommandCenterProps {
   currentBoss: Debt | null;
   freedomDate: string;
   onAddDebt?: () => void;
+  // Budget editing props
+  onIncomeChange?: (newIncome: number) => void;
+  onExpenseChange?: (id: string, newAmount: number) => void;
 }
 
 export function CommandCenter({
@@ -59,7 +72,10 @@ export function CommandCenter({
   currentBoss,
   freedomDate,
   onAddDebt,
+  onIncomeChange,
+  onExpenseChange,
 }: CommandCenterProps) {
+  const [isEditing, setIsEditing] = useState(false);
   // Calculate totals
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.planned || 0), 0);
   const moatPercentage = moatTarget > 0 ? Math.min(100, (moatCurrent / moatTarget) * 100) : 0;
@@ -193,49 +209,88 @@ export function CommandCenter({
         >
           <Card className="shadow-royal hover-lift h-full card-expense">
             <CardHeader className="pb-3">
-              <div>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Wallet className="h-5 w-5 text-success" />
-                  {FUNCTIONAL_COPY.budget}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <AlertCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[250px]">
-                      <p className="font-medium">What counts as an expense?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Recurring monthly costs like rent, utilities, groceries, 
-                        subscriptions, and discretionary spending.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {HEROIC_SUBTEXTS.budget}
-                </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Wallet className="h-5 w-5 text-success" />
+                    {FUNCTIONAL_COPY.budget}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-[250px]">
+                        <p className="font-medium">What counts as an expense?</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Recurring monthly costs like rent, utilities, groceries, 
+                          subscriptions, and discretionary spending.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    {HEROIC_SUBTEXTS.budget}
+                  </p>
+                </div>
+                {/* Edit Toggle */}
+                {(onIncomeChange || onExpenseChange) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditing(!isEditing)}
+                    className="h-8 w-8 p-0"
+                    aria-label={isEditing ? "Done editing" : "Edit budget"}
+                  >
+                    {isEditing ? (
+                      <Check className="h-4 w-4 text-success" />
+                    ) : (
+                      <Pencil className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                )}
               </div>
             </CardHeader>
             
             <CardContent className="space-y-3">
-              {/* Income Display */}
+              {/* Income Display/Edit */}
               <div className="flex items-center justify-between p-3 rounded-lg bg-success/5 border border-success/20">
                 <span className="font-medium">Monthly Income</span>
-                <span className="text-lg font-bold text-success">
-                  {income > 0 ? formatCurrency(income) : '—'}
-                </span>
+                {isEditing && onIncomeChange ? (
+                  <CurrencyInput
+                    prefix="$"
+                    value={income || ''}
+                    onChange={(e) => onIncomeChange(parseFloat(e.target.value) || 0)}
+                    className="w-28 text-right"
+                    aria-label="Monthly income"
+                  />
+                ) : (
+                  <span className="text-lg font-bold text-success">
+                    {income > 0 ? formatCurrency(income) : '—'}
+                  </span>
+                )}
               </div>
               
               {/* Top Expenses */}
               {topExpenses.length > 0 ? (
                 <div className="space-y-2">
                   {topExpenses.map((expense, i) => (
-                    <div key={i} className="flex justify-between py-1.5 text-sm">
-                      <span className="text-muted-foreground truncate max-w-[150px]">
+                    <div key={expense.id || i} className="flex items-center justify-between py-1.5 text-sm">
+                      <span className="text-muted-foreground truncate max-w-[120px]">
                         {expense.name || expense.category}
                       </span>
-                      <span className="font-medium">
-                        {formatCurrency(expense.planned || 0)}
-                      </span>
+                      {isEditing && onExpenseChange && expense.id ? (
+                        <CurrencyInput
+                          prefix="$"
+                          value={expense.planned || ''}
+                          onChange={(e) => onExpenseChange(expense.id!, parseFloat(e.target.value) || 0)}
+                          className="w-24 text-right text-sm"
+                          variant="expense"
+                          aria-label={`${expense.name || expense.category} amount`}
+                        />
+                      ) : (
+                        <span className="font-medium">
+                          {formatCurrency(expense.planned || 0)}
+                        </span>
+                      )}
                     </div>
                   ))}
                   {expenses.length > 5 && (

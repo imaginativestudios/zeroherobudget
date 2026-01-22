@@ -32,7 +32,7 @@ const ComingSoon = () => {
       icon: Heart,
       title: 'The Sanctuary',
       quote: '"Build a safe haven before the storm."',
-      description: 'Your first quest: A $1,000 emergency fund. This Sanctuary protects 80% of travelers from falling back into shadow.',
+      description: 'Your first goal: A $1,000 emergency fund. This safety net protects 80% of people from falling back into debt.',
     },
     {
       icon: Zap,
@@ -51,8 +51,8 @@ const ComingSoon = () => {
   // The Path - Wayfarer to Luminary
   const journeyLevels = [
     { level: 1, title: 'Wayfarer', quote: 'Every journey starts with a single step.' },
-    { level: 2, title: 'Pathfinder', quote: 'Your Sanctuary is complete. You\'re ready for the road ahead.' },
-    { level: 3, title: 'Sage', quote: 'You\'ve cleared your first Shadow.' },
+    { level: 2, title: 'Pathfinder', quote: 'Your emergency fund is complete. You\'re ready for the road ahead.' },
+    { level: 3, title: 'Sage', quote: 'You\'ve paid off your first debt.' },
     { level: 4, title: 'Luminary', quote: 'Debt-free. You ARE the Zero Hero.' },
   ];
 
@@ -366,7 +366,7 @@ const ComingSoon = () => {
               Your Arsenal
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powerful tools for your quest to financial freedom
+              Powerful tools for your path to financial freedom
             </p>
           </div>
 
@@ -378,8 +378,8 @@ const ComingSoon = () => {
                 icon: TrendingDown,
               },
               {
-                title: 'The Atlas',
-                description: 'Visualize your spending with tactical precision',
+                title: 'Smart Budget Planner',
+                description: 'Visualize your spending with complete clarity',
                 icon: Target,
               },
               {
@@ -419,7 +419,7 @@ const ComingSoon = () => {
             viewport={{ once: true }}
             className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6"
           >
-            Ready to Begin Your Hero's Journey?
+            Ready to Take Control?
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}

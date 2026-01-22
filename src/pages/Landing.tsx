@@ -27,7 +27,7 @@ export default function Landing() {
       icon: Heart,
       title: 'The Sanctuary',
       quote: '"Build a safe haven before the storm."',
-      description: 'Your first quest: A $1,000 emergency fund. This Sanctuary protects 80% of travelers from falling back into shadow.',
+      description: 'Your first goal: A $1,000 emergency fund. This safety net protects 80% of people from falling back into debt.',
     },
     {
       icon: Zap,
@@ -51,14 +51,14 @@ export default function Landing() {
       quote: 'Every journey starts with a single step.',
       milestones: [
         'Complete onboarding',
-        'Enter your first shadow',
-        'Set your Sanctuary target',
+        'Add your first debt',
+        'Set your emergency fund goal',
       ],
     },
     {
       level: 2,
       title: 'Pathfinder',
-      quote: 'Your Sanctuary is complete. You\'re ready for the road ahead.',
+      quote: 'Your emergency fund is complete. You\'re ready for the road ahead.',
       milestones: [
         'Build $1,000 emergency fund',
         'Log 7 days of transactions',
@@ -68,7 +68,7 @@ export default function Landing() {
     {
       level: 3,
       title: 'Sage',
-      quote: 'You\'ve cleared your first Shadow.',
+      quote: 'You\'ve paid off your first debt.',
       milestones: [
         'Pay off your first debt',
         'Maintain 30-day streak',
@@ -80,7 +80,7 @@ export default function Landing() {
       title: 'Luminary',
       quote: 'Debt-free. You ARE the Zero Hero.',
       milestones: [
-        'All shadows cleared',
+        'All debts paid off',
         '6-month emergency fund',
         'Financial freedom achieved',
       ],
@@ -144,7 +144,7 @@ export default function Landing() {
                 className="text-sm sm:text-base md:text-lg px-6 sm:px-8 h-11 sm:h-12"
                 onClick={beginQuest}
               >
-                Begin Your Quest
+                Get Started Free
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               </Button>
               <Button
@@ -309,7 +309,7 @@ export default function Landing() {
               viewport={{ once: true }}
               className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6"
             >
-              Ready to Begin Your Hero's Journey?
+              Ready to Take Control?
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -318,7 +318,7 @@ export default function Landing() {
               transition={{ delay: 0.1 }}
               className="text-sm sm:text-base md:text-lg lg:text-xl mb-8 sm:mb-12 text-white/90 max-w-2xl mx-auto px-2"
             >
-              Transform your relationship with money. Your quest to financial freedom starts today.
+              Transform your relationship with money. Your path to financial freedom starts today.
             </motion.p>
 
             <motion.div
@@ -333,13 +333,13 @@ export default function Landing() {
                 onClick={beginQuest}
                 className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
               >
-                Begin Your Quest
+                Get Started Free
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               </Button>
             </motion.div>
 
             <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/90">
-              Already a Hero?{' '}
+              Already have an account?{' '}
               <button
                 onClick={() => openAuth('login')}
                 className="underline hover:text-white transition-colors font-medium"

@@ -13,7 +13,7 @@ import {
 
 interface SubscriptionCanceledEmailProps {
   email: string;
-  tierName: string;
+  planDisplayName: string;
   accessEndDate: string;
   pricingUrl: string;
   supportEmail: string;
@@ -21,7 +21,7 @@ interface SubscriptionCanceledEmailProps {
 
 export const SubscriptionCanceledEmail: React.FC<SubscriptionCanceledEmailProps> = ({
   email,
-  tierName,
+  planDisplayName,
   accessEndDate,
   pricingUrl,
   supportEmail,
@@ -53,8 +53,8 @@ export const SubscriptionCanceledEmail: React.FC<SubscriptionCanceledEmailProps>
             </Text>
 
             <Text style={paragraph}>
-              We're grateful you chose to join us on your financial adventure as a{" "}
-              <strong>{tierName}</strong> member. Every step you took on your quest toward 
+              We're grateful you chose to join us on your financial adventure with our{" "}
+              <strong>{planDisplayName}</strong>. Every step you took on your quest toward 
               financial freedom matters, and we hope Zero Hero helped light the way.
             </Text>
 

@@ -9,18 +9,21 @@ import { PaymentFailedEmail } from "./_templates/payment-failed.tsx";
 import { SubscriptionCanceledEmail } from "./_templates/subscription-canceled.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
 
-const getTierName = (amountCents: number): string => {
-  if (amountCents <= 500) return "Starter";
-  if (amountCents <= 900) return "Supporter";
-  if (amountCents <= 1200) return "Champion";
-  return "Hero";
+// Helper to determine plan type from Stripe subscription
+const getPlanType = (subscription: Stripe.Subscription): 'monthly' | 'annual' => {
+  const recurringInterval = subscription.items.data[0]?.price?.recurring?.interval;
+  return recurringInterval === 'year' ? 'annual' : 'monthly';
 };
 
-const getTierEmoji = (amountCents: number): string => {
-  if (amountCents <= 500) return "🌱";
-  if (amountCents <= 900) return "💪";
-  if (amountCents <= 1200) return "🏆";
-  return "⚔️";
+// Helper to get display name for plan
+const getPlanDisplayName = (planType: 'monthly' | 'annual'): string => {
+  return planType === 'annual' ? 'Annual Plan' : 'Monthly Plan';
+};
+
+// Helper to format amount with billing period
+const formatPlanAmount = (planType: 'monthly' | 'annual', amountCents: number): string => {
+  const amount = amountCents / 100;
+  return planType === 'annual' ? `$${amount}/year` : `$${amount}/month`;
 };
 
 serve(async (req) => {
@@ -75,15 +78,17 @@ serve(async (req) => {
         }
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
+        const amountCents = subscription.items.data[0]?.price?.unit_amount || 500;
         const status = subscription.status;
+        const planType = getPlanType(subscription);
+        const planDisplayName = getPlanDisplayName(planType);
 
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
             subscription_status: status === 'trialing' ? 'trialing' : 'active',
             stripe_customer_id: customerId,
-            subscription_tier: getTierName(amountCents),
+            subscription_tier: planType, // Now stores 'monthly' or 'annual'
             subscription_amount: amountCents,
             subscription_end: new Date(subscription.current_period_end * 1000).toISOString(),
             updated_at: new Date().toISOString(),
@@ -109,15 +114,15 @@ serve(async (req) => {
               recipientEmail: customerEmail,
               emailType: 'subscription_welcome',
               status: 'pending',
-              metadata: { tier: getTierName(amountCents), amount: amountCents / 100 },
+              metadata: { planType, planDisplayName, amount: amountCents / 100 },
             });
 
             // Render email template
             const html = await renderAsync(
               React.createElement(SubscriptionWelcomeEmail, {
                 email: customerEmail,
-                tierName: getTierName(amountCents),
-                tierEmoji: getTierEmoji(amountCents),
+                planType,
+                planDisplayName,
                 amount: amountCents / 100,
                 isTrialing,
                 trialEndDate,
@@ -162,6 +167,7 @@ serve(async (req) => {
 
         const status = subscription.status;
         const amountCents = subscription.items.data[0]?.price?.unit_amount || 0;
+        const planType = getPlanType(subscription);
 
         let subscriptionStatus: string;
         if (status === 'active') {
@@ -178,7 +184,7 @@ serve(async (req) => {
           .from('profiles')
           .update({
             subscription_status: subscriptionStatus,
-            subscription_tier: subscriptionStatus === 'canceled' ? null : getTierName(amountCents),
+            subscription_tier: subscriptionStatus === 'canceled' ? null : planType,
             subscription_amount: subscriptionStatus === 'canceled' ? null : amountCents,
             subscription_end: new Date(subscription.current_period_end * 1000).toISOString(),
             updated_at: new Date().toISOString(),
@@ -198,9 +204,10 @@ serve(async (req) => {
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted || !customer.email) break;
 
-        // Get tier info before clearing it
-        const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
-        const tierName = getTierName(amountCents);
+        // Get plan info before clearing it
+        const amountCents = subscription.items.data[0]?.price?.unit_amount || 500;
+        const planType = getPlanType(subscription);
+        const planDisplayName = getPlanDisplayName(planType);
         const accessEndDate = new Date(subscription.current_period_end * 1000).toISOString();
 
         const { error: updateError } = await supabase
@@ -231,14 +238,14 @@ serve(async (req) => {
               recipientEmail: customer.email,
               emailType: 'subscription_canceled',
               status: 'pending',
-              metadata: { tier: tierName, accessEndDate },
+              metadata: { planType, planDisplayName, accessEndDate },
             });
 
             // Render email
             const html = await renderAsync(
               React.createElement(SubscriptionCanceledEmail, {
                 email: customer.email,
-                tierName,
+                planDisplayName,
                 accessEndDate,
                 pricingUrl,
                 supportEmail,
@@ -278,15 +285,17 @@ serve(async (req) => {
 
         // Get subscription details for the email
         const subscriptionId = invoice.subscription as string;
-        let tierName = "Starter";
-        let amount = 3;
+        let planType: 'monthly' | 'annual' = 'monthly';
+        let planDisplayName = "Monthly Plan";
+        let amount = 5;
         let nextRetryDate: string | undefined;
 
         if (subscriptionId) {
           try {
             const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-            const amountCents = subscription.items.data[0]?.price?.unit_amount || 300;
-            tierName = getTierName(amountCents);
+            const amountCents = subscription.items.data[0]?.price?.unit_amount || 500;
+            planType = getPlanType(subscription);
+            planDisplayName = getPlanDisplayName(planType);
             amount = amountCents / 100;
             
             // Calculate next retry date (Stripe typically retries after 3-5 days)
@@ -321,14 +330,15 @@ serve(async (req) => {
               recipientEmail: customer.email,
               emailType: 'payment_failed',
               status: 'pending',
-              metadata: { tier: tierName, amount, invoiceId: invoice.id },
+              metadata: { planType, planDisplayName, amount, invoiceId: invoice.id },
             });
 
             // Render email
             const html = await renderAsync(
               React.createElement(PaymentFailedEmail, {
                 email: customer.email,
-                tierName,
+                planDisplayName,
+                planType,
                 amount,
                 nextRetryDate,
                 portalUrl,

@@ -12,25 +12,25 @@ const FAQ_KNOWLEDGE = `
 ## General Questions
 
 **Q: What is Zero Hero?**
-A: Zero Hero is your companion on the Hero's Journey to financial freedom. It combines your War Map (budget tracking), Battle Plan (debt payoff strategies like Snowball and Avalanche), subscription management, and household collaboration features to help you vanquish your Balance Foes and become Victorious.
+A: Zero Hero is your companion on the path to financial freedom. It combines budget tracking, debt payoff strategies (Snowball and Avalanche), subscription management, and household collaboration features to help you eliminate debt and achieve financial independence.
 
 **Q: Does Zero Hero offer a free trial?**
-A: Zero Hero offers a 7-day free trial to help you get started. After your trial, affordable subscription plans give you full access to your War Map, Battle Plan, Quest Log (transactions), Intel Center (reports), and household collaboration features.
+A: Zero Hero offers a 7-day free trial to help you get started. After your trial, affordable subscription plans give you full access to Budget, Debt Strategy, Transactions, Reports, and household collaboration features.
 
 **Q: What debt payoff strategies are available?**
-A: Zero Hero offers two proven tactics for slaying Balance Foes:
-- Snowball: Target smallest Balance Foes first for quick victories and motivation
-- Avalanche: Target highest interest rates first to save the most gold
-Both strategies include visual progress tracking and heroic achievements.
+A: Zero Hero offers two proven strategies for paying off debt:
+- Snowball: Target smallest debts first for quick wins and motivation
+- Avalanche: Target highest interest rates first to save the most money
+Both strategies include visual progress tracking and achievements.
 
 **Q: Can I use Zero Hero with my family?**
-A: Absolutely! Zero Hero includes household collaboration features. You can invite fellow heroes to join your household, manage shared War Maps and deployments, and track financial quests together.
+A: Absolutely! Zero Hero includes household collaboration features. You can invite family members to join your household, manage shared budgets and expenses, and track financial goals together.
 
 **Q: What browsers are supported?**
 A: Zero Hero works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated for optimal performance.
 
 **Q: Can I access Zero Hero on my phone?**
-A: Yes! Zero Hero is fully responsive and works seamlessly on mobile devices, tablets, and desktops. Access your financial kingdom anywhere, anytime.
+A: Yes! Zero Hero is fully responsive and works seamlessly on mobile devices, tablets, and desktops. Access your finances anywhere, anytime.
 
 ## Account & Authentication
 
@@ -55,22 +55,22 @@ A: Yes! Your data is stored securely using Supabase's enterprise-grade infrastru
 A: Never. We never sell, rent, or share your personal financial data with third parties. Your privacy is paramount.
 
 **Q: Can I export my data?**
-A: Yes! You can export your War Map data, Quest Log (transactions), Balance Foes (debts), and Intel (reports) in CSV or PDF format from the respective pages.
+A: Yes! You can export your budget data, transactions, debts, and reports in CSV or PDF format from the respective pages.
 
 **Q: What happens to my data if I delete my account?**
 A: All your data is permanently deleted from our servers within 30 days of account deletion. We retain no copies. Make sure to export any data you need before deleting your account.
 
 ## Features Overview
 
-**War Map (Budget):** Create and manage monthly plans across 10 standard categories including Housing, Utilities, Transportation, Food, and more. Track planned vs actual deployments with visual charts.
+**Budget:** Create and manage monthly spending plans across 10 standard categories including Housing, Utilities, Transportation, Food, and more. Track planned vs actual expenses with visual charts.
 
-**Battle Plan (Debt Management):** Add all your Balance Foes and choose between Snowball or Avalanche tactics. Visualize your victory date and track progress with heroic achievements.
+**Debt Strategy:** Add all your debts and choose between Snowball or Avalanche methods. Visualize your payoff date and track progress with achievements.
 
-**Subscription Management:** Track all your recurring obligations, get alerts for upcoming renewals, and identify opportunities to cut unnecessary deployments.
+**Subscription Management:** Track all your recurring subscriptions, get alerts for upcoming renewals, and identify opportunities to cut unnecessary spending.
 
-**Intel Center (Reports):** Access comprehensive financial intelligence including income analysis, Kingdom Wealth (net worth) tracking, War Chest analysis, and deployment breakdowns.
+**Reports:** Access comprehensive financial insights including income analysis, net worth tracking, savings analysis, and expense breakdowns.
 
-**Household Collaboration:** Invite fellow heroes, share financial data, and work together toward common financial quests with role-based permissions.
+**Household Collaboration:** Invite family members, share financial data, and work together toward common financial goals with role-based permissions.
 
 ## Troubleshooting
 
@@ -85,8 +85,8 @@ A: Try these steps:
 **Q: My data isn't syncing across devices**
 A: Ensure you're logged in with the same account on all devices. Data syncs automatically when you're authenticated.
 
-**Q: I can't see my Quest Log entries**
-A: Make sure you've added at least one account first. Quest Log entries require an account to be associated with. Check the filters to ensure you're not filtering out all data.
+**Q: I can't see my transactions**
+A: Make sure you've added at least one account first. Transactions require an account to be associated with. Check the filters to ensure you're not filtering out all data.
 
 **Q: How do I clear the cache?**
 A: In Chrome/Edge: Ctrl+Shift+Delete (Cmd+Shift+Delete on Mac)
@@ -97,10 +97,10 @@ Select "Cached images and files" and clear for the time range you prefer.
 ## Getting Started
 
 1. **Create your account** - Click "Get Started" and sign up
-2. **Set up your War Map** - Go to War Map page and add income and deployment categories
-3. **Add your Balance Foes** - Navigate to Battle Plan page and input all Balance Foes with balances and interest rates
-4. **Choose your tactics** - Select Snowball or Avalanche method
-5. **Track your quest** - Monitor your journey on the Dashboard and celebrate Victories!
+2. **Set up your Budget** - Go to Budget page and add income and expense categories
+3. **Add your Debts** - Navigate to Debt Strategy page and input all debts with balances and interest rates
+4. **Choose your strategy** - Select Snowball or Avalanche method
+5. **Track your progress** - Monitor your journey on the Dashboard and celebrate your wins!
 
 ## Contact & Support
 

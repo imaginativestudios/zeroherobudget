@@ -8,7 +8,7 @@
 
 export const FUNCTIONAL_COPY = {
   // Budget/Spending Terms
-  budget: 'Budget Planner',
+  budget: 'Budget',
   budgets: 'Budget',
   atlas: 'Budget Planner',
   overspent: 'Over Budget',

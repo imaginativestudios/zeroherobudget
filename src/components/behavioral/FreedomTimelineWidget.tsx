@@ -15,11 +15,11 @@ interface FreedomTimelineWidgetProps {
 }
 
 const getHeroicMessage = (months: number): string => {
-  if (months === 0) return "Victory! You've slain all your debts!";
-  if (months <= 6) return "The end is near, warrior! Push through!";
-  if (months <= 12) return "You're in the final stretch of your quest!";
-  if (months <= 24) return "Steady progress leads to certain victory!";
-  if (months <= 36) return "Your discipline will be rewarded!";
+  if (months === 0) return "Victory! You've paid off all your debts!";
+  if (months <= 6) return "Almost there! Just a few more months!";
+  if (months <= 12) return "You're in the final stretch!";
+  if (months <= 24) return "Steady progress leads to certain success!";
+  if (months <= 36) return "Your discipline will pay off!";
   return "The longest journeys start with a single step!";
 };
 
@@ -57,7 +57,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
             </div>
             <h3 className="text-2xl font-bold text-accent">Debt Free!</h3>
             <p className="text-muted-foreground mt-1">
-              You've achieved financial freedom, hero!
+              You've achieved financial freedom!
             </p>
           </div>
           <Button asChild variant="outline" className="w-full">

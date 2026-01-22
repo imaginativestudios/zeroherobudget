@@ -94,3 +94,25 @@ export const formatCurrency = (value: number): string => {
 
 // Demo User ID for isolated demo mode
 export const DEMO_USER_ID = 'demo-hero-00000000';
+
+// Stripe Pricing Configuration
+export const STRIPE_PRICES = {
+  monthly: {
+    priceId: 'price_1SsW56LOOLpslU1kncgwtvl1',
+    productId: 'prod_TqCUft00OmYfZR',
+    amount: 5,
+    interval: 'month' as const,
+    label: 'Monthly',
+  },
+  annual: {
+    priceId: 'price_1SsW5ULOOLpslU1kdyaY3yy1',
+    productId: 'prod_TqCUwrl7vHhSB3',
+    amount: 50,
+    interval: 'year' as const,
+    label: 'Annual',
+    savings: 10, // $60 - $50 = $10 saved
+    monthlyEquivalent: 4.17,
+  },
+} as const;
+
+export type PricingInterval = keyof typeof STRIPE_PRICES;

@@ -2,23 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Castle, Check, Loader2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
+import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { AuthModal } from '@/components/AuthModal';
 import { toast } from 'sonner';
+import { STRIPE_PRICES, type PricingInterval } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 interface PricingStepProps {
   onStartTrial: () => void;
   onSkipTrial: () => void;
 }
-
-const getTierInfo = (amount: number) => {
-  if (amount <= 3) return { name: 'Starter', emoji: '🌱', color: 'text-emerald-500' };
-  if (amount <= 7) return { name: 'Supporter', emoji: '⚔️', color: 'text-blue-500' };
-  if (amount <= 11) return { name: 'Champion', emoji: '🛡️', color: 'text-purple-500' };
-  return { name: 'Hero', emoji: '👑', color: 'text-accent' };
-};
 
 const features = [
   'Unlimited budget tracking',
@@ -29,16 +24,16 @@ const features = [
 ];
 
 export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
-  const [amount, setAmount] = useState(5);
+  const [selectedInterval, setSelectedInterval] = useState<PricingInterval>('annual');
   const [processing, setProcessing] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const pendingCheckoutRef = useRef(false);
   
   const { user } = useAuth();
-  const { createCheckout, subscribed, isTrialing, loading: statusLoading, tierName, tierEmoji } = useSubscriptionStatus();
+  const { createCheckout, subscribed, isTrialing, loading: statusLoading, interval: currentInterval } = useSubscriptionStatus();
   
-  const tierInfo = getTierInfo(amount);
   const hasActiveSubscription = subscribed || isTrialing;
+  const selectedPrice = STRIPE_PRICES[selectedInterval];
 
   // When user logs in after opening auth modal, trigger checkout
   useEffect(() => {
@@ -53,7 +48,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
     
     setProcessing(true);
     try {
-      const checkoutUrl = await createCheckout(amount);
+      const checkoutUrl = await createCheckout(selectedInterval);
       
       // Save that we're in checkout flow
       localStorage.setItem('bdt_checkout_in_progress', 'true');
@@ -116,16 +111,16 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             </p>
           </motion.div>
 
-          {/* Current Tier Badge */}
+          {/* Current Plan Badge */}
           <motion.div
             initial={{ y: 15, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-center mb-8"
           >
-            <span className="text-4xl">{tierEmoji || '⚔️'}</span>
+            <span className="text-4xl">🏰</span>
             <p className="text-lg font-bold text-primary mt-2">
-              {tierName || 'Hero'}
+              {currentInterval === 'annual' ? 'Annual' : 'Monthly'} Plan
             </p>
           </motion.div>
 
@@ -181,7 +176,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             Initialize Your Fortress
           </h1>
           <p className="text-muted-foreground">
-            Choose your support level to unlock the full experience
+            Choose your plan to unlock the full experience
           </p>
         </motion.div>
 
@@ -192,34 +187,69 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
           transition={{ delay: 0.2 }}
           className="space-y-6"
         >
-          {/* Tier Badge */}
-          <div className="text-center">
-            <span className={`text-4xl`}>{tierInfo.emoji}</span>
-            <p className={`text-lg font-bold ${tierInfo.color} mt-2`}>
-              {tierInfo.name}
-            </p>
-          </div>
-
-          {/* Amount Display */}
-          <div className="text-center">
-            <span className="text-4xl font-bold text-foreground">${amount}</span>
-            <span className="text-muted-foreground">/month</span>
-          </div>
-
-          {/* Slider */}
-          <div className="px-2">
-            <Slider
-              value={[amount]}
-              onValueChange={(values) => setAmount(values[0])}
-              min={3}
-              max={15}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex justify-between text-sm text-muted-foreground mt-2">
-              <span>$3</span>
-              <span>$15</span>
+          {/* Interval Toggle */}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center bg-muted p-1 rounded-lg">
+              <button
+                onClick={() => setSelectedInterval('monthly')}
+                className={cn(
+                  "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
+                  selectedInterval === 'monthly'
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setSelectedInterval('annual')}
+                className={cn(
+                  "px-4 py-1.5 rounded-md text-sm font-medium transition-all relative",
+                  selectedInterval === 'annual'
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Annual
+                <span className="absolute -top-2 -right-2 bg-chart-3 text-chart-3-foreground text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                  -$10
+                </span>
+              </button>
             </div>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-2 gap-3">
+            <Card 
+              className={cn(
+                "cursor-pointer transition-all border-2",
+                selectedInterval === 'monthly' 
+                  ? "border-primary bg-primary/5" 
+                  : "border-border hover:border-border/80"
+              )}
+              onClick={() => setSelectedInterval('monthly')}
+            >
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-foreground">${STRIPE_PRICES.monthly.amount}</div>
+                <div className="text-xs text-muted-foreground">/month</div>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className={cn(
+                "cursor-pointer transition-all border-2 relative",
+                selectedInterval === 'annual' 
+                  ? "border-primary bg-primary/5" 
+                  : "border-border hover:border-border/80"
+              )}
+              onClick={() => setSelectedInterval('annual')}
+            >
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-foreground">${STRIPE_PRICES.annual.amount}</div>
+                <div className="text-xs text-muted-foreground">/year</div>
+                <div className="text-xs text-chart-3 font-medium mt-1">${STRIPE_PRICES.annual.monthlyEquivalent}/mo</div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Features */}
@@ -235,7 +265,9 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
           {/* Trial Info */}
           <div className="text-center text-sm text-muted-foreground bg-accent/10 rounded-lg p-3">
             <span className="text-accent font-medium">✨ Try free for 7 days</span>
-            <span className="block mt-1">then ${amount}/month · Cancel anytime</span>
+            <span className="block mt-1">
+              then ${selectedPrice.amount}/{selectedInterval === 'annual' ? 'year' : 'month'} · Cancel anytime
+            </span>
           </div>
         </motion.div>
 

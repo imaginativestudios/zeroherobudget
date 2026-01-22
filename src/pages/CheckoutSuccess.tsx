@@ -25,8 +25,7 @@ const CheckoutSuccess = () => {
   const { 
     subscribed, 
     isTrialing, 
-    tierName, 
-    tierEmoji,
+    interval,
     amount,
     trialEnd,
     loading: subLoading,
@@ -184,9 +183,9 @@ const CheckoutSuccess = () => {
                 className="flex justify-center mb-6"
               >
                 <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
-                  <span className="text-2xl">{tierEmoji}</span>
-                  <span className="text-lg font-medium text-white">{tierName} Tier</span>
-                  {amount && <span className="text-white/60">• ${amount}/mo</span>}
+                  <span className="text-2xl">🏰</span>
+                  <span className="text-lg font-medium text-white">{interval === 'annual' ? 'Annual' : 'Monthly'} Plan</span>
+                  {amount && <span className="text-white/60">• ${amount}/{interval === 'annual' ? 'yr' : 'mo'}</span>}
                 </div>
               </motion.div>
 

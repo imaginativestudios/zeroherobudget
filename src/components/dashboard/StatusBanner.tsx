@@ -8,13 +8,13 @@
 import { TrialCountdownBanner } from './TrialCountdownBanner';
 import { RegroupingBanner } from '@/components/defense/RegroupingBanner';
 import { PrivacyNotice } from '@/components/PrivacyNotice';
+import type { PricingInterval } from '@/lib/constants';
 
 interface StatusBannerProps {
   // Trial status
   isTrialing: boolean;
   trialEnd: string | null;
-  tierEmoji?: string | null;
-  tierName?: string | null;
+  interval?: PricingInterval | null;
   
   // Moat status
   isRegrouping: boolean;
@@ -27,8 +27,7 @@ type BannerType = 'trial' | 'regrouping' | 'privacy' | null;
 export function StatusBanner({
   isTrialing,
   trialEnd,
-  tierEmoji,
-  tierName,
+  interval,
   isRegrouping,
   isVulnerable,
   bannerDismissed,
@@ -57,8 +56,7 @@ export function StatusBanner({
       return (
         <TrialCountdownBanner 
           trialEnd={trialEnd!} 
-          tierEmoji={tierEmoji} 
-          tierName={tierName} 
+          interval={interval} 
         />
       );
     

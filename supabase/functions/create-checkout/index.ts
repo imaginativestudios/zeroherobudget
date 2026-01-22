@@ -7,6 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Fixed price IDs for monthly and annual plans
+const PRICE_IDS = {
+  monthly: 'price_1SsW56LOOLpslU1kncgwtvl1',
+  annual: 'price_1SsW5ULOOLpslU1kdyaY3yy1',
+} as const;
+
+type PricingInterval = keyof typeof PRICE_IDS;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,13 +39,14 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
-    const { amount } = await req.json();
+    const { interval } = await req.json();
     
-    // Validate amount is between $3 and $15 (300-1500 cents)
-    const amountCents = Math.round(amount * 100);
-    if (amountCents < 300 || amountCents > 1500) {
-      throw new Error("Amount must be between $3 and $15");
+    // Validate interval
+    if (!interval || !PRICE_IDS[interval as PricingInterval]) {
+      throw new Error("Invalid subscription interval. Must be 'monthly' or 'annual'");
     }
+
+    const priceId = PRICE_IDS[interval as PricingInterval];
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -76,20 +85,13 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://ukpejgrghpewwdfztryg.lovableproject.com";
     
-    // Create checkout session with dynamic pricing and 7-day free trial for new customers
+    // Create checkout session with fixed pricing and 7-day free trial for new customers
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product: "prod_ToGDxQx1RgvD3J", // Zero Hero Subscription product
-            unit_amount: amountCents,
-            recurring: {
-              interval: "month",
-            },
-          },
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -98,7 +100,7 @@ serve(async (req) => {
       cancel_url: `${origin}/pricing?canceled=true`,
       metadata: {
         user_id: user.id,
-        selected_amount: amountCents.toString(),
+        interval: interval,
       },
     };
     
@@ -121,7 +123,7 @@ serve(async (req) => {
     
     // Only expose safe, expected error messages to the client
     const safeErrors = [
-      "Amount must be between $3 and $15",
+      "Invalid subscription interval. Must be 'monthly' or 'annual'",
       "You already have an active subscription. Please manage it from your account settings.",
     ];
     const clientMessage = safeErrors.includes(errorMessage) 

@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import type { PricingInterval } from '@/lib/constants';
 
 interface TrialCountdownBannerProps {
   trialEnd: string;
-  tierEmoji?: string | null;
-  tierName?: string | null;
+  interval?: PricingInterval | null;
 }
 
-export function TrialCountdownBanner({ trialEnd, tierEmoji, tierName }: TrialCountdownBannerProps) {
+export function TrialCountdownBanner({ trialEnd, interval }: TrialCountdownBannerProps) {
   const navigate = useNavigate();
   const daysRemaining = differenceInDays(new Date(trialEnd), new Date());
   
@@ -40,6 +40,8 @@ export function TrialCountdownBanner({ trialEnd, tierEmoji, tierName }: TrialCou
       ? '1 day left' 
       : `${daysRemaining} days left`;
 
+  const planLabel = interval === 'annual' ? 'Annual' : 'Monthly';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -59,10 +61,10 @@ export function TrialCountdownBanner({ trialEnd, tierEmoji, tierName }: TrialCou
             <span className="font-semibold">{daysText}</span>
             <span className="text-sm opacity-80">in your free trial</span>
           </div>
-          {tierName && (
+          {interval && (
             <p className="text-sm opacity-70 flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
-              Your {tierEmoji} {tierName} tier awaits!
+              Your {planLabel} Plan awaits!
             </p>
           )}
         </div>

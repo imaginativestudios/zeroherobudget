@@ -7,21 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Get tier name based on amount in cents
-const getTierName = (amountCents: number): string => {
-  if (amountCents <= 500) return "Starter";
-  if (amountCents <= 900) return "Supporter";
-  if (amountCents <= 1200) return "Champion";
-  return "Hero";
-};
-
-const getTierEmoji = (amountCents: number): string => {
-  if (amountCents <= 500) return "🌱";
-  if (amountCents <= 900) return "💪";
-  if (amountCents <= 1200) return "🏆";
-  return "🦸";
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -54,8 +39,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         subscribed: false,
         is_trialing: false,
-        tier_name: null,
-        tier_emoji: null,
+        interval: null,
         amount: null,
         subscription_end: null,
         trial_end: null,
@@ -88,8 +72,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         subscribed: false,
         is_trialing: false,
-        tier_name: null,
-        tier_emoji: null,
+        interval: null,
         amount: null,
         subscription_end: null,
         trial_end: null,
@@ -100,7 +83,12 @@ serve(async (req) => {
     }
 
     const isTrialing = subscription.status === "trialing";
-    const amountCents = subscription.items.data[0]?.price?.unit_amount ?? 300;
+    const priceItem = subscription.items.data[0]?.price;
+    const amountCents = priceItem?.unit_amount ?? 500;
+    const recurringInterval = priceItem?.recurring?.interval;
+    
+    // Determine if monthly or annual based on price recurring interval
+    const interval = recurringInterval === 'year' ? 'annual' : 'monthly';
     
     // Safely handle date conversions
     let subscriptionEnd: string | null = null;
@@ -116,8 +104,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscribed: true,
       is_trialing: isTrialing,
-      tier_name: getTierName(amountCents),
-      tier_emoji: getTierEmoji(amountCents),
+      interval: interval,
       amount: amountCents / 100,
       subscription_end: subscriptionEnd,
       trial_end: trialEnd,

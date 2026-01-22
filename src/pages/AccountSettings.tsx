@@ -40,8 +40,7 @@ const AccountSettings = () => {
   const { 
     subscribed, 
     isTrialing, 
-    tierName, 
-    tierEmoji, 
+    interval, 
     amount, 
     subscriptionEnd,
     trialEnd,
@@ -298,8 +297,8 @@ const AccountSettings = () => {
                 {subscribed || isTrialing ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">{tierEmoji || '🌱'}</span>
-                      <span className="text-xl font-semibold">{tierName || 'Starter'}</span>
+                      <span className="text-2xl">🏰</span>
+                      <span className="text-xl font-semibold">{interval === 'annual' ? 'Annual' : 'Monthly'} Plan</span>
                     </div>
                     <Badge variant={status.variant}>{status.label}</Badge>
                   </>
@@ -312,8 +311,8 @@ const AccountSettings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   {amount && (
                     <div>
-                      <p className="text-muted-foreground">Monthly Amount</p>
-                      <p className="font-medium">${(amount / 100).toFixed(2)}/month</p>
+                      <p className="text-muted-foreground">Subscription Amount</p>
+                      <p className="font-medium">${amount}/{interval === 'annual' ? 'year' : 'month'}</p>
                     </div>
                   )}
                   {subscriptionEnd && (

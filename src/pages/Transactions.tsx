@@ -286,7 +286,7 @@ export const Transactions = () => {
   return <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-foreground">Actual Transactions</h1>
+          <h1 className="text-3xl font-bold text-foreground">Transactions</h1>
           
           <div className="flex flex-wrap items-center gap-2">
             <Tooltip>

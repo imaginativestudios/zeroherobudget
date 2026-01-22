@@ -48,43 +48,43 @@ export const Reports = () => {
     }).sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance)).slice(0, 3); // Show top 3 variances
   }, [expenses, monthlyActuals]);
 
-  // Generate overall insights with heroic vocabulary
+  // Generate overall insights with functional language
   const reportInsight = useMemo(() => {
     const totalPlanned = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
     const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
     const totalVariance = totalActual - totalPlanned;
     const variancePercentage = totalPlanned > 0 ? totalVariance / totalPlanned * 100 : 0;
     if (Math.abs(variancePercentage) < 5) {
-      return "Excellent tactical precision! Your deployment closely matches your war map.";
+      return "Excellent budget accuracy! Your spending closely matches your plan.";
     } else if (variancePercentage > 20) {
-      return `Deployment is ${variancePercentage.toFixed(1)}% in Tactical Overstretch. Review high-variance categories.`;
+      return `Spending is ${variancePercentage.toFixed(1)}% over budget. Review high-variance categories.`;
     } else if (variancePercentage < -20) {
-      return `Heroic restraint! Deployment is ${Math.abs(variancePercentage).toFixed(1)}% in Strategic Surplus.`;
+      return `Great restraint! Spending is ${Math.abs(variancePercentage).toFixed(1)}% under budget.`;
     } else {
-      return `Deployment is ${variancePercentage > 0 ? 'in Tactical Overstretch' : 'in Strategic Surplus'} by ${Math.abs(variancePercentage).toFixed(1)}%.`;
+      return `Spending is ${variancePercentage > 0 ? 'over' : 'under'} budget by ${Math.abs(variancePercentage).toFixed(1)}%.`;
     }
   }, [expenses, monthlyActuals]);
   const hasTransactionData = useMemo(() => Object.values(monthlyActuals).some(amount => amount > 0), [monthlyActuals]);
   const reportTypes = [{
-    title: "Income Intel",
-    description: "Track your monthly income sources and reinforcements",
+    title: "Income Report",
+    description: "Track your monthly income sources",
     icon: DollarSign,
     href: "/reports/income",
     color: "text-success"
   }, {
-    title: "Available Funds",
-    description: "See your funds available for clearing Shadows",
+    title: "Available for Debt",
+    description: "See your surplus funds available for debt payments",
     icon: Target,
     href: "/reports/available",
     color: "text-warning"
   }, {
     title: "Net Worth",
-    description: "Monitor your assets, Shadows, and overall worth",
+    description: "Monitor your assets, debts, and overall net worth",
     icon: TrendingUp,
     href: "/reports/net-worth",
     color: "text-primary"
   }, {
-    title: "Recurring Commitments",
+    title: "Subscriptions Report",
     description: "Analyze your recurring subscription costs",
     icon: CreditCard,
     href: "/reports/subscriptions",
@@ -92,7 +92,7 @@ export const Reports = () => {
   }];
   return <div className="pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-foreground">Intel Center</h1>
+        <h1 className="text-3xl font-bold text-foreground">Reports</h1>
         <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">
           <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Label className="text-sm font-medium">Month:</Label>

@@ -98,7 +98,7 @@ export default function FinancialTips() {
             <Lightbulb className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Financial Tips & Knowledge</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Financial Tips</h1>
             <p className="text-muted-foreground mt-1">Expert advice for your financial journey</p>
           </div>
         </div>

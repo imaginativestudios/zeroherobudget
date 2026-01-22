@@ -2,12 +2,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import type { PricingInterval } from '@/lib/constants';
 
 interface SubscriptionStatus {
   subscribed: boolean;
   isTrialing: boolean;
-  tierName: string | null;
-  tierEmoji: string | null;
+  interval: PricingInterval | null;
   amount: number | null;
   subscriptionEnd: string | null;
   trialEnd: string | null;
@@ -18,8 +18,7 @@ export const useSubscriptionStatus = () => {
   const [status, setStatus] = useState<SubscriptionStatus>({
     subscribed: false,
     isTrialing: false,
-    tierName: null,
-    tierEmoji: null,
+    interval: null,
     amount: null,
     subscriptionEnd: null,
     trialEnd: null,
@@ -32,8 +31,7 @@ export const useSubscriptionStatus = () => {
       setStatus({
         subscribed: false,
         isTrialing: false,
-        tierName: null,
-        tierEmoji: null,
+        interval: null,
         amount: null,
         subscriptionEnd: null,
         trialEnd: null,
@@ -61,8 +59,7 @@ export const useSubscriptionStatus = () => {
       setStatus({
         subscribed: data.subscribed,
         isTrialing: data.is_trialing || false,
-        tierName: data.tier_name,
-        tierEmoji: data.tier_emoji,
+        interval: data.interval || null,
         amount: data.amount,
         subscriptionEnd: data.subscription_end,
         trialEnd: data.trial_end || null,
@@ -126,13 +123,13 @@ export const useSubscriptionStatus = () => {
     };
   }, [user, checkSubscription]);
 
-  const createCheckout = async (amount: number) => {
+  const createCheckout = async (interval: PricingInterval) => {
     if (!session) {
       throw new Error('You must be logged in to subscribe');
     }
 
     const { data, error: fnError } = await supabase.functions.invoke('create-checkout', {
-      body: { amount },
+      body: { interval },
       headers: {
         Authorization: `Bearer ${session.access_token}`,
       },

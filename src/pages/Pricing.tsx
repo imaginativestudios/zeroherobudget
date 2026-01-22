@@ -3,18 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { toast } from '@/hooks/use-toast';
 import { Logo } from '@/components/Logo';
-
-const getTierInfo = (amount: number) => {
-  if (amount <= 5) return { name: 'Starter', emoji: '🌱', color: 'text-tier-starter' };
-  if (amount <= 9) return { name: 'Supporter', emoji: '💪', color: 'text-tier-supporter' };
-  if (amount <= 12) return { name: 'Champion', emoji: '🏆', color: 'text-tier-champion' };
-  return { name: 'Hero', emoji: '🦸', color: 'text-tier-hero' };
-};
+import { STRIPE_PRICES, type PricingInterval } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 const features = [
   { icon: ChartBar, text: 'Unlimited budget tracking' },
@@ -32,21 +26,17 @@ const Pricing = () => {
   const { 
     subscribed, 
     isTrialing,
-    tierName, 
-    tierEmoji, 
+    interval: currentInterval,
     amount: currentAmount, 
     subscriptionEnd,
     trialEnd,
     loading: subLoading,
-    checkSubscription,
     createCheckout,
     openCustomerPortal,
   } = useSubscriptionStatus();
 
-  const [selectedAmount, setSelectedAmount] = useState(5);
+  const [selectedInterval, setSelectedInterval] = useState<PricingInterval>('annual');
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const tierInfo = getTierInfo(selectedAmount);
 
   // Calculate days remaining in trial
   const getTrialDaysRemaining = () => {
@@ -85,7 +75,7 @@ const Pricing = () => {
 
     setIsProcessing(true);
     try {
-      const checkoutUrl = await createCheckout(selectedAmount);
+      const checkoutUrl = await createCheckout(selectedInterval);
       if (checkoutUrl) {
         window.open(checkoutUrl, '_blank');
       }
@@ -122,6 +112,7 @@ const Pricing = () => {
 
   const loading = authLoading || subLoading;
   const trialDaysRemaining = getTrialDaysRemaining();
+  const selectedPrice = STRIPE_PRICES[selectedInterval];
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,11 +136,10 @@ const Pricing = () => {
         {/* Hero */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Pay What You Can
+            Choose Your Plan
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Everyone deserves financial freedom. Choose what works for your budget — 
-            all features included at every level.
+            Start with 7 days free. All features included. Cancel anytime.
           </p>
         </div>
 
@@ -161,9 +151,9 @@ const Pricing = () => {
           /* Current Subscriber View (Active or Trialing) */
           <Card className={`border-2 ${isTrialing ? 'border-chart-3/50 bg-gradient-to-br from-chart-3/5 to-background' : 'border-primary/50 bg-gradient-to-br from-primary/5 to-background'}`}>
             <CardHeader className="text-center">
-              <div className="text-5xl mb-2">{tierEmoji}</div>
+              <div className="text-5xl mb-2">🏰</div>
               <CardTitle className="text-2xl">
-                You're a <span className="text-primary">{tierName}</span>!
+                You're subscribed!
               </CardTitle>
               {isTrialing ? (
                 <CardDescription className="text-lg">
@@ -174,7 +164,7 @@ const Pricing = () => {
                 </CardDescription>
               ) : (
                 <CardDescription className="text-lg">
-                  Thank you for supporting Zero Hero at ${currentAmount}/month
+                  {currentInterval === 'annual' ? 'Annual' : 'Monthly'} Plan — ${currentAmount}/{currentInterval === 'annual' ? 'year' : 'month'}
                 </CardDescription>
               )}
             </CardHeader>
@@ -192,7 +182,7 @@ const Pricing = () => {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Then ${currentAmount}/month — cancel anytime before to avoid charges
+                    Then ${currentAmount}/{currentInterval === 'annual' ? 'year' : 'month'} — cancel anytime before to avoid charges
                   </p>
                 </div>
               ) : (
@@ -269,61 +259,106 @@ const Pricing = () => {
           </Card>
         ) : (
           /* New Subscriber View */
-          <Card className="border-2">
-            <CardHeader className="text-center pb-2">
-              <div className="text-5xl mb-2">{tierInfo.emoji}</div>
-              <CardTitle className={`text-3xl ${tierInfo.color}`}>
-                {tierInfo.name} Plan
-              </CardTitle>
-              <CardDescription className="text-base mt-2">
-                <span className="inline-flex items-center gap-2 text-chart-3 font-medium">
-                  <Sparkles className="h-4 w-4" />
-                  Start with 7 days free
-                </span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Price Display */}
-              <div className="text-center">
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-5xl font-bold text-foreground">${selectedAmount}</span>
-                  <span className="text-xl text-muted-foreground">/month</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  after your free trial
-                </p>
+          <div className="space-y-8">
+            {/* Interval Toggle */}
+            <div className="flex justify-center">
+              <div className="inline-flex items-center bg-muted p-1 rounded-lg">
+                <button
+                  onClick={() => setSelectedInterval('monthly')}
+                  className={cn(
+                    "px-6 py-2 rounded-md text-sm font-medium transition-all",
+                    selectedInterval === 'monthly'
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setSelectedInterval('annual')}
+                  className={cn(
+                    "px-6 py-2 rounded-md text-sm font-medium transition-all relative",
+                    selectedInterval === 'annual'
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Annual
+                  <span className="absolute -top-2 -right-2 bg-chart-3 text-chart-3-foreground text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                    Save $10
+                  </span>
+                </button>
               </div>
+            </div>
 
-              {/* Slider */}
-              <div className="px-4 space-y-4">
-                <Slider
-                  value={[selectedAmount]}
-                  onValueChange={(value) => setSelectedAmount(value[0])}
-                  min={3}
-                  max={15}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>$3</span>
-                  <span className="font-medium text-foreground">Choose your price</span>
-                  <span>$15</span>
-                </div>
-              </div>
-
-              {/* Features */}
-              <div className="grid grid-cols-2 gap-4 py-4">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <feature.icon className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="text-sm text-foreground">{feature.text}</span>
+            {/* Pricing Cards */}
+            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              {/* Monthly Card */}
+              <Card 
+                className={cn(
+                  "border-2 cursor-pointer transition-all",
+                  selectedInterval === 'monthly' 
+                    ? "border-primary bg-gradient-to-br from-primary/5 to-background" 
+                    : "border-border hover:border-border/80"
+                )}
+                onClick={() => setSelectedInterval('monthly')}
+              >
+                <CardHeader className="text-center pb-2">
+                  <CardTitle className="text-lg">Monthly</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-foreground">${STRIPE_PRICES.monthly.amount}</span>
+                    <span className="text-muted-foreground">/month</span>
                   </div>
-                ))}
-              </div>
+                  <p className="text-sm text-muted-foreground mt-2">Billed monthly</p>
+                </CardContent>
+              </Card>
 
-              {/* Subscribe Button */}
+              {/* Annual Card */}
+              <Card 
+                className={cn(
+                  "border-2 cursor-pointer transition-all relative",
+                  selectedInterval === 'annual' 
+                    ? "border-primary bg-gradient-to-br from-primary/5 to-background" 
+                    : "border-border hover:border-border/80"
+                )}
+                onClick={() => setSelectedInterval('annual')}
+              >
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-chart-3 text-chart-3-foreground text-xs px-3 py-1 rounded-full font-bold">
+                    BEST VALUE
+                  </span>
+                </div>
+                <CardHeader className="text-center pb-2 pt-6">
+                  <CardTitle className="text-lg">Annual</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-foreground">${STRIPE_PRICES.annual.amount}</span>
+                    <span className="text-muted-foreground">/year</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    ${STRIPE_PRICES.annual.monthlyEquivalent}/month • Save ${STRIPE_PRICES.annual.savings}!
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto py-4">
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <feature.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-sm text-foreground">{feature.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Subscribe Button */}
+            <div className="max-w-md mx-auto space-y-4">
               <Button
                 size="lg"
                 className="w-full text-lg py-6"
@@ -345,27 +380,27 @@ const Pricing = () => {
 
               {/* Trust Indicators */}
               <div className="text-center text-sm text-muted-foreground space-y-2">
-                <p>✨ Try free for 7 days, then ${selectedAmount}/month</p>
+                <p>
+                  ✨ Try free for 7 days, then ${selectedPrice.amount}/{selectedInterval === 'annual' ? 'year' : 'month'}
+                </p>
                 <p className="text-xs">
                   Cancel anytime • No hidden fees • Secure payment via Stripe
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Transparency Section */}
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Why Pay What You Can?</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Simple, Transparent Pricing</h2>
           <div className="max-w-2xl mx-auto space-y-4 text-muted-foreground">
             <p>
-              We believe financial tools should be accessible to everyone, regardless of income.
-              Whether you're just starting out or doing well financially, you get the same 
-              powerful features.
+              No hidden fees, no surprise charges. Choose monthly for flexibility or annual for savings.
+              All features included with every plan.
             </p>
             <p>
-              Those who can pay more help subsidize access for those who can't. 
-              It's community-powered financial freedom.
+              Start your 7-day free trial today and cancel anytime if it's not right for you.
             </p>
           </div>
         </div>

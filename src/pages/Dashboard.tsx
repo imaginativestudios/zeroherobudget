@@ -93,7 +93,7 @@ export const Dashboard = () => {
   const { isRegrouping, isVulnerable, bannerDismissed } = useMoatStatus();
 
   // Subscription status for trial countdown
-  const { isTrialing, trialEnd, tierEmoji, tierName } = useSubscriptionStatus();
+  const { isTrialing, trialEnd, interval } = useSubscriptionStatus();
 
   // Behavioral Engine for Stamina Wheel
   const { surplusPower } = useBehavioralEngine();
@@ -376,8 +376,7 @@ export const Dashboard = () => {
       <StatusBanner
         isTrialing={isTrialing}
         trialEnd={trialEnd}
-        tierEmoji={tierEmoji}
-        tierName={tierName}
+        interval={interval}
         isRegrouping={isRegrouping}
         isVulnerable={isVulnerable}
         bannerDismissed={bannerDismissed}

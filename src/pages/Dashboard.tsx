@@ -596,7 +596,7 @@ export const Dashboard = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-6 pt-0">
-                        {hasAnyTransactions ? (
+                        {spendingByCategory.length > 0 ? (
                           <>
                             <div className="h-[300px]">
                               <ResponsiveContainer width="100%" height="100%">

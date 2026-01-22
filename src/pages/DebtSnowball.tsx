@@ -119,7 +119,7 @@ export const DebtSnowball = () => {
     <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Your Debts</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Debt Strategy</h1>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={exportDebts} aria-label="Export debts to CSV">
               <Download className="h-4 w-4" aria-hidden="true" />

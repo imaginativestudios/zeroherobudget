@@ -31,7 +31,7 @@ export interface DashboardState {
   canShowAvailableCard: boolean;       // income > 0 AND expenses.length > 0
   canShowNetWorthCard: boolean;        // assets.length > 0 OR debts.length > 0
   canShowStaminaWheel: boolean;        // income > 0
-  canShowSpendingChart: boolean;       // transactions.length > 0
+  canShowSpendingChart: boolean;       // expenses.length > 0
   canShowDebtProjection: boolean;      // debts.length > 0 AND leftover > 0
   canShowAchievements: boolean;        // debts.length > 0
   canShowFinancialOverview: boolean;   // Any financial card visible
@@ -118,7 +118,7 @@ export function useDashboardState(): DashboardState {
     const canShowAvailableCard = (income || 0) > 0 && expenses.length > 0;
     const canShowNetWorthCard = assets.length > 0 || debts.length > 0;
     const canShowStaminaWheel = (income || 0) > 0;
-    const canShowSpendingChart = transactions.length > 0;
+    const canShowSpendingChart = expenses.length > 0;
     const canShowDebtProjection = debts.length > 0 && leftover > 0;
     const canShowAchievements = debts.length > 0;
     

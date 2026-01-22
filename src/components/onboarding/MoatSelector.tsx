@@ -11,7 +11,7 @@ interface MoatOption {
 const moatOptions: MoatOption[] = [
   { value: 500, label: '$500', subtitle: 'Starter' },
   { value: 1000, label: '$1,000', subtitle: 'Recommended', recommended: true },
-  { value: 2000, label: '$2,000', subtitle: 'Fortress' },
+  { value: 2000, label: '$2,000', subtitle: 'Full Protection' },
 ];
 
 interface MoatSelectorProps {

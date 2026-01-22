@@ -95,7 +95,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
   // Show welcome back toast for returning users
   useEffect(() => {
     if (isReturning) {
-      toast.info('Welcome back, Hero!', {
+      toast.info('Welcome back!', {
         description: 'Let\'s continue where you left off.',
       });
       setIsReturning(false);
@@ -202,7 +202,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const enterDashboard = useCallback(() => {
     markComplete();
     clearOnboardingProgress();
-    toast.success('Welcome! Your journey begins now.', {
+    toast.success('Welcome! You\'re ready to take control.', {
       description: 'Your profile has been created. Time to take control of your finances!',
     });
     navigate('/dashboard');

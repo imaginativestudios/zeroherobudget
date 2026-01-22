@@ -12,7 +12,7 @@ export function HeroTip({ children }: HeroTipProps) {
           <Lightbulb className="h-4 w-4 text-info" />
         </div>
         <div>
-          <p className="text-sm font-medium text-info mb-1">Hero Tip</p>
+          <p className="text-sm font-medium text-info mb-1">Pro Tip</p>
           <p className="text-sm text-muted-foreground">{children}</p>
         </div>
       </div>

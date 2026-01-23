@@ -38,6 +38,7 @@ import { useIncome, useStrategy, useExpenses, useAssets } from "@/hooks/useLocal
 import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
+import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useProfile } from "@/hooks/useProfile";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
@@ -78,6 +79,9 @@ export const Dashboard = () => {
   
   // For inline expense editing
   const { updateExpense } = useLocalExpenses('critical');
+  
+  // Accounts for checklist
+  const { accounts } = useLocalAccounts();
   
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
@@ -372,6 +376,7 @@ export const Dashboard = () => {
         debts={debts}
         transactions={transactions}
         moatCurrent={heroProfile.moat_current || 0}
+        accounts={accounts}
       />
 
       {/* Unified Status Banner - Single priority slot */}

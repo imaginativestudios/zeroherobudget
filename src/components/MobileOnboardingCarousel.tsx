@@ -13,8 +13,8 @@ interface MobileOnboardingCarouselProps {
 const slides = [
   {
     icon: Sparkles,
-    title: "Transform Debt Into Victory",
-    description: "Welcome to Zero Hero! Let's take a quick tour of how you can take control of your finances and crush your debt.",
+    title: "Welcome to Zero Hero",
+    description: "Let's take a quick tour of how you can take control of your finances and pay off debt faster.",
     color: "text-primary",
   },
   {
@@ -25,8 +25,8 @@ const slides = [
   },
   {
     icon: TrendingDown,
-    title: "Attack Your Debt",
-    description: "Choose between Snowball and Avalanche strategies to pay off debt faster and save on interest.",
+    title: "Pay Down Your Debt",
+    description: "Choose between Snowball and Avalanche strategies. Pay off debt faster and save on interest.",
     color: "text-destructive",
   },
   {

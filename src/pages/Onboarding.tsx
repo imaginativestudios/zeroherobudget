@@ -11,15 +11,15 @@ import { MoatSelector } from '@/components/onboarding/MoatSelector';
 import { AhaMomentStep } from '@/components/onboarding/AhaMomentStep';
 import { PricingStep } from '@/components/onboarding/PricingStep';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
-import { Clock, Swords, Castle, ArrowRight, ArrowLeft, Loader2, Shield, AlertCircle } from 'lucide-react';
+import { Clock, Compass, Target, ArrowRight, ArrowLeft, Loader2, Shield, AlertCircle } from 'lucide-react';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
 import { haptics } from '@/lib/haptics';
 import confetti from 'canvas-confetti';
 
 const stepIcons = {
   1: Clock,
-  2: Swords,
-  3: Castle,
+  2: Target,
+  3: Shield,
 };
 
 const stepTitles = {
@@ -220,7 +220,7 @@ export default function Onboarding() {
     skipStep();
   };
 
-  const handleEnterFortress = () => {
+  const handleEnterDashboard = () => {
     soundEffects.heroChoice();
     haptics.medium();
     enterDashboard();
@@ -619,7 +619,7 @@ export default function Onboarding() {
                   className="space-y-4"
                 >
                   <Button
-                    onClick={handleEnterFortress}
+                    onClick={handleEnterDashboard}
                     size="lg"
                     className="w-full h-14 text-lg"
                   >

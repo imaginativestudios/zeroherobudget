@@ -6,7 +6,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { Swords, Plus, ArrowRight, Sparkles, Target } from 'lucide-react';
+import { Zap, Plus, ArrowRight, Sparkles, Target } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,7 +61,7 @@ export function InitializeMissionCard() {
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             className="mx-auto mb-4 w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center"
           >
-            <Swords className="w-10 h-10 text-primary" />
+            <Target className="w-10 h-10 text-primary" />
           </motion.div>
           <CardTitle className="text-2xl sm:text-3xl font-bold text-foreground">
             Get Started
@@ -133,8 +133,8 @@ export function InitializeMissionCard() {
                   <Target className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm">The Boss</p>
-                  <p className="text-xs text-muted-foreground">Your current target debt</p>
+                  <p className="font-medium text-sm">Current Target</p>
+                  <p className="text-xs text-muted-foreground">Your focus debt to pay off</p>
                 </div>
               </div>
               
@@ -150,11 +150,11 @@ export function InitializeMissionCard() {
               
               <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
                 <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center flex-shrink-0">
-                  <Swords className="w-4 h-4 text-warning" />
+                  <Zap className="w-4 h-4 text-warning" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm">Strike Button</p>
-                  <p className="text-xs text-muted-foreground">Make extra payments</p>
+                  <p className="font-medium text-sm">Extra Payment</p>
+                  <p className="text-xs text-muted-foreground">Accelerate your payoff</p>
                 </div>
               </div>
             </div>

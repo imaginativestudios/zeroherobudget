@@ -6,7 +6,7 @@
  */
 
 import { useEffect } from 'react';
-import { Sword, Trophy, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle, Trophy, ArrowRight, Sparkles, Target } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -74,7 +74,7 @@ export function DebtVictoryModal({
               "bg-gradient-to-br from-warning to-accent",
               "animate-pulse shadow-lg"
             )}>
-              <Sword className="h-10 w-10 text-white" />
+              <CheckCircle className="h-10 w-10 text-white" />
             </div>
             <div className="absolute -top-2 -right-2">
               <Sparkles className="h-6 w-6 text-warning animate-spin" style={{ animationDuration: '3s' }} />
@@ -129,7 +129,7 @@ export function DebtVictoryModal({
                       ${nextDebt.balance.toLocaleString()} remaining
                     </p>
                   </div>
-                  <Sword className="h-5 w-5 text-primary" />
+                  <Target className="h-5 w-5 text-primary" />
                 </div>
               </CardContent>
             </Card>

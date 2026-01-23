@@ -408,13 +408,13 @@ export function calculateConsistencyScore(
   let heroMessage: string;
   switch (streakLevel) {
     case 'legend':
-      heroMessage = `🏆 LEGENDARY! ${currentStreak} days of consistent tracking! You've mastered financial awareness.`;
+      heroMessage = `🏆 Exceptional! ${currentStreak} days of consistent tracking. You've mastered financial awareness.`;
       break;
     case 'hero':
-      heroMessage = `🌟 Amazing streak! ${currentStreak} days strong. Your consistency is building unstoppable momentum!`;
+      heroMessage = `🌟 Impressive consistency! ${currentStreak} days strong. Your discipline is building unstoppable momentum!`;
       break;
     case 'warrior':
-      heroMessage = `💪 Impressive! ${currentStreak} day streak. Keep pushing for financial freedom!`;
+      heroMessage = `💪 Strong consistency! ${currentStreak} day streak. Keep pushing toward financial freedom!`;
       break;
     case 'apprentice':
       heroMessage = `📈 Great start! ${currentStreak} days logged. You're building a powerful habit.`;
@@ -449,21 +449,21 @@ function generateConsistencyHeroMessage(
   budgetAdherence: { status: string }
 ): string {
   if (score >= 90) {
-    return `🏆 LEGENDARY! You've achieved a ${score.toFixed(0)}% Consistency Score. Your financial discipline is unmatched!`;
+    return `🏆 Exceptional! You've achieved a ${score.toFixed(0)}% Consistency Score. Your financial discipline is unmatched!`;
   } else if (score >= 75) {
-    return `⚔️ Hero status! ${score.toFixed(0)}% Consistency Score. You're ready to level up your strategy!`;
+    return `⚔️ Impressive! ${score.toFixed(0)}% Consistency Score. You're ready to level up your strategy!`;
   } else if (score >= 50) {
-    return `🛡️ Warrior-level consistency at ${score.toFixed(0)}%. Keep logging daily to build momentum!`;
+    return `🛡️ Strong consistency at ${score.toFixed(0)}%. Keep logging daily to build momentum!`;
   } else if (score >= 25) {
     if (participation.activeDaysCount < 4) {
       return `📊 Active ${participation.activeDaysCount}/7 days. Open the app daily to boost your score!`;
     }
     if (budgetAdherence.status === 'over') {
-      return `💡 Survival spending is in Tactical Overstretch. Review essentials to improve adherence.`;
+      return `💡 Essential spending is over budget. Review expenses to improve adherence.`;
     }
-    return `🌱 Apprentice level at ${score.toFixed(0)}%. Build your streak to unlock higher levels!`;
+    return `🌱 Building habits at ${score.toFixed(0)}%. Keep logging to unlock higher levels!`;
   }
-  return `🎯 Start your hero's journey! Log transactions daily to build consistency.`;
+  return `🎯 Start your journey! Log transactions daily to build consistency.`;
 }
 
 /**

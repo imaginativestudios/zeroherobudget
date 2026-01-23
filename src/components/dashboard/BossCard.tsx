@@ -173,11 +173,11 @@ export function BossCard({
           {/* Progress Bar (visual only for now) */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Journey Progress</span>
+              <span className="text-muted-foreground">Payoff Progress</span>
               <span className="font-medium">
                 {thisDebtSchedule?.totalInterest 
                   ? `$${thisDebtSchedule.totalInterest.toLocaleString()} interest saved` 
-                  : 'Begin clearing!'}
+                  : 'Start paying!'}
               </span>
             </div>
             <Progress value={progressPercentage} className="h-3" />

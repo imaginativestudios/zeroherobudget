@@ -176,11 +176,11 @@ export function MoatBuilder({
         variant === 'full' && "col-span-full"
       )}
     >
-      {/* Current Quest Badge - inside the card */}
+      {/* Current Focus Badge - inside the card */}
       {showPrimaryQuestBadge && (
         <div className="px-6 pt-4 pb-0">
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-warning/10 text-warning text-sm font-semibold rounded-full">
-            🌟 CURRENT QUEST
+            🎯 CURRENT FOCUS
           </span>
         </div>
       )}

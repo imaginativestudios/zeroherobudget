@@ -21,7 +21,7 @@ export function HeroTipsFeed() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-warning" />
-            Hero Insights
+            Insights
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -51,7 +51,7 @@ export function HeroTipsFeed() {
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-warning" />
-            Hero Insights
+            Insights
           </span>
           <span className="text-xs text-muted-foreground">
             {currentIndex + 1} of {heroTips.length}

@@ -1,60 +1,34 @@
 
 
-# Getting Started Checklist Stoic Wisdom Update
+# Add 6th Task to Getting Started Checklist
 
 ## Overview
 
-Refactor the "Your Quest Begins" checklist card to align with the new stoic wisdom voice and the 6-step Financial Journey. The card's visual design will remain unchanged, but the terminology and tasks will be updated to reflect functional, mentor-style guidance.
+Add a 6th task to the Getting Started checklist that aligns with Journey Step 5: "Invest for the Future". This will make the checklist accurately represent all 6 journey milestones and match the subtext that says "See all 6 steps to financial freedom."
 
 ---
 
-## Current vs New Terminology
+## Current vs Updated Task List
 
-| Current | New |
-|---------|-----|
-| "Your Quest Begins" | "Getting Started" |
-| "Quest Complete!" | "Setup Complete!" |
-| "Complete these tasks to unlock your full dashboard" | "Complete these steps to unlock your full dashboard" |
-| `Swords` icon | `Compass` icon (direction/clarity) |
-| "Add your first expense" | "Set up your budget" |
-
----
-
-## Task Alignment with Journey Steps
-
-The 5 checklist tasks will map to the first 3 journey steps, creating a clear "getting started" subset:
-
-| Task | Aligns with Journey Step | Title | Description |
-|------|-------------------------|-------|-------------|
-| 1 | Step 1 (Establish Your Budget) | "Set your income" | "Define your monthly earnings" |
-| 2 | Step 1 (Establish Your Budget) | "Set up your budget" | "Add expense categories to track spending" |
-| 3 | Step 3 (Eliminate Debt) | "Track a debt" | "Add a debt to start your payoff plan" |
-| 4 | Step 2 (Build Starter Fund) | "Start your emergency fund" | "Build your financial safety net" |
-| 5 | Transaction logging | "Record a transaction" | "Log your first spending entry" |
+| # | Current Task | Journey Step Alignment |
+|---|-------------|----------------------|
+| 1 | Set your income | Step 1: Establish Your Budget |
+| 2 | Set up your budget | Step 1: Establish Your Budget |
+| 3 | Track a debt | Step 3: Eliminate Consumer Debt |
+| 4 | Start your emergency fund | Step 2/4: Build Safety Net |
+| 5 | Record a transaction | General: Transaction logging |
+| **6** | **(NEW) Start investing** | **Step 5: Invest for the Future** |
 
 ---
 
-## New Feature: Journey Link Button
-
-Add a button at the bottom of the checklist that takes users to the `/journey` page:
+## New 6th Task
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│  🧭 Getting Started                                         │
-│  Complete these steps to unlock your full dashboard         │
-├─────────────────────────────────────────────────────────────┤
-│  Progress: 2 of 5 Complete                    ████████░░    │
-│                                                             │
-│  [✓] Set your income                                        │
-│  [✓] Set up your budget                                     │
-│  [ ] Track a debt                                           │
-│  [ ] Start your emergency fund                              │
-│  [ ] Record a transaction                                   │
-│                                                             │
-│  ──────────────────────────────────────────────────────────│
-│  [🚀 View Your Full Journey]                                │
-│  See all 6 steps to financial freedom                       │
-└─────────────────────────────────────────────────────────────┘
+Title: "Start investing"
+Description: "Plant seeds for your future wealth"
+Icon: Sprout (matches Journey step 5)
+Completion: Investment account exists OR investment expense category
+Link: /budgets (to add investment category)
 ```
 
 ---
@@ -63,118 +37,115 @@ Add a button at the bottom of the checklist that takes users to the `/journey` p
 
 ### File: `src/components/dashboard/GettingStartedChecklist.tsx`
 
-**1. Update imports (Line 5):**
-- Replace `Swords` with `Compass`
-- Add `Rocket` for the journey button
-
-**2. Update card title (Lines 137-145):**
+**1. Add new import (Line 4):**
 ```tsx
-// Before
-{allComplete ? (
-  <span className="flex items-center gap-2">
-    <Sparkles className="h-5 w-5 text-amber-400" />
-    Quest Complete!
-  </span>
-) : (
-  'Your Quest Begins'
-)}
-
-// After
-{allComplete ? (
-  <span className="flex items-center gap-2">
-    <Sparkles className="h-5 w-5 text-amber-400" />
-    Setup Complete!
-  </span>
-) : (
-  'Getting Started'
-)}
+import { Sprout } from 'lucide-react';
 ```
 
-**3. Update header icon (Line 134):**
+**2. Update component props interface (Lines 26-32):**
+
+Need to add `accounts` prop to check for investment accounts (same logic as Journey step 5).
+
 ```tsx
-// Before
-<Swords className="h-5 w-5 text-primary" aria-hidden="true" />
-
-// After
-<Compass className="h-5 w-5 text-primary" aria-hidden="true" />
-```
-
-**4. Update expense task (Lines 62-69):**
-```tsx
-// Before
-{ 
-  id: 'expense', 
-  title: 'Add your first expense', 
-  description: 'Track where your money goes',
-  ...
-}
-
-// After
-{ 
-  id: 'expense', 
-  title: 'Set up your budget', 
-  description: 'Add expense categories to track spending',
-  ...
+interface GettingStartedChecklistProps {
+  income: number;
+  expenses: Expense[];
+  debts: Debt[];
+  transactions: Transaction[];
+  moatCurrent: number;
+  accounts: Account[];  // NEW
 }
 ```
 
-**5. Update debt task description (Lines 71-77):**
+**3. Add Account type import (Line 24):**
 ```tsx
-// Before
-description: 'Add a debt to build your payoff plan',
-
-// After
-description: 'Add a debt to start your payoff plan',
+import type { Account } from '@/hooks/useLocalAccounts';
 ```
 
-**6. Update subtitle (Lines 147-152):**
+**4. Add accounts to destructured props (Line 48):**
 ```tsx
-// Before
-'Complete these tasks to unlock your full dashboard'
-
-// After
-'Complete these steps to unlock your full dashboard'
+export function GettingStartedChecklist({
+  income,
+  expenses,
+  debts,
+  transactions,
+  moatCurrent,
+  accounts,  // NEW
+}: GettingStartedChecklistProps) {
 ```
 
-**7. Add Journey Link Button (after the task grid, before closing CardContent):**
+**5. Add investment completion logic (after line 52):**
 ```tsx
-{/* Journey Link */}
-<div className="mt-4 pt-4 border-t border-border">
-  <Button 
-    variant="outline" 
-    className="w-full min-h-[44px]" 
-    asChild
-  >
-    <Link to="/journey" className="flex items-center justify-center gap-2">
-      <Rocket className="h-4 w-4" />
-      View Your Full Journey
-    </Link>
-  </Button>
-  <p className="text-xs text-muted-foreground text-center mt-2">
-    See all 6 steps to financial freedom
-  </p>
-</div>
+// Check for investment tracking (matches Journey step 5 logic)
+const hasInvestmentAccount = accounts.some(a => 
+  a.type.toLowerCase().includes('investment') || 
+  a.type.toLowerCase().includes('retirement') ||
+  a.type.toLowerCase().includes('401k') ||
+  a.type.toLowerCase().includes('ira')
+);
+const hasInvestmentExpense = expenses.some(e => 
+  e.category.toLowerCase().includes('investment') ||
+  e.category.toLowerCase().includes('savings')
+);
+const isInvestingStarted = hasInvestmentAccount || hasInvestmentExpense;
+```
+
+**6. Add 6th task to tasks array (after line 93):**
+```tsx
+{ 
+  id: 'investing', 
+  title: 'Start investing', 
+  description: 'Plant seeds for your future wealth',
+  icon: Sprout,
+  isComplete: isInvestingStarted, 
+  href: '/budgets'
+},
 ```
 
 ---
 
-## Summary of Changes
+### File: `src/pages/Dashboard.tsx`
 
-| Line(s) | Change |
-|---------|--------|
-| 5 | Replace `Swords` import with `Compass`, add `Rocket` |
-| 62-68 | Update "Add your first expense" → "Set up your budget" |
-| 74 | Minor tweak to debt description |
-| 134 | Replace `Swords` icon with `Compass` |
-| 137-145 | "Your Quest Begins" → "Getting Started", "Quest Complete!" → "Setup Complete!" |
-| 147-152 | "tasks" → "steps" in subtitle |
-| ~200-210 | Add Journey link button with subtext after the task grid |
+Need to pass the `accounts` prop to the GettingStartedChecklist component.
+
+**1. Import useLocalAccounts (if not already imported)**
+
+**2. Get accounts from hook:**
+```tsx
+const { accounts } = useLocalAccounts();
+```
+
+**3. Pass accounts to GettingStartedChecklist:**
+```tsx
+<GettingStartedChecklist
+  income={income}
+  expenses={expenses}
+  debts={debts}
+  transactions={transactions}
+  moatCurrent={moatCurrent}
+  accounts={accounts}  // NEW
+/>
+```
 
 ---
 
-## Files to Modify
+## Grid Layout Update
 
-| File | Action |
-|------|--------|
-| `src/components/dashboard/GettingStartedChecklist.tsx` | Modify - Update terminology, icon, add Journey button |
+The task grid currently uses `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`. With 6 items:
+- Mobile (1 column): 6 rows ✓
+- Tablet (2 columns): 3 rows ✓
+- Desktop (3 columns): 2 rows ✓
+
+This already works perfectly for 6 items — no changes needed to the grid.
+
+---
+
+## Summary
+
+| File | Changes |
+|------|---------|
+| `src/components/dashboard/GettingStartedChecklist.tsx` | Add `Sprout` import, add `accounts` prop, add investment logic, add 6th task |
+| `src/pages/Dashboard.tsx` | Pass `accounts` prop to checklist |
+
+The 6 tasks will now align with the 6-step journey, and the grid will display as a clean 2×3 layout on desktop.
 

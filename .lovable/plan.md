@@ -1,225 +1,284 @@
 
-
-# Audit & Fix: Placeholder Text Styling for All Inputs
+# Input Focus Color, Step Values & Intuitive Card Editing
 
 ## Overview
 
-This audit addresses two key issues identified in user testing:
-1. **Placeholder text visibility** - Placeholder text should be visibly lighter than entered values
-2. **Placeholder behavior with $ and %** - When user focuses on currency/percentage inputs, placeholder should disappear but $ or % symbols should remain visible
+Three enhancements to improve input interactions and make card editing more intuitive:
+1. **Focus Color**: Change input focus ring from gold/accent to teal (primary)
+2. **Step Values**: Make number input arrows increment by $1 (or 1%) instead of pennies
+3. **Intuitive Card Editing**: Replace hidden edit mode with always-visible inline editing
 
 ---
 
-## Current Issues Identified
+## Issue 1: Focus Color (Gold → Teal)
 
-### 1. Placeholder Color Too Dark
-The current `placeholder:text-muted-foreground` class renders at `hsl(175 10% 40%)` which can appear too similar to actual entered text values.
+### Current State
+Input focus styling uses `--ring-accent` (gold/orange) defined in `index.css`:
+- Line 53: `--ring-accent: 32 85% 45%;` (orange)
+- Line 256: Global focus styling uses `hsl(var(--ring-accent))`
 
-### 2. Inconsistent Prefix/Suffix Patterns
-Three different patterns are currently used for currency/percentage inputs:
+### Proposed Change
+Update the focus ring to use teal (`--ring` which is `175 77% 26%`) for a more cohesive brand experience.
 
-| Pattern | Example Location | Behavior |
-|---------|------------------|----------|
-| `CurrencyInput` with prefix/suffix props | QuickAddDebtDialog, DebtSnowball | $ and % always visible, placeholder inside input |
-| Manual `<span>` before `<Input>` | StrikePaymentModal, HeroMoatCard, MoatBuilder | Static $ visible, placeholder shows "0" |
-| Inline positioned `<span>` | Onboarding | $ or % absolutely positioned, placeholder shows number |
+**File: `src/index.css`**
 
-### 3. Placeholder Values That Look Like Data
-Many currency inputs use numeric placeholders like `"5000"`, `"22.5"`, `"150"` which can confuse users.
+Lines 248-257 (global focus styling):
+```css
+/* Before */
+box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring-accent));
 
----
-
-## Solution Design
-
-### Part 1: Lighter Placeholder Color
-
-Update the base placeholder styling to use a significantly lighter, more obviously "hint-like" color.
+/* After */
+box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+```
 
 **File: `src/components/ui/input.tsx`**
 
+Update the focus ring class:
 ```tsx
-// Current
-"placeholder:text-muted-foreground"
+// Before
+"focus-visible:ring-2 focus-visible:ring-accent/20"
 
-// Proposed - using opacity for clear visual distinction
-"placeholder:text-muted-foreground/50"
+// After  
+"focus-visible:ring-2 focus-visible:ring-primary/30"
 ```
 
-This reduces opacity to 50%, making placeholders clearly distinguishable from actual values.
+**File: `src/components/ui/currency-input.tsx`**
 
-**File: `src/components/ui/textarea.tsx`**
-
-Apply the same change:
+Update the container focus ring:
 ```tsx
-"placeholder:text-muted-foreground/50"
+// Before
+"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+
+// After
+"focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2"
 ```
 
 ---
 
-### Part 2: Enhanced CurrencyInput Component
+## Issue 2: Arrow Increment (Pennies → Dollars)
 
-The `CurrencyInput` component needs to be redesigned so that:
-- The $ or % symbol is always visible
-- The placeholder text inside the input disappears on focus
-- The symbol remains in a muted color when empty, becomes active color when has value
+### Current State
+The `CurrencyInput` component uses `step="0.01"` in some places, causing arrows to increment by pennies. For most financial inputs, users expect whole dollar increments.
+
+### Proposed Changes
 
 **File: `src/components/ui/currency-input.tsx`**
 
+Add a `step` prop with intelligent defaults:
 ```tsx
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-
 export interface CurrencyInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   prefix?: string;
   suffix?: string;
   variant?: 'default' | 'debt' | 'expense';
+  step?: number; // Default: 1 for $, 0.1 for %
 }
 
-const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
-  ({ className, prefix, suffix, variant = 'default', value, ...props }, ref) => {
-    const [isFocused, setIsFocused] = React.useState(false);
-    
-    // Determine if field has a meaningful value
-    const hasValue = value !== undefined && value !== '' && value !== '0';
-    
-    const variantClasses = {
-      default: '',
-      debt: 'border-purple-500/30 focus-within:border-purple-500 focus-within:ring-purple-500/20',
-      expense: 'border-blue-500/30 focus-within:border-blue-500 focus-within:ring-blue-500/20',
-    };
+// Inside component
+const defaultStep = suffix === '%' ? 0.1 : 1;
+const actualStep = props.step ?? defaultStep;
 
-    return (
-      <div 
-        className={cn(
-          "flex items-center rounded-md border border-input bg-background ring-offset-background",
-          "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-          variantClasses[variant],
-          className
-        )}
-      >
-        {prefix && (
-          <span 
-            className={cn(
-              "pl-3 select-none pointer-events-none transition-colors",
-              hasValue || isFocused 
-                ? "text-foreground" 
-                : "text-muted-foreground/50"
-            )}
-          >
-            {prefix}
-          </span>
-        )}
-        <Input
-          type="number"
-          ref={ref}
-          value={value}
-          onFocus={(e) => {
-            setIsFocused(true);
-            props.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            props.onBlur?.(e);
-          }}
-          className={cn(
-            "border-0 focus-visible:ring-0 focus-visible:ring-offset-0",
-            prefix && "pl-1",
-            suffix && "pr-1"
-          )}
-          // Clear placeholder on focus by conditionally removing it
-          placeholder={isFocused ? undefined : props.placeholder}
-          {...props}
-        />
-        {suffix && (
-          <span 
-            className={cn(
-              "pr-3 select-none pointer-events-none transition-colors",
-              hasValue || isFocused 
-                ? "text-foreground" 
-                : "text-muted-foreground/50"
-            )}
-          >
-            {suffix}
-          </span>
-        )}
-      </div>
-    );
-  }
-);
-
-CurrencyInput.displayName = "CurrencyInput";
-
-export { CurrencyInput };
-```
-
-**Key Behavior Changes:**
-- Symbol ($ or %) starts in muted color when empty
-- Symbol transitions to full foreground color when focused OR has value
-- Placeholder text disappears on focus, reappears on blur if empty
-
----
-
-### Part 3: Standardize Manual $ Prefix Patterns
-
-Several components use manual `<span>$</span>` before inputs. These need to be:
-1. Updated to use proper muted styling
-2. Show the symbol in active color when focused
-
-**Files to update:**
-
-| File | Lines | Change |
-|------|-------|--------|
-| `src/components/dashboard/StrikePaymentModal.tsx` | 140-151 | Convert to CurrencyInput or add focus state |
-| `src/components/behavioral/HeroMoatCard.tsx` | 191-201 | Convert to CurrencyInput |
-| `src/components/defense/MoatBuilder.tsx` | 378-388 | Convert to CurrencyInput |
-| `src/pages/Onboarding.tsx` | 310-324, 351-368, 380-398, 409-423 | Add focus state management to symbols |
-
-**Example refactor for StrikePaymentModal:**
-
-```tsx
-// Before
-<div className="flex items-center gap-2">
-  <span className="text-2xl text-muted-foreground">$</span>
-  <Input
-    type="number"
-    placeholder="0"
-    value={amount}
-    onChange={(e) => setAmount(e.target.value)}
-    className="text-2xl h-14 font-bold"
-    min="0"
-    max={debt.balance}
-  />
-</div>
-
-// After - using enhanced CurrencyInput
-<CurrencyInput
-  prefix="$"
-  value={amount}
-  onChange={(e) => setAmount(e.target.value)}
-  className="text-2xl h-14 font-bold"
-  min="0"
-  max={debt.balance}
+<Input
+  type="number"
+  step={actualStep}
+  ...
 />
 ```
 
+**Files to update step values:**
+| File | Location | Current | Change To |
+|------|----------|---------|-----------|
+| `src/pages/DebtSnowball.tsx` | Balance input | `step="0.01"` | Remove (use default `1`) |
+| `src/pages/DebtSnowball.tsx` | APR input | `step="0.01"` | `step={0.1}` |
+| `src/pages/DebtSnowball.tsx` | Min Payment input | `step="0.01"` | Remove (use default `1`) |
+
 ---
 
-### Part 4: Improve Placeholder Content
+## Issue 3: Intuitive Card Editing
 
-Update numeric placeholders to be more clearly "example" values by using empty strings or leaving the input blank by default.
+### Current Pattern (Not Intuitive)
+Users must:
+1. Find and click a small pencil icon
+2. Realize they're now in "edit mode"
+3. Make changes
+4. Find and click save/check button
 
-| Current Placeholder | File | Change To |
-|---------------------|------|-----------|
-| `"5000"` | QuickAddDebtDialog | Remove placeholder ($ prefix is hint enough) |
-| `"22.5"` | QuickAddDebtDialog | Remove placeholder (% suffix is hint enough) |
-| `"150"` | QuickAddDebtDialog | Remove placeholder |
-| `"0"` | StrikePaymentModal | Remove placeholder |
-| `"0"` | HeroMoatCard | Remove placeholder |
-| `"30.00"` | Onboarding | Keep (provides formatting hint) |
+This creates friction because:
+- Edit affordance is hidden (pencil icon is subtle)
+- Users may not realize fields are editable
+- Two-step process for simple changes
 
-For text fields, placeholders should remain as helpful hints.
+### Proposed Pattern: "Click-to-Edit" Inline Editing
+
+Replace the toggle-based edit mode with always-visible, direct-manipulation inputs:
+
+**Design Principles:**
+1. **Values are always visible** as formatted display text
+2. **Clicking a value** transforms it into an editable input
+3. **Blur or Enter** saves the change automatically
+4. **Escape** cancels the edit
+
+**Visual Mockup:**
+
+```text
+┌─────────────────────────────────────────┐
+│  Credit Card                        🗑️  │
+│  Visa • APR: 22.5%                      │
+├─────────────────────────────────────────┤
+│  Balance          APR         Min Pay   │
+│  $5,000          22.5%         $150     │  ← Display mode (clickable)
+│  ─────────       ─────        ─────     │
+│                                         │
+│  [Click any value to edit]              │  ← Helper text (optional)
+└─────────────────────────────────────────┘
+
+After clicking "$5,000":
+┌─────────────────────────────────────────┐
+│  Balance          APR         Min Pay   │
+│  ┌────────┐      22.5%         $150     │
+│  │ $ 5000 │  ✓   ─────        ─────     │
+│  └────────┘                             │
+└─────────────────────────────────────────┘
+```
+
+### Implementation: New "EditableValue" Component
+
+**File: `src/components/ui/editable-value.tsx` (new)**
+
+```tsx
+interface EditableValueProps {
+  value: number;
+  onChange: (value: number) => void;
+  prefix?: string;
+  suffix?: string;
+  formatDisplay?: (value: number) => string;
+  className?: string;
+}
+
+const EditableValue = ({ value, onChange, prefix, suffix, formatDisplay, className }: EditableValueProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(value.toString());
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleSave = () => {
+    const parsed = parseFloat(editValue);
+    if (!isNaN(parsed)) {
+      onChange(parsed);
+    }
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSave();
+    if (e.key === 'Escape') {
+      setEditValue(value.toString());
+      setIsEditing(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <CurrencyInput
+        ref={inputRef}
+        prefix={prefix}
+        suffix={suffix}
+        value={editValue}
+        onChange={(e) => setEditValue(e.target.value)}
+        onBlur={handleSave}
+        onKeyDown={handleKeyDown}
+        className={cn("w-24", className)}
+      />
+    );
+  }
+
+  return (
+    <button
+      onClick={() => {
+        setEditValue(value.toString());
+        setIsEditing(true);
+      }}
+      className={cn(
+        "font-semibold text-foreground px-2 py-1 -mx-2 -my-1 rounded-md",
+        "hover:bg-muted/50 focus-visible:bg-muted/50 cursor-text transition-colors",
+        "text-left",
+        className
+      )}
+      aria-label={`Edit value: ${formatDisplay ? formatDisplay(value) : value}`}
+    >
+      {formatDisplay ? formatDisplay(value) : `${prefix || ''}${value}${suffix || ''}`}
+    </button>
+  );
+};
+```
+
+### Update Debt Cards to Use EditableValue
+
+**File: `src/pages/DebtSnowball.tsx`**
+
+Replace the edit mode toggle with inline EditableValue components:
+
+```tsx
+// Before - with edit mode toggle
+<div>
+  <label className="text-xs text-muted-foreground">Balance</label>
+  <CurrencyInput
+    prefix="$"
+    value={isEditing ? editBuffer.balance ?? debt.balance : debt.balance}
+    onChange={(e) => { ... }}
+    disabled={!isEditing}
+  />
+</div>
+
+// After - always editable inline
+<div>
+  <label className="text-xs text-muted-foreground">Balance</label>
+  <EditableValue
+    value={debt.balance}
+    onChange={(value) => updateDebt(debt.id, 'balance', value)}
+    prefix="$"
+    formatDisplay={formatCurrency}
+  />
+</div>
+```
+
+This removes the need for:
+- `editingDebtId` state
+- `editBuffer` state
+- Pencil/X toggle buttons
+- `startEditing`, `cancelEditing`, `saveChanges` functions
+
+### Update Command Center
+
+**File: `src/components/dashboard/CommandCenter.tsx`**
+
+Apply the same pattern to income and expense values:
+
+```tsx
+// Before
+{isEditing && onIncomeChange ? (
+  <CurrencyInput ... />
+) : (
+  <span className="text-lg font-bold text-success">
+    {formatCurrency(income)}
+  </span>
+)}
+
+// After
+<EditableValue
+  value={income}
+  onChange={onIncomeChange}
+  prefix="$"
+  formatDisplay={formatCurrency}
+  className="text-lg font-bold text-success"
+/>
+```
 
 ---
 
@@ -227,20 +286,31 @@ For text fields, placeholders should remain as helpful hints.
 
 | File | Type | Changes |
 |------|------|---------|
-| `src/components/ui/input.tsx` | Core | Update placeholder opacity to `/50` |
-| `src/components/ui/textarea.tsx` | Core | Update placeholder opacity to `/50` |
-| `src/components/ui/currency-input.tsx` | Core | Add focus state, dynamic symbol color, clear placeholder on focus |
-| `src/components/dashboard/StrikePaymentModal.tsx` | Component | Convert to CurrencyInput pattern |
-| `src/components/behavioral/HeroMoatCard.tsx` | Component | Convert to CurrencyInput pattern |
-| `src/components/defense/MoatBuilder.tsx` | Component | Convert to CurrencyInput pattern |
-| `src/pages/Onboarding.tsx` | Page | Add focus state management to symbol spans |
-| `src/components/dashboard/QuickAddDebtDialog.tsx` | Component | Remove numeric placeholders |
+| `src/index.css` | Style | Update global focus ring from accent to primary |
+| `src/components/ui/input.tsx` | Core | Update focus ring class to primary |
+| `src/components/ui/currency-input.tsx` | Core | Update focus ring, add smart step defaults |
+| `src/components/ui/editable-value.tsx` | New | Click-to-edit inline component |
+| `src/pages/DebtSnowball.tsx` | Page | Replace edit mode with EditableValue, remove step="0.01" |
+| `src/components/dashboard/CommandCenter.tsx` | Component | Replace edit mode toggle with EditableValue |
 
 ---
 
-## Accessibility Notes
+## UX Benefits
 
-- Placeholder opacity at 50% of muted-foreground maintains WCAG AA compliance (~3.5:1 contrast ratio as helper text)
-- $ and % symbols transitioning to full foreground color on focus provides clear visual feedback
-- Placeholder removal on focus follows standard input behavior patterns
+| Before | After |
+|--------|-------|
+| Hidden edit affordance (pencil icon) | Values look clickable (hover state) |
+| Two-step edit process (click pencil → edit → click save) | Single-step (click value → edit → blur) |
+| Confusing "am I in edit mode?" state | Always clear what's editable |
+| Easy to forget to save | Auto-saves on blur |
+| Arrows increment by $0.01 | Arrows increment by $1 |
 
+---
+
+## Accessibility Considerations
+
+- `EditableValue` buttons have proper `aria-label` for screen readers
+- Focus is automatically moved to input when editing begins
+- Escape key cancels edits (standard pattern)
+- Enter key saves (standard pattern)
+- Tab navigation works naturally through editable values

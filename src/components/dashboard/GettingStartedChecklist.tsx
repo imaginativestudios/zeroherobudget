@@ -12,7 +12,8 @@ import {
   ArrowUpRight,
   Check,
   Sparkles,
-  Rocket
+  Rocket,
+  Sprout
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import confetti from 'canvas-confetti';
 import type { Expense } from '@/hooks/useLocalExpenses';
 import type { Debt } from '@/hooks/useLocalDebts';
 import type { Transaction } from '@/hooks/useLocalTransactions';
+import type { Account } from '@/hooks/useLocalAccounts';
 
 interface GettingStartedChecklistProps {
   income: number;
@@ -29,6 +31,7 @@ interface GettingStartedChecklistProps {
   debts: Debt[];
   transactions: Transaction[];
   moatCurrent: number;
+  accounts: Account[];
 }
 
 interface ChecklistTask {
@@ -46,10 +49,24 @@ export function GettingStartedChecklist({
   debts,
   transactions,
   moatCurrent,
+  accounts,
 }: GettingStartedChecklistProps) {
   const [isCollapsed, setIsCollapsed] = useUserLocalStorage('bdt_checklist_collapsed', false);
   const [hasShownCelebration, setHasShownCelebration] = useUserLocalStorage('bdt_checklist_celebrated', false);
   const [isHidden, setIsHidden] = useState(false);
+
+  // Check for investment tracking (matches Journey step 5 logic)
+  const hasInvestmentAccount = accounts.some(a => 
+    a.type.toLowerCase().includes('investment') || 
+    a.type.toLowerCase().includes('retirement') ||
+    a.type.toLowerCase().includes('401k') ||
+    a.type.toLowerCase().includes('ira')
+  );
+  const hasInvestmentExpense = expenses.some(e => 
+    e.category.toLowerCase().includes('investment') ||
+    e.category.toLowerCase().includes('savings')
+  );
+  const isInvestingStarted = hasInvestmentAccount || hasInvestmentExpense;
 
   const tasks: ChecklistTask[] = [
     { 
@@ -90,6 +107,14 @@ export function GettingStartedChecklist({
       icon: Receipt,
       isComplete: transactions.length > 0, 
       href: '/transactions'
+    },
+    { 
+      id: 'investing', 
+      title: 'Start investing', 
+      description: 'Plant seeds for your future wealth',
+      icon: Sprout,
+      isComplete: isInvestingStarted, 
+      href: '/budgets'
     },
   ];
 

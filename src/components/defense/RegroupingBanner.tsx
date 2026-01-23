@@ -50,11 +50,11 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
   
   const handleOptimizeClick = () => {
     activateRepairMode();
-    navigate('/budget?mode=repair');
+    navigate('/budgets?mode=repair');
   };
-  
+
   const handleViewWarMap = () => {
-    navigate('/budget');
+    navigate('/budgets');
   };
   
   const formatCurrency = (amount: number) => {
@@ -105,7 +105,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-foreground">
-                Your Emergency Fund Worked
+                Emergency Fund
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Your emergency fund protected you from new debt. Now, let's focus on 

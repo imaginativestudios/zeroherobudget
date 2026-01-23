@@ -44,6 +44,7 @@ import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import ConnectorSetup from "./pages/ConnectorSetup";
 import ReleaseKit from "./pages/ReleaseKit";
+import Journey from "./pages/Journey";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
             <Layout>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/journey" element={<Journey />} />
                 <Route path="/budgets" element={<Budget />} />
                 <Route path="/debts" element={<DebtSnowball />} />
                 <Route path="/transactions" element={<Transactions />} />

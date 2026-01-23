@@ -69,16 +69,23 @@ export const HEROIC_COPY = {
   prioritizingRepairs: 'Prioritizing Restoration',
   
   // Positive Reinforcement
-  greatJob: 'Well Traveled',
-  excellent: 'Remarkable',
-  good: 'On the Right Path',
+  greatJob: 'Well Done',
+  excellent: 'Excellent',
+  good: 'Good Progress',
 
-  // Journey Levels
-  squire: 'Wayfarer',
-  knight: 'Sage',
-  warrior: 'Pathfinder',
-  hero: 'Sage',
-  legend: 'Luminary',
+  // Journey Steps (Stoic Wisdom)
+  journeyStep1: 'Establish Your Budget',
+  journeyStep2: 'Build Starter Fund',
+  journeyStep3: 'Eliminate Consumer Debt',
+  journeyStep4: 'Financial Freedom',
+
+  // Stoic Wisdom Subtexts
+  wisdomBudget: 'You must see the path before you can walk it.',
+  wisdomStarterFund: 'A hero builds on solid ground, not sand.',
+  wisdomDebtFree: 'Remove the weight of the past to move forward.',
+  wisdomEmergencyFund: 'True power is being ready for the unexpected.',
+  wisdomInvesting: 'Plant the seeds today that will shade you tomorrow.',
+  wisdomFreedom: 'The ultimate victory is owning your own time.',
 };
 
 /**

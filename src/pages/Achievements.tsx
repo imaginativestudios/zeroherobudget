@@ -47,7 +47,7 @@ export const Achievements = () => {
               Achievements
             </h1>
             <p className="text-muted-foreground mt-2">
-              Track your debt-fighting victories and milestones
+              Track your progress and celebrate your discipline
             </p>
           </div>
         </div>
@@ -169,11 +169,11 @@ export const Achievements = () => {
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <Trophy className="h-12 w-12 mx-auto text-accent" />
-              <h3 className="text-lg font-semibold">Keep Fighting!</h3>
+              <h3 className="text-lg font-semibold">Keep Going</h3>
               <p className="text-muted-foreground">
                 {unlockedCount === 0 
-                  ? "Start your journey to financial freedom and unlock your first achievement!"
-                  : `You're making great progress! ${totalCount - unlockedCount} more ${totalCount - unlockedCount === 1 ? 'achievement' : 'achievements'} to go.`
+                  ? "Begin your path to financial clarity. Each milestone marks your growth."
+                  : `You're making steady progress. ${totalCount - unlockedCount} more ${totalCount - unlockedCount === 1 ? 'milestone' : 'milestones'} ahead.`
                 }
               </p>
             </div>
@@ -186,9 +186,9 @@ export const Achievements = () => {
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <Trophy className="h-16 w-16 mx-auto text-accent animate-pulse" />
-              <h3 className="text-2xl font-bold">Financial Freedom Champion!</h3>
+              <h3 className="text-2xl font-bold">Financial Freedom Achieved</h3>
               <p className="text-muted-foreground text-lg">
-                You've unlocked all achievements! You're a true champion of financial freedom!
+                You've reached every milestone. You now own your time.
               </p>
             </div>
           </CardContent>

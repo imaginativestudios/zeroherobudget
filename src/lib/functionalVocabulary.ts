@@ -15,9 +15,15 @@ export const FUNCTIONAL_COPY = {
   overBudget: 'Over Budget',
   underBudget: 'Under Budget',
   deficit: 'Deficit',
-  spending: 'Expenses',
-  provisions: 'Expenses',
+  spending: 'Transactions',
+  provisions: 'Transactions',
   stamina: 'Left to Spend',
+  
+  // Transaction Terms
+  addTransaction: 'Add Transaction',
+  logTransaction: 'Log Transaction',
+  transactionHistory: 'Transaction History',
+  noTransactions: 'No transactions found',
   vitality: 'Disposable Income',
   disposableIncome: 'Disposable Income',
   leftToSpend: 'Left to Spend',

@@ -249,7 +249,7 @@ export function GroupCard({
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No expenses in this group. Click + to add one.
+                  No budget items in this group. Click + to add one.
                 </div>
               )}
             </AccordionContent>

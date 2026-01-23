@@ -1,27 +1,27 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { toast } from "sonner";
-import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle, Heart, Home, Zap, ShoppingCart, Car, Shield, Sparkles, Gamepad2, PiggyBank, CreditCard, MoreHorizontal, ChevronDown, BarChart3 } from "lucide-react";
+import { DollarSign, Download, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
-import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
+import { formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
-import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
+import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
+import { BudgetOverviewCard } from "@/components/budget/BudgetOverviewCard";
 import { cn } from "@/lib/utils";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 
 export const Budget = () => {
+  const budgetSectionRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
@@ -177,21 +177,9 @@ export const Budget = () => {
     }
     event.target.value = "";
   };
-  // Category icon mapping for inventory-style display
-  const getCategoryIcon = (category: string) => {
-    const iconMap: Record<string, React.ElementType> = {
-      'Housing': Home,
-      'Utilities': Zap,
-      'Food': ShoppingCart,
-      'Transportation': Car,
-      'Insurance & Healthcare': Shield,
-      'Personal Care': Sparkles,
-      'Entertainment': Gamepad2,
-      'Savings & Investments': PiggyBank,
-      'Debt Payments': CreditCard,
-      'Miscellaneous': MoreHorizontal,
-    };
-    return iconMap[category] || MoreHorizontal;
+  // Scroll handler for interactive cards
+  const scrollToBudget = () => {
+    budgetSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return <div className="space-y-8">
@@ -239,37 +227,16 @@ export const Budget = () => {
         </div>
       </div>
 
-      {/* Budget Progress At-a-Glance */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border bg-muted/30">
-        <div className="flex-1 w-full space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {formatCurrency(totalActual)} of {formatCurrency(totalExpenses)} spent
-            </span>
-            <span className={cn(
-              "font-medium",
-              budgetUsedPercent <= 100 ? "text-success" : "text-destructive"
-            )}>
-              {budgetUsedPercent.toFixed(0)}%
-            </span>
-          </div>
-          <Progress 
-            value={Math.min(100, budgetUsedPercent)} 
-            className="h-2"
-            aria-label={`Budget progress: ${budgetUsedPercent.toFixed(0)}% used`}
-          />
-        </div>
-        
-        {/* Remaining/Over indicator */}
-        <div className={cn(
-          "text-sm font-medium whitespace-nowrap",
-          variance <= 0 ? "text-success" : "text-destructive"
-        )}>
-          {variance <= 0 
-            ? `${formatCurrency(Math.abs(variance))} under budget` 
-            : `${formatCurrency(variance)} over budget`}
-        </div>
-      </div>
+      {/* Budget Overview Card with segmented progress, interactive cards, and tips */}
+      <BudgetOverviewCard
+        categoryData={categoryData}
+        totalPlanned={totalExpenses}
+        totalActual={totalActual}
+        income={income}
+        selectedMonth={selectedMonth}
+        budgetItemCount={expenses.length}
+        onScrollToBudget={scrollToBudget}
+      />
 
       {/* Income Section */}
       <Card className="shadow-royal hover-lift" data-tour="budget-income">
@@ -298,51 +265,8 @@ export const Budget = () => {
         </CardContent>
       </Card>
 
-      {/* ========================================= */}
-      {/* INVENTORY-STYLE CATEGORY LIST            */}
-      {/* ========================================= */}
-      <Card className="shadow-royal hover-lift">
-        <CardHeader className="p-6">
-          <CardTitle className="text-xl text-foreground flex items-center gap-3">
-            <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
-            Budget Inventory
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 pt-0">
-          {/* Summary Statistics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="p-4 bg-muted/50 rounded-xl border">
-              <div className="text-sm text-muted-foreground mb-1">Total Planned</div>
-              <div className="text-2xl font-bold text-foreground">
-                {formatCurrency(totalExpenses)}
-              </div>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-xl border">
-              <div className="text-sm text-muted-foreground mb-1">Total Actual</div>
-              <div className="text-2xl font-bold text-foreground">
-                {formatCurrency(totalActual)}
-              </div>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-xl border">
-              <div className="text-sm text-muted-foreground mb-1">Variance</div>
-              <div className={`text-2xl font-bold flex items-center gap-1 ${variance <= 0 ? 'text-success' : 'text-destructive'}`}>
-                {variance <= 0 ? <TrendingDown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
-                {formatCurrency(Math.abs(variance))}
-              </div>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-xl border">
-              <div className="text-sm text-muted-foreground mb-1">Budget Used</div>
-              <div className={`text-2xl font-bold ${budgetUsedPercent <= 100 ? 'text-success' : 'text-destructive'}`}>
-                {budgetUsedPercent.toFixed(1)}%
-              </div>
-            </div>
-          </div>
-
-        </CardContent>
-      </Card>
-
       {/* Expenses Section */}
-      <Card className="shadow-royal hover-lift">
+      <Card ref={budgetSectionRef} className="shadow-royal hover-lift">
         <CardHeader className="p-6">
           <CardTitle className="text-xl text-foreground">Monthly Budget</CardTitle>
         </CardHeader>
@@ -479,7 +403,7 @@ export const Budget = () => {
                 {/* Pie Chart Section */}
                 <div>
                   <h3 className="text-base font-medium mb-4 flex items-center gap-2">
-                    <Compass className="h-4 w-4 text-primary" />
+                    <PieChartIcon className="h-4 w-4 text-primary" />
                     Planned Spending by Category
                   </h3>
                   <ResponsiveContainer width="100%" height={400}>

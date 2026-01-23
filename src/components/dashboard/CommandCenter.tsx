@@ -7,7 +7,7 @@
  * 3. Payoff Strategy - Freedom date calculator with real-time updates
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   CreditCard, 
@@ -35,6 +35,7 @@ import { CompactDebtRow } from './CompactDebtRow';
 import { FreedomSlider } from '@/components/behavioral/FreedomSlider';
 import { formatCurrency } from '@/lib/utils';
 import { FUNCTIONAL_COPY, HEROIC_SUBTEXTS } from '@/lib/functionalVocabulary';
+import { simulatePayoff } from '@/lib/debtCalculations';
 import type { Debt } from '@/hooks/useLocalDebts';
 import type { DebtItem } from '@/lib/debtCalculations';
 
@@ -90,6 +91,34 @@ export function CommandCenter({
   const topExpenses = [...expenses]
     .sort((a, b) => (b.planned || 0) - (a.planned || 0))
     .slice(0, 5);
+
+  // Calculate outcomes for both strategies
+  const strategyComparison = useMemo(() => {
+    const activeDebtItems = debtItems.filter(d => d.balance > 0);
+    if (activeDebtItems.length === 0 || leftover <= 0) return null;
+    
+    const snowball = simulatePayoff(activeDebtItems, leftover, 'Snowball');
+    const avalanche = simulatePayoff(activeDebtItems, leftover, 'Avalanche');
+    
+    const snowballMonths = snowball.timeline.length;
+    const avalancheMonths = avalanche.timeline.length;
+    
+    return {
+      snowball: {
+        months: snowballMonths,
+        totalInterest: snowball.totalInterest,
+        date: snowball.timeline[snowballMonths - 1]?.label || 'Debt Free!',
+      },
+      avalanche: {
+        months: avalancheMonths,
+        totalInterest: avalanche.totalInterest,
+        date: avalanche.timeline[avalancheMonths - 1]?.label || 'Debt Free!',
+      },
+      interestDifference: Math.abs(snowball.totalInterest - avalanche.totalInterest),
+      monthsDifference: Math.abs(snowballMonths - avalancheMonths),
+      avalancheSavesMore: avalanche.totalInterest < snowball.totalInterest,
+    };
+  }, [debtItems, leftover]);
 
   // Animation variants
   const cardVariants = {
@@ -362,7 +391,11 @@ export function CommandCenter({
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
                       Debt-Free By
                     </p>
-                    <p className="text-2xl font-bold text-primary">{freedomDate}</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {strategy === 'Snowball' 
+                        ? strategyComparison?.snowball.date || freedomDate
+                        : strategyComparison?.avalanche.date || freedomDate}
+                    </p>
                     {onStrategyUpdate ? (
                       <div className="flex justify-center gap-1 mt-2">
                         <Tooltip>
@@ -408,6 +441,35 @@ export function CommandCenter({
                       <Badge variant="outline" className="mt-2 text-xs">
                         {strategy} Strategy
                       </Badge>
+                    )}
+                    
+                    {/* Strategy Comparison Insight */}
+                    {strategyComparison && strategyComparison.interestDifference > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border/50">
+                        <p className="text-xs text-muted-foreground">
+                          {strategy === 'Avalanche' ? (
+                            <>
+                              <span className="text-success font-medium">
+                                Saving {formatCurrency(strategyComparison.interestDifference)}
+                              </span>
+                              {' '}in interest vs. Snowball
+                            </>
+                          ) : (
+                            <>
+                              {strategyComparison.avalancheSavesMore ? (
+                                <>
+                                  <span className="text-primary font-medium">Quick wins mode</span>
+                                  {' '}• Avalanche saves {formatCurrency(strategyComparison.interestDifference)}
+                                </>
+                              ) : (
+                                <span className="text-success font-medium">
+                                  Best option for your debts!
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </p>
+                      </div>
                     )}
                   </div>
                   

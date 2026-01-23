@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle, Heart, Home, Zap, ShoppingCart, Car, Shield, Sparkles, Gamepad2, PiggyBank, CreditCard, MoreHorizontal } from "lucide-react";
+import { Compass, DollarSign, Plus, Download, Upload, Trash2, Calendar, TrendingUp, TrendingDown, HelpCircle, Heart, Home, Zap, ShoppingCart, Car, Shield, Sparkles, Gamepad2, PiggyBank, CreditCard, MoreHorizontal, ChevronDown, BarChart3 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ export const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useIncome();
   const [assets, setAssets] = useAssets();
+  const [chartsExpanded, setChartsExpanded] = useState(false);
 
   // Critical: Load expenses first (needed for budget display)
   const {
@@ -398,85 +400,6 @@ export const Budget = () => {
         </CardContent>
       </Card>
 
-      {/* Planned Spending by Category - Donut Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal hover-lift animate-fade-in">
-          <CardHeader className="p-6">
-            <CardTitle className="text-lg text-foreground flex items-center gap-3">
-              <Compass className="h-5 w-5 text-primary" />
-              Planned Spending by Category
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-            <ResponsiveContainer width="100%" height={400}>
-              <PieChart>
-                <Pie data={categoryData} dataKey="planned" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} label={({
-              name,
-              percentage
-            }) => `${percentage.toFixed(1)}%`} labelLine={{
-              stroke: 'hsl(var(--muted-foreground))',
-              strokeWidth: 1
-            }}>
-                  {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name, index)} />)}
-                </Pie>
-                <Tooltip formatter={currencyFormatter} contentStyle={STANDARD_TOOLTIP_STYLE} />
-              </PieChart>
-            </ResponsiveContainer>
-            <CustomPieLegend data={pieLegendData} />
-          </CardContent>
-        </Card>}
-
-      {/* Planned vs Actual by Category - Bar Chart */}
-      {isSecondaryLoading ? <ChartCardSkeleton /> : categoryData.length > 0 && <Card className="shadow-royal hover-lift animate-fade-in">
-          <CardHeader className="p-6">
-            <CardTitle className="text-lg text-foreground flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Planned vs Actual by Category
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-            <CustomBarLegend items={[{
-          label: "Planned Budget",
-          color: "hsl(var(--chart-8))"
-        }, {
-          label: "Actual Spent",
-          color: "hsl(var(--chart-4))"
-        }]} />
-            <ResponsiveContainer width="100%" height={Math.max(400, categoryData.length * 60)}>
-              <BarChart data={categoryData} layout="vertical" margin={{
-            left: 0,
-            right: 20,
-            top: 20,
-            bottom: 20
-          }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis type="number" tick={{
-              fill: 'hsl(var(--muted-foreground))',
-              fontSize: 12
-            }} tickFormatter={value => `$${(value / 1000).toFixed(0)}k`} />
-                <YAxis type="category" dataKey="name" width={120} tick={props => {
-              const {
-                x,
-                y,
-                payload
-              } = props;
-              const text = payload.value as string;
-              const truncated = text.length > 18 ? text.substring(0, 15) + '...' : text;
-              return <text x={x} y={y} textAnchor="end" fill="hsl(var(--muted-foreground))" fontSize={12} dy={4}>
-                        {truncated}
-                      </text>;
-            }} />
-                <Tooltip 
-                  formatter={(value: number, name: string) => [formatCurrency(value), name === 'planned' ? 'Planned' : 'Actual']} 
-                  labelFormatter={label => label} 
-                  contentStyle={STANDARD_TOOLTIP_STYLE} 
-                />
-                <Bar dataKey="planned" fill="hsl(var(--chart-8))" radius={[0, 4, 4, 0]} name="planned" />
-                <Bar dataKey="actual" fill="hsl(var(--chart-4))" radius={[0, 4, 4, 0]} name="actual" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>}
-
       {/* Expenses Section */}
       <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6">
@@ -491,44 +414,44 @@ export const Budget = () => {
           // notes not available in new schema
           category: e.category
         }))} setExpenses={newExpenses => {
-          // Check if this is just a reorder operation
-          const newOrder = newExpenses.map(e => e.id);
-          const oldOrder = expenses.map(e => e.id);
-          const isReorder = newOrder.length === oldOrder.length && newOrder.every(id => oldOrder.includes(id)) && JSON.stringify(newOrder) !== JSON.stringify(oldOrder);
-          if (isReorder) {
-            setExpensesOrder(newOrder);
-            return;
-          }
+            // Check if this is just a reorder operation
+            const newOrder = newExpenses.map(e => e.id);
+            const oldOrder = expenses.map(e => e.id);
+            const isReorder = newOrder.length === oldOrder.length && newOrder.every(id => oldOrder.includes(id)) && JSON.stringify(newOrder) !== JSON.stringify(oldOrder);
+            if (isReorder) {
+              setExpensesOrder(newOrder);
+              return;
+            }
 
-          // Handle updating expenses through Supabase
-          expenses.forEach(expense => {
-            const updatedExpense = newExpenses.find(ne => ne.id === expense.id);
-            if (updatedExpense) {
-              if (updatedExpense.planned !== expense.amount || updatedExpense.name !== expense.name || updatedExpense.category !== expense.category) {
-                updateSupabaseExpense(expense.id, {
-                  amount: updatedExpense.planned,
-                  name: updatedExpense.name,
-                  category: updatedExpense.category
+            // Handle updating expenses through Supabase
+            expenses.forEach(expense => {
+              const updatedExpense = newExpenses.find(ne => ne.id === expense.id);
+              if (updatedExpense) {
+                if (updatedExpense.planned !== expense.amount || updatedExpense.name !== expense.name || updatedExpense.category !== expense.category) {
+                  updateSupabaseExpense(expense.id, {
+                    amount: updatedExpense.planned,
+                    name: updatedExpense.name,
+                    category: updatedExpense.category
+                  });
+                }
+              } else {
+                // Expense was removed
+                removeSupabaseExpense(expense.id);
+              }
+            });
+
+            // Handle new expenses
+            newExpenses.forEach(newExpense => {
+              if (!expenses.find(e => e.id === newExpense.id)) {
+                addSupabaseExpense({
+                  name: newExpense.name,
+                  amount: newExpense.planned,
+                  category: newExpense.category,
+                  is_income: false
                 });
               }
-            } else {
-              // Expense was removed
-              removeSupabaseExpense(expense.id);
-            }
-          });
-
-          // Handle new expenses
-          newExpenses.forEach(newExpense => {
-            if (!expenses.find(e => e.id === newExpense.id)) {
-              addSupabaseExpense({
-                name: newExpense.name,
-                amount: newExpense.planned,
-                category: newExpense.category,
-                is_income: false
-              });
-            }
-          });
-        }} monthlyActuals={monthlyActuals} />
+            });
+          }} monthlyActuals={monthlyActuals} />
           
           <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <div></div>
@@ -588,5 +511,104 @@ export const Budget = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Budget Visualizations (Collapsible) */}
+      {categoryData.length > 0 && (
+        <Collapsible open={chartsExpanded} onOpenChange={setChartsExpanded}>
+          <Card className="shadow-royal">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="p-6 cursor-pointer hover:bg-muted/30 transition-colors">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg text-foreground flex items-center gap-3">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    Budget Visualizations
+                  </CardTitle>
+                  <ChevronDown className={cn(
+                    "h-5 w-5 text-muted-foreground transition-transform",
+                    chartsExpanded && "rotate-180"
+                  )} />
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  View spending breakdown charts
+                </p>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="p-6 pt-0 space-y-8">
+                {/* Pie Chart Section */}
+                <div>
+                  <h3 className="text-base font-medium mb-4 flex items-center gap-2">
+                    <Compass className="h-4 w-4 text-primary" />
+                    Planned Spending by Category
+                  </h3>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                      <Pie data={categoryData} dataKey="planned" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} label={({
+                        name,
+                        percentage
+                      }) => `${percentage.toFixed(1)}%`} labelLine={{
+                        stroke: 'hsl(var(--muted-foreground))',
+                        strokeWidth: 1
+                      }}>
+                        {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name, index)} />)}
+                      </Pie>
+                      <Tooltip formatter={currencyFormatter} contentStyle={STANDARD_TOOLTIP_STYLE} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <CustomPieLegend data={pieLegendData} />
+                </div>
+                
+                {/* Bar Chart Section */}
+                <div>
+                  <h3 className="text-base font-medium mb-4 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    Planned vs Actual by Category
+                  </h3>
+                  <CustomBarLegend items={[{
+                    label: "Planned Budget",
+                    color: "hsl(var(--chart-8))"
+                  }, {
+                    label: "Actual Spent",
+                    color: "hsl(var(--chart-4))"
+                  }]} />
+                  <ResponsiveContainer width="100%" height={Math.max(400, categoryData.length * 60)}>
+                    <BarChart data={categoryData} layout="vertical" margin={{
+                      left: 0,
+                      right: 20,
+                      top: 20,
+                      bottom: 20
+                    }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" tick={{
+                        fill: 'hsl(var(--muted-foreground))',
+                        fontSize: 12
+                      }} tickFormatter={value => `$${(value / 1000).toFixed(0)}k`} />
+                      <YAxis type="category" dataKey="name" width={120} tick={props => {
+                        const {
+                          x,
+                          y,
+                          payload
+                        } = props;
+                        const text = payload.value as string;
+                        const truncated = text.length > 18 ? text.substring(0, 15) + '...' : text;
+                        return <text x={x} y={y} textAnchor="end" fill="hsl(var(--muted-foreground))" fontSize={12} dy={4}>
+                              {truncated}
+                            </text>;
+                      }} />
+                      <Tooltip 
+                        formatter={(value: number, name: string) => [formatCurrency(value), name === 'planned' ? 'Planned' : 'Actual']} 
+                        labelFormatter={label => label} 
+                        contentStyle={STANDARD_TOOLTIP_STYLE} 
+                      />
+                      <Bar dataKey="planned" fill="hsl(var(--chart-8))" radius={[0, 4, 4, 0]} name="planned" />
+                      <Bar dataKey="actual" fill="hsl(var(--chart-4))" radius={[0, 4, 4, 0]} name="actual" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
+      )}
     </div>;
 };

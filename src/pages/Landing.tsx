@@ -43,46 +43,46 @@ export default function Landing() {
     },
   ];
 
-  // The Path - Wayfarer to Luminary
+  // The Path - Stoic Wisdom Journey
   const journeyLevels = [
     {
       level: 1,
-      title: 'Wayfarer',
-      quote: 'Every journey starts with a single step.',
+      title: 'Establish Your Budget',
+      quote: 'You must see the path before you can walk it.',
       milestones: [
         'Complete onboarding',
-        'Add your first debt',
-        'Set your emergency fund goal',
+        'Log your first month of transactions',
+        'Set spending categories',
       ],
     },
     {
       level: 2,
-      title: 'Pathfinder',
-      quote: 'Your emergency fund is complete. You\'re ready for the road ahead.',
+      title: 'Build Your Starter Fund',
+      quote: 'A hero builds on solid ground, not sand.',
       milestones: [
-        'Build $1,000 emergency fund',
-        'Log 7 days of transactions',
-        'Make your first extra payment',
+        'Save $1,000 emergency fund',
+        'Maintain consistent tracking',
+        'Build your safety net',
       ],
     },
     {
       level: 3,
-      title: 'Sage',
-      quote: 'You\'ve paid off your first debt.',
+      title: 'Eliminate Consumer Debt',
+      quote: 'Remove the weight of the past to move forward.',
       milestones: [
         'Pay off your first debt',
-        'Maintain 30-day streak',
-        'Achieve 75+ Consistency Score',
+        'Maintain momentum',
+        'Build lasting habits',
       ],
     },
     {
       level: 4,
-      title: 'Luminary',
-      quote: 'Debt-free. You ARE the Zero Hero.',
+      title: 'Financial Freedom',
+      quote: 'The ultimate victory is owning your own time.',
       milestones: [
-        'All debts paid off',
-        '6-month emergency fund',
-        'Financial freedom achieved',
+        'All consumer debts eliminated',
+        'Full emergency fund (3-6 months)',
+        'You own your time',
       ],
     },
   ];
@@ -258,7 +258,7 @@ export default function Landing() {
                     }`}
                   >
                     <h3 className="text-lg sm:text-xl font-bold text-card-foreground mb-1">
-                      Level {level.level}: {level.title}
+                      Step {level.level}: {level.title}
                     </h3>
                     <p className="text-accent font-medium italic text-sm mb-3">
                       "{level.quote}"

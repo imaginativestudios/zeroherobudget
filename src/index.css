@@ -253,7 +253,7 @@ All colors MUST be HSL.
   textarea:focus-visible,
   [tabindex]:not([tabindex="-1"]):focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring-accent));
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary));
   }
   
   /* Exception for elements that have their own focus styling */

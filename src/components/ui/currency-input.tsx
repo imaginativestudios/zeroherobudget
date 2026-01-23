@@ -10,11 +10,15 @@ export interface CurrencyInputProps
 }
 
 const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
-  ({ className, prefix, suffix, variant = 'default', value, onFocus, onBlur, placeholder, ...props }, ref) => {
+  ({ className, prefix, suffix, variant = 'default', value, onFocus, onBlur, placeholder, step, ...props }, ref) => {
     const [isFocused, setIsFocused] = React.useState(false);
     
     // Determine if field has a meaningful value
     const hasValue = value !== undefined && value !== '' && value !== '0';
+    
+    // Smart step defaults: $1 for currency, 0.1 for percentages
+    const defaultStep = suffix === '%' ? 0.1 : 1;
+    const actualStep = step ?? defaultStep;
     
     const variantClasses = {
       default: '',
@@ -26,7 +30,7 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
       <div 
         className={cn(
           "flex items-center rounded-md border border-input bg-background ring-offset-background",
-          "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+          "focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2",
           variantClasses[variant],
           className
         )}
@@ -47,6 +51,7 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
           type="number"
           ref={ref}
           value={value}
+          step={actualStep}
           onFocus={(e) => {
             setIsFocused(true);
             onFocus?.(e);

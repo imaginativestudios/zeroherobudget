@@ -18,8 +18,6 @@ import {
   Castle,
   TrendingUp,
   AlertCircle,
-  Pencil,
-  Check,
   Snowflake,
   Flame
 } from 'lucide-react';
@@ -29,7 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { CurrencyInput } from '@/components/ui/currency-input';
+import { EditableValue } from '@/components/ui/editable-value';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CompactDebtRow } from './CompactDebtRow';
 import { FreedomSlider } from '@/components/behavioral/FreedomSlider';
@@ -80,7 +78,6 @@ export function CommandCenter({
   onIncomeChange,
   onExpenseChange,
 }: CommandCenterProps) {
-  const [isEditing, setIsEditing] = useState(false);
   // Calculate totals
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.planned || 0), 0);
   const moatPercentage = moatTarget > 0 ? Math.min(100, (moatCurrent / moatTarget) * 100) : 0;
@@ -264,22 +261,6 @@ export function CommandCenter({
                     {HEROIC_SUBTEXTS.budget}
                   </p>
                 </div>
-                {/* Edit Toggle */}
-                {(onIncomeChange || onExpenseChange) && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsEditing(!isEditing)}
-                    className="h-8 w-8 p-0"
-                    aria-label={isEditing ? "Done editing" : "Edit budget"}
-                  >
-                    {isEditing ? (
-                      <Check className="h-4 w-4 text-success" />
-                    ) : (
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                )}
               </div>
             </CardHeader>
             
@@ -287,12 +268,13 @@ export function CommandCenter({
               {/* Income Display/Edit */}
               <div className="flex items-center justify-between p-3 rounded-lg bg-success/5 border border-success/20">
                 <span className="font-medium">Monthly Income</span>
-                {isEditing && onIncomeChange ? (
-                  <CurrencyInput
+                {onIncomeChange ? (
+                  <EditableValue
+                    value={income}
+                    onChange={onIncomeChange}
                     prefix="$"
-                    value={income || ''}
-                    onChange={(e) => onIncomeChange(parseFloat(e.target.value) || 0)}
-                    className="w-28 text-right"
+                    formatDisplay={formatCurrency}
+                    className="text-lg font-bold text-success"
                     aria-label="Monthly income"
                   />
                 ) : (
@@ -310,13 +292,13 @@ export function CommandCenter({
                       <span className="text-muted-foreground truncate max-w-[120px]">
                         {expense.name || expense.category}
                       </span>
-                      {isEditing && onExpenseChange && expense.id ? (
-                        <CurrencyInput
+                      {onExpenseChange && expense.id ? (
+                        <EditableValue
+                          value={expense.planned || 0}
+                          onChange={(value) => onExpenseChange(expense.id!, value)}
                           prefix="$"
-                          value={expense.planned || ''}
-                          onChange={(e) => onExpenseChange(expense.id!, parseFloat(e.target.value) || 0)}
-                          className="w-24 text-right text-sm"
-                          variant="expense"
+                          formatDisplay={formatCurrency}
+                          className="font-medium"
                           aria-label={`${expense.name || expense.category} amount`}
                         />
                       ) : (

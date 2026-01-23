@@ -163,7 +163,7 @@ export const Layout = ({ children }: LayoutProps) => {
       </a>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-primary shadow-royal border-b border-sidebar-border">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-sidebar shadow-md border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
           <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
             <Logo className="h-6 sm:h-7 w-auto" />
@@ -172,7 +172,7 @@ export const Layout = ({ children }: LayoutProps) => {
             variant="ghost"
             size="sm"
             onClick={toggleMobileMenu}
-            className="text-sidebar-foreground hover:bg-sidebar-accent/50"
+            className="text-sidebar-foreground hover:bg-sidebar-accent"
             aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-navigation"
@@ -203,7 +203,7 @@ export const Layout = ({ children }: LayoutProps) => {
         aria-label="Main navigation"
         data-tour="nav-sidebar"
       >
-        <nav className="bg-primary shadow-royal border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
+        <nav className="bg-sidebar shadow-md border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
           <ScrollArea className="flex-1">
             <div className="p-4 lg:p-6">
               {/* Desktop Header */}
@@ -238,8 +238,8 @@ export const Layout = ({ children }: LayoutProps) => {
                         className={cn(
                           "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                           isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-2 border-primary"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                         aria-current={isActive ? "page" : undefined}
                         data-tour={tourId}
@@ -254,7 +254,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
               {/* Tools Section */}
               <div className="mt-6 pt-4 border-t border-sidebar-border">
-                <h3 className="px-3 mb-2 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
+                <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Tools
                 </h3>
                 <ul className="space-y-2">
@@ -265,8 +265,8 @@ export const Layout = ({ children }: LayoutProps) => {
                       className={cn(
                         "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                         location.pathname === "/settings/connector"
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-elegant"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-2 border-primary"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       )}
                       aria-current={location.pathname === "/settings/connector" ? "page" : undefined}
                     >
@@ -280,14 +280,14 @@ export const Layout = ({ children }: LayoutProps) => {
               {/* User section at bottom */}
               {user && (
                 <div className="mt-8 pt-4 border-t border-sidebar-border space-y-3">
-                  <div className="text-xs text-sidebar-foreground/70 mb-2 px-3">
+                  <div className="text-xs text-muted-foreground mb-2 px-3">
                     Signed in as {user.email}
                   </div>
                   <div className="px-3 space-y-2">
                     <Link
                       to="/account"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"
+                      className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                     >
                       <Settings className="h-4 w-4" aria-hidden="true" />
                       Account Settings
@@ -295,7 +295,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     <Link
                       to="/data-privacy"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"
+                      className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                     >
                       <Shield className="h-4 w-4" aria-hidden="true" />
                       Your Privacy
@@ -306,7 +306,7 @@ export const Layout = ({ children }: LayoutProps) => {
                         size="sm"
                         onClick={handleManageSubscription}
                         disabled={isManagingSubscription}
-                        className="w-full justify-start text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 h-auto py-2 px-3"
+                        className="w-full justify-start text-xs text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent h-auto py-2 px-3"
                       >
                         {isManagingSubscription ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
@@ -319,7 +319,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       <Link
                         to="/pricing"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                       >
                         <CreditCard className="h-4 w-4" aria-hidden="true" />
                         Subscribe
@@ -330,7 +330,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     onClick={signOut}
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
                   >
                     <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                     Sign Out

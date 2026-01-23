@@ -90,14 +90,14 @@ All colors MUST be HSL.
     --chart-9: 15 75% 50%;    /* Coral - Debt Payments */
     --chart-10: 220 40% 55%;  /* Slate Blue - Miscellaneous */
 
-    --sidebar-background: 175 77% 26%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 32 88% 65%; /* Sandy Orange to match accent */
-    --sidebar-primary-foreground: 175 15% 8%;
-    --sidebar-accent: 175 65% 35%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 175 80% 20%;
-    --sidebar-ring: 32 88% 65%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 175 15% 15%;
+    --sidebar-primary: 175 77% 26%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 175 20% 94%;
+    --sidebar-accent-foreground: 175 77% 26%;
+    --sidebar-border: 175 15% 88%;
+    --sidebar-ring: 175 77% 26%;
   }
 
   .dark {

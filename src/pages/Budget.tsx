@@ -237,6 +237,38 @@ export const Budget = () => {
         </div>
       </div>
 
+      {/* Budget Progress At-a-Glance */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border bg-muted/30">
+        <div className="flex-1 w-full space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              {formatCurrency(totalActual)} of {formatCurrency(totalExpenses)} spent
+            </span>
+            <span className={cn(
+              "font-medium",
+              budgetUsedPercent <= 100 ? "text-success" : "text-destructive"
+            )}>
+              {budgetUsedPercent.toFixed(0)}%
+            </span>
+          </div>
+          <Progress 
+            value={Math.min(100, budgetUsedPercent)} 
+            className="h-2"
+            aria-label={`Budget progress: ${budgetUsedPercent.toFixed(0)}% used`}
+          />
+        </div>
+        
+        {/* Remaining/Over indicator */}
+        <div className={cn(
+          "text-sm font-medium whitespace-nowrap",
+          variance <= 0 ? "text-success" : "text-destructive"
+        )}>
+          {variance <= 0 
+            ? `${formatCurrency(Math.abs(variance))} under budget` 
+            : `${formatCurrency(variance)} over budget`}
+        </div>
+      </div>
+
       {/* Income Section */}
       <Card className="shadow-royal hover-lift" data-tour="budget-income">
         <CardHeader className="p-6">

@@ -69,7 +69,7 @@ export function ExpenseItemRow({
       <div
         ref={setNodeRef}
         style={style}
-        className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-all duration-200 group"
+        className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-all duration-200 group"
       >
         <div className="flex items-center gap-2 min-w-0">
           <button
@@ -91,20 +91,20 @@ export function ExpenseItemRow({
             step="0.01"
             value={expense.planned}
             onChange={(e) => onUpdate('planned', parseFloat(e.target.value) || 0)}
-            className="w-32 transition-all duration-200 group-hover:border-primary/30"
+            className="w-full transition-all duration-200 group-hover:border-primary/30"
           />
         </div>
         <div>
-          <div className="w-32 px-3 py-2 text-sm bg-muted rounded-md">
+          <div className="w-full px-3 py-2 text-sm bg-muted rounded-md">
             {formatCurrency(actual)}
           </div>
         </div>
-        <div className="flex items-center gap-2 justify-center">
+        <div>
           <Select
             value={expense.category || 'Uncategorized'}
             onValueChange={onMoveToGroup}
           >
-            <SelectTrigger className="w-32 bg-background z-50">
+            <SelectTrigger className="w-full bg-background z-50">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-background z-50">
@@ -115,6 +115,8 @@ export function ExpenseItemRow({
               ))}
             </SelectContent>
           </Select>
+        </div>
+        <div className="flex items-center justify-center">
           <Button
             variant="ghost"
             size="sm"

@@ -156,7 +156,6 @@ export function QuickAddDebtDialog({ open, onOpenChange, onDebtAdded }: QuickAdd
             <CurrencyInput
               id="debt-balance"
               prefix="$"
-              placeholder="5000"
               value={balance}
               onChange={(e) => setBalance(e.target.value)}
               variant="debt"
@@ -173,7 +172,6 @@ export function QuickAddDebtDialog({ open, onOpenChange, onDebtAdded }: QuickAdd
             <CurrencyInput
               id="debt-apr"
               suffix="%"
-              placeholder="22.5"
               value={interestRate}
               onChange={(e) => setInterestRate(e.target.value)}
               variant="debt"
@@ -186,7 +184,6 @@ export function QuickAddDebtDialog({ open, onOpenChange, onDebtAdded }: QuickAdd
             <CurrencyInput
               id="debt-min-payment"
               prefix="$"
-              placeholder="150"
               value={minimumPayment}
               onChange={(e) => setMinimumPayment(e.target.value)}
               variant="debt"

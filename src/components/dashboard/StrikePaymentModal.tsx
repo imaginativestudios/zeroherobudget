@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CurrencyInput } from '@/components/ui/currency-input';
 import { Debt, useLocalDebts } from '@/hooks/useLocalDebts';
 import { calculateFreedomImpact, translateToHumanTime } from '@/lib/freedomEngine';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
@@ -137,18 +137,14 @@ export function StrikePaymentModal({
           {/* Amount Input */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Payment Amount</label>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl text-muted-foreground">$</span>
-              <Input
-                type="number"
-                placeholder="0"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="text-2xl h-14 font-bold"
-                min="0"
-                max={debt.balance}
-              />
-            </div>
+            <CurrencyInput
+              prefix="$"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="text-2xl h-14 font-bold"
+              min="0"
+              max={debt.balance}
+            />
           </div>
 
           {/* Quick Amount Buttons */}

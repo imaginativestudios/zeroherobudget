@@ -58,7 +58,7 @@ interface CommandCenterProps {
   currentBoss: Debt | null;
   freedomDate: string;
   onAddDebt?: () => void;
-  onStrategyUpdate?: (strategy: 'Snowball' | 'Avalanche') => void;
+  // Note: onStrategyUpdate removed - strategy changes now happen on /debts page
   // Budget editing props
   onIncomeChange?: (newIncome: number) => void;
   onExpenseChange?: (id: string, newAmount: number) => void;
@@ -76,7 +76,7 @@ export function CommandCenter({
   currentBoss,
   freedomDate,
   onAddDebt,
-  onStrategyUpdate,
+  // Note: onStrategyUpdate removed
   onIncomeChange,
   onExpenseChange,
 }: CommandCenterProps) {
@@ -396,52 +396,13 @@ export function CommandCenter({
                         ? strategyComparison?.snowball.date || freedomDate
                         : strategyComparison?.avalanche.date || freedomDate}
                     </p>
-                    {onStrategyUpdate ? (
-                      <div className="flex justify-center gap-1 mt-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant={strategy === "Snowball" ? "default" : "outline"}
-                              size="sm"
-                              className="text-xs h-7 px-2"
-                              onClick={() => onStrategyUpdate("Snowball")}
-                            >
-                              <Snowflake className="h-3 w-3 mr-1" />
-                              Snowball
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-[200px]">
-                            <p className="font-medium">Snowball Method</p>
-                            <p className="text-sm text-muted-foreground">
-                              Pay smallest debts first for quick psychological wins.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant={strategy === "Avalanche" ? "default" : "outline"}
-                              size="sm"
-                              className="text-xs h-7 px-2"
-                              onClick={() => onStrategyUpdate("Avalanche")}
-                            >
-                              <Flame className="h-3 w-3 mr-1" />
-                              Avalanche
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-[200px]">
-                            <p className="font-medium">Avalanche Method</p>
-                            <p className="text-sm text-muted-foreground">
-                              Pay highest interest first to save the most money.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    ) : (
-                      <Badge variant="outline" className="mt-2 text-xs">
-                        {strategy} Strategy
-                      </Badge>
-                    )}
+                    <Badge variant="secondary" className="mt-2 text-xs">
+                      {strategy === 'Snowball' ? (
+                        <><Snowflake className="h-3 w-3 mr-1" /> Snowball</>
+                      ) : (
+                        <><Flame className="h-3 w-3 mr-1" /> Avalanche</>
+                      )} Strategy
+                    </Badge>
                     
                     {/* Strategy Comparison Insight */}
                     {strategyComparison && strategyComparison.interestDifference > 0 && (
@@ -501,6 +462,16 @@ export function CommandCenter({
                   </p>
                 </div>
               )}
+              
+              <Button 
+                variant="outline" 
+                className="w-full min-h-[44px]"
+                asChild
+              >
+                <Link to="/debts">
+                  View Full Strategy <ArrowRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
               
               <Separator />
               

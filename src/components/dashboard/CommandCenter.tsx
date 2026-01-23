@@ -365,24 +365,44 @@ export function CommandCenter({
                     <p className="text-2xl font-bold text-primary">{freedomDate}</p>
                     {onStrategyUpdate ? (
                       <div className="flex justify-center gap-1 mt-2">
-                        <Button
-                          variant={strategy === "Snowball" ? "default" : "outline"}
-                          size="sm"
-                          className="text-xs h-7 px-2"
-                          onClick={() => onStrategyUpdate("Snowball")}
-                        >
-                          <Snowflake className="h-3 w-3 mr-1" />
-                          Snowball
-                        </Button>
-                        <Button
-                          variant={strategy === "Avalanche" ? "default" : "outline"}
-                          size="sm"
-                          className="text-xs h-7 px-2"
-                          onClick={() => onStrategyUpdate("Avalanche")}
-                        >
-                          <Flame className="h-3 w-3 mr-1" />
-                          Avalanche
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant={strategy === "Snowball" ? "default" : "outline"}
+                              size="sm"
+                              className="text-xs h-7 px-2"
+                              onClick={() => onStrategyUpdate("Snowball")}
+                            >
+                              <Snowflake className="h-3 w-3 mr-1" />
+                              Snowball
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[200px]">
+                            <p className="font-medium">Snowball Method</p>
+                            <p className="text-sm text-muted-foreground">
+                              Pay smallest debts first for quick psychological wins.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant={strategy === "Avalanche" ? "default" : "outline"}
+                              size="sm"
+                              className="text-xs h-7 px-2"
+                              onClick={() => onStrategyUpdate("Avalanche")}
+                            >
+                              <Flame className="h-3 w-3 mr-1" />
+                              Avalanche
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[200px]">
+                            <p className="font-medium">Avalanche Method</p>
+                            <p className="text-sm text-muted-foreground">
+                              Pay highest interest first to save the most money.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     ) : (
                       <Badge variant="outline" className="mt-2 text-xs">

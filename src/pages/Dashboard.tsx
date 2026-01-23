@@ -57,7 +57,6 @@ import { IntelFeed } from "@/components/dashboard/IntelFeed";
 import { StatusBanner } from "@/components/dashboard/StatusBanner";
 import { CommandCenter } from "@/components/dashboard/CommandCenter";
 import { QuickAddDebtDialog } from "@/components/dashboard/QuickAddDebtDialog";
-import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
@@ -102,22 +101,6 @@ export const Dashboard = () => {
   // Subscription status for trial countdown
   const { isTrialing, trialEnd, interval } = useSubscriptionStatus();
 
-  // Behavioral Engine for Stamina Wheel
-  const { surplusPower } = useBehavioralEngine();
-
-  // Calculate current month's discretionary spending for Stamina Wheel
-  const currentMonthSpend = useMemo(() => {
-    const currentMonth = format(new Date(), 'yyyy-MM');
-    const survivalCategories = getSurvivalCategories();
-    
-    return transactions
-      .filter(t => 
-        t.date.startsWith(currentMonth) && 
-        t.flow === 'out' && 
-        !survivalCategories.includes(t.category)
-      )
-      .reduce((sum, t) => sum + t.amount, 0);
-  }, [transactions]);
 
   // Critical data loading state (for main cards)
   const isCriticalLoading = isLoadingExpenses || isLoadingDebts || isLoadingSubscriptions;
@@ -560,33 +543,6 @@ export const Dashboard = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
-                  {/* Financial Stamina Wheel */}
-                  {dashboardState.canShowStaminaWheel && (
-                    <Card className="overflow-hidden h-full shadow-royal hover-lift">
-                      <CardHeader className="p-6">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                          <Heart className="h-5 w-5 text-success" aria-hidden="true" />
-                          Financial Stamina
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-6 pt-0 flex flex-col items-center">
-                        <StaminaWheel
-                          incomeTotal={surplusPower.totalIncome}
-                          fixedExpenses={surplusPower.survivalExpenses}
-                          debtPayments={surplusPower.debtMinimums}
-                          currentSpend={currentMonthSpend}
-                          size={320}
-                        />
-                        <div className="mt-4 w-full">
-                          <ChartInsight 
-                            insight={surplusPower.heroMessage} 
-                            type={surplusPower.isPositive ? "success" : "warning"} 
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
                   {/* Spending by Category Chart */}
                   {dashboardState.canShowSpendingChart && (
                     <Card className="overflow-hidden h-full shadow-royal hover-lift">
@@ -646,7 +602,7 @@ export const Dashboard = () => {
                   {dashboardState.canShowDebtProjection && (
                     <Card className={cn(
                       "overflow-hidden h-full shadow-royal hover-lift",
-                      dashboardState.canShowStaminaWheel && dashboardState.canShowSpendingChart && "xl:col-span-2"
+                      dashboardState.canShowSpendingChart && "xl:col-span-2"
                     )}>
                       <CardHeader className="p-6">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">

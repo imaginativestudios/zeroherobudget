@@ -403,7 +403,7 @@ export const Budget = () => {
       {/* Expenses Section */}
       <Card className="shadow-royal hover-lift">
         <CardHeader className="p-6">
-          <CardTitle className="text-xl text-foreground">Monthly Expenses</CardTitle>
+          <CardTitle className="text-xl text-foreground">Monthly Budget</CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <GroupableExpenses expenses={expenses.map(e => ({

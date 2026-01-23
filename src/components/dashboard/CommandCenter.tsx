@@ -333,9 +333,9 @@ export function CommandCenter({
                   )}
                 </div>
               ) : (
-                <div className="text-center py-4">
+              <div className="text-center py-4">
                   <p className="text-sm text-muted-foreground">
-                    No expenses set up yet
+                    No budget items set up yet
                   </p>
                 </div>
               )}

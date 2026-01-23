@@ -255,7 +255,7 @@ export default function DataManagement() {
           <ImportCard
             icon={DollarSign}
             title="Budget Items"
-            description="Import your planned expenses and budget categories"
+            description="Import your budget categories and planned amounts"
             onClick={() => openImportWizard('expenses')}
           />
           <ImportCard

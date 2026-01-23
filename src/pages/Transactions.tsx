@@ -318,7 +318,7 @@ export const Transactions = () => {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Transaction</DialogTitle>
+                  <DialogTitle>Log Transaction</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -373,8 +373,8 @@ export const Transactions = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="out">Expense (Money Out)</SelectItem>
-                          <SelectItem value="in">Income (Money In)</SelectItem>
+                          <SelectItem value="out">💸 Expense</SelectItem>
+                          <SelectItem value="in">💰 Income</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

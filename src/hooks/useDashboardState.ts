@@ -30,7 +30,6 @@ export interface DashboardState {
   canShowExpenseCard: boolean;         // expenses.length > 0
   canShowAvailableCard: boolean;       // income > 0 AND expenses.length > 0
   canShowNetWorthCard: boolean;        // assets.length > 0 OR debts.length > 0
-  canShowStaminaWheel: boolean;        // income > 0
   canShowSpendingChart: boolean;       // expenses.length > 0
   canShowDebtProjection: boolean;      // debts.length > 0 AND leftover > 0
   canShowAchievements: boolean;        // debts.length > 0
@@ -117,14 +116,13 @@ export function useDashboardState(): DashboardState {
     const canShowExpenseCard = expenses.length > 0;
     const canShowAvailableCard = (income || 0) > 0 && expenses.length > 0;
     const canShowNetWorthCard = assets.length > 0 || debts.length > 0;
-    const canShowStaminaWheel = (income || 0) > 0;
     const canShowSpendingChart = expenses.length > 0;
     const canShowDebtProjection = debts.length > 0 && leftover > 0;
     const canShowAchievements = debts.length > 0;
     
     // Section visibility
     const canShowFinancialOverview = canShowIncomeCard || canShowExpenseCard || canShowNetWorthCard;
-    const canShowAnalytics = canShowStaminaWheel || canShowSpendingChart || canShowDebtProjection;
+    const canShowAnalytics = canShowSpendingChart || canShowDebtProjection;
     
     // Calculate visible financial card count for grid layout
     const visibleFinancialCardCount = [
@@ -163,7 +161,6 @@ export function useDashboardState(): DashboardState {
       canShowExpenseCard,
       canShowAvailableCard,
       canShowNetWorthCard,
-      canShowStaminaWheel,
       canShowSpendingChart,
       canShowDebtProjection,
       canShowAchievements,

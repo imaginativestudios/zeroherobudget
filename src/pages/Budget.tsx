@@ -15,7 +15,6 @@ import { DEFAULT_EXPENSES, DEFAULT_ASSETS, formatCurrency } from "@/lib/constant
 import { getCurrentMonth, formatMonthDisplay } from "@/lib/dateUtils";
 import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile, type Expense, type Asset } from "@/lib/csvUtils";
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
-import { StaminaWheel } from "@/components/Sanctuary/StaminaWheel";
 import { cn } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
@@ -238,30 +237,6 @@ export const Budget = () => {
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* HERO: STAMINA WHEEL - Central Visual     */}
-      {/* ========================================= */}
-      <Card className="shadow-royal py-8" data-tour="budget-summary">
-        <CardContent className="flex flex-col items-center justify-center">
-          <div className="mb-6">
-            <StaminaWheel
-              incomeTotal={income}
-              fixedExpenses={totalExpenses}
-              debtPayments={0}
-              currentSpend={totalActual}
-              size={400}
-            />
-          </div>
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-semibold text-foreground">
-              Your Financial Energy
-            </h2>
-            <p className="text-muted-foreground max-w-md">
-              Watch your stamina as you allocate resources. The green vitality represents your safe-to-spend buffer.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
       {/* Income Section */}
       <Card className="shadow-royal hover-lift" data-tour="budget-income">
         <CardHeader className="p-6">

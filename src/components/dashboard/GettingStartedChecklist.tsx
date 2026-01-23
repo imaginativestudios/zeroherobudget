@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Swords, 
+  Compass, 
   ChevronDown, 
   ChevronUp,
   DollarSign,
@@ -11,7 +11,8 @@ import {
   Heart,
   ArrowUpRight,
   Check,
-  Sparkles
+  Sparkles,
+  Rocket
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,8 +62,8 @@ export function GettingStartedChecklist({
     },
     { 
       id: 'expense', 
-      title: 'Add your first expense', 
-      description: 'Track where your money goes',
+      title: 'Set up your budget', 
+      description: 'Add expense categories to track spending',
       icon: Receipt,
       isComplete: expenses.length > 0, 
       href: '/budgets'
@@ -70,7 +71,7 @@ export function GettingStartedChecklist({
     { 
       id: 'debt', 
       title: 'Track a debt', 
-      description: 'Add a debt to build your payoff plan',
+      description: 'Add a debt to start your payoff plan',
       icon: Target,
       isComplete: debts.length > 0, 
       href: '/debts'
@@ -131,23 +132,23 @@ export function GettingStartedChecklist({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
-                <Swords className="h-5 w-5 text-primary" aria-hidden="true" />
+                <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
               </div>
               <div>
                 <CardTitle className="text-lg font-semibold">
                   {allComplete ? (
                     <span className="flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-amber-400" />
-                      Quest Complete!
+                      Setup Complete!
                     </span>
                   ) : (
-                    'Your Quest Begins'
+                    'Getting Started'
                   )}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   {allComplete 
                     ? 'All systems operational. Your dashboard is fully unlocked.'
-                    : 'Complete these tasks to unlock your full dashboard'
+                    : 'Complete these steps to unlock your full dashboard'
                   }
                 </p>
               </div>
@@ -202,6 +203,23 @@ export function GettingStartedChecklist({
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Journey Link */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <Button 
+              variant="outline" 
+              className="w-full min-h-[44px]" 
+              asChild
+            >
+              <Link to="/journey" className="flex items-center justify-center gap-2">
+                <Rocket className="h-4 w-4" />
+                View Your Full Journey
+              </Link>
+            </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              See all 6 steps to financial freedom
+            </p>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

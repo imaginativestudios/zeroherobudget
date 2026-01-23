@@ -21,6 +21,7 @@ interface LayoutProps {
 // Navigation items - Thematic Headers, Functional Names
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Journey", href: "/journey", icon: Rocket },
   { name: "Budget", href: "/budgets", icon: Compass },
   { name: "Debt Strategy", href: "/debts", icon: Cloud },
   { name: "Transactions", href: "/transactions", icon: Scroll },

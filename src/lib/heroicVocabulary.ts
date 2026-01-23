@@ -73,11 +73,13 @@ export const HEROIC_COPY = {
   excellent: 'Excellent',
   good: 'Good Progress',
 
-  // Journey Steps (Stoic Wisdom)
+  // Journey Steps (Stoic Wisdom - Full 6-Step Path)
   journeyStep1: 'Establish Your Budget',
   journeyStep2: 'Build Starter Fund',
   journeyStep3: 'Eliminate Consumer Debt',
-  journeyStep4: 'Financial Freedom',
+  journeyStep4: 'Save 3-6 Months Expenses',
+  journeyStep5: 'Invest for the Future',
+  journeyStep6: 'Financial Freedom',
 
   // Stoic Wisdom Subtexts
   wisdomBudget: 'You must see the path before you can walk it.',

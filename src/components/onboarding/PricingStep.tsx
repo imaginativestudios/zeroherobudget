@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Castle, Check, Loader2, ArrowRight } from 'lucide-react';
+import { Compass, Check, Loader2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -106,8 +106,8 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             </h1>
             <p className="text-muted-foreground">
               {isTrialing 
-                ? 'You already have an active trial. Continue your quest!'
-                : 'Your fortress is fully operational.'}
+                ? 'Your trial is active. Let\'s continue your journey.'
+                : 'Your subscription is active.'}
             </p>
           </motion.div>
 
@@ -161,7 +161,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
           transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
         >
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center">
-            <Castle className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+            <Compass className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
           </div>
         </motion.div>
 
@@ -173,7 +173,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
           transition={{ delay: 0.15 }}
         >
           <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-            Initialize Your Fortress
+            Choose Your Plan
           </h1>
           <p className="text-muted-foreground">
             Choose your plan to unlock the full experience

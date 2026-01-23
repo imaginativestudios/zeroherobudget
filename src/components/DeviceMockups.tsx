@@ -73,7 +73,7 @@ export function DeviceMockups() {
               <div className="flex-1 p-2 lg:p-4 bg-background overflow-hidden">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-2 lg:mb-3">
-                  <div className="text-[7px] lg:text-[10px] font-bold text-foreground">Welcome, debt warrior!</div>
+                  <div className="text-[7px] lg:text-[10px] font-bold text-foreground">Welcome back!</div>
                   <div className="flex items-center gap-1">
                     <div className="flex items-center gap-0.5 px-1 lg:px-1.5 py-0.5 bg-primary rounded text-[5px] lg:text-[7px] text-white font-medium">
                       <TrendingUp className="w-1.5 h-1.5 lg:w-2 lg:h-2" />

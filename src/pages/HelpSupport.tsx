@@ -192,10 +192,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <Wallet className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">War Map (Budget)</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Budget</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Plan your financial strategy across 10 household categories. Visualize Tactical Overstretch and Strategic Surplus with charts and insights.
+                  Plan your monthly spending across 10 household categories. Visualize over- and under-budget items with charts and insights.
                 </p>
               </div>
 
@@ -204,10 +204,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <TrendingDown className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Battle Plan (Debt Payoff)</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Debt Strategy</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Slay your Balance Foes using Snowball or Avalanche tactics. See projected victory timelines and total interest saved.
+                  Pay off your debts using Snowball or Avalanche methods. See projected payoff dates and interest saved.
                 </p>
               </div>
 
@@ -219,7 +219,7 @@ const HelpSupport = () => {
                   <h3 className="text-lg font-semibold text-foreground">Subscription Management</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Track all your recurring obligations in one place. Get alerts for upcoming renewals and identify unnecessary deployments.
+                  Track all your recurring subscriptions in one place. Get alerts for upcoming renewals and identify unnecessary expenses.
                 </p>
               </div>
 
@@ -228,10 +228,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <BarChart3 className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Intel Center (Reports)</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Reports</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Gather intelligence on your financial kingdom including income analysis, net worth tracking, and deployment breakdowns.
+                  View detailed financial reports including income analysis, net worth tracking, and spending breakdowns.
                 </p>
               </div>
 
@@ -243,7 +243,7 @@ const HelpSupport = () => {
                   <h3 className="text-lg font-semibold text-foreground">Household Collaboration</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Invite fellow heroes to collaborate on shared finances. Assign roles (Owner, Admin, Member, Viewer) with different permission levels.
+                  Invite family members to collaborate on shared finances. Assign roles (Owner, Admin, Member, Viewer) with different permission levels.
                 </p>
               </div>
 
@@ -252,10 +252,10 @@ const HelpSupport = () => {
                   <div className="rounded-lg bg-primary/10 p-3">
                     <Calendar className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">Quest Log (Transactions)</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Transactions</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Record and categorize all income and deployments. Search, filter, and analyze patterns over time.
+                  Record and categorize all income and expenses. Search, filter, and analyze spending patterns over time.
                 </p>
               </div>
             </div>

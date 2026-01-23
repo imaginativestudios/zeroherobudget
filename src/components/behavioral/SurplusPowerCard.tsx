@@ -47,7 +47,7 @@ export function SurplusPowerCard() {
       color: 'text-success',
       bgColor: 'bg-success/10',
       icon: TrendingUp,
-      label: 'Hero Mode',
+      label: 'Strong Surplus',
     },
     healthy: {
       color: 'text-success',
@@ -59,13 +59,13 @@ export function SurplusPowerCard() {
       color: 'text-warning',
       bgColor: 'bg-warning/10',
       icon: TrendingDown,
-      label: 'Regrouping',
+      label: 'Tight Budget',
     },
     negative: {
       color: 'text-destructive',
       bgColor: 'bg-destructive/10',
       icon: TrendingDown,
-      label: 'Temporary Retreat',
+      label: 'Needs Attention',
     },
   };
 

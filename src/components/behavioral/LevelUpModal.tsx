@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Trophy, Swords, TrendingUp, Sparkles } from 'lucide-react';
+import { Trophy, Target, TrendingUp, Sparkles } from 'lucide-react';
 import { formatTriggerCurrency } from '@/lib/behavioralTriggers';
 
 interface HighestInterestDebt {
@@ -103,7 +103,7 @@ export function LevelUpModal({
               LEVEL UP!
             </DialogTitle>
             <DialogDescription className="text-base mt-2">
-              You've proven yourself a <span className="font-semibold text-foreground">Master of Discipline</span> with a{' '}
+              Your consistency has paid off! You've achieved a{' '}
               <span className="font-bold text-primary">{Math.round(consistencyScore)}%</span> Consistency Score.
             </DialogDescription>
           </div>
@@ -114,7 +114,7 @@ export function LevelUpModal({
           {highestInterestDebt && (
             <div className="bg-muted/50 rounded-lg p-4 border border-destructive/20">
               <div className="flex items-center gap-2 text-sm font-medium text-destructive mb-2">
-                <Swords className="h-4 w-4" />
+                <Target className="h-4 w-4" />
                 YOUR HIGHEST INTEREST DEBT
               </div>
               <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export function LevelUpModal({
             </div>
             <p className="text-sm text-muted-foreground mb-3">
               By switching to the <span className="font-semibold text-foreground">Avalanche Method</span>, 
-              you attack high-interest debts first—the mathematically optimal approach.
+              you tackle high-interest debts first—the mathematically optimal approach.
             </p>
             <div className="text-center py-2">
               <p className="text-sm text-muted-foreground">Potential Interest Savings</p>
@@ -152,7 +152,7 @@ export function LevelUpModal({
 
           {/* Motivational Text */}
           <p className="text-sm text-center text-muted-foreground italic">
-            "A true Slayer doesn't just fight—they fight <span className="font-semibold">smart</span>."
+            "Discipline and strategy lead to <span className="font-semibold">lasting results</span>."
           </p>
         </div>
 
@@ -169,7 +169,7 @@ export function LevelUpModal({
             onClick={handleSwitch}
             className="flex-1 min-h-[44px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
           >
-            <Swords className="h-4 w-4 mr-2" />
+            <TrendingUp className="h-4 w-4 mr-2" />
             Adopt Expert Strategy
           </Button>
         </div>

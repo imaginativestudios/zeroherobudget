@@ -12,11 +12,11 @@ import { useBehavioralEngine } from '@/hooks/useBehavioralEngine';
 import { cn } from '@/lib/utils';
 
 const STREAK_LEVELS = {
-  novice: { icon: Star, color: 'text-muted-foreground', label: 'Wayfarer', next: 'Seeker', threshold: 3 },
-  apprentice: { icon: Flame, color: 'text-warning', label: 'Seeker', next: 'Pathfinder', threshold: 7 },
-  warrior: { icon: Trophy, color: 'text-primary', label: 'Pathfinder', next: 'Sage', threshold: 14 },
-  hero: { icon: Compass, color: 'text-success', label: 'Sage', next: 'Luminary', threshold: 30 },
-  legend: { icon: Sparkles, color: 'text-tier-champion', label: 'Luminary', next: null, threshold: 100 },
+  novice: { icon: Star, color: 'text-muted-foreground', label: 'Getting Started', next: 'Building Habits', threshold: 3 },
+  apprentice: { icon: Flame, color: 'text-warning', label: 'Building Habits', next: 'Consistent', threshold: 7 },
+  warrior: { icon: Trophy, color: 'text-primary', label: 'Consistent', next: 'Dedicated', threshold: 14 },
+  hero: { icon: Compass, color: 'text-success', label: 'Dedicated', next: 'Master', threshold: 30 },
+  legend: { icon: Sparkles, color: 'text-tier-champion', label: 'Master', next: null, threshold: 100 },
 };
 
 export function StreakTrackerWidget() {

@@ -168,14 +168,14 @@ export function useBehavioralEngine(): BehavioralEngineResult {
     // Enhanced consistency tip with score breakdown
     tips.push(consistencyScore.heroMessage);
 
-    // Budget compliance tip with heroic vocabulary
+    // Budget compliance tip with clear vocabulary
     if (!budgetCompliance.isUnderBudget) {
       tips.push(
-        `⚠️ Survival deployment is $${Math.abs(budgetCompliance.variance).toFixed(0)} in Tactical Overstretch. Review essential expenses.`
+        `⚠️ Essential spending is $${Math.abs(budgetCompliance.variance).toFixed(0)} over budget. Review expenses to find savings.`
       );
     } else if (budgetCompliance.variance > 0) {
       tips.push(
-        `✅ You're $${budgetCompliance.variance.toFixed(0)} in Strategic Surplus on survival! Consider redirecting to slay debts.`
+        `✅ You're $${budgetCompliance.variance.toFixed(0)} under budget on essentials! Consider putting the extra toward debt.`
       );
     }
 

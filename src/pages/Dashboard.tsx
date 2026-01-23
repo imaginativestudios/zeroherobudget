@@ -421,6 +421,7 @@ export const Dashboard = () => {
           currentBoss={dashboardState.currentBoss}
           freedomDate={freedomDate}
           onAddDebt={() => setQuickAddDebtOpen(true)}
+          onStrategyUpdate={setStrategy}
           onIncomeChange={setIncome}
           onExpenseChange={handleExpenseChange}
         />

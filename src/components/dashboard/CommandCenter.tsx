@@ -19,7 +19,9 @@ import {
   TrendingUp,
   AlertCircle,
   Pencil,
-  Check
+  Check,
+  Snowflake,
+  Flame
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,6 +57,7 @@ interface CommandCenterProps {
   currentBoss: Debt | null;
   freedomDate: string;
   onAddDebt?: () => void;
+  onStrategyUpdate?: (strategy: 'Snowball' | 'Avalanche') => void;
   // Budget editing props
   onIncomeChange?: (newIncome: number) => void;
   onExpenseChange?: (id: string, newAmount: number) => void;
@@ -72,6 +75,7 @@ export function CommandCenter({
   currentBoss,
   freedomDate,
   onAddDebt,
+  onStrategyUpdate,
   onIncomeChange,
   onExpenseChange,
 }: CommandCenterProps) {
@@ -359,9 +363,32 @@ export function CommandCenter({
                       Debt-Free By
                     </p>
                     <p className="text-2xl font-bold text-primary">{freedomDate}</p>
-                    <Badge variant="outline" className="mt-2 text-xs">
-                      {strategy} Strategy
-                    </Badge>
+                    {onStrategyUpdate ? (
+                      <div className="flex justify-center gap-1 mt-2">
+                        <Button
+                          variant={strategy === "Snowball" ? "default" : "outline"}
+                          size="sm"
+                          className="text-xs h-7 px-2"
+                          onClick={() => onStrategyUpdate("Snowball")}
+                        >
+                          <Snowflake className="h-3 w-3 mr-1" />
+                          Snowball
+                        </Button>
+                        <Button
+                          variant={strategy === "Avalanche" ? "default" : "outline"}
+                          size="sm"
+                          className="text-xs h-7 px-2"
+                          onClick={() => onStrategyUpdate("Avalanche")}
+                        >
+                          <Flame className="h-3 w-3 mr-1" />
+                          Avalanche
+                        </Button>
+                      </div>
+                    ) : (
+                      <Badge variant="outline" className="mt-2 text-xs">
+                        {strategy} Strategy
+                      </Badge>
+                    )}
                   </div>
                   
                   {/* Embedded FreedomSlider (compact) */}

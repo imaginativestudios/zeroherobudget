@@ -166,7 +166,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-sidebar shadow-md border-b border-sidebar-border">
         <div className="flex items-center justify-between p-4">
           <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
-            <Logo className="h-6 sm:h-7 w-auto" />
+            <Logo className="h-6 sm:h-7 w-auto" variant="dark" />
           </Link>
           <Button
             variant="ghost"
@@ -208,7 +208,7 @@ export const Layout = ({ children }: LayoutProps) => {
             <div className="p-4 lg:p-6">
               {/* Desktop Header */}
               <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
-                <Logo className="h-8 w-auto" />
+                <Logo className="h-8 w-auto" variant="dark" />
               </Link>
               
               {/* Mobile padding for header */}
@@ -238,13 +238,13 @@ export const Layout = ({ children }: LayoutProps) => {
                         className={cn(
                           "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                           isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-2 border-primary"
+                            ? "bg-primary text-primary-foreground font-semibold shadow-md"
                             : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                         aria-current={isActive ? "page" : undefined}
                         data-tour={tourId}
                       >
-                        <item.icon className="h-5 w-5" aria-hidden="true" />
+                        <item.icon className={cn("h-5 w-5", isActive && "text-primary-foreground")} aria-hidden="true" />
                         <span className="font-medium truncate">{item.name}</span>
                       </Link>
                     </li>
@@ -265,12 +265,12 @@ export const Layout = ({ children }: LayoutProps) => {
                       className={cn(
                         "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                         location.pathname === "/settings/connector"
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-2 border-primary"
+                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
                           : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       )}
                       aria-current={location.pathname === "/settings/connector" ? "page" : undefined}
                     >
-                      <Plug className="h-5 w-5" aria-hidden="true" />
+                      <Plug className={cn("h-5 w-5", location.pathname === "/settings/connector" && "text-primary-foreground")} aria-hidden="true" />
                       <span className="font-medium truncate">Bank Connector</span>
                     </Link>
                   </li>

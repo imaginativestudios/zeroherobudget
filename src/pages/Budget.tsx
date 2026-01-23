@@ -338,65 +338,6 @@ export const Budget = () => {
             </div>
           </div>
 
-          {/* Sleek Vertical Category List */}
-          {categoryData.length > 0 && (
-            <div className="space-y-3">
-              {categoryData.map((cat, idx) => {
-                const CategoryIcon = getCategoryIcon(cat.name);
-                const usagePercent = cat.planned > 0 ? Math.min(100, (cat.actual / cat.planned) * 100) : 0;
-                const isOverBudget = cat.actual > cat.planned;
-                const isFullySpent = usagePercent >= 100;
-                
-                return (
-                  <div 
-                    key={cat.name}
-                    className={cn(
-                      "flex items-center gap-4 p-4 rounded-xl bg-muted/30 border hover:border-primary/30 transition-all cursor-pointer",
-                      isFullySpent && "opacity-60"
-                    )}
-                  >
-                    {/* Icon */}
-                    <div className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center",
-                      isOverBudget ? "bg-destructive/20" : "bg-primary/20"
-                    )}>
-                      <CategoryIcon className={cn(
-                        "h-5 w-5",
-                        isOverBudget ? "text-destructive" : "text-primary"
-                      )} />
-                    </div>
-                    
-                    {/* Name */}
-                    <span className={cn(
-                      "flex-1 font-medium",
-                      isFullySpent ? "text-muted-foreground" : "text-foreground"
-                    )}>
-                      {cat.name}
-                    </span>
-                    
-                    {/* Progress Bar - Thin */}
-                    <div className="w-24 sm:w-32 h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className={cn(
-                          "h-full rounded-full transition-all",
-                          isOverBudget ? "bg-destructive" : "bg-primary"
-                        )}
-                        style={{ width: `${usagePercent}%` }}
-                      />
-                    </div>
-                    
-                    {/* Amount Left */}
-                    <span className={cn(
-                      "font-mono text-sm w-20 text-right",
-                      isOverBudget ? "text-destructive" : "text-success"
-                    )}>
-                      {isOverBudget ? '-' : ''}{formatCurrency(Math.abs(cat.planned - cat.actual))}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </CardContent>
       </Card>
 

@@ -223,10 +223,11 @@ export function GroupCard({
               {expenses.length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="w-full">
-                    <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 border-b pb-3 mb-2">
+                    <div className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 border-b pb-3 mb-2">
                       <div className="text-left font-semibold">Item</div>
                       <div className="text-left font-semibold">Planned</div>
                       <div className="text-left font-semibold">Actual</div>
+                      <div className="text-left font-semibold">Category</div>
                       <div className="text-center font-semibold">Actions</div>
                     </div>
                     <SortableContext

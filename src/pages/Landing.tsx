@@ -226,7 +226,7 @@ export default function Landing() {
                 The Path
               </h2>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Your journey from zero to hero
+                Your path to financial freedom
               </p>
             </div>
 

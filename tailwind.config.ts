@@ -37,7 +37,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'sans': ['Outfit', 'system-ui', 'sans-serif'],
+				'sans': ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+				'serif': ['Playfair Display', 'Georgia', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -122,7 +123,12 @@ export default {
 					'8': 'hsl(var(--chart-8))',
 					'9': 'hsl(var(--chart-9))',
 					'10': 'hsl(var(--chart-10))'
-				}
+				},
+				// Semantic Financial Colors - Vitality vs Shadow Model
+				income: 'hsl(var(--color-income))',
+				debt: 'hsl(var(--color-debt))',
+				expense: 'hsl(var(--color-expense))',
+				savings: 'hsl(var(--color-savings))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -126,10 +126,10 @@ export const NetWorthReport = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
               <Scale className="h-6 w-6 sm:h-8 sm:w-8 text-accent" />
-              Kingdom Wealth Report
+              Net Worth Report
             </h1>
             <p className="text-muted-foreground mt-2">
-              Your financial kingdom&apos;s position and projected growth
+              Your financial position and projected growth
             </p>
           </div>
         </div>
@@ -388,15 +388,15 @@ export const NetWorthReport = () => {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Expand Your Kingdom</CardTitle>
+          <CardTitle className="text-lg">Take Action</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button variant="outline" asChild>
-              <Link to="/budgets">Update The Atlas</Link>
+              <Link to="/budgets">Update Your Budget</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link to="/debts">View The Shadow Path</Link>
+              <Link to="/debts">View Debt Strategy</Link>
             </Button>
           </div>
         </CardContent>

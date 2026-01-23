@@ -1,151 +1,160 @@
 
-
-# Add 6th Task to Getting Started Checklist
+# Budget Page Column Alignment & Cleanup
 
 ## Overview
 
-Add a 6th task to the Getting Started checklist that aligns with Journey Step 5: "Invest for the Future". This will make the checklist accurately represent all 6 journey milestones and match the subtext that says "See all 6 steps to financial freedom."
+Fix two issues on the Budget page:
+1. **Column header misalignment** - The column headers in the Monthly Budget section don't line up with the line items
+2. **Remove category cards** - Remove the individual category cards under Budget Inventory, keeping only the 4 summary statistics cards
 
 ---
 
-## Current vs Updated Task List
+## Issue 1: Column Header Alignment
 
-| # | Current Task | Journey Step Alignment |
-|---|-------------|----------------------|
-| 1 | Set your income | Step 1: Establish Your Budget |
-| 2 | Set up your budget | Step 1: Establish Your Budget |
-| 3 | Track a debt | Step 3: Eliminate Consumer Debt |
-| 4 | Start your emergency fund | Step 2/4: Build Safety Net |
-| 5 | Record a transaction | General: Transaction logging |
-| **6** | **(NEW) Start investing** | **Step 5: Invest for the Future** |
+### Root Cause
 
----
+The header and row use the same grid template (`grid-cols-[1fr_auto_auto_auto]`), but the "Actions" column in the rows contains **two elements** (category Select + Delete button), while the header only shows one label "Actions".
 
-## New 6th Task
+**Current Header:** Item | Planned | Actual | Actions
+**Current Row:** Name Input | Planned Input | Actual Display | [Category Select + Delete Button]
 
-```text
-Title: "Start investing"
-Description: "Plant seeds for your future wealth"
-Icon: Sprout (matches Journey step 5)
-Completion: Investment account exists OR investment expense category
-Link: /budgets (to add investment category)
-```
+The header should account for the category selector as its own column.
+
+### Solution
+
+Update the grid to 5 columns and add a "Category" header between "Actual" and "Actions":
+
+**New Header:** Item | Planned | Actual | Category | Actions
+**New Row:** Name Input | Planned Input | Actual Display | Category Select | Delete Button
 
 ---
 
 ## Technical Changes
 
-### File: `src/components/dashboard/GettingStartedChecklist.tsx`
+### File: `src/components/budget/GroupCard.tsx`
 
-**1. Add new import (Line 4):**
+**Line 226:** Update grid template from 4 to 5 columns and add Category header
+
 ```tsx
-import { Sprout } from 'lucide-react';
+// Before
+<div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 border-b pb-3 mb-2">
+  <div className="text-left font-semibold">Item</div>
+  <div className="text-left font-semibold">Planned</div>
+  <div className="text-left font-semibold">Actual</div>
+  <div className="text-center font-semibold">Actions</div>
+</div>
+
+// After
+<div className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 border-b pb-3 mb-2">
+  <div className="text-left font-semibold">Item</div>
+  <div className="text-left font-semibold">Planned</div>
+  <div className="text-left font-semibold">Actual</div>
+  <div className="text-left font-semibold">Category</div>
+  <div className="text-center font-semibold">Actions</div>
+</div>
 ```
 
-**2. Update component props interface (Lines 26-32):**
+### File: `src/components/budget/ExpenseItemRow.tsx`
 
-Need to add `accounts` prop to check for investment accounts (same logic as Journey step 5).
+**Line 72:** Update grid template to match and separate Category from Actions
 
 ```tsx
-interface GettingStartedChecklistProps {
-  income: number;
-  expenses: Expense[];
-  debts: Debt[];
-  transactions: Transaction[];
-  moatCurrent: number;
-  accounts: Account[];  // NEW
-}
-```
+// Before
+<div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center ...">
+  ...
+  <div className="flex items-center gap-2 justify-center">
+    <Select ... />
+    <Button ... />
+  </div>
+</div>
 
-**3. Add Account type import (Line 24):**
-```tsx
-import type { Account } from '@/hooks/useLocalAccounts';
-```
-
-**4. Add accounts to destructured props (Line 48):**
-```tsx
-export function GettingStartedChecklist({
-  income,
-  expenses,
-  debts,
-  transactions,
-  moatCurrent,
-  accounts,  // NEW
-}: GettingStartedChecklistProps) {
-```
-
-**5. Add investment completion logic (after line 52):**
-```tsx
-// Check for investment tracking (matches Journey step 5 logic)
-const hasInvestmentAccount = accounts.some(a => 
-  a.type.toLowerCase().includes('investment') || 
-  a.type.toLowerCase().includes('retirement') ||
-  a.type.toLowerCase().includes('401k') ||
-  a.type.toLowerCase().includes('ira')
-);
-const hasInvestmentExpense = expenses.some(e => 
-  e.category.toLowerCase().includes('investment') ||
-  e.category.toLowerCase().includes('savings')
-);
-const isInvestingStarted = hasInvestmentAccount || hasInvestmentExpense;
-```
-
-**6. Add 6th task to tasks array (after line 93):**
-```tsx
-{ 
-  id: 'investing', 
-  title: 'Start investing', 
-  description: 'Plant seeds for your future wealth',
-  icon: Sprout,
-  isComplete: isInvestingStarted, 
-  href: '/budgets'
-},
+// After
+<div className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 items-center ...">
+  ...
+  <div>
+    <Select className="w-full" ... />
+  </div>
+  <div className="flex items-center justify-center">
+    <Button ... />
+  </div>
+</div>
 ```
 
 ---
 
-### File: `src/pages/Dashboard.tsx`
+## Issue 2: Remove Category Cards
 
-Need to pass the `accounts` prop to the GettingStartedChecklist component.
+### Current Structure (Budget Inventory Card)
 
-**1. Import useLocalAccounts (if not already imported)**
-
-**2. Get accounts from hook:**
-```tsx
-const { accounts } = useLocalAccounts();
+```text
+┌─────────────────────────────────────────────────────┐
+│  📍 Budget Inventory                                │
+├─────────────────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │ Total   │ │ Total   │ │Variance │ │ Budget  │   │  ← KEEP
+│  │ Planned │ │ Actual  │ │         │ │ Used    │   │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘   │
+│                                                     │
+│  ┌─────────────────────────────────────────────────┐│
+│  │ 🏠 Housing            ████████░░  $500 left    ││  ← REMOVE
+│  └─────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────┐│
+│  │ ⚡ Utilities          ██████████  -$50         ││  ← REMOVE
+│  └─────────────────────────────────────────────────┘│
+│  ... more category cards ...                        │
+└─────────────────────────────────────────────────────┘
 ```
 
-**3. Pass accounts to GettingStartedChecklist:**
+### Solution
+
+Remove the entire "Sleek Vertical Category List" section (lines 341-399) from the Budget Inventory card, leaving only the 4 summary statistics cards.
+
+### File: `src/pages/Budget.tsx`
+
+**Lines 341-399:** Delete the entire category list block
+
 ```tsx
-<GettingStartedChecklist
-  income={income}
-  expenses={expenses}
-  debts={debts}
-  transactions={transactions}
-  moatCurrent={moatCurrent}
-  accounts={accounts}  // NEW
-/>
+// DELETE THIS ENTIRE SECTION (lines 341-399):
+{/* Sleek Vertical Category List */}
+{categoryData.length > 0 && (
+  <div className="space-y-3">
+    {categoryData.map((cat, idx) => {
+      // ... all the category card rendering code
+    })}
+  </div>
+)}
 ```
 
 ---
 
-## Grid Layout Update
+## Summary of Changes
 
-The task grid currently uses `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`. With 6 items:
-- Mobile (1 column): 6 rows ✓
-- Tablet (2 columns): 3 rows ✓
-- Desktop (3 columns): 2 rows ✓
-
-This already works perfectly for 6 items — no changes needed to the grid.
+| File | Change |
+|------|--------|
+| `src/components/budget/GroupCard.tsx` | Update header grid to 5 columns, add "Category" header |
+| `src/components/budget/ExpenseItemRow.tsx` | Update row grid to 5 columns, separate Category Select into its own column |
+| `src/pages/Budget.tsx` | Remove lines 341-399 (category cards under Budget Inventory) |
 
 ---
 
-## Summary
+## Visual Result
 
-| File | Changes |
-|------|---------|
-| `src/components/dashboard/GettingStartedChecklist.tsx` | Add `Sprout` import, add `accounts` prop, add investment logic, add 6th task |
-| `src/pages/Dashboard.tsx` | Pass `accounts` prop to checklist |
+**Budget Inventory Card (After):**
+```text
+┌─────────────────────────────────────────────────────┐
+│  📍 Budget Inventory                                │
+├─────────────────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │ Total   │ │ Total   │ │Variance │ │ Budget  │   │
+│  │ Planned │ │ Actual  │ │         │ │ Used    │   │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘   │
+└─────────────────────────────────────────────────────┘
+```
 
-The 6 tasks will now align with the 6-step journey, and the grid will display as a clean 2×3 layout on desktop.
-
+**Monthly Budget Table (After):**
+```text
+Item            | Planned  | Actual   | Category      | Actions
+─────────────────────────────────────────────────────────────────
+[Rent        ]  | [$1,500] | $1,500   | [Housing   ▾] |  🗑️
+[Groceries   ]  | [$400  ] | $450     | [Food      ▾] |  🗑️
+```

@@ -95,7 +95,7 @@ const Legal = () => {
                   <div>
                     <h3 className="font-semibold text-card-foreground mb-2">Local-First Architecture</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Your financial data, including all transaction history and debt records, is stored locally on your device using IndexedDB (via RxDB). Zero Hero servers do not possess, read, or monetize your personal financial records.
+                      Your financial Atlas, including all transaction history and debt data, is stored locally on your device using IndexedDB (via RxDB). Zero Hero servers do not possess, read, or monetize your personal financial records.
                     </p>
                   </div>
                 </div>

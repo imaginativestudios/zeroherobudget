@@ -1,11 +1,5 @@
 import { formatCurrency } from "@/lib/constants";
 
-/**
- * Chart Configuration - Centralized styling for all Recharts visualizations
- * 
- * This file provides consistent styling across all charts in the application.
- */
-
 // Standard tooltip styling for all charts
 export const STANDARD_TOOLTIP_STYLE = {
   backgroundColor: 'hsl(var(--popover))',
@@ -14,19 +8,6 @@ export const STANDARD_TOOLTIP_STYLE = {
   boxShadow: '0 4px 12px hsl(var(--foreground) / 0.1)',
   fontSize: '14px'
 };
-
-// Semantic Financial Colors - Vitality vs Shadow Model
-export const FINANCIAL_COLORS = {
-  income: 'hsl(160 84% 39%)',     // Emerald - Revenue/Growth
-  debt: 'hsl(263 70% 66%)',       // Purple - Liabilities/Shadow
-  expense: 'hsl(215 16% 47%)',    // Slate - Expenses/Outflow
-  savings: 'hsl(38 92% 50%)',     // Amber/Gold - Savings/Wealth
-};
-
-// Helper for financial chart data
-export function getFinancialColor(type: 'income' | 'debt' | 'expense' | 'savings'): string {
-  return FINANCIAL_COLORS[type];
-}
 
 // Consistent category colors for budget categories
 export const CATEGORY_COLORS: Record<string, string> = {

@@ -25,13 +25,13 @@ export default function Landing() {
   const oaths = [
     {
       icon: Heart,
-      title: 'Build Your Emergency Fund',
+      title: 'The Sanctuary',
       quote: '"Build a safe haven before the storm."',
       description: 'Your first goal: A $1,000 emergency fund. This safety net protects 80% of people from falling back into debt.',
     },
     {
       icon: Zap,
-      title: 'Know Your True Costs',
+      title: 'The Freedom Engine',
       quote: '"Every dollar saved is an hour of life reclaimed."',
       description: 'We calculate the TRUE cost of purchases—in hours of work, not just dollars.',
     },
@@ -39,7 +39,7 @@ export default function Landing() {
       icon: Sprout,
       title: 'Growth Over Guilt',
       quote: '"There are no failures here—only lessons."',
-      description: 'Overspent? That\'s just a \'Detour\' not a character flaw. Behind on goals? You\'re \'Finding the Way.\'',
+      description: 'Off the path? That\'s just a \'Detour\' not a character flaw. Behind on goals? You\'re \'Finding the Way.\'',
     },
   ];
 

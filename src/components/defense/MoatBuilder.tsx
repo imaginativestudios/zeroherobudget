@@ -23,7 +23,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CurrencyInput } from '@/components/ui/currency-input';
 import { 
   Dialog, 
   DialogContent, 
@@ -375,18 +375,14 @@ export function MoatBuilder({
                     </DialogDescription>
                   </DialogHeader>
                   <div className="py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">$</span>
-                      <Input
-                        type="number"
-                        placeholder="0"
-                        value={addAmount}
-                        onChange={(e) => setAddAmount(e.target.value)}
-                        min="0"
-                        step="1"
-                        className="text-lg"
-                      />
-                    </div>
+                    <CurrencyInput
+                      prefix="$"
+                      value={addAmount}
+                      onChange={(e) => setAddAmount(e.target.value)}
+                      min="0"
+                      step="1"
+                      className="text-lg"
+                    />
                     <p className="text-sm text-muted-foreground mt-2">
                       Current: ${profile.moat_current.toLocaleString()} • 
                       Remaining: ${(profile.moat_target - profile.moat_current).toLocaleString()}

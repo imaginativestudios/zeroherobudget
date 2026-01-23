@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CurrencyInput } from '@/components/ui/currency-input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/Logo';
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
@@ -307,21 +308,16 @@ export default function Onboarding() {
                         <Label htmlFor="hourly-wage" className="sr-only">
                           Hourly Wage
                         </Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
-                            $
-                          </span>
-                          <Input
-                            id="hourly-wage"
-                            type="number"
-                            placeholder="30.00"
-                            value={hourlyWageInput}
-                            onChange={(e) => setHourlyWageInput(e.target.value)}
-                            className="pl-8 text-center text-lg h-14"
-                            min="1"
-                            step="0.01"
-                          />
-                        </div>
+                        <CurrencyInput
+                          id="hourly-wage"
+                          prefix="$"
+                          placeholder="30.00"
+                          value={hourlyWageInput}
+                          onChange={(e) => setHourlyWageInput(e.target.value)}
+                          className="text-center text-lg h-14"
+                          min="1"
+                          step="0.01"
+                        />
                         <p className="text-center text-sm text-muted-foreground mt-2">
                           per hour
                         </p>
@@ -348,24 +344,18 @@ export default function Onboarding() {
 
                       <div>
                         <Label htmlFor="debt-balance">Balance</Label>
-                        <div className="relative mt-1.5">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                            $
-                          </span>
-                          <Input
-                            id="debt-balance"
-                            type="number"
-                            placeholder="5,200"
-                            value={debtBalance}
-                            onChange={(e) => {
-                              setDebtBalance(e.target.value);
-                              if (errors.balance) setErrors((prev) => ({ ...prev, balance: undefined }));
-                            }}
-                            className={`pl-8 ${errors.balance ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                            min="0"
-                            step="0.01"
-                          />
-                        </div>
+                        <CurrencyInput
+                          id="debt-balance"
+                          prefix="$"
+                          value={debtBalance}
+                          onChange={(e) => {
+                            setDebtBalance(e.target.value);
+                            if (errors.balance) setErrors((prev) => ({ ...prev, balance: undefined }));
+                          }}
+                          className={`mt-1.5 ${errors.balance ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                          min="0"
+                          step="0.01"
+                        />
                         {errors.balance && (
                           <p className="text-sm text-destructive mt-1 flex items-center gap-1">
                             <AlertCircle className="h-3 w-3" />
@@ -377,25 +367,19 @@ export default function Onboarding() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="debt-apr">APR (%)</Label>
-                          <div className="relative mt-1.5">
-                            <Input
-                              id="debt-apr"
-                              type="number"
-                              placeholder="22.99"
-                              value={debtApr}
-                              onChange={(e) => {
-                                setDebtApr(e.target.value);
-                                if (errors.apr) setErrors((prev) => ({ ...prev, apr: undefined }));
-                              }}
-                              className={errors.apr ? 'border-destructive focus-visible:ring-destructive' : ''}
-                              min="0"
-                              max="100"
-                              step="0.01"
-                            />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                              %
-                            </span>
-                          </div>
+                          <CurrencyInput
+                            id="debt-apr"
+                            suffix="%"
+                            value={debtApr}
+                            onChange={(e) => {
+                              setDebtApr(e.target.value);
+                              if (errors.apr) setErrors((prev) => ({ ...prev, apr: undefined }));
+                            }}
+                            className={`mt-1.5 ${errors.apr ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                            min="0"
+                            max="100"
+                            step="0.01"
+                          />
                           {errors.apr && (
                             <p className="text-sm text-destructive mt-1 flex items-center gap-1">
                               <AlertCircle className="h-3 w-3" />
@@ -406,21 +390,15 @@ export default function Onboarding() {
 
                         <div>
                           <Label htmlFor="debt-min-payment">Min Payment</Label>
-                          <div className="relative mt-1.5">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                              $
-                            </span>
-                            <Input
-                              id="debt-min-payment"
-                              type="number"
-                              placeholder="105"
-                              value={debtMinPayment}
-                              onChange={(e) => setDebtMinPayment(e.target.value)}
-                              className="pl-8"
-                              min="0"
-                              step="0.01"
-                            />
-                          </div>
+                          <CurrencyInput
+                            id="debt-min-payment"
+                            prefix="$"
+                            value={debtMinPayment}
+                            onChange={(e) => setDebtMinPayment(e.target.value)}
+                            className="mt-1.5"
+                            min="0"
+                            step="0.01"
+                          />
                         </div>
                       </div>
 

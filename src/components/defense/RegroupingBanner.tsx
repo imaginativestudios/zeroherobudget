@@ -13,8 +13,6 @@ import {
   ChevronUp, 
   Shield, 
   Calendar,
-  Wrench,
-  ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -53,9 +51,6 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
     navigate('/budgets?mode=repair');
   };
 
-  const handleViewWarMap = () => {
-    navigate('/budgets');
-  };
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -156,7 +151,6 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 <span className="flex items-center gap-2 text-sm font-medium">
-                  <Wrench className="h-4 w-4" />
                   View Recovery Plan
                 </span>
                 {isExpanded ? (
@@ -244,22 +238,13 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
             </>
           )}
           
-          {/* Action Buttons */}
+          {/* Action Button */}
           <div className="flex flex-wrap gap-3 pt-2">
             <Button 
               onClick={handleOptimizeClick}
               className="flex-1 sm:flex-none"
             >
-              <Wrench className="h-4 w-4 mr-2" />
-              Focus on Recovery
-            </Button>
-            <Button 
-              variant="ghost" 
-              onClick={handleViewWarMap}
-              className="flex-1 sm:flex-none text-muted-foreground"
-            >
               View Budget
-              <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         </CardContent>

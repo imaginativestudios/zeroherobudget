@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale, Snowflake, Flame, ArrowRight, Info } from "lucide-react";
+import { Compass, Target, Plus, Download, Upload, Trash2, DollarSign, TrendingDown, Calendar, Scale, Snowflake, Flame, ArrowRight, Info, Pencil, X, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
 import { FreedomSlider } from "@/components/behavioral/FreedomSlider";
+import { CurrencyInput } from "@/components/ui/currency-input";
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
@@ -26,6 +27,10 @@ export const DebtSnowball = () => {
   const [income] = useUserLocalStorage("bdt_income", 0);
   const [expenses] = useUserLocalStorage("bdt_expenses", []);
   const { transactions } = useTransactions();
+  
+  // Edit mode state
+  const [editingDebtId, setEditingDebtId] = useState<string | null>(null);
+  const [editBuffer, setEditBuffer] = useState<Partial<Debt>>({});
 
   const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
@@ -332,17 +337,49 @@ export const DebtSnowball = () => {
                 ? ((debt._orig - debt.balance) / debt._orig) * 100 
                 : 0;
               const payoffInfo = schedule.perDebt.find(d => d.id === debt.id);
+              const isEditing = editingDebtId === debt.id;
+              
+              const startEditing = () => {
+                setEditingDebtId(debt.id);
+                setEditBuffer({ ...debt });
+              };
+              
+              const cancelEditing = () => {
+                setEditingDebtId(null);
+                setEditBuffer({});
+              };
+              
+              const saveChanges = () => {
+                if (editBuffer.name !== undefined) updateDebt(debt.id, 'name', editBuffer.name);
+                if (editBuffer.balance !== undefined) updateDebt(debt.id, 'balance', editBuffer.balance);
+                if (editBuffer.apr !== undefined) updateDebt(debt.id, 'apr', editBuffer.apr);
+                if (editBuffer.min !== undefined) updateDebt(debt.id, 'min', editBuffer.min);
+                setEditingDebtId(null);
+                setEditBuffer({});
+                toast.success(`${editBuffer.name || debt.name} updated`);
+              };
+              
+              // Format value for display - removes leading zeros
+              const formatInputValue = (value: number | undefined) => {
+                if (value === undefined || value === 0) return "";
+                return String(value);
+              };
               
               return (
                 <div key={debt.id} className="border border-border rounded-lg p-4 space-y-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 space-y-2">
-                      <Input
-                        value={debt.name}
-                        onChange={(e) => updateDebt(debt.id, 'name', e.target.value)}
-                        className="font-semibold"
-                      />
-                      <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      {isEditing ? (
+                        <Input
+                          value={editBuffer.name ?? debt.name}
+                          onChange={(e) => setEditBuffer({ ...editBuffer, name: e.target.value })}
+                          className="font-semibold"
+                          aria-label="Debt name"
+                        />
+                      ) : (
+                        <p className="font-semibold text-lg">{debt.name}</p>
+                      )}
+                      <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
                         <span className="capitalize">{debt.type}</span>
                         <span>•</span>
                         <span>APR: {debt.apr}%</span>
@@ -356,15 +393,36 @@ export const DebtSnowball = () => {
                         )}
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeDebt(debt.id)}
-                      className="text-destructive hover:text-destructive"
-                      aria-label={`Remove ${debt.name}`}
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      {isEditing ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={cancelEditing}
+                          aria-label="Cancel editing"
+                        >
+                          <X className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={startEditing}
+                          aria-label={`Edit ${debt.name}`}
+                        >
+                          <Pencil className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeDebt(debt.id)}
+                        className="text-destructive hover:text-destructive"
+                        aria-label={`Remove ${debt.name}`}
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -378,42 +436,78 @@ export const DebtSnowball = () => {
                   <div className="grid grid-cols-1 xs:grid-cols-3 gap-3">
                     <div>
                       <label htmlFor={`balance-${debt.id}`} className="text-xs text-muted-foreground">Balance</label>
-                      <Input
+                      <CurrencyInput
                         id={`balance-${debt.id}`}
-                        type="number"
+                        prefix="$"
                         step="0.01"
-                        value={debt.balance}
-                        onChange={(e) => updateDebt(debt.id, 'balance', parseFloat(e.target.value) || 0)}
+                        value={isEditing ? formatInputValue(editBuffer.balance ?? debt.balance) : formatInputValue(debt.balance)}
+                        onChange={(e) => {
+                          if (isEditing) {
+                            setEditBuffer({ ...editBuffer, balance: parseFloat(e.target.value) || 0 });
+                          } else {
+                            updateDebt(debt.id, 'balance', parseFloat(e.target.value) || 0);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        variant="debt"
                       />
                     </div>
                     <div>
-                      <label htmlFor={`apr-${debt.id}`} className="text-xs text-muted-foreground">APR (%)</label>
-                      <Input
+                      <label htmlFor={`apr-${debt.id}`} className="text-xs text-muted-foreground">APR</label>
+                      <CurrencyInput
                         id={`apr-${debt.id}`}
-                        type="number"
+                        suffix="%"
                         step="0.01"
-                        value={debt.apr}
-                        onChange={(e) => updateDebt(debt.id, 'apr', parseFloat(e.target.value) || 0)}
+                        value={isEditing ? formatInputValue(editBuffer.apr ?? debt.apr) : formatInputValue(debt.apr)}
+                        onChange={(e) => {
+                          if (isEditing) {
+                            setEditBuffer({ ...editBuffer, apr: parseFloat(e.target.value) || 0 });
+                          } else {
+                            updateDebt(debt.id, 'apr', parseFloat(e.target.value) || 0);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        variant="debt"
                       />
                     </div>
                     <div>
                       <label htmlFor={`min-${debt.id}`} className="text-xs text-muted-foreground">Min Payment</label>
-                      <Input
+                      <CurrencyInput
                         id={`min-${debt.id}`}
-                        type="number"
+                        prefix="$"
                         step="0.01"
-                        value={debt.min}
-                        onChange={(e) => updateDebt(debt.id, 'min', parseFloat(e.target.value) || 0)}
+                        value={isEditing ? formatInputValue(editBuffer.min ?? debt.min) : formatInputValue(debt.min)}
+                        onChange={(e) => {
+                          if (isEditing) {
+                            setEditBuffer({ ...editBuffer, min: parseFloat(e.target.value) || 0 });
+                          } else {
+                            updateDebt(debt.id, 'min', parseFloat(e.target.value) || 0);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        variant="debt"
                       />
                     </div>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    Current Balance: <span className="font-semibold">{formatCurrency(debt.balance)}</span>
-                    {payoffInfo && (
-                      <>
-                        {" "}• Estimated Interest: <span className="font-semibold">{formatCurrency(payoffInfo.totalInterest)}</span>
-                      </>
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm text-muted-foreground">
+                      Current Balance: <span className="font-semibold">{formatCurrency(debt.balance)}</span>
+                      {payoffInfo && (
+                        <>
+                          {" "}• Est. Interest: <span className="font-semibold">{formatCurrency(payoffInfo.totalInterest)}</span>
+                        </>
+                      )}
+                    </div>
+                    {isEditing && (
+                      <Button
+                        size="sm"
+                        onClick={saveChanges}
+                        className="gap-1"
+                      >
+                        <Check className="h-4 w-4" aria-hidden="true" />
+                        Save
+                      </Button>
                     )}
                   </div>
                 </div>

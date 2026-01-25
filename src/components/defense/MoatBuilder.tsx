@@ -170,7 +170,7 @@ export function MoatBuilder({
   return (
     <Card 
       className={cn(
-        "shadow-royal hover-lift overflow-hidden h-full flex flex-col",
+        "shadow-royal hover-lift overflow-hidden h-full flex flex-col bg-white dark:bg-card",
         moatHealth.status === 'secure' && "ring-1 ring-success/30",
         showPrimaryQuestBadge && "ring-1 ring-warning/30",
         variant === 'full' && "col-span-full"

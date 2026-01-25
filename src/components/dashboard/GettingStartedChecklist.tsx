@@ -152,7 +152,7 @@ export function GettingStartedChecklist({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="shadow-royal hover-lift">
+      <Card className="shadow-royal hover-lift bg-white dark:bg-card">
         <CardHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -43,7 +43,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
   // Debt-free state
   if (activeDebts.length === 0) {
     return (
-      <Card className="border-accent/30 bg-gradient-to-br from-accent/10 to-background shadow-lg">
+      <Card className="border-accent/30 bg-white dark:bg-card shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg font-bold">
             <PartyPopper className="h-5 w-5 text-accent" aria-hidden="true" />
@@ -74,7 +74,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
   // No impact calculated (edge case)
   if (!impact) {
     return (
-      <Card className="border-border/50 shadow-lg">
+      <Card className="border-border/50 shadow-lg bg-white dark:bg-card">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg font-bold">
             <Calendar className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -101,7 +101,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
   const heroMessage = getHeroicMessage(monthsRemaining);
 
   return (
-    <Card className="shadow-royal hover-lift overflow-hidden">
+    <Card className="shadow-royal hover-lift overflow-hidden bg-white dark:bg-card">
       <CardHeader className="p-6 pb-2">
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <Calendar className="h-5 w-5 text-primary" aria-hidden="true" />

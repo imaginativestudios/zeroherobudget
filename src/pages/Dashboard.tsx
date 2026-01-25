@@ -330,7 +330,7 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="p-6 sm:p-8 rounded-2xl bg-card border shadow-royal"
+        className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-card border shadow-royal"
       >
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Welcome + Consistency */}
@@ -549,7 +549,7 @@ export const Dashboard = () => {
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-stretch">
                   {/* Spending by Category Chart */}
                   {dashboardState.canShowSpendingChart && (
-                    <Card className="overflow-hidden h-full shadow-royal hover-lift">
+                    <Card className="overflow-hidden h-full shadow-royal hover-lift bg-white dark:bg-card">
                       <CardHeader className="p-6">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
                           <BarChart3 className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -605,7 +605,7 @@ export const Dashboard = () => {
                   {/* Debt Payoff Projection - Full Width */}
                   {dashboardState.canShowDebtProjection && (
                     <Card className={cn(
-                      "overflow-hidden h-full shadow-royal hover-lift",
+                      "overflow-hidden h-full shadow-royal hover-lift bg-white dark:bg-card",
                       dashboardState.canShowSpendingChart && "xl:col-span-2"
                     )}>
                       <CardHeader className="p-6">
@@ -669,7 +669,7 @@ export const Dashboard = () => {
             </TabsContent>
 
             <TabsContent value="achievements">
-              <Card className="shadow-royal hover-lift">
+              <Card className="shadow-royal hover-lift bg-white dark:bg-card">
                 <CardHeader className="p-6">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     <span className="flex items-center gap-2">

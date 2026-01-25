@@ -223,29 +223,31 @@ export function GroupCard({
               {expenses.length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="w-full">
-                    <div className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 border-b pb-3 mb-2">
+                    <div className="hidden sm:grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 border-b pb-3 mb-2">
                       <div className="text-left font-semibold">Item</div>
                       <div className="text-left font-semibold">Planned</div>
                       <div className="text-left font-semibold">Actual</div>
                       <div className="text-left font-semibold">Category</div>
                       <div className="text-center font-semibold">Actions</div>
                     </div>
-                    <SortableContext
-                      items={expenses.map(e => e.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      {expenses.map((expense) => (
-                        <ExpenseItemRow
-                          key={expense.id}
-                          expense={expense}
-                          actual={monthlyActuals[expense.id] || 0}
-                          availableGroups={availableGroups}
-                          onUpdate={(field, value) => onUpdateExpense(expense.id, field, value)}
-                          onRemove={() => onRemoveExpense(expense.id)}
-                          onMoveToGroup={(groupName) => onMoveToGroup(expense.id, groupName)}
-                        />
-                      ))}
-                    </SortableContext>
+                    <div className="space-y-3 sm:space-y-0">
+                      <SortableContext
+                        items={expenses.map(e => e.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {expenses.map((expense) => (
+                          <ExpenseItemRow
+                            key={expense.id}
+                            expense={expense}
+                            actual={monthlyActuals[expense.id] || 0}
+                            availableGroups={availableGroups}
+                            onUpdate={(field, value) => onUpdateExpense(expense.id, field, value)}
+                            onRemove={() => onRemoveExpense(expense.id)}
+                            onMoveToGroup={(groupName) => onMoveToGroup(expense.id, groupName)}
+                          />
+                        ))}
+                      </SortableContext>
+                    </div>
                   </div>
                 </div>
               ) : (

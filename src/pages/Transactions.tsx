@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -316,10 +318,11 @@ export const Transactions = () => {
                   <span>Add Transaction</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
+              <DialogContent className="max-h-[90vh] p-0">
+                <DialogHeader className="p-6 pb-2">
                   <DialogTitle>Log Transaction</DialogTitle>
                 </DialogHeader>
+                <ScrollArea className="max-h-[calc(90vh-80px)] px-6 pb-6">
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -331,10 +334,10 @@ export const Transactions = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="transaction-amount">Amount</Label>
-                      <Input id="transaction-amount" type="number" step="0.01" value={newTransaction.amount} onChange={e => setNewTransaction({
+                      <CurrencyInput id="transaction-amount" prefix="$" step={0.01} value={newTransaction.amount || ''} onChange={e => setNewTransaction({
                       ...newTransaction,
                       amount: parseFloat(e.target.value) || 0
-                    })} />
+                    })} placeholder="0.00" />
                     </div>
                   </div>
                   
@@ -435,6 +438,7 @@ export const Transactions = () => {
                     Add Transaction
                   </Button>
                 </div>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
           </div>

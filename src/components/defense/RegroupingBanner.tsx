@@ -69,7 +69,7 @@ export function RegroupingBanner({ className }: RegroupingBannerProps) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn('w-full', className)}
     >
-      <Card className="border-2 overflow-hidden border-primary/30 bg-muted/50">
+      <Card className="border-2 overflow-hidden border-primary/30 bg-white dark:bg-card">
         {/* Header */}
         <div className="px-4 py-3 flex items-center justify-between bg-primary/10">
           <div className="flex items-center gap-2">

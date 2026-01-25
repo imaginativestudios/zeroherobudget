@@ -125,23 +125,42 @@ export function MoatSelector({ value, onChange }: MoatSelectorProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ 
+              type: 'spring', 
+              stiffness: 300, 
+              damping: 30,
+              opacity: { duration: 0.2 }
+            }}
             className="overflow-hidden"
           >
-            <div className="pt-2 space-y-2">
-              <Label htmlFor="custom-goal" className="text-sm text-muted-foreground">
-                Enter your goal amount (minimum $100)
-              </Label>
-              <CurrencyInput
-                id="custom-goal"
-                prefix="$"
-                value={customValue}
-                onChange={handleCustomChange}
-                placeholder="1500"
-                min={100}
-                autoFocus
-                className="max-w-xs"
-              />
+            <div className="mt-4 p-5 rounded-xl bg-accent/5 border border-accent/20">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <Label 
+                  htmlFor="custom-goal" 
+                  className="text-sm font-medium text-foreground"
+                >
+                  Your Custom Goal
+                </Label>
+                <CurrencyInput
+                  id="custom-goal"
+                  prefix="$"
+                  value={customValue}
+                  onChange={handleCustomChange}
+                  placeholder="1500"
+                  min={100}
+                  autoFocus
+                  className="text-center text-xl h-14 max-w-[180px] font-semibold"
+                />
+                {parseFloat(customValue) < 100 && customValue !== '' ? (
+                  <p className="text-xs text-destructive">
+                    Minimum goal is $100
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Tip: 3-6 months of expenses is a common goal
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

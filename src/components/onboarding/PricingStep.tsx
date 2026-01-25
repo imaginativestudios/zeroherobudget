@@ -317,6 +317,8 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
       <AuthModal 
         open={showAuthModal} 
         onOpenChange={setShowAuthModal}
+        signupFirst={true}
+        contextTitle="Start Your Free Trial"
       />
     </>
   );

@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, CheckCircle2, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 
@@ -22,11 +22,20 @@ interface AuthModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultMode?: 'login' | 'signup';
+  signupFirst?: boolean;
+  contextTitle?: string;
 }
 
 type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'confirmation-sent';
 
-export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthModalProps) {
+export function AuthModal({ 
+  open, 
+  onOpenChange, 
+  defaultMode = 'login',
+  signupFirst = false,
+  contextTitle
+}: AuthModalProps) {
+  const [showLoginInSignupFirst, setShowLoginInSignupFirst] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -175,9 +184,211 @@ export function AuthModal({ open, onOpenChange, defaultMode = 'login' }: AuthMod
     if (!open) {
       // Reset view when closing
       setView('auth');
+      setShowLoginInSignupFirst(false);
     }
     onOpenChange(open);
   };
+
+  // Signup-first mode: render a focused signup layout
+  if (signupFirst && view === 'auth') {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+          {!showLoginInSignupFirst ? (
+            // Signup form (primary view)
+            <>
+              <DialogHeader className="flex flex-col items-center space-y-2">
+                <Logo variant="dark" className="h-6 sm:h-8 mb-2" />
+                <DialogTitle className="text-xl sm:text-2xl font-bold text-center">
+                  {contextTitle || 'Create Your Account'}
+                </DialogTitle>
+                <DialogDescription className="text-center text-sm sm:text-base">
+                  7 days free, then just $5/month
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleSignup} className="space-y-4 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-first-firstname">First Name</Label>
+                    <Input
+                      id="signup-first-firstname"
+                      type="text"
+                      placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-first-lastname">
+                      Last Name <span className="text-muted-foreground font-normal">(optional)</span>
+                    </Label>
+                    <Input
+                      id="signup-first-lastname"
+                      type="text"
+                      placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-first-email">Email</Label>
+                  <Input
+                    id="signup-first-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-first-password">Password</Label>
+                  <Input
+                    id="signup-first-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                    minLength={6}
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  variant="royal"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Already have an account?{' '}
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="px-0 h-auto text-sm text-primary font-medium"
+                    onClick={() => setShowLoginInSignupFirst(true)}
+                  >
+                    Sign in
+                  </Button>
+                </p>
+              </div>
+
+              <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1.5 mt-2">
+                <Lock className="h-3 w-3" />
+                No credit card required
+              </p>
+            </>
+          ) : (
+            // Login form (secondary view with back button)
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setShowLoginInSignupFirst(false)}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <DialogTitle className="text-xl font-bold">Sign In</DialogTitle>
+                </div>
+                <DialogDescription className="text-left pl-10">
+                  Welcome back! Enter your credentials to continue.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleLogin} className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-first-login-email">Email</Label>
+                  <Input
+                    id="signup-first-login-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-first-login-password">Password</Label>
+                  <Input
+                    id="signup-first-login-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="signup-first-remember-me"
+                      checked={rememberMe}
+                      onCheckedChange={(checked) => setRememberMe(checked === true)}
+                      disabled={loading}
+                    />
+                    <Label 
+                      htmlFor="signup-first-remember-me" 
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      Remember me
+                    </Label>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="px-0 h-auto text-sm text-primary"
+                    onClick={() => setView('forgot-password')}
+                    disabled={loading}
+                  >
+                    Forgot password?
+                  </Button>
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  variant="royal"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
+                </Button>
+              </form>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

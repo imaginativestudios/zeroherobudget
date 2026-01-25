@@ -3,6 +3,7 @@ import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
 import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
 import { format, startOfMonth, endOfMonth, parseISO } from 'date-fns';
+import { DEMO_USER_ID } from '@/lib/constants';
 
 export interface Transaction {
   id: string;
@@ -31,11 +32,11 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
   const [transactions, setTransactions, isLoading] = usePriorityLocalStorage<Transaction[]>('transactions', [], priority, shouldLoad);
 
   const addTransaction = async (transaction: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
-    if (!user) return;
+    const effectiveUserId = user?.id ?? DEMO_USER_ID;
     const newTransaction: Transaction = {
       ...transaction,
       id: uuidv4(),
-      user_id: user.id,
+      user_id: effectiveUserId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -43,11 +44,11 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
   };
 
   const addTransactionsBulk = async (newTransactions: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>[]) => {
-    if (!user) return;
+    const effectiveUserId = user?.id ?? DEMO_USER_ID;
     const transactionsWithIds = newTransactions.map(t => ({
       ...t,
       id: uuidv4(),
-      user_id: user.id,
+      user_id: effectiveUserId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }));

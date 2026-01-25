@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useUserLocalStorage } from './useUserLocalStorage';
-import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
 import { DEMO_USER_ID } from '@/lib/constants';
 
@@ -17,33 +16,30 @@ export interface Account {
 }
 
 export function useLocalAccounts() {
-  const { user } = useAuth();
   const [accounts, setAccounts] = useUserLocalStorage<Account[]>('accounts', []);
 
   // Create default account if none exist (supports demo mode)
   useEffect(() => {
     if (accounts.length === 0) {
-      const effectiveUserId = user?.id ?? DEMO_USER_ID;
       const defaultAccount: Account = {
         id: 'default-checking',
         name: 'Main Checking',
         type: 'checking',
         balance: 0,
         is_active: true,
-        user_id: effectiveUserId,
+        user_id: DEMO_USER_ID, // Will be updated when user is authenticated
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
       setAccounts([defaultAccount]);
     }
-  }, [accounts.length, user, setAccounts]);
+  }, [accounts.length, setAccounts]);
 
   const addAccount = (account: Omit<Account, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
-    if (!user) return;
     const newAccount: Account = {
       ...account,
       id: uuidv4(),
-      user_id: user.id,
+      user_id: DEMO_USER_ID, // useUserLocalStorage handles user-specific storage
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

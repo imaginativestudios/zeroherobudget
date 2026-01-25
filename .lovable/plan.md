@@ -1,271 +1,264 @@
 
-# Add Custom Emergency Fund Goal in Onboarding
 
-## Overview
+# Onboarding UX Improvements Using Gestalt Principles
 
-Allow users to enter their own emergency fund goal amount during onboarding Step 3, in addition to the three preset options ($500, $1,000, $2,000). This gives users flexibility to set a goal that matches their specific situation.
+## Analysis: What Looks "Off"
+
+After analyzing the current onboarding flow through Gestalt design principles, I've identified several visual and UX issues:
+
+### Issues Identified
+
+| Principle | Problem | Impact |
+|-----------|---------|--------|
+| **Proximity** | The HeroTip is visually disconnected from the input—too much space between the input's "per hour" label and the tip | Users don't associate the tip with the input it references |
+| **Focal Point** | The input field lacks visual emphasis—it's the same width as everything else and has low contrast | Users' eyes wander instead of landing on the primary action |
+| **Figure-Ground** | The card is floating on a very similar gray background with minimal contrast | The form feels "flat" and unanchored |
+| **Similarity** | The "Continue" and "Skip for now" buttons have equal visual weight in their containers | The primary action doesn't stand out enough from secondary |
+| **Common Region** | Step 3's MoatSelector (4-column grid) breaks the visual rhythm when the 4th "Custom" option is smaller | Inconsistent grouping breaks Gestalt's "common region" |
+| **Continuity** | The header text hierarchy (Title → Subtitle → Question) uses 3 different colors and sizes but lacks clear visual separation | Information flow is unclear |
 
 ---
 
-## Current State
+## Proposed Improvements
 
-The `MoatSelector` component presents only three fixed options:
-- $500 (Starter)
-- $1,000 (Recommended)
-- $2,000 (Full Protection)
+### 1. Improve Focal Point on Primary Input
 
-The type system enforces this: `moatTarget: 500 | 1000 | 2000`
+**Current**: Input is full-width, same style as everything else.
 
----
-
-## Proposed UX Design
-
-Add a fourth "Custom" option that reveals a currency input when selected:
+**Proposed**: Make the primary input larger, centered, with subtle visual emphasis.
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                Set Your Emergency Fund Goal                  │
-│            Choose your savings target                        │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│   ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │
-│   │  $500   │  │ $1,000  │  │ $2,000  │  │ Custom  │       │
-│   │ Starter │  │  Best   │  │  Full   │  │  Your   │       │
-│   │         │  │   ★     │  │ Protect │  │  Goal   │       │
-│   └─────────┘  └─────────┘  └─────────┘  └─────────┘       │
-│                                                              │
-│   [When Custom is selected:]                                 │
-│   ┌────────────────────────────────────────────────────┐    │
-│   │ Enter your goal amount                              │    │
-│   │ ┌──────────────────────────────────────────────┐   │    │
-│   │ │ $                                      3,500 │   │    │
-│   │ └──────────────────────────────────────────────┘   │    │
-│   └────────────────────────────────────────────────────┘    │
-│                                                              │
-│   💡 A $1,000 emergency fund protects 80% of people...      │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+Before:                          After:
+┌─────────────────────┐         ┌───────────────────────┐
+│ $ 30.00             │         │                       │
+└─────────────────────┘         │    ┌───────────┐      │
+                                │    │  $ 30.00  │      │
+                                │    └───────────┘      │
+                                │      per hour         │
+                                └───────────────────────┘
 ```
+
+**Changes in `Onboarding.tsx` (Step 1)**:
+- Reduce input max-width to `max-w-[200px] mx-auto`
+- Increase input font size to `text-2xl`
+- Add subtle focus highlight container
+
+### 2. Improve Proximity: Tighten Tip Placement
+
+**Current**: HeroTip has `mt-6` creating large gap from content.
+
+**Proposed**: Reduce spacing to `mt-4` and integrate it more closely.
+
+**Changes in `HeroTip.tsx`**:
+- Change internal padding and margin
+- Make it feel more like an inline annotation
+
+### 3. Strengthen Figure-Ground Contrast
+
+**Current**: Card background `bg-card` on `bg-gradient-to-br from-background via-secondary` creates low contrast.
+
+**Proposed**: Add subtle shadow elevation and slightly increase border visibility.
+
+**Changes in `Onboarding.tsx`**:
+- Update card class: `shadow-lg` → `shadow-xl`
+- Add `ring-1 ring-black/5` for subtle definition
+
+### 4. Fix MoatSelector Grid Balance (Step 3)
+
+**Current**: 4-column grid with unequal content makes "Custom" feel orphaned.
+
+**Proposed**: 
+- Use 2x2 grid on mobile (better touch targets)
+- Add visual parity to "Custom" option
+- Show current value prominently when custom is selected
+
+**Changes in `MoatSelector.tsx`**:
+- Change grid to `grid-cols-2 sm:grid-cols-4`
+- Add dollar amount display to Custom when active
+- Improve custom input styling
+
+### 5. Improve Button Hierarchy (Similarity Principle)
+
+**Current**: "Skip for now" is full-width, creating visual competition with "Continue".
+
+**Proposed**: Make secondary action smaller and more subdued.
+
+**Changes in `Onboarding.tsx`**:
+- Change "Skip for now" to inline link style rather than full-width button
+- Add more visual differentiation
+
+### 6. Improve Header Text Hierarchy (Continuity)
+
+**Current**: Three text lines (title, subtitle, question) blend together.
+
+**Proposed**: Create clear visual grouping with consistent spacing.
+
+**Changes in `Onboarding.tsx`**:
+- Increase spacing between title and subtitle
+- Use consistent text sizing
+- Remove the subtitle color variation (both use foreground)
 
 ---
 
-## Technical Changes
+## Implementation Details
 
-### 1. Update Type Definitions
+### File: `src/components/onboarding/MoatSelector.tsx`
 
-**File: `src/hooks/useHeroProfile.ts`**
-
-Change the moatTarget type from union to number:
-
-```typescript
+**Grid Layout Fix**:
+```tsx
 // Before
-moatTarget?: 500 | 1000 | 2000;
+<div className="grid grid-cols-4 gap-2 sm:gap-3">
 
-// After
-moatTarget?: number;
+// After - Better mobile layout
+<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
 ```
 
-**File: `src/hooks/useOnboardingState.ts`**
-
-Update the type constraint:
-
-```typescript
-// Before
-moatTarget: 500 | 1000 | 2000;
-setMoatTarget: (target: 500 | 1000 | 2000) => void;
-
-// After
-moatTarget: number;
-setMoatTarget: (target: number) => void;
-```
-
----
-
-### 2. Update MoatSelector Component
-
-**File: `src/components/onboarding/MoatSelector.tsx`**
-
-Transform from a simple button group to support a custom input:
+**Custom Option Enhancement**:
+- When "Custom" is selected, show the current value as a large number
+- Add a subtle edit indicator
 
 ```tsx
-interface MoatSelectorProps {
-  value: number;
-  onChange: (value: number) => void;
-}
-
-const presetOptions = [
-  { value: 500, label: '$500', subtitle: 'Starter' },
-  { value: 1000, label: '$1,000', subtitle: 'Recommended', recommended: true },
-  { value: 2000, label: '$2,000', subtitle: 'Full Protection' },
-];
-
-export function MoatSelector({ value, onChange }: MoatSelectorProps) {
-  const isCustom = !presetOptions.some(opt => opt.value === value);
-  const [customValue, setCustomValue] = useState(isCustom ? value.toString() : '');
-  const [showCustomInput, setShowCustomInput] = useState(isCustom);
-
-  const handleCustomSelect = () => {
-    setShowCustomInput(true);
-    // Set a reasonable default when switching to custom
-    if (!customValue) {
-      setCustomValue('1500');
-      onChange(1500);
-    }
-  };
-
-  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setCustomValue(val);
-    const parsed = parseFloat(val);
-    if (!isNaN(parsed) && parsed >= 100) {
-      onChange(parsed);
-    }
-  };
-
-  const handlePresetSelect = (presetValue: number) => {
-    setShowCustomInput(false);
-    onChange(presetValue);
-  };
-
-  return (
-    <div className="space-y-4">
-      {/* 4-column grid: 3 presets + Custom */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
-        {presetOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => handlePresetSelect(option.value)}
-            className={cn(
-              'relative flex flex-col items-center p-3 sm:p-4 rounded-xl border-2 transition-all',
-              value === option.value && !showCustomInput
-                ? 'border-accent bg-accent/10'
-                : 'border-border bg-card hover:border-primary/50'
-            )}
-          >
-            {option.recommended && <Star badge />}
-            <span className="text-lg font-bold">{option.label}</span>
-            <span className="text-xs text-muted-foreground">{option.subtitle}</span>
-          </button>
-        ))}
-        
-        {/* Custom option */}
-        <button
-          onClick={handleCustomSelect}
-          className={cn(
-            'flex flex-col items-center p-3 sm:p-4 rounded-xl border-2 transition-all',
-            showCustomInput
-              ? 'border-accent bg-accent/10'
-              : 'border-border bg-card hover:border-primary/50'
-          )}
-        >
-          <Edit3 className="h-5 w-5 mb-1" />
-          <span className="text-xs text-muted-foreground">Custom</span>
-        </button>
-      </div>
-
-      {/* Custom input field (animated) */}
-      <AnimatePresence>
-        {showCustomInput && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="pt-2">
-              <Label htmlFor="custom-goal">Enter your goal amount</Label>
-              <CurrencyInput
-                id="custom-goal"
-                prefix="$"
-                value={customValue}
-                onChange={handleCustomChange}
-                placeholder="1500"
-                min="100"
-                autoFocus
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+<button onClick={handleCustomSelect} ...>
+  {showCustomInput ? (
+    <>
+      <span className="text-lg sm:text-xl font-bold text-accent">
+        ${customValue || '1,500'}
+      </span>
+      <span className="text-xs text-muted-foreground">Custom</span>
+    </>
+  ) : (
+    <>
+      <Edit3 className="h-5 w-5 sm:h-6 sm:w-6 mb-1 text-muted-foreground" />
+      <span className="text-xs text-muted-foreground">Custom</span>
+    </>
+  )}
+</button>
 ```
 
----
+### File: `src/pages/Onboarding.tsx`
 
-### 3. Update Onboarding Page
-
-**File: `src/pages/Onboarding.tsx`**
-
-The MoatSelector usage stays the same, but the type will now accept any number:
-
+**Input Focal Point (Step 1)**:
 ```tsx
-<MoatSelector value={data.moatTarget} onChange={setMoatTarget} />
+// Before
+<CurrencyInput
+  className="text-center text-lg h-14"
+  ...
+/>
+
+// After - More prominent
+<div className="flex justify-center">
+  <CurrencyInput
+    className="text-center text-2xl h-16 max-w-[200px] font-semibold"
+    ...
+  />
+</div>
 ```
 
-No visual changes needed here since MoatSelector handles everything internally.
+**Card Elevation**:
+```tsx
+// Before
+className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg"
 
----
+// After - Stronger figure-ground
+className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-xl ring-1 ring-black/5"
+```
 
-### 4. Validation
+**Button Hierarchy**:
+```tsx
+// Before
+<Button variant="ghost" onClick={handleSkip} className="w-full text-muted-foreground">
+  Skip for now
+</Button>
 
-Add validation to ensure custom amounts are reasonable:
+// After - Less prominent, link-style
+<button
+  onClick={handleSkip}
+  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
+>
+  Skip for now
+</button>
+```
 
-- **Minimum**: $100 (prevent trivially small goals)
-- **Maximum**: No hard limit, but could add $50,000 as sanity check
-- **Error message**: "Please enter an amount of at least $100"
+**Header Text Hierarchy**:
+```tsx
+// Before - Cramped spacing
+<h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
+<p className="text-sm font-medium text-primary mb-1">
+<p className="text-sm text-muted-foreground">
 
----
+// After - Clearer grouping
+<h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+<p className="text-sm font-medium text-primary mb-2">
+<p className="text-sm text-muted-foreground leading-relaxed">
+```
 
-### 5. Update E2E Tests
+### File: `src/components/onboarding/HeroTip.tsx`
 
-**File: `e2e/onboarding.spec.ts`**
+**Tighter Integration**:
+```tsx
+// Before
+<div className="bg-muted border border-info/30 rounded-lg p-4 mt-6">
 
-Add test for custom goal entry:
-
-```typescript
-test('Step 3: Enter custom moat target', async ({ page }) => {
-  await page.goto('/onboarding');
-  
-  // Complete Steps 1-2
-  await page.locator('#hourly-wage').fill('30');
-  await page.getByRole('button', { name: /continue/i }).click();
-  await page.getByRole('button', { name: /continue/i }).click(); // Skip debt
-  
-  // Should be on Step 3
-  await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
-  
-  // Click "Custom" option
-  await page.getByText('Custom').click();
-  
-  // Enter custom amount
-  await page.locator('#custom-goal').fill('3500');
-  
-  // Continue to next step
-  await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
-  
-  // Should advance to Aha Moment
-  await expect(page.getByText(/freedom|path/i)).toBeVisible();
-});
+// After - Reduced top margin, inline feel
+<div className="bg-muted/50 border border-info/20 rounded-lg p-3 mt-4">
 ```
 
 ---
 
-## Files to Modify
+## Summary of Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/hooks/useHeroProfile.ts` | Change `moatTarget` type from `500 \| 1000 \| 2000` to `number` |
-| `src/hooks/useOnboardingState.ts` | Update `moatTarget` type and `setMoatTarget` signature to accept `number` |
-| `src/components/onboarding/MoatSelector.tsx` | Add "Custom" fourth option with currency input, update props interface |
-| `e2e/onboarding.spec.ts` | Add test for custom goal entry |
+| `src/pages/Onboarding.tsx` | Input focal point, card elevation, button hierarchy, header spacing |
+| `src/components/onboarding/MoatSelector.tsx` | 2x2 mobile grid, custom value display, improved visual balance |
+| `src/components/onboarding/HeroTip.tsx` | Tighter spacing, softer styling |
 
 ---
 
-## Accessibility Considerations
+## Visual Before/After Comparison
 
-- Custom input has proper label association (`htmlFor`/`id`)
-- Focus moves to custom input when Custom option is selected
-- All buttons maintain keyboard navigation
-- Animation respects `prefers-reduced-motion`
+```text
+BEFORE:                              AFTER:
+┌────────────────────────┐          ┌────────────────────────┐
+│ [Icon]                 │          │        [Icon]          │
+│ Title                  │          │                        │
+│ Subtitle               │          │         Title          │
+│ Question text...       │          │        Subtitle        │
+│                        │          │                        │
+│ ┌────────────────────┐ │          │ Question text here...  │
+│ │ $ 30.00            │ │          │                        │
+│ └────────────────────┘ │          │    ┌──────────────┐    │
+│      per hour          │          │    │   $ 30.00    │    │
+│                        │          │    └──────────────┘    │
+│ ┌────────────────────┐ │          │       per hour         │
+│ │ 💡 Tip: Long tip...│ │          │                        │
+│ └────────────────────┘ │          │ 💡 Tip: Long tip text  │
+│                        │          │                        │
+│ [====== Continue ====] │          │ [====== Continue ====] │
+│ [====== Skip ========] │          │      Skip for now      │
+└────────────────────────┘          └────────────────────────┘
+
+Step 3 MoatSelector:
+
+BEFORE (cramped on mobile):         AFTER (balanced):
+┌────┐┌────┐┌────┐┌────┐            ┌─────────┐┌─────────┐
+│$500││$1K ││$2K ││ ✏️ │            │  $500   ││  $1,000 │
+└────┘└────┘└────┘└────┘            │ Starter ││  Best ★ │
+                                    └─────────┘└─────────┘
+                                    ┌─────────┐┌─────────┐
+                                    │  $2,000 ││  Custom │
+                                    │  Full   ││  $1,500 │
+                                    └─────────┘└─────────┘
+```
+
+---
+
+## Gestalt Principles Applied
+
+- **Proximity**: Tighter spacing between related elements (input → label → tip)
+- **Focal Point**: Centered, larger primary input draws the eye
+- **Figure-Ground**: Enhanced card shadow creates clear separation from background
+- **Similarity**: Clear visual distinction between primary and secondary actions
+- **Common Region**: Balanced 2x2 grid gives each option equal visual weight on mobile
+- **Continuity**: Improved text hierarchy guides the eye from title → action
+

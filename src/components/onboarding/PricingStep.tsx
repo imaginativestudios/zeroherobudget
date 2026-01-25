@@ -118,8 +118,10 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             transition={{ delay: 0.2 }}
             className="text-center mb-8"
           >
-            <span className="text-4xl">🏰</span>
-            <p className="text-lg font-bold text-primary mt-2">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Check className="w-6 h-6 text-primary" />
+            </div>
+            <p className="text-lg font-bold text-primary">
               {currentInterval === 'annual' ? 'Annual' : 'Monthly'} Plan
             </p>
           </motion.div>

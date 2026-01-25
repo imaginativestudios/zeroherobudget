@@ -1,4 +1,4 @@
-import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Cloud, Scroll, BarChart3, Plug, Heart } from "lucide-react";
+import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Cloud, Scroll, BarChart3, Plug, Heart, Wallet } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ const navigationItems = [
   { name: "Budget", href: "/budgets", icon: Compass },
   { name: "Debt Strategy", href: "/debts", icon: Cloud },
   { name: "Transactions", href: "/transactions", icon: Scroll },
+  { name: "Accounts", href: "/accounts", icon: Wallet },
   { name: "Data Management", href: "/data", icon: Database },
   { name: "Achievements", href: "/achievements", icon: Trophy },
   { name: "Financial Tips", href: "/learn", icon: Lightbulb },

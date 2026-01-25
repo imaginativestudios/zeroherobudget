@@ -39,6 +39,7 @@ import CheckoutSuccess from "./pages/CheckoutSuccess";
 import { Household } from "./pages/Household";
 import { AcceptInvite } from "./pages/AcceptInvite";
 import { Subscriptions } from "./pages/Subscriptions";
+import { Accounts } from "./pages/Accounts";
 import { SubscriptionsReport } from "./pages/reports/SubscriptionsReport";
 import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="/reports/subscriptions" element={<SubscriptionsReport />} />
                 <Route path="/household" element={<Household />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/accounts" element={<Accounts />} />
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
                 <Route path="/settings/release-kit" element={<ReleaseKit />} />

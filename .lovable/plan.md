@@ -1,216 +1,192 @@
 
 
-# Fix Transaction Form Issues
+# Account Management Page
 
-## Problems Identified
+## Overview
 
-After investigating the Transactions page, I found **5 distinct issues**:
-
-### 1. Leading Zero in Amount Field
-- **Current**: `value={newTransaction.amount}` shows `0` when empty
-- **Problem**: The `0` doesn't disappear when focused, and there's no visual dollar sign prefix
-- **Solution**: Replace the plain `<Input>` with `<CurrencyInput prefix="$">` component
-
-### 2. Missing Dollar Sign in Input
-- **Current**: Uses plain `<Input type="number">` with no currency indicator
-- **Problem**: Inconsistent with other currency inputs in the app that show `$` prefix
-- **Solution**: Use `CurrencyInput` component with `prefix="$"` prop
-
-### 3. Mobile Scrollability
-- **Current**: `<DialogContent>` may not scroll on mobile when content overflows
-- **Problem**: Users can't access all form fields on small screens
-- **Solution**: Wrap dialog content in `<ScrollArea>` with a max height
-
-### 4. Account Field Appears "Broken"
-- **Current**: `useLocalAccounts()` returns an empty array `[]` by default
-- **Problem**: No accounts exist until the user creates one, so the dropdown shows nothing
-- **Root cause**: Unlike `useAccounts` (which has `DEFAULT_ACCOUNTS`), `useLocalAccounts` has no default
-- **Solution**: Create a default "Main Checking" account if none exist, similar to the pattern in `useAccounts.ts`
-
-### 5. Transactions Don't Persist/Show on Other Pages
-- **Current**: `useLocalTransactions` requires `if (!user) return;` - silently fails for demo users
-- **Problem**: Demo users (unauthenticated) can see data but `addTransaction` does nothing because `user` is `null`
-- **Root cause**: The hook checks `if (!user) return;` but demo mode uses `DEMO_USER_ID` fallback
-- **Solution**: Use `user?.id ?? DEMO_USER_ID` pattern instead of blocking when no user
+Create a dedicated page at `/accounts` where users can view, create, edit, and delete their bank accounts. This builds upon the existing `useLocalAccounts` hook and follows the established patterns from the Subscriptions page.
 
 ---
 
-## Files to Modify
+## Architecture
 
-| File | Changes |
-|------|---------|
-| `src/pages/Transactions.tsx` | Replace amount Input with CurrencyInput, add ScrollArea for mobile |
-| `src/hooks/useLocalAccounts.ts` | Add default account creation when empty |
-| `src/hooks/useLocalTransactions.ts` | Fix demo mode persistence by using DEMO_USER_ID fallback |
+### Components to Create
+
+| Component | Purpose |
+|-----------|---------|
+| `src/pages/Accounts.tsx` | Main page component with account list and management UI |
+| `src/components/accounts/AccountForm.tsx` | Reusable dialog form for creating/editing accounts |
+| `src/components/accounts/AccountRow.tsx` | Table row component with inline actions |
+
+### Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Add `/accounts` route |
+| `src/components/Layout.tsx` | Add "Accounts" link to navigation sidebar |
 
 ---
 
-## Detailed Changes
+## Page Design
 
-### 1. Transactions.tsx - Use CurrencyInput for Amount (lines 332-338)
+### Header Section
+- Title: "Accounts"
+- Subtitle: "Manage your bank accounts, credit cards, and cash accounts"
+- Primary action button: "+ Add Account"
 
-**Before:**
-```tsx
-<Input 
-  id="transaction-amount" 
-  type="number" 
-  step="0.01" 
-  value={newTransaction.amount} 
-  onChange={e => setNewTransaction({
-    ...newTransaction,
-    amount: parseFloat(e.target.value) || 0
-  })} 
-/>
+### Summary Cards (3-column grid)
+1. **Total Balance** - Sum of all account balances
+2. **Active Accounts** - Count of active accounts
+3. **Account Types** - Breakdown by type (checking, savings, credit, etc.)
+
+### Accounts Table
+| Column | Content |
+|--------|---------|
+| Account Name | Name with type badge below |
+| Type | Icon + label (checking, savings, credit, cash, investment) |
+| Balance | Formatted currency (negative shown in red for credit) |
+| Status | Active/Inactive badge |
+| Actions | Edit, Toggle Active, Delete buttons |
+
+### Empty State
+When no accounts exist:
+- Illustrated empty state with wallet icon
+- "No accounts yet" message
+- "Add your first account to start tracking your finances"
+- Primary CTA button to open the add form
+
+---
+
+## Account Form Dialog
+
+### Fields
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| Account Name | Text input | Yes | e.g., "Chase Checking", "Visa Card" |
+| Account Type | Select dropdown | Yes | checking, savings, credit, cash, investment |
+| Current Balance | Currency input | Yes | With $ prefix, supports negative for credit |
+| Active | Switch | No | Default: true |
+
+### Form Behavior
+- Dialog title changes: "Add Account" vs "Edit Account"
+- Form validation before submit
+- Toast notification on success
+- Form resets after successful submission
+
+---
+
+## Delete Confirmation
+
+Use `AlertDialog` pattern (consistent with ExpenseItemRow):
+- Title: "Delete Account?"
+- Description: "This will permanently delete '{accountName}'. Transactions linked to this account will lose their account reference."
+- Actions: "Cancel" (outline) | "Delete" (destructive)
+
+---
+
+## Technical Details
+
+### Account Types with Icons
+
+```text
+checking    -> Wallet icon
+savings     -> PiggyBank icon
+credit      -> CreditCard icon
+cash        -> Banknote icon
+investment  -> TrendingUp icon
 ```
 
-**After:**
-```tsx
-<CurrencyInput 
-  id="transaction-amount" 
-  prefix="$"
-  step={0.01}
-  value={newTransaction.amount || ''} 
-  onChange={e => setNewTransaction({
-    ...newTransaction,
-    amount: parseFloat(e.target.value) || 0
-  })} 
-  placeholder="0.00"
-/>
-```
+### Page Structure (Accounts.tsx)
 
-Key changes:
-- Use `CurrencyInput` component with `prefix="$"`
-- Change `value` to show empty string when 0: `newTransaction.amount || ''`
-- Add placeholder for when empty
-
-### 2. Transactions.tsx - Add ScrollArea for Mobile Dialog (lines 319-438)
-
-Wrap the dialog content in a ScrollArea to ensure it's scrollable on mobile:
-
-```tsx
-<DialogContent className="max-h-[90vh] p-0">
-  <DialogHeader className="p-6 pb-0">
-    <DialogTitle>Log Transaction</DialogTitle>
-  </DialogHeader>
-  <ScrollArea className="max-h-[calc(90vh-80px)] px-6 pb-6">
-    <div className="space-y-4">
-      {/* ... form fields ... */}
+```text
+<div className="pt-8 space-y-6">
+  <!-- Header with title + Add button -->
+  <div className="flex items-center justify-between">
+    <div>
+      <h1>Accounts</h1>
+      <p>Manage your bank accounts...</p>
     </div>
-  </ScrollArea>
-</DialogContent>
+    <Button onClick={openAddForm}>+ Add Account</Button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <Card>Total Balance</Card>
+    <Card>Active Accounts</Card>
+    <Card>Account Types</Card>
+  </div>
+
+  <!-- Accounts Table -->
+  <Card>
+    <CardHeader>
+      <CardTitle>All Accounts</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>...</Table>
+    </CardContent>
+  </Card>
+
+  <!-- Form Dialog -->
+  <AccountForm open={showForm} ... />
+
+  <!-- Delete Confirmation -->
+  <AlertDialog open={showDeleteConfirm} ... />
+</div>
 ```
 
-### 3. Transactions.tsx - Add Import
+### Navigation Item (Layout.tsx)
 
-Add CurrencyInput and ScrollArea imports:
-```tsx
-import { CurrencyInput } from "@/components/ui/currency-input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+Add to the `navigationItems` array:
+```text
+{ name: "Accounts", href: "/accounts", icon: Wallet }
 ```
 
-### 4. useLocalAccounts.ts - Add Default Account (line 19)
+Place after "Transactions" in the navigation order.
 
-**Before:**
-```tsx
-const [accounts, setAccounts] = useUserLocalStorage<Account[]>('accounts', []);
-```
+### Route (App.tsx)
 
-**After:**
-```tsx
-const [accounts, setAccounts] = useUserLocalStorage<Account[]>('accounts', []);
-
-// Create default account if none exist
-useEffect(() => {
-  if (accounts.length === 0 && user) {
-    const defaultAccount: Account = {
-      id: 'default-checking',
-      name: 'Main Checking',
-      type: 'checking',
-      balance: 0,
-      is_active: true,
-      user_id: user.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    setAccounts([defaultAccount]);
-  }
-}, [accounts.length, user, setAccounts]);
-```
-
-Also need to support demo mode by using DEMO_USER_ID:
-```tsx
-import { DEMO_USER_ID } from '@/lib/constants';
-
-// In the useEffect:
-const effectiveUserId = user?.id ?? DEMO_USER_ID;
-```
-
-### 5. useLocalTransactions.ts - Fix Demo Mode Persistence (lines 33-43, 45-55)
-
-**Before (addTransaction):**
-```tsx
-const addTransaction = async (transaction: ...) => {
-  if (!user) return;  // ❌ Blocks demo users
-  const newTransaction: Transaction = {
-    ...transaction,
-    id: uuidv4(),
-    user_id: user.id,  // ❌ Would crash if user is null
-    ...
-  };
-  setTransactions([...transactions, newTransaction]);
-};
-```
-
-**After:**
-```tsx
-import { DEMO_USER_ID } from '@/lib/constants';
-
-const addTransaction = async (transaction: ...) => {
-  const effectiveUserId = user?.id ?? DEMO_USER_ID;
-  const newTransaction: Transaction = {
-    ...transaction,
-    id: uuidv4(),
-    user_id: effectiveUserId,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-  setTransactions([...transactions, newTransaction]);
-};
-```
-
-Apply the same pattern to `addTransactionsBulk`:
-```tsx
-const addTransactionsBulk = async (newTransactions: ...) => {
-  const effectiveUserId = user?.id ?? DEMO_USER_ID;
-  const transactionsWithIds = newTransactions.map(t => ({
-    ...t,
-    id: uuidv4(),
-    user_id: effectiveUserId,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }));
-  setTransactions([...transactions, ...transactionsWithIds]);
-};
+Add inside the protected routes section:
+```text
+<Route path="/accounts" element={<Accounts />} />
 ```
 
 ---
 
-## Technical Summary
+## Mobile Considerations
 
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
-| Leading zero stays | Using `0` as value | Use `amount \|\| ''` to show empty |
-| No dollar sign | Plain `<Input>` | Use `<CurrencyInput prefix="$">` |
-| Not scrollable on mobile | No ScrollArea wrapper | Wrap in `<ScrollArea>` with max-height |
-| Account dropdown empty | No default accounts | Create default "Main Checking" on first load |
-| Data doesn't save | `if (!user) return` blocks demo | Use `user?.id ?? DEMO_USER_ID` pattern |
+- Table columns hide on mobile: Type column hidden below `sm:`
+- Action buttons collapse to icon-only on mobile
+- Form dialog uses `ScrollArea` with `max-h-[calc(90vh-80px)]` for scrollability
+- Touch-friendly button sizes (min-h-[44px])
 
 ---
 
-## Additional Notes
+## Validation Rules
 
-- The `CurrencyInput` component already handles the focus/blur behavior for placeholders
-- The default account will be created with `is_active: true` so it appears in `getActiveAccounts()`
-- Demo mode transactions will persist under the `demo-hero-00000000_transactions` localStorage key
-- All other pages using `useLocalTransactions` will now see the demo user's transactions
+1. Account name is required (min 1 character)
+2. Account type must be selected
+3. Balance is required (can be 0 or negative)
+4. Cannot delete the last active account (show warning toast)
+
+---
+
+## Files Summary
+
+### New Files
+1. `src/pages/Accounts.tsx` - Main accounts management page
+2. `src/components/accounts/AccountForm.tsx` - Add/Edit dialog component
+
+### Modified Files
+1. `src/App.tsx` - Add route for `/accounts`
+2. `src/components/Layout.tsx` - Add navigation item
+
+---
+
+## Implementation Order
+
+1. Create `AccountForm.tsx` component
+2. Create `Accounts.tsx` page
+3. Add route to `App.tsx`
+4. Add navigation link in `Layout.tsx`
 

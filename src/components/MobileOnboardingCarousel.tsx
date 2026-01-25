@@ -37,8 +37,8 @@ const slides = [
   },
   {
     icon: CreditCard,
-    title: "AI Assistant Ready",
-    description: "Have questions? Our AI financial assistant is always available in the bottom-right corner to help.",
+    title: "Guidance When You Need It",
+    description: "Have questions? A helpful assistant is always available in the bottom-right corner to guide you.",
     color: "text-primary",
   },
 ];

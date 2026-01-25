@@ -1,56 +1,143 @@
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Star } from 'lucide-react';
+import { Star, Edit3 } from 'lucide-react';
+import { CurrencyInput } from '@/components/ui/currency-input';
+import { Label } from '@/components/ui/label';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MoatOption {
-  value: 500 | 1000 | 2000;
+  value: number;
   label: string;
   subtitle: string;
   recommended?: boolean;
 }
 
-const moatOptions: MoatOption[] = [
+const presetOptions: MoatOption[] = [
   { value: 500, label: '$500', subtitle: 'Starter' },
   { value: 1000, label: '$1,000', subtitle: 'Recommended', recommended: true },
   { value: 2000, label: '$2,000', subtitle: 'Full Protection' },
 ];
 
 interface MoatSelectorProps {
-  value: 500 | 1000 | 2000;
-  onChange: (value: 500 | 1000 | 2000) => void;
+  value: number;
+  onChange: (value: number) => void;
 }
 
 export function MoatSelector({ value, onChange }: MoatSelectorProps) {
+  const isCustom = !presetOptions.some(opt => opt.value === value);
+  const [customValue, setCustomValue] = useState(isCustom ? value.toString() : '');
+  const [showCustomInput, setShowCustomInput] = useState(isCustom);
+
+  const handleCustomSelect = () => {
+    setShowCustomInput(true);
+    // Set a reasonable default when switching to custom
+    if (!customValue) {
+      setCustomValue('1500');
+      onChange(1500);
+    } else {
+      const parsed = parseFloat(customValue);
+      if (!isNaN(parsed) && parsed >= 100) {
+        onChange(parsed);
+      }
+    }
+  };
+
+  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setCustomValue(val);
+    const parsed = parseFloat(val);
+    if (!isNaN(parsed) && parsed >= 100) {
+      onChange(parsed);
+    }
+  };
+
+  const handlePresetSelect = (presetValue: number) => {
+    setShowCustomInput(false);
+    setCustomValue('');
+    onChange(presetValue);
+  };
+
   return (
-    <div className="grid grid-cols-3 gap-3 sm:gap-4">
-      {moatOptions.map((option) => (
+    <div className="space-y-4">
+      {/* 4-column grid: 3 presets + Custom */}
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+        {presetOptions.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => handlePresetSelect(option.value)}
+            className={cn(
+              'relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200',
+              value === option.value && !showCustomInput
+                ? 'border-accent bg-accent/10 shadow-md'
+                : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
+            )}
+          >
+            {option.recommended && (
+              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Star className="h-3 w-3" />
+                <span className="hidden sm:inline">Best</span>
+              </div>
+            )}
+            <span className={cn(
+              'text-lg sm:text-xl font-bold mb-1',
+              value === option.value && !showCustomInput ? 'text-accent' : 'text-foreground'
+            )}>
+              {option.label}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {option.subtitle}
+            </span>
+          </button>
+        ))}
+        
+        {/* Custom option */}
         <button
-          key={option.value}
           type="button"
-          onClick={() => onChange(option.value)}
+          onClick={handleCustomSelect}
           className={cn(
-            'relative flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200',
-            value === option.value
+            'flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200',
+            showCustomInput
               ? 'border-accent bg-accent/10 shadow-md'
               : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
           )}
         >
-          {option.recommended && (
-            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
-              <Star className="h-3 w-3" />
-              <span className="hidden sm:inline">Best</span>
-            </div>
-          )}
-          <span className={cn(
-            'text-xl sm:text-2xl font-bold mb-1',
-            value === option.value ? 'text-accent' : 'text-foreground'
-          )}>
-            {option.label}
-          </span>
-          <span className="text-xs sm:text-sm text-muted-foreground">
-            {option.subtitle}
-          </span>
+          <Edit3 className={cn(
+            'h-5 w-5 sm:h-6 sm:w-6 mb-1',
+            showCustomInput ? 'text-accent' : 'text-muted-foreground'
+          )} />
+          <span className="text-xs text-muted-foreground">Custom</span>
         </button>
-      ))}
+      </div>
+
+      {/* Custom input field (animated) */}
+      <AnimatePresence>
+        {showCustomInput && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-2 space-y-2">
+              <Label htmlFor="custom-goal" className="text-sm text-muted-foreground">
+                Enter your goal amount (minimum $100)
+              </Label>
+              <CurrencyInput
+                id="custom-goal"
+                prefix="$"
+                value={customValue}
+                onChange={handleCustomChange}
+                placeholder="1500"
+                min={100}
+                autoFocus
+                className="max-w-xs"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

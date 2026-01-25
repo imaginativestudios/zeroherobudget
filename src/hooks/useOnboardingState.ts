@@ -15,7 +15,7 @@ export interface DebtEntry {
 export interface OnboardingDataState {
   hourlyWage: number | null;
   primaryDebt: DebtEntry | null;
-  moatTarget: 500 | 1000 | 2000;
+  moatTarget: number;
 }
 
 export interface UseOnboardingStateResult {
@@ -23,7 +23,7 @@ export interface UseOnboardingStateResult {
   data: OnboardingDataState;
   setHourlyWage: (wage: number | null) => void;
   setPrimaryDebt: (debt: DebtEntry | null) => void;
-  setMoatTarget: (target: 500 | 1000 | 2000) => void;
+  setMoatTarget: (target: number) => void;
   nextStep: () => void;
   prevStep: () => void;
   skipStep: () => void;
@@ -110,7 +110,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
     setData((prev) => ({ ...prev, primaryDebt: debt }));
   }, []);
 
-  const setMoatTarget = useCallback((target: 500 | 1000 | 2000) => {
+  const setMoatTarget = useCallback((target: number) => {
     setData((prev) => ({ ...prev, moatTarget: target }));
   }, []);
 

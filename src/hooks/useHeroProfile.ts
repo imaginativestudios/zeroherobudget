@@ -16,7 +16,7 @@ export interface OnboardingData {
   debtBalance?: number;
   debtApr?: number;
   debtMinPayment?: number;
-  moatTarget?: 500 | 1000 | 2000;
+  moatTarget?: number;
 }
 
 export interface HeroProfile {

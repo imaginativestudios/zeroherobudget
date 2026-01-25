@@ -1,192 +1,195 @@
 
 
-# Account Management Page
+# Mobile Budget UX Redesign
 
-## Overview
+## Problem Analysis
 
-Create a dedicated page at `/accounts` where users can view, create, edit, and delete their bank accounts. This builds upon the existing `useLocalAccounts` hook and follows the established patterns from the Subscriptions page.
+The current budget page uses a strict 5-column grid layout (`grid-cols-[1fr_8rem_8rem_8rem_auto]`) that totals approximately **540px minimum width** before content. On mobile devices (320-414px viewport), this causes:
 
----
+1. **Horizontal overflow** - Users must scroll sideways to see all columns
+2. **Cramped inputs** - Fixed 8rem (128px) columns leave minimal space for the expense name
+3. **Hidden actions** - The delete button and category selector get cut off
+4. **Poor touch targets** - Dense layout makes tapping difficult
 
-## Architecture
+## Design Solution: Responsive Card Layout
 
-### Components to Create
+Transform the desktop table layout into a mobile-optimized card layout that follows established patterns in this codebase (Accounts, Subscriptions pages).
 
-| Component | Purpose |
-|-----------|---------|
-| `src/pages/Accounts.tsx` | Main page component with account list and management UI |
-| `src/components/accounts/AccountForm.tsx` | Reusable dialog form for creating/editing accounts |
-| `src/components/accounts/AccountRow.tsx` | Table row component with inline actions |
+### Mobile Layout (< 640px)
 
-### Files to Modify
-
-| File | Change |
-|------|--------|
-| `src/App.tsx` | Add `/accounts` route |
-| `src/components/Layout.tsx` | Add "Accounts" link to navigation sidebar |
-
----
-
-## Page Design
-
-### Header Section
-- Title: "Accounts"
-- Subtitle: "Manage your bank accounts, credit cards, and cash accounts"
-- Primary action button: "+ Add Account"
-
-### Summary Cards (3-column grid)
-1. **Total Balance** - Sum of all account balances
-2. **Active Accounts** - Count of active accounts
-3. **Account Types** - Breakdown by type (checking, savings, credit, etc.)
-
-### Accounts Table
-| Column | Content |
-|--------|---------|
-| Account Name | Name with type badge below |
-| Type | Icon + label (checking, savings, credit, cash, investment) |
-| Balance | Formatted currency (negative shown in red for credit) |
-| Status | Active/Inactive badge |
-| Actions | Edit, Toggle Active, Delete buttons |
-
-### Empty State
-When no accounts exist:
-- Illustrated empty state with wallet icon
-- "No accounts yet" message
-- "Add your first account to start tracking your finances"
-- Primary CTA button to open the add form
-
----
-
-## Account Form Dialog
-
-### Fields
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| Account Name | Text input | Yes | e.g., "Chase Checking", "Visa Card" |
-| Account Type | Select dropdown | Yes | checking, savings, credit, cash, investment |
-| Current Balance | Currency input | Yes | With $ prefix, supports negative for credit |
-| Active | Switch | No | Default: true |
-
-### Form Behavior
-- Dialog title changes: "Add Account" vs "Edit Account"
-- Form validation before submit
-- Toast notification on success
-- Form resets after successful submission
-
----
-
-## Delete Confirmation
-
-Use `AlertDialog` pattern (consistent with ExpenseItemRow):
-- Title: "Delete Account?"
-- Description: "This will permanently delete '{accountName}'. Transactions linked to this account will lose their account reference."
-- Actions: "Cancel" (outline) | "Delete" (destructive)
-
----
-
-## Technical Details
-
-### Account Types with Icons
+Each expense item becomes a **vertical card** with:
+- Expense name (full width, editable)
+- Planned/Actual amounts side-by-side in a 2-column grid
+- Category selector (full width)
+- Action buttons (visible, touch-friendly)
 
 ```text
-checking    -> Wallet icon
-savings     -> PiggyBank icon
-credit      -> CreditCard icon
-cash        -> Banknote icon
-investment  -> TrendingUp icon
+┌─────────────────────────────────────┐
+│ ≡  [Expense Name Input          ]  │
+├─────────────────────────────────────┤
+│  Planned        │  Actual           │
+│  [$125.00    ]  │  $98.45           │
+├─────────────────────────────────────┤
+│  [Housing              ▼]    [🗑️]  │
+└─────────────────────────────────────┘
 ```
 
-### Page Structure (Accounts.tsx)
+### Desktop Layout (≥ 640px)
+
+Keep the current 5-column grid with minor refinements:
+- Use responsive column widths: `grid-cols-[1fr_7rem_7rem_8rem_auto] sm:grid-cols-[1fr_8rem_8rem_8rem_auto]`
+- Maintain the strict alignment from the memory
+
+---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/components/budget/ExpenseItemRow.tsx` | Add responsive mobile card layout |
+| `src/components/budget/GroupCard.tsx` | Hide desktop headers on mobile, adjust grid |
+
+---
+
+## Detailed Implementation
+
+### 1. ExpenseItemRow.tsx - Responsive Layout
+
+Replace the single grid layout with a dual-mode responsive design:
+
+**Mobile View (< sm):**
+- Full-width expense name input with drag handle
+- 2-column grid for Planned/Actual amounts
+- Full-width category selector with delete button inline
+
+**Desktop View (≥ sm):**
+- Keep existing 5-column grid
 
 ```text
-<div className="pt-8 space-y-6">
-  <!-- Header with title + Add button -->
-  <div className="flex items-center justify-between">
-    <div>
-      <h1>Accounts</h1>
-      <p>Manage your bank accounts...</p>
+// Conceptual structure
+<div className="block sm:hidden">
+  {/* Mobile card layout */}
+  <div className="space-y-3 p-3 border rounded-lg">
+    <div className="flex items-center gap-2">
+      <GripVertical />
+      <Input value={expense.name} />
     </div>
-    <Button onClick={openAddForm}>+ Add Account</Button>
+    <div className="grid grid-cols-2 gap-3">
+      <div>
+        <label>Planned</label>
+        <Input value={expense.planned} />
+      </div>
+      <div>
+        <label>Actual</label>
+        <div>{formatCurrency(actual)}</div>
+      </div>
+    </div>
+    <div className="flex items-center gap-2">
+      <Select className="flex-1" />
+      <Button onClick={delete} />
+    </div>
   </div>
+</div>
 
-  <!-- Summary Cards -->
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-    <Card>Total Balance</Card>
-    <Card>Active Accounts</Card>
-    <Card>Account Types</Card>
-  </div>
-
-  <!-- Accounts Table -->
-  <Card>
-    <CardHeader>
-      <CardTitle>All Accounts</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Table>...</Table>
-    </CardContent>
-  </Card>
-
-  <!-- Form Dialog -->
-  <AccountForm open={showForm} ... />
-
-  <!-- Delete Confirmation -->
-  <AlertDialog open={showDeleteConfirm} ... />
+<div className="hidden sm:grid grid-cols-[...]">
+  {/* Desktop row layout - keep existing */}
 </div>
 ```
 
-### Navigation Item (Layout.tsx)
+### 2. GroupCard.tsx - Hide Desktop Headers on Mobile
 
-Add to the `navigationItems` array:
+The 5-column header row only makes sense on desktop. On mobile, each card is self-documenting with labels.
+
 ```text
-{ name: "Accounts", href: "/accounts", icon: Wallet }
+// Line 226-231: Add responsive visibility
+<div className="hidden sm:grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 border-b pb-3 mb-2">
+  <div className="text-left font-semibold">Item</div>
+  <div className="text-left font-semibold">Planned</div>
+  <div className="text-left font-semibold">Actual</div>
+  <div className="text-left font-semibold">Category</div>
+  <div className="text-center font-semibold">Actions</div>
+</div>
 ```
 
-Place after "Transactions" in the navigation order.
+---
 
-### Route (App.tsx)
+## Mobile Card Design Specifications
 
-Add inside the protected routes section:
+### Touch Targets
+- All interactive elements: **min-h-[44px]** (WCAG 2.1 AAA)
+- Buttons: **min-w-[44px]** with centered icons
+- Inputs: Full width within their container
+
+### Visual Hierarchy
+- Expense name: Primary focus, larger input
+- Amounts: Secondary, side-by-side for easy comparison
+- Category/Actions: Tertiary, bottom of card
+
+### Spacing
+- Card padding: `p-3` (12px)
+- Between fields: `gap-3` (12px)
+- Between cards: `space-y-3` (12px) via parent
+
+### Labels
+- Add subtle labels above Planned/Actual on mobile
+- Use `text-xs text-muted-foreground` for labels
+
+---
+
+## Accessibility Considerations
+
+1. **Drag handles**: Keep visible and accessible for reordering
+2. **Form labels**: Add explicit labels for screen readers (sr-only on desktop)
+3. **Touch spacing**: No cramped tap targets
+4. **Color contrast**: Maintain existing accessible color scheme
+
+---
+
+## Summary of Changes
+
+### ExpenseItemRow.tsx
+
+| Section | Change |
+|---------|--------|
+| Lines 67-129 | Wrap existing grid in `hidden sm:grid`, add mobile card layout with `block sm:hidden` |
+| Mobile card | Stack: Name row → Planned/Actual grid → Category/Delete row |
+| Touch targets | Ensure 44px minimum on all interactive elements |
+
+### GroupCard.tsx
+
+| Section | Change |
+|---------|--------|
+| Line 226 | Add `hidden sm:grid` to header row |
+| Line 224 | Keep `overflow-x-auto` as fallback for edge cases |
+
+---
+
+## Visual Comparison
+
+### Before (Mobile)
 ```text
-<Route path="/accounts" element={<Accounts />} />
+[Item][Planned][Actual][Cat...  ← Cut off, requires scroll
+```
+
+### After (Mobile)
+```text
+┌────────────────────────────┐
+│ ≡ [Expense Name         ]  │
+├────────────────────────────┤
+│ Planned     │ Actual       │
+│ [$125.00  ] │ $98.45       │
+├────────────────────────────┤
+│ [Housing         ▼]   [🗑️] │
+└────────────────────────────┘
 ```
 
 ---
 
-## Mobile Considerations
+## Technical Notes
 
-- Table columns hide on mobile: Type column hidden below `sm:`
-- Action buttons collapse to icon-only on mobile
-- Form dialog uses `ScrollArea` with `max-h-[calc(90vh-80px)]` for scrollability
-- Touch-friendly button sizes (min-h-[44px])
-
----
-
-## Validation Rules
-
-1. Account name is required (min 1 character)
-2. Account type must be selected
-3. Balance is required (can be 0 or negative)
-4. Cannot delete the last active account (show warning toast)
-
----
-
-## Files Summary
-
-### New Files
-1. `src/pages/Accounts.tsx` - Main accounts management page
-2. `src/components/accounts/AccountForm.tsx` - Add/Edit dialog component
-
-### Modified Files
-1. `src/App.tsx` - Add route for `/accounts`
-2. `src/components/Layout.tsx` - Add navigation item
-
----
-
-## Implementation Order
-
-1. Create `AccountForm.tsx` component
-2. Create `Accounts.tsx` page
-3. Add route to `App.tsx`
-4. Add navigation link in `Layout.tsx`
+- Uses existing `useIsMobile` or Tailwind responsive classes
+- No new dependencies required
+- Follows established mobile patterns from Accounts/Subscriptions pages
+- Maintains drag-and-drop functionality via dnd-kit (handles work in both layouts)
+- Preserves all existing functionality - just restructures the visual layout
 

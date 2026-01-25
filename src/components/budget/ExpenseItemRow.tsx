@@ -66,10 +66,84 @@ export function ExpenseItemRow({
 
   return (
     <>
+      {/* Mobile Card Layout */}
       <div
         ref={setNodeRef}
         style={style}
-        className="grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-all duration-200 group"
+        className="block sm:hidden"
+      >
+        <div className="space-y-3 p-3 border border-border/50 rounded-lg bg-card/50 hover:bg-muted/50 transition-all duration-200">
+          {/* Row 1: Drag handle + Name */}
+          <div className="flex items-center gap-2">
+            <button
+              className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors duration-200 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              {...attributes}
+              {...listeners}
+            >
+              <GripVertical className="h-4 w-4" />
+            </button>
+            <Input
+              value={expense.name}
+              onChange={(e) => onUpdate('name', e.target.value)}
+              className="flex-1"
+              aria-label="Expense name"
+            />
+          </div>
+          
+          {/* Row 2: Planned / Actual */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Planned</label>
+              <Input
+                type="number"
+                step="0.01"
+                value={expense.planned}
+                onChange={(e) => onUpdate('planned', parseFloat(e.target.value) || 0)}
+                aria-label="Planned amount"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Actual</label>
+              <div className="min-h-[44px] px-3 py-2 text-sm bg-muted rounded-xl flex items-center">
+                {formatCurrency(actual)}
+              </div>
+            </div>
+          </div>
+          
+          {/* Row 3: Category + Delete */}
+          <div className="flex items-center gap-2">
+            <Select
+              value={expense.category || 'Uncategorized'}
+              onValueChange={onMoveToGroup}
+            >
+              <SelectTrigger className="flex-1 min-h-[44px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                {availableGroups.map(group => (
+                  <SelectItem key={group} value={group}>
+                    {group}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-destructive hover:text-destructive min-h-[44px] min-w-[44px]"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Row Layout */}
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="hidden sm:grid grid-cols-[1fr_8rem_8rem_8rem_auto] gap-4 items-center py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-all duration-200 group"
       >
         <div className="flex items-center gap-2 min-w-0">
           <button

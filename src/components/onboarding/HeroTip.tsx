@@ -6,14 +6,13 @@ interface HeroTipProps {
 
 export function HeroTip({ children }: HeroTipProps) {
   return (
-    <div className="bg-muted border border-info/30 rounded-lg p-4 mt-6">
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 w-8 h-8 bg-info/20 rounded-full flex items-center justify-center">
-          <Lightbulb className="h-4 w-4 text-info" />
+    <div className="bg-muted/50 border border-info/20 rounded-lg p-3 mt-4">
+      <div className="flex items-start gap-2.5">
+        <div className="flex-shrink-0 w-7 h-7 bg-info/15 rounded-full flex items-center justify-center">
+          <Lightbulb className="h-3.5 w-3.5 text-info" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-info mb-1">Tip</p>
-          <p className="text-sm text-muted-foreground">{children}</p>
+        <div className="pt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed">{children}</p>
         </div>
       </div>
     </div>

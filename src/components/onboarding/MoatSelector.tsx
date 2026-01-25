@@ -59,15 +59,15 @@ export function MoatSelector({ value, onChange }: MoatSelectorProps) {
 
   return (
     <div className="space-y-4">
-      {/* 4-column grid: 3 presets + Custom */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+      {/* 2x2 grid on mobile, 4-column on desktop for better touch targets */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {presetOptions.map((option) => (
           <button
             key={option.value}
             type="button"
             onClick={() => handlePresetSelect(option.value)}
             className={cn(
-              'relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200',
+              'relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 min-h-[80px]',
               value === option.value && !showCustomInput
                 ? 'border-accent bg-accent/10 shadow-md'
                 : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
@@ -91,22 +91,30 @@ export function MoatSelector({ value, onChange }: MoatSelectorProps) {
           </button>
         ))}
         
-        {/* Custom option */}
+        {/* Custom option - shows value when selected */}
         <button
           type="button"
           onClick={handleCustomSelect}
           className={cn(
-            'flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200',
+            'flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 min-h-[80px]',
             showCustomInput
               ? 'border-accent bg-accent/10 shadow-md'
               : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
           )}
         >
-          <Edit3 className={cn(
-            'h-5 w-5 sm:h-6 sm:w-6 mb-1',
-            showCustomInput ? 'text-accent' : 'text-muted-foreground'
-          )} />
-          <span className="text-xs text-muted-foreground">Custom</span>
+          {showCustomInput ? (
+            <>
+              <span className="text-lg sm:text-xl font-bold text-accent mb-1">
+                ${customValue || '1,500'}
+              </span>
+              <span className="text-xs text-muted-foreground">Custom</span>
+            </>
+          ) : (
+            <>
+              <Edit3 className="h-5 w-5 sm:h-6 sm:w-6 mb-1 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Custom</span>
+            </>
+          )}
         </button>
       </div>
 

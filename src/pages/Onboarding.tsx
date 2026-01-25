@@ -264,7 +264,7 @@ export default function Onboarding() {
                 animate="center"
                 exit="exit"
                 transition={slideTransition}
-                className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg"
+                className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-xl ring-1 ring-black/5"
               >
                 {/* Step Icon */}
                 <motion.div 
@@ -285,13 +285,13 @@ export default function Onboarding() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.15 }}
                 >
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                     {stepTitles[currentStep as 1 | 2 | 3]}
                   </h1>
-                  <p className="text-sm font-medium text-primary mb-1">
+                  <p className="text-sm font-medium text-primary mb-2">
                     {stepSubtitles[currentStep as 1 | 2 | 3]}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {stepQuestions[currentStep as 1 | 2 | 3]}
                   </p>
                 </motion.div>
@@ -304,7 +304,7 @@ export default function Onboarding() {
                 >
                   {currentStep === 1 && (
                     <div className="space-y-4">
-                      <div className="relative">
+                      <div className="flex flex-col items-center">
                         <Label htmlFor="hourly-wage" className="sr-only">
                           Hourly Wage
                         </Label>
@@ -314,7 +314,7 @@ export default function Onboarding() {
                           placeholder="30.00"
                           value={hourlyWageInput}
                           onChange={(e) => setHourlyWageInput(e.target.value)}
-                          className="text-center text-lg h-14"
+                          className="text-center text-2xl h-16 max-w-[200px] font-semibold"
                           min="1"
                           step="0.01"
                         />
@@ -436,13 +436,14 @@ export default function Onboarding() {
                         Continue
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={handleSkip}
-                        className="w-full text-muted-foreground"
-                      >
-                        Skip for now
-                      </Button>
+                      <div className="text-center">
+                        <button
+                          onClick={handleSkip}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
+                        >
+                          Skip for now
+                        </button>
+                      </div>
                     </>
                   ) : (
                     <Button

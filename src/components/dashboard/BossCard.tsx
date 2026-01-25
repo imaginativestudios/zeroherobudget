@@ -70,7 +70,7 @@ export function BossCard({
     <>
       <Card 
         className={cn(
-          "relative overflow-hidden shadow-royal hover-lift h-full flex flex-col",
+          "relative overflow-hidden shadow-royal hover-lift h-full flex flex-col bg-white dark:bg-card",
           isHighInterest && "ring-1 ring-destructive/20"
         )}
       >

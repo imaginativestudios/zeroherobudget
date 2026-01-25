@@ -17,7 +17,7 @@ export function ShadowBudgetSummary() {
 
   if (isLoading) {
     return (
-      <Card className="h-full">
+      <Card className="h-full bg-white dark:bg-card">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Ghost className="h-4 w-4 text-muted-foreground" />
@@ -48,7 +48,7 @@ export function ShadowBudgetSummary() {
 
   if (shadowAlerts.length === 0) {
     return (
-      <Card className="h-full">
+      <Card className="h-full bg-white dark:bg-card">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Ghost className="h-4 w-4 text-muted-foreground" />
@@ -65,7 +65,7 @@ export function ShadowBudgetSummary() {
   }
 
   return (
-    <Card className="h-full shadow-royal hover-lift">
+    <Card className="h-full shadow-royal hover-lift bg-white dark:bg-card">
       <CardHeader className="p-6 pb-2">
         <CardTitle className="text-sm font-medium flex items-center justify-between">
           <span className="flex items-center gap-2">

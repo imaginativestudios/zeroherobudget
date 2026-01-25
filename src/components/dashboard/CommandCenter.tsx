@@ -137,7 +137,7 @@ export function CommandCenter({
           animate="visible"
           variants={cardVariants}
         >
-          <Card className="shadow-royal hover-lift h-full card-debt">
+          <Card className="shadow-royal hover-lift h-full card-debt bg-white dark:bg-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -237,7 +237,7 @@ export function CommandCenter({
           animate="visible"
           variants={cardVariants}
         >
-          <Card className="shadow-royal hover-lift h-full card-expense">
+          <Card className="shadow-royal hover-lift h-full card-expense bg-white dark:bg-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -352,7 +352,7 @@ export function CommandCenter({
           animate="visible"
           variants={cardVariants}
         >
-          <Card className="shadow-royal hover-lift h-full">
+          <Card className="shadow-royal hover-lift h-full bg-white dark:bg-card">
             <CardHeader className="pb-3">
               <div>
                 <CardTitle className="text-lg flex items-center gap-2">

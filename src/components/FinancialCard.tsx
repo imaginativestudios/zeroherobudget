@@ -77,7 +77,7 @@ export const FinancialCard = ({
 
   const cardContent = (
     <Card className={cn(
-      "h-full flex flex-col transition-all duration-300 ease-out",
+      "h-full flex flex-col transition-all duration-300 ease-out bg-white dark:bg-card",
       to && "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       className
     )}>

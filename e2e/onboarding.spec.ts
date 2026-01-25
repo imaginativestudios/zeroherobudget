@@ -210,4 +210,31 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     // Data should still be there (form state is preserved via local state)
     await expect(page.locator('#debt-name')).toHaveValue('My Credit Card');
   });
+
+  test('Step 3: Enter custom emergency fund goal', async ({ page }) => {
+    await page.goto('/onboarding');
+    
+    // Complete Steps 1-2
+    await page.locator('#hourly-wage').fill('30');
+    await page.getByRole('button', { name: /continue/i }).click();
+    await page.getByRole('button', { name: /continue/i }).click(); // Skip debt
+    
+    // Should be on Step 3
+    await expect(page.getByText('Set Your Moat Depth')).toBeVisible();
+    
+    // Click "Custom" option
+    await page.getByText('Custom').click();
+    
+    // Custom input should appear
+    await expect(page.locator('#custom-goal')).toBeVisible();
+    
+    // Enter custom amount
+    await page.locator('#custom-goal').fill('3500');
+    
+    // Continue to next step
+    await page.getByRole('button', { name: /See My Freedom Path/i }).click();
+    
+    // Should advance to Aha Moment
+    await expect(page.getByText(/freedom|path|debt-free/i)).toBeVisible({ timeout: 5000 });
+  });
 });

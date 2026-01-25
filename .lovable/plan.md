@@ -1,264 +1,211 @@
 
 
-# Onboarding UX Improvements Using Gestalt Principles
+# Custom Input Field UX & Visual Design Improvements
 
-## Analysis: What Looks "Off"
+## Issues Identified
 
-After analyzing the current onboarding flow through Gestalt design principles, I've identified several visual and UX issues:
-
-### Issues Identified
-
-| Principle | Problem | Impact |
-|-----------|---------|--------|
-| **Proximity** | The HeroTip is visually disconnected from the input—too much space between the input's "per hour" label and the tip | Users don't associate the tip with the input it references |
-| **Focal Point** | The input field lacks visual emphasis—it's the same width as everything else and has low contrast | Users' eyes wander instead of landing on the primary action |
-| **Figure-Ground** | The card is floating on a very similar gray background with minimal contrast | The form feels "flat" and unanchored |
-| **Similarity** | The "Continue" and "Skip for now" buttons have equal visual weight in their containers | The primary action doesn't stand out enough from secondary |
-| **Common Region** | Step 3's MoatSelector (4-column grid) breaks the visual rhythm when the 4th "Custom" option is smaller | Inconsistent grouping breaks Gestalt's "common region" |
-| **Continuity** | The header text hierarchy (Title → Subtitle → Question) uses 3 different colors and sizes but lacks clear visual separation | Information flow is unclear |
+| Problem | Impact |
+|---------|--------|
+| **Disconnected Layout** | The input floats below the grid, feeling like an afterthought rather than an integrated part of the selection |
+| **Weak Container** | No visual boundary around the input area - it blends into the card background |
+| **Left-Aligned Input** | `max-w-xs` creates asymmetrical layout that doesn't match the centered grid above |
+| **Technical Label** | "Enter your goal amount (minimum $100)" is instructional, not encouraging |
+| **No Contextual Help** | Users don't know what a good custom amount might be |
+| **Plain Animation** | Simple opacity/height animation could be more polished |
 
 ---
 
-## Proposed Improvements
+## Proposed Design
 
-### 1. Improve Focal Point on Primary Input
-
-**Current**: Input is full-width, same style as everything else.
-
-**Proposed**: Make the primary input larger, centered, with subtle visual emphasis.
+Create a cohesive, centered input area that feels like an extension of the selected "Custom" card:
 
 ```text
-Before:                          After:
-┌─────────────────────┐         ┌───────────────────────┐
-│ $ 30.00             │         │                       │
-└─────────────────────┘         │    ┌───────────┐      │
-                                │    │  $ 30.00  │      │
-                                │    └───────────┘      │
-                                │      per hour         │
-                                └───────────────────────┘
+Current Layout:                        Proposed Layout:
+┌─────────┐┌─────────┐                ┌─────────┐┌─────────┐
+│  $500   ││ $1,000  │                │  $500   ││ $1,000  │
+│ Starter ││   ★     │                │ Starter ││   ★     │
+└─────────┘└─────────┘                └─────────┘└─────────┘
+┌─────────┐┌─────────┐                ┌─────────┐┌─────────┐
+│  $2000  ││ $1,500  │                │  $2000  ││ $1,500  │
+│  Full   ││ Custom ✓│                │  Full   ││ Custom ✓│
+└─────────┘└─────────┘                └─────────┘└─────────┘
+                                      ┌───────────────────────┐
+Enter your goal amount (min $100)     │   Your Custom Goal    │
+┌────────────────┐                    │                       │
+│ $ 1500         │                    │   ┌──────────────┐    │
+└────────────────┘                    │   │  $   1,500   │    │
+                                      │   └──────────────┘    │
+                                      │                       │
+                                      │   💡 Tip: 3-6 months  │
+                                      │   of expenses is ideal│
+                                      └───────────────────────┘
 ```
-
-**Changes in `Onboarding.tsx` (Step 1)**:
-- Reduce input max-width to `max-w-[200px] mx-auto`
-- Increase input font size to `text-2xl`
-- Add subtle focus highlight container
-
-### 2. Improve Proximity: Tighten Tip Placement
-
-**Current**: HeroTip has `mt-6` creating large gap from content.
-
-**Proposed**: Reduce spacing to `mt-4` and integrate it more closely.
-
-**Changes in `HeroTip.tsx`**:
-- Change internal padding and margin
-- Make it feel more like an inline annotation
-
-### 3. Strengthen Figure-Ground Contrast
-
-**Current**: Card background `bg-card` on `bg-gradient-to-br from-background via-secondary` creates low contrast.
-
-**Proposed**: Add subtle shadow elevation and slightly increase border visibility.
-
-**Changes in `Onboarding.tsx`**:
-- Update card class: `shadow-lg` → `shadow-xl`
-- Add `ring-1 ring-black/5` for subtle definition
-
-### 4. Fix MoatSelector Grid Balance (Step 3)
-
-**Current**: 4-column grid with unequal content makes "Custom" feel orphaned.
-
-**Proposed**: 
-- Use 2x2 grid on mobile (better touch targets)
-- Add visual parity to "Custom" option
-- Show current value prominently when custom is selected
-
-**Changes in `MoatSelector.tsx`**:
-- Change grid to `grid-cols-2 sm:grid-cols-4`
-- Add dollar amount display to Custom when active
-- Improve custom input styling
-
-### 5. Improve Button Hierarchy (Similarity Principle)
-
-**Current**: "Skip for now" is full-width, creating visual competition with "Continue".
-
-**Proposed**: Make secondary action smaller and more subdued.
-
-**Changes in `Onboarding.tsx`**:
-- Change "Skip for now" to inline link style rather than full-width button
-- Add more visual differentiation
-
-### 6. Improve Header Text Hierarchy (Continuity)
-
-**Current**: Three text lines (title, subtitle, question) blend together.
-
-**Proposed**: Create clear visual grouping with consistent spacing.
-
-**Changes in `Onboarding.tsx`**:
-- Increase spacing between title and subtitle
-- Use consistent text sizing
-- Remove the subtitle color variation (both use foreground)
 
 ---
 
-## Implementation Details
+## Improvements
 
-### File: `src/components/onboarding/MoatSelector.tsx`
+### 1. Create a Visual Container
+Wrap the input in a styled container that connects it visually to the selected Custom option:
 
-**Grid Layout Fix**:
 ```tsx
-// Before
-<div className="grid grid-cols-4 gap-2 sm:gap-3">
-
-// After - Better mobile layout
-<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<motion.div className="overflow-hidden">
+  <div className="mt-4 p-4 rounded-xl bg-accent/5 border border-accent/20">
+    {/* Content centered inside */}
+  </div>
+</motion.div>
 ```
 
-**Custom Option Enhancement**:
-- When "Custom" is selected, show the current value as a large number
-- Add a subtle edit indicator
+### 2. Center the Input Layout
+Make the input centered and give it a prominent, focused appearance:
 
 ```tsx
-<button onClick={handleCustomSelect} ...>
-  {showCustomInput ? (
-    <>
-      <span className="text-lg sm:text-xl font-bold text-accent">
-        ${customValue || '1,500'}
-      </span>
-      <span className="text-xs text-muted-foreground">Custom</span>
-    </>
-  ) : (
-    <>
-      <Edit3 className="h-5 w-5 sm:h-6 sm:w-6 mb-1 text-muted-foreground" />
-      <span className="text-xs text-muted-foreground">Custom</span>
-    </>
-  )}
-</button>
-```
-
-### File: `src/pages/Onboarding.tsx`
-
-**Input Focal Point (Step 1)**:
-```tsx
-// Before
-<CurrencyInput
-  className="text-center text-lg h-14"
-  ...
-/>
-
-// After - More prominent
-<div className="flex justify-center">
+<div className="flex flex-col items-center text-center space-y-3">
+  <Label className="text-sm font-medium text-foreground">
+    Your Custom Goal
+  </Label>
   <CurrencyInput
-    className="text-center text-2xl h-16 max-w-[200px] font-semibold"
+    className="text-center text-xl h-14 max-w-[180px] font-semibold"
     ...
   />
 </div>
 ```
 
-**Card Elevation**:
+### 3. Improve the Label Copy
+Change from technical instruction to empowering language:
+
 ```tsx
 // Before
-className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg"
+"Enter your goal amount (minimum $100)"
 
-// After - Stronger figure-ground
-className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-xl ring-1 ring-black/5"
+// After - More human, matches Stoic voice
+"Your Custom Goal"
 ```
 
-**Button Hierarchy**:
-```tsx
-// Before
-<Button variant="ghost" onClick={handleSkip} className="w-full text-muted-foreground">
-  Skip for now
-</Button>
+### 4. Add Helpful Micro-Copy
+Add subtle contextual guidance below the input:
 
-// After - Less prominent, link-style
-<button
-  onClick={handleSkip}
-  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
+```tsx
+<p className="text-xs text-muted-foreground mt-2">
+  Tip: 3-6 months of expenses is a common goal
+</p>
+```
+
+### 5. Improve Animation
+Use spring physics for a more natural feel:
+
+```tsx
+<motion.div
+  initial={{ height: 0, opacity: 0 }}
+  animate={{ height: 'auto', opacity: 1 }}
+  exit={{ height: 0, opacity: 0 }}
+  transition={{ 
+    type: 'spring', 
+    stiffness: 300, 
+    damping: 30,
+    opacity: { duration: 0.2 }
+  }}
 >
-  Skip for now
-</button>
 ```
 
-**Header Text Hierarchy**:
+### 6. Add Minimum Validation Indicator
+Show subtle inline feedback when below minimum:
+
 ```tsx
-// Before - Cramped spacing
-<h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
-<p className="text-sm font-medium text-primary mb-1">
-<p className="text-sm text-muted-foreground">
-
-// After - Clearer grouping
-<h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-<p className="text-sm font-medium text-primary mb-2">
-<p className="text-sm text-muted-foreground leading-relaxed">
-```
-
-### File: `src/components/onboarding/HeroTip.tsx`
-
-**Tighter Integration**:
-```tsx
-// Before
-<div className="bg-muted border border-info/30 rounded-lg p-4 mt-6">
-
-// After - Reduced top margin, inline feel
-<div className="bg-muted/50 border border-info/20 rounded-lg p-3 mt-4">
+{parseFloat(customValue) < 100 && customValue !== '' && (
+  <p className="text-xs text-destructive">
+    Minimum goal is $100
+  </p>
+)}
 ```
 
 ---
 
-## Summary of Files to Modify
+## Implementation
 
-| File | Changes |
-|------|---------|
-| `src/pages/Onboarding.tsx` | Input focal point, card elevation, button hierarchy, header spacing |
-| `src/components/onboarding/MoatSelector.tsx` | 2x2 mobile grid, custom value display, improved visual balance |
-| `src/components/onboarding/HeroTip.tsx` | Tighter spacing, softer styling |
+### File: `src/components/onboarding/MoatSelector.tsx`
+
+**Complete Updated Custom Input Section (lines 121-148):**
+
+```tsx
+{/* Custom input field (animated) */}
+<AnimatePresence>
+  {showCustomInput && (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: 'auto', opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 30,
+        opacity: { duration: 0.2 }
+      }}
+      className="overflow-hidden"
+    >
+      <div className="mt-4 p-5 rounded-xl bg-accent/5 border border-accent/20">
+        <div className="flex flex-col items-center text-center space-y-3">
+          <Label 
+            htmlFor="custom-goal" 
+            className="text-sm font-medium text-foreground"
+          >
+            Your Custom Goal
+          </Label>
+          <CurrencyInput
+            id="custom-goal"
+            prefix="$"
+            value={customValue}
+            onChange={handleCustomChange}
+            placeholder="1500"
+            min={100}
+            autoFocus
+            className="text-center text-xl h-14 max-w-[180px] font-semibold"
+          />
+          {parseFloat(customValue) < 100 && customValue !== '' ? (
+            <p className="text-xs text-destructive">
+              Minimum goal is $100
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Tip: 3-6 months of expenses is a common goal
+            </p>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+```
 
 ---
 
-## Visual Before/After Comparison
+## Visual Summary
 
-```text
-BEFORE:                              AFTER:
-┌────────────────────────┐          ┌────────────────────────┐
-│ [Icon]                 │          │        [Icon]          │
-│ Title                  │          │                        │
-│ Subtitle               │          │         Title          │
-│ Question text...       │          │        Subtitle        │
-│                        │          │                        │
-│ ┌────────────────────┐ │          │ Question text here...  │
-│ │ $ 30.00            │ │          │                        │
-│ └────────────────────┘ │          │    ┌──────────────┐    │
-│      per hour          │          │    │   $ 30.00    │    │
-│                        │          │    └──────────────┘    │
-│ ┌────────────────────┐ │          │       per hour         │
-│ │ 💡 Tip: Long tip...│ │          │                        │
-│ └────────────────────┘ │          │ 💡 Tip: Long tip text  │
-│                        │          │                        │
-│ [====== Continue ====] │          │ [====== Continue ====] │
-│ [====== Skip ========] │          │      Skip for now      │
-└────────────────────────┘          └────────────────────────┘
-
-Step 3 MoatSelector:
-
-BEFORE (cramped on mobile):         AFTER (balanced):
-┌────┐┌────┐┌────┐┌────┐            ┌─────────┐┌─────────┐
-│$500││$1K ││$2K ││ ✏️ │            │  $500   ││  $1,000 │
-└────┘└────┘└────┘└────┘            │ Starter ││  Best ★ │
-                                    └─────────┘└─────────┘
-                                    ┌─────────┐┌─────────┐
-                                    │  $2,000 ││  Custom │
-                                    │  Full   ││  $1,500 │
-                                    └─────────┘└─────────┘
-```
+| Aspect | Before | After |
+|--------|--------|-------|
+| **Container** | None (floating) | Rounded box with accent tint |
+| **Alignment** | Left-aligned, narrow | Centered, prominent |
+| **Input Size** | `max-w-xs`, default height | `max-w-[180px]`, `text-xl`, `h-14` |
+| **Label** | Technical instruction | Empowering title |
+| **Guidance** | None | Contextual tip about 3-6 months |
+| **Validation** | Silent | Inline error for under $100 |
+| **Animation** | Linear timing | Spring physics |
 
 ---
 
 ## Gestalt Principles Applied
 
-- **Proximity**: Tighter spacing between related elements (input → label → tip)
-- **Focal Point**: Centered, larger primary input draws the eye
-- **Figure-Ground**: Enhanced card shadow creates clear separation from background
-- **Similarity**: Clear visual distinction between primary and secondary actions
-- **Common Region**: Balanced 2x2 grid gives each option equal visual weight on mobile
-- **Continuity**: Improved text hierarchy guides the eye from title → action
+- **Common Region**: The accent-tinted container groups all custom input elements together
+- **Proximity**: Tighter spacing between label, input, and tip
+- **Focal Point**: Centered, larger input draws the eye immediately
+- **Similarity**: Container styling echoes the selected state of preset options
+- **Continuity**: Vertical stack flows naturally from label → input → tip
+
+---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/components/onboarding/MoatSelector.tsx` | Redesign custom input section with container, centering, improved animation, and validation feedback |
 

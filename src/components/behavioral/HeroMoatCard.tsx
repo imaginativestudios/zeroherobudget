@@ -68,8 +68,8 @@ export function HeroMoatCard() {
 
   return (
     <Card className={cn(
-      "h-full transition-all duration-500",
-      isMoatComplete && "ring-2 ring-success/50 bg-gradient-to-br from-success/5 to-transparent"
+      "h-full transition-all duration-500 bg-white dark:bg-card",
+      isMoatComplete && "ring-2 ring-success/50"
     )}>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center justify-between">

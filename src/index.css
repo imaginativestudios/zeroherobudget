@@ -573,4 +573,33 @@ All colors MUST be HSL.
   .animate-success-flash {
     animation: success-flash 0.5s ease-out;
   }
+
+  /* ====================================== */
+  /* Mobile Safe Area Utilities             */
+  /* ====================================== */
+  
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+  
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  
+  /* Bottom navigation spacer for content */
+  .mb-bottom-nav {
+    margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .pb-bottom-nav {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
 }

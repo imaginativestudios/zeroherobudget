@@ -49,6 +49,7 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
         )}
         <Input
           type="number"
+          inputMode="decimal"
           ref={ref}
           value={value}
           step={actualStep}

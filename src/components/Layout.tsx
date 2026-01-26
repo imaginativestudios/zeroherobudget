@@ -11,6 +11,7 @@ import { useKeyboardShortcuts, ShortcutConfig } from "@/hooks/useKeyboardShortcu
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { LocalFirstBadge } from "./LocalFirstBadge";
 import { DemoModeBadge } from "./DemoModeBadge";
+import { MobileBottomNav } from "./MobileBottomNav";
 import { isDemoDataLoaded } from "@/lib/demoDataLoader";
 import { toast } from "@/hooks/use-toast";
 
@@ -351,6 +352,7 @@ export const Layout = ({ children }: LayoutProps) => {
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
           "p-2 sm:p-4 lg:p-8",
+          "pb-bottom-nav lg:pb-8", // Space for mobile bottom nav
           "bg-secondary" // Standard background
         )}
         role="main"
@@ -375,6 +377,9 @@ export const Layout = ({ children }: LayoutProps) => {
           </div>
         </footer>
       </main>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
       
       {/* Keyboard Shortcuts Dialog */}
       <KeyboardShortcutsDialog

@@ -154,20 +154,20 @@ export function BudgetOverviewCard({
 
   return (
     <Card className="shadow-royal hover-lift">
-      <CardHeader className="p-6 pb-4">
+      <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl text-foreground flex items-center gap-3">
-            <Target className="h-5 w-5 text-primary" aria-hidden="true" />
+          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
+            <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" aria-hidden="true" />
             Budget Overview
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             {formatMonthDisplay(selectedMonth)}
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="p-6 pt-0 space-y-6">
+      <CardContent className="p-4 sm:p-6 pt-0 space-y-4 sm:space-y-6">
         {/* Segmented Progress Bar */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm">
@@ -247,20 +247,20 @@ export function BudgetOverviewCard({
         </div>
         
         {/* Interactive Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
           {/* Total Planned */}
           <button
             onClick={onScrollToBudget}
-            className="p-4 bg-muted/50 rounded-xl border text-left transition-all hover:bg-muted/80 hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="p-3 sm:p-4 bg-muted/50 rounded-xl border text-left transition-all hover:bg-muted/80 hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <ClipboardList className="h-4 w-4" />
-              Total Planned
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-1">
+              <ClipboardList className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="truncate">Planned</span>
             </div>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-lg sm:text-2xl font-bold text-foreground">
               {formatCurrency(totalPlanned)}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 hidden sm:block">
               {budgetItemCount} budget item{budgetItemCount !== 1 ? 's' : ''}
             </div>
           </button>
@@ -268,39 +268,39 @@ export function BudgetOverviewCard({
           {/* Total Spent */}
           <button
             onClick={onScrollToBudget}
-            className="p-4 bg-muted/50 rounded-xl border text-left transition-all hover:bg-muted/80 hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="p-3 sm:p-4 bg-muted/50 rounded-xl border text-left transition-all hover:bg-muted/80 hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <Receipt className="h-4 w-4" />
-              Total Spent
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-1">
+              <Receipt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="truncate">Spent</span>
             </div>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-lg sm:text-2xl font-bold text-foreground">
               {formatCurrency(totalActual)}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 hidden sm:block">
               {transactionCount > 0 ? `${transactionCount} transaction${transactionCount !== 1 ? 's' : ''}` : 'No transactions yet'}
             </div>
           </button>
           
           {/* Variance */}
-          <div className="p-4 bg-muted/50 rounded-xl border">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+          <div className="p-3 sm:p-4 bg-muted/50 rounded-xl border">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-1">
               {variance <= 0 ? (
-                <TrendingDown className="h-4 w-4 text-success" />
+                <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" />
               ) : (
-                <TrendingUp className="h-4 w-4 text-destructive" />
+                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />
               )}
-              Variance
+              <span className="truncate">Variance</span>
             </div>
             <div className={cn(
-              "text-2xl font-bold flex items-center gap-1",
+              "text-lg sm:text-2xl font-bold flex items-center gap-1",
               variance <= 0 ? "text-success" : "text-destructive"
             )}>
               {variance <= 0 ? '-' : '+'}
               {formatCurrency(Math.abs(variance))}
             </div>
             <div className={cn(
-              "text-xs mt-1",
+              "text-xs mt-1 hidden sm:block",
               variance <= 0 ? "text-success" : "text-destructive"
             )}>
               {variance <= 0 ? "Under budget" : "Over budget"}
@@ -309,27 +309,27 @@ export function BudgetOverviewCard({
           
           {/* Alerts */}
           <div className={cn(
-            "p-4 rounded-xl border",
+            "p-3 sm:p-4 rounded-xl border",
             overBudgetCategories.length > 0 
               ? "bg-warning/10 border-warning/30" 
               : "bg-success/10 border-success/30"
           )}>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-1">
               <AlertTriangle className={cn(
-                "h-4 w-4",
+                "h-3.5 w-3.5 sm:h-4 sm:w-4",
                 overBudgetCategories.length > 0 ? "text-warning" : "text-success"
               )} />
-              Category Status
+              <span className="truncate">Status</span>
             </div>
             <div className={cn(
-              "text-2xl font-bold",
+              "text-lg sm:text-2xl font-bold",
               overBudgetCategories.length > 0 ? "text-warning" : "text-success"
             )}>
               {overBudgetCategories.length > 0 
                 ? `${overBudgetCategories.length} Over`
-                : "All Good"}
+                : "On Track"}
             </div>
-            <div className="text-xs text-muted-foreground mt-1 truncate">
+            <div className="text-xs text-muted-foreground mt-1 truncate hidden sm:block">
               {overBudgetCategories.length > 0 
                 ? overBudgetCategories.slice(0, 2).map(c => c.name).join(', ')
                 : "All categories on track"}

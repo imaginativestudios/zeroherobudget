@@ -72,7 +72,7 @@ export function ExpenseItemRow({
         style={style}
         className="block sm:hidden"
       >
-        <div className="space-y-3 p-3 border border-border/50 rounded-lg bg-card/50 hover:bg-muted/50 transition-all duration-200">
+        <div className="space-y-2 p-2 border border-border/50 rounded-lg bg-card/50 hover:bg-muted/50 transition-all duration-200">
           {/* Row 1: Drag handle + Name */}
           <div className="flex items-center gap-2">
             <button
@@ -91,7 +91,7 @@ export function ExpenseItemRow({
           </div>
           
           {/* Row 2: Planned / Actual */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Planned</label>
               <Input

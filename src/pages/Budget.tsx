@@ -185,18 +185,19 @@ export const Budget = () => {
   };
 
   return <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       {/* Header */}
-      <div className="pt-8 space-y-4">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-foreground">Budget</h1>
+      <div className="pt-4 sm:pt-8 space-y-3">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Budget</h1>
           
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            {/* Compare Section */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+          {/* Combined controls row on mobile */}
+          <div className="flex items-center gap-2 w-full lg:w-auto flex-wrap">
+            {/* Month Selector */}
+            <div className="flex items-center gap-2 flex-1 sm:flex-none">
+              <Calendar className="h-4 w-4 text-muted-foreground hidden sm:block" />
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-full sm:w-44">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -214,13 +215,13 @@ export const Budget = () => {
               </Select>
             </div>
 
-            {/* Actions Section */}
-            <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
-              <Button variant="outline" size="sm" onClick={exportExpenses}>
+            {/* Actions */}
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="sm" onClick={exportExpenses} className="h-10 sm:h-9 px-2 sm:px-3">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Export</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()}>
+              <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()} className="h-10 sm:h-9 px-2 sm:px-3">
                 <Upload className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Import</span>
               </Button>
@@ -243,15 +244,15 @@ export const Budget = () => {
 
       {/* Income Section */}
       <Card className="shadow-royal hover-lift" data-tour="budget-income">
-        <CardHeader className="p-6">
-          <CardTitle className="text-xl text-foreground flex items-center gap-3">
-            <DollarSign className="h-5 w-5 text-success" aria-hidden="true" />
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
+            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-success" aria-hidden="true" />
             Monthly Income
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
+        <CardContent className="p-4 sm:p-6 pt-0">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <label htmlFor="income-amount" className="text-muted-foreground font-medium whitespace-nowrap">
+            <label htmlFor="income-amount" className="text-sm sm:text-base text-muted-foreground font-medium whitespace-nowrap">
               Income Amount:
             </label>
             <CurrencyInput 
@@ -267,10 +268,10 @@ export const Budget = () => {
 
       {/* Expenses Section */}
       <Card ref={budgetSectionRef} className="shadow-royal hover-lift">
-        <CardHeader className="p-6">
-          <CardTitle className="text-xl text-foreground">Monthly Budget</CardTitle>
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+          <CardTitle className="text-lg sm:text-xl text-foreground">Monthly Budget</CardTitle>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
+        <CardContent className="p-4 sm:p-6 pt-0">
           <GroupableExpenses expenses={expenses.map(e => ({
           id: e.id,
           name: e.name,
@@ -334,11 +335,33 @@ export const Budget = () => {
 
       {/* Assets Section */}
       <Card className="shadow-royal hover-lift">
-        <CardHeader className="p-6">
-          <CardTitle className="text-xl text-foreground">Assets (for Net Worth Calculation)</CardTitle>
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+          <CardTitle className="text-lg sm:text-xl text-foreground">Assets (for Net Worth)</CardTitle>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <div className="overflow-x-auto">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          {/* Mobile Card Layout */}
+          <div className="block sm:hidden space-y-3">
+            {assets.map(asset => (
+              <div key={asset.id} className="p-3 border border-border/50 rounded-lg bg-card/50 space-y-2">
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Asset Name</label>
+                  <Input value={asset.name} onChange={e => updateAsset(asset.id, 'name', e.target.value)} className="min-w-0" />
+                </div>
+                <div className="flex items-end gap-2">
+                  <div className="flex-1 space-y-1">
+                    <label className="text-xs text-muted-foreground">Value</label>
+                    <Input type="number" step="0.01" value={asset.value} onChange={e => updateAsset(asset.id, 'value', parseFloat(e.target.value) || 0)} />
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => removeAsset(asset.id)} className="text-destructive hover:text-destructive min-h-[44px] min-w-[44px]">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Desktop Table Layout */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
@@ -365,12 +388,12 @@ export const Budget = () => {
             </table>
           </div>
           
-          <div className="flex justify-between items-center mt-6 pt-4 border-t">
-            <Button onClick={addAsset} variant="default" className="btn-glow">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-4 sm:mt-6 pt-4 border-t">
+            <Button onClick={addAsset} variant="default" className="btn-glow w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               Add Asset
             </Button>
-            <div className="text-lg font-semibold text-primary">
+            <div className="text-base sm:text-lg font-semibold text-primary">
               Total Assets: {formatCurrency(totalAssets)}
             </div>
           </div>

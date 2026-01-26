@@ -125,13 +125,13 @@ export function GroupCard({
       <div
         ref={setNodeRef}
         style={style}
-        className="border border-border/50 rounded-lg bg-card/80 backdrop-blur-md transition-all duration-200 hover:shadow-lg hover:border-primary/30 hover-lift"
+        className="border border-border/50 rounded-lg bg-card/80 backdrop-blur-md transition-all duration-200 hover:shadow-lg hover:border-primary/30"
       >
         <Accordion type="single" collapsible defaultValue={`group-${groupName}`}>
           <AccordionItem value={`group-${groupName}`} className="border-none">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline">
-              <div className="flex items-center justify-between w-full mr-4">
-                <div className="flex items-center gap-3 min-w-0">
+            <AccordionTrigger className="px-3 sm:px-4 py-2 sm:py-3 hover:no-underline">
+              <div className="flex items-center justify-between w-full mr-2 sm:mr-4">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <button
                     className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors duration-200"
                     {...attributes}
@@ -160,7 +160,7 @@ export function GroupCard({
                       </Button>
                     </div>
                   ) : (
-                    <h3 className="font-semibold text-lg min-w-0 truncate text-balance">{groupName}</h3>
+                    <h3 className="font-semibold text-base sm:text-lg min-w-0 truncate text-balance">{groupName}</h3>
                   )}
                 </div>
                 
@@ -219,7 +219,7 @@ export function GroupCard({
               </div>
             </AccordionTrigger>
             
-            <AccordionContent className="px-4 pb-4">
+            <AccordionContent className="px-3 sm:px-4 pb-3 sm:pb-4">
               {expenses.length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="w-full">

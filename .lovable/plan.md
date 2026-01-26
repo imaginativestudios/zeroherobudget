@@ -1,205 +1,279 @@
 
-
-# PWA Enhancements Plan
+# Mobile App Features Implementation Plan
 
 ## Overview
 
-Add three enhancements to improve the Progressive Web App experience:
-1. **Offline Indicator Banner** - Visual feedback when internet connection is lost
-2. **iOS Splash Screen Images** - Polished launch experience on Apple devices
-3. **Service Worker Update Notification** - Prompt users to refresh for new versions
+Transform Zero Hero into a native-feeling mobile experience by adding touch gestures, pull-to-refresh, bottom navigation tabs, expanded haptic feedback, and optimized mobile forms. This builds upon existing infrastructure (framer-motion, embla-carousel, haptics.ts, and 44px touch target standards).
 
 ---
 
-## 1. Offline Indicator Banner
+## Feature 1: Bottom Navigation Tabs
 
-### New Files
+Create a fixed bottom navigation bar for mobile devices that provides quick thumb access to core sections.
 
-| File | Purpose |
-|------|---------|
-| `src/hooks/useOnlineStatus.ts` | Hook to detect online/offline state changes |
-| `src/components/OfflineBanner.tsx` | Top banner showing offline status |
+### New Component: `src/components/MobileBottomNav.tsx`
 
-### Hook: useOnlineStatus.ts
+| Tab | Icon | Route | Label |
+|-----|------|-------|-------|
+| Dashboard | Home | /dashboard | Home |
+| Budget | Compass | /budgets | Budget |
+| Debts | Cloud | /debts | Debts |
+| Transactions | Scroll | /transactions | Log |
+| More | Menu | (opens drawer) | More |
+
+**Design Specifications:**
+- Fixed to bottom of screen: `fixed bottom-0 left-0 right-0`
+- Only visible on mobile/tablet: `lg:hidden`
+- Safe area padding for notched devices: `pb-safe` using `env(safe-area-inset-bottom)`
+- Height: 64px + safe area
+- Background: Matches sidebar color scheme (`bg-sidebar`)
+- Active tab: Primary color with subtle animation
+- Z-index: 50 (same level as mobile header)
+- Haptic feedback on tab press
+
+**"More" Drawer:**
+- Slides up from bottom using Vaul drawer component
+- Contains: Journey, Accounts, Achievements, Reports, Data Management, Financial Tips, Settings
+
+### Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Add MobileBottomNav component inside Layout wrapper |
+| `src/components/Layout.tsx` | Add padding-bottom on mobile to account for bottom nav height |
+| `src/index.css` | Add `pb-safe` utility class for safe area inset |
+
+---
+
+## Feature 2: Pull-to-Refresh
+
+Add native-feeling pull-to-refresh for data pages using framer-motion for the gesture detection and animation.
+
+### New Hook: `src/hooks/usePullToRefresh.ts`
 
 ```text
-- Track navigator.onLine state
-- Listen to 'online' and 'offline' window events
-- Return { isOnline, isOffline } booleans
-- Auto-dismiss visual when connection restores
+Parameters:
+- onRefresh: () => Promise<void> | void
+- threshold: number (default 80px)
+- disabled?: boolean
+
+Returns:
+- containerRef: RefObject<HTMLDivElement>
+- isRefreshing: boolean
+- pullProgress: number (0-1)
 ```
 
-### Component: OfflineBanner.tsx
+**Implementation:**
+- Track touch start/move/end events
+- Only activate when scrolled to top (`scrollTop <= 0`)
+- Show progress indicator as user pulls down
+- Trigger haptic feedback at threshold
+- Animate spinner during refresh
+- Auto-reset after completion
+
+### New Component: `src/components/PullToRefreshContainer.tsx`
+
+Wrapper component that adds pull-to-refresh behavior:
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│ ⚠️ WifiOff  You're offline · Changes saved locally      │
-└─────────────────────────────────────────────────────────┘
+<PullToRefreshContainer onRefresh={handleRefresh}>
+  <DashboardContent />
+</PullToRefreshContainer>
+```
+
+**Visual Design:**
+- Spinner appears above content when pulled
+- Uses primary color spinner
+- Subtle opacity change on content during pull
+- "Release to refresh" text at threshold
+
+### Pages to Wrap
+
+| Page | Refresh Action |
+|------|----------------|
+| Dashboard | Re-fetch all dashboard data |
+| Transactions | Refresh transaction list |
+| Budget | Reload expense groups |
+| Accounts | Refresh account balances |
+
+---
+
+## Feature 3: Swipe Gestures for Screen Transitions
+
+Enable swipe navigation between related screens using framer-motion's gesture system.
+
+### New Hook: `src/hooks/useSwipeNavigation.ts`
+
+```text
+Parameters:
+- routes: { left?: string; right?: string }
+- threshold: number (default 100px)
+- enabled?: boolean
+
+Returns:
+- containerProps: MotionProps for the container
+- direction: 'left' | 'right' | null
+```
+
+**Behavior:**
+- Swipe right: Navigate to previous screen in sequence
+- Swipe left: Navigate to next screen in sequence
+- Visual feedback: Content follows finger during swipe
+- Haptic feedback on successful swipe
+- Edge resistance when no route available
+
+### Navigation Sequences
+
+| Group | Swipe Left → | Swipe Right ← |
+|-------|--------------|---------------|
+| Dashboard | Budget | (edge) |
+| Budget | Debts | Dashboard |
+| Debts | Transactions | Budget |
+| Transactions | (edge) | Debts |
+
+### New Component: `src/components/SwipeablePageWrapper.tsx`
+
+Wraps page content to add swipe navigation:
+
+```text
+<SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
+  <BudgetPageContent />
+</SwipeablePageWrapper>
+```
+
+---
+
+## Feature 4: Enhanced Haptic Feedback
+
+Expand the existing haptics utility to cover more interactions and add visual feedback pairing.
+
+### Modify: `src/lib/haptics.ts`
+
+Add new patterns:
+
+| Pattern | Duration | Use Case |
+|---------|----------|----------|
+| `tap` | 5ms | Button/tab press |
+| `light` | 10ms | Drag start (existing) |
+| `medium` | 20ms | Successful drop (existing) |
+| `success` | [10, 50, 10]ms | Completed actions (existing) |
+| `warning` | [20, 40, 20]ms | Destructive action confirmation |
+| `error` | [50, 30, 50, 30, 50]ms | Error/failure notification |
+| `selection` | 8ms | Toggle/selection change |
+
+### New Hook: `src/hooks/useHapticFeedback.ts`
+
+Provides haptic-enabled event handlers:
+
+```text
+const { withHaptic } = useHapticFeedback();
+
+<Button onClick={withHaptic('tap', handleClick)}>
+  Save
+</Button>
+```
+
+### Integration Points
+
+| Component/Action | Haptic Pattern |
+|------------------|----------------|
+| Bottom nav tab press | `tap` |
+| Pull-to-refresh threshold | `medium` |
+| Successful form submission | `success` |
+| Delete confirmation | `warning` |
+| Form validation error | `error` |
+| Toggle switches | `selection` |
+| Swipe navigation complete | `medium` |
+
+---
+
+## Feature 5: Mobile-Optimized Forms
+
+Enhance form inputs for better mobile usability beyond the existing 44px touch targets.
+
+### Enhancements to Existing Components
+
+**Input Components:**
+- Add `inputMode` attributes for appropriate mobile keyboards
+- Currency inputs: `inputMode="decimal"`
+- Date inputs: Use native date picker on mobile
+- Text inputs: `inputMode="text"` with appropriate `autocomplete`
+
+**Form Layout Patterns:**
+- Single-column layout on mobile by default
+- Sticky submit buttons at bottom of form
+- Larger tap targets for radio/checkbox groups
+- Visual feedback on input focus (slight scale)
+
+### New Component: `src/components/ui/mobile-form-footer.tsx`
+
+Sticky footer for form actions:
+
+```text
+<MobileFormFooter>
+  <Button variant="outline">Cancel</Button>
+  <Button type="submit">Save</Button>
+</MobileFormFooter>
 ```
 
 **Design:**
-- Fixed position at top of screen (above other content)
-- Yellow/amber warning color scheme (`bg-amber-500 text-white`)
-- Animated slide-in from top (`animate-in slide-in-from-top`)
-- Auto-hides when connection restores
-- Shows reassuring message about local data persistence
+- Sticks to bottom of viewport
+- Background blur effect
+- Safe area padding
+- Visible only on mobile (`lg:hidden`)
 
-### Integration
+### Form Input Optimizations
 
-Add to `App.tsx` alongside `InstallPromptBanner`:
-```text
-<OfflineBanner />
-<InstallPromptBanner />
-```
-
----
-
-## 2. iOS Splash Screen Images
-
-### Required Assets
-
-iOS requires specific splash screen sizes for different devices. Create these images in `public/`:
-
-| Filename | Size | Devices |
-|----------|------|---------|
-| `apple-splash-1125x2436.png` | 1125×2436 | iPhone X/XS/11 Pro |
-| `apple-splash-1242x2688.png` | 1242×2688 | iPhone XS Max/11 Pro Max |
-| `apple-splash-1170x2532.png` | 1170×2532 | iPhone 12/13 Pro |
-| `apple-splash-1284x2778.png` | 1284×2778 | iPhone 12/13 Pro Max |
-| `apple-splash-2048x2732.png` | 2048×2732 | iPad Pro 12.9" |
-| `apple-splash-1668x2388.png` | 1668×2388 | iPad Pro 11" |
-
-**Design Spec:**
-- Teal background (#0D7377) matching theme-color
-- Centered Zero Hero logo (from `/assets/zero-hero-logo.svg`)
-- White logo on teal background
-
-### HTML Meta Tags
-
-Add to `index.html` `<head>`:
-```text
-<!-- iOS Splash Screens -->
-<link rel="apple-touch-startup-image" 
-      href="/apple-splash-1125x2436.png"
-      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
-<!-- ... additional sizes ... -->
-
-<!-- iOS Status Bar Style -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Zero Hero">
-```
+| Input Type | inputMode | autocomplete | Additional |
+|------------|-----------|--------------|------------|
+| Currency | decimal | off | Prefix/suffix visible |
+| Email | email | email | Lower keyboard |
+| Phone | tel | tel | Number pad |
+| Date | - | off | Native picker |
+| Search | search | off | Search keyboard |
+| Name | text | name | Auto-capitalize |
 
 ---
 
-## 3. Service Worker Update Notification
+## Implementation Details
 
-### New Files
-
-| File | Purpose |
-|------|---------|
-| `src/hooks/useServiceWorkerUpdate.ts` | Detect SW updates from vite-plugin-pwa |
-| `src/components/UpdateAvailableBanner.tsx` | Prompt user to refresh |
-
-### Hook: useServiceWorkerUpdate.ts
+### MobileBottomNav Component Structure
 
 ```text
-- Use virtual:pwa-register API from vite-plugin-pwa
-- Detect when new SW waiting to activate
-- Expose { needRefresh, updateServiceWorker } 
-- Handle skipWaiting and reload
+<nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-sidebar border-t border-sidebar-border">
+  <div className="flex items-center justify-around h-16 pb-safe">
+    {tabs.map(tab => (
+      <NavButton 
+        key={tab.route}
+        icon={tab.icon}
+        label={tab.label}
+        isActive={location.pathname === tab.route}
+        onClick={() => handleTabPress(tab)}
+      />
+    ))}
+    <MoreDrawerTrigger />
+  </div>
+</nav>
 ```
 
-### Component: UpdateAvailableBanner.tsx
+### Layout Padding Adjustment
+
+Add to main content container in `Layout.tsx`:
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│ ✨ SparklesIcon  New version available    [Refresh Now] │
-└─────────────────────────────────────────────────────────┘
+className={cn(
+  // ... existing classes
+  "pb-20 lg:pb-0" // Space for bottom nav on mobile
+)}
 ```
 
-**Design:**
-- Fixed position at bottom (above InstallPromptBanner if both shown)
-- Primary gradient background (matching install banner style)
-- "Refresh Now" button triggers `updateServiceWorker(true)`
-- Dismiss button to ignore this update
+### Safe Area CSS Utility
 
-### Vite Config Update
-
-Modify `vite.config.ts` to change `registerType` from `'autoUpdate'` to `'prompt'`:
+Add to `src/index.css`:
 
 ```text
-VitePWA({
-  registerType: 'prompt',  // Changed from 'autoUpdate'
-  // ... rest stays same
-})
-```
-
-This allows the app to show a prompt before applying updates instead of auto-updating.
-
-### Integration
-
-Add to `App.tsx`:
-```text
-<UpdateAvailableBanner />
-<OfflineBanner />
-<InstallPromptBanner />
-```
-
----
-
-## Technical Details
-
-### useOnlineStatus.ts Structure
-
-```text
-export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  return { isOnline, isOffline: !isOnline };
-}
-```
-
-### useServiceWorkerUpdate.ts Structure
-
-```text
-import { useRegisterSW } from 'virtual:pwa-register/react';
-
-export function useServiceWorkerUpdate() {
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW();
-
-  const dismissUpdate = () => setNeedRefresh(false);
-  
-  return {
-    needRefresh,
-    updateServiceWorker: () => updateServiceWorker(true),
-    dismissUpdate
-  };
-}
-```
-
-### TypeScript Declaration
-
-Add `src/vite-pwa.d.ts`:
-```text
-declare module 'virtual:pwa-register/react' {
-  export function useRegisterSW(options?: { ... }): { ... };
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 ```
 
@@ -211,49 +285,83 @@ declare module 'virtual:pwa-register/react' {
 
 | File | Purpose |
 |------|---------|
-| `src/hooks/useOnlineStatus.ts` | Online/offline detection |
-| `src/hooks/useServiceWorkerUpdate.ts` | SW update detection |
-| `src/components/OfflineBanner.tsx` | Offline status banner |
-| `src/components/UpdateAvailableBanner.tsx` | Update prompt banner |
-| `src/vite-pwa.d.ts` | TypeScript declarations for PWA virtual module |
-| `public/apple-splash-*.png` | iOS splash screen images (6 files) |
+| `src/components/MobileBottomNav.tsx` | Bottom navigation bar for mobile |
+| `src/components/MobileMoreDrawer.tsx` | Drawer for additional nav items |
+| `src/components/PullToRefreshContainer.tsx` | Pull-to-refresh wrapper |
+| `src/components/SwipeablePageWrapper.tsx` | Swipe navigation wrapper |
+| `src/components/ui/mobile-form-footer.tsx` | Sticky form action footer |
+| `src/hooks/usePullToRefresh.ts` | Pull-to-refresh gesture hook |
+| `src/hooks/useSwipeNavigation.ts` | Swipe navigation hook |
+| `src/hooks/useHapticFeedback.ts` | Haptic feedback utilities |
 
 ### Modified Files
 
 | File | Change |
 |------|--------|
-| `index.html` | Add iOS splash screen meta tags and apple-mobile-web-app tags |
-| `vite.config.ts` | Change registerType to 'prompt' |
-| `src/App.tsx` | Add OfflineBanner and UpdateAvailableBanner components |
+| `src/lib/haptics.ts` | Add new haptic patterns (tap, warning, error, selection) |
+| `src/components/Layout.tsx` | Add bottom padding for nav, integrate bottom nav |
+| `src/index.css` | Add safe area utilities |
+| `src/pages/Dashboard.tsx` | Wrap in PullToRefreshContainer and SwipeablePageWrapper |
+| `src/pages/Budget.tsx` | Wrap in PullToRefreshContainer and SwipeablePageWrapper |
+| `src/pages/Transactions.tsx` | Wrap in PullToRefreshContainer and SwipeablePageWrapper |
+| `src/pages/DebtSnowball.tsx` | Wrap in SwipeablePageWrapper |
+| Various form dialogs | Add inputMode and mobile-form-footer |
 
 ---
 
 ## Implementation Order
 
-1. Create `useOnlineStatus` hook
-2. Create `OfflineBanner` component
-3. Create `useServiceWorkerUpdate` hook and TypeScript declaration
-4. Create `UpdateAvailableBanner` component
-5. Update `vite.config.ts` to use prompt registration
-6. Update `App.tsx` to include new banners
-7. Add iOS splash screen meta tags to `index.html`
-8. Generate iOS splash screen images (placeholder PNGs with correct dimensions)
+1. **Haptic Feedback** - Extend `haptics.ts` and create `useHapticFeedback` hook
+2. **Bottom Navigation** - Create `MobileBottomNav` and `MobileMoreDrawer` components
+3. **Layout Updates** - Modify `Layout.tsx` for bottom nav integration
+4. **Pull-to-Refresh** - Create hook and container component
+5. **Swipe Navigation** - Create hook and wrapper component
+6. **Page Integration** - Wrap pages with new containers
+7. **Form Optimizations** - Create mobile-form-footer and update input components
 
 ---
 
-## Visual Priority (Bottom of Screen)
+## Visual Design Reference
 
-When multiple banners could show:
+### Bottom Navigation (Mobile)
 ```text
-┌────────────────────────────────────────────┐
-│ Main App Content                           │
-│                                            │
-├────────────────────────────────────────────┤
-│ [Update Available Banner - z-51]           │
-├────────────────────────────────────────────┤
-│ [Install Prompt Banner - z-50]             │
-└────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│                    App Content                       │
+│                                                     │
+│                                                     │
+│                                                     │
+├─────────────────────────────────────────────────────┤
+│  🏠     🧭     ☁️     📜     ≡                      │
+│ Home  Budget  Debts   Log   More                    │
+└─────────────────────────────────────────────────────┘
 ```
 
-The offline banner appears at the **top** of the screen since it's a status indicator, not an action prompt.
+### Pull-to-Refresh Animation
+```text
+     ↓ Pull down
+┌─────────────────────────────────────────────────────┐
+│           ⟳ Release to refresh                       │
+├─────────────────────────────────────────────────────┤
+│                    App Content                       │
+│                    (pulled down)                     │
+└─────────────────────────────────────────────────────┘
+```
 
+---
+
+## Accessibility Considerations
+
+1. **Bottom navigation**: Proper `aria-current` for active tab
+2. **Swipe gestures**: Don't interfere with screen reader navigation
+3. **Haptics**: Respect system haptic settings
+4. **Pull-to-refresh**: Announce loading state to screen readers
+5. **Touch targets**: Maintain 44px minimum throughout
+
+---
+
+## Performance Notes
+
+- Swipe detection uses passive touch listeners
+- Animations use `transform` and `opacity` for GPU acceleration
+- Pull-to-refresh uses `requestAnimationFrame` for smooth updates
+- Bottom nav is rendered once at app level, not per-page

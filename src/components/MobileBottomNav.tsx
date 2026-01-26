@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, Cloud, Scroll, Menu } from 'lucide-react';
+import { Home, Compass, Cloud, Scroll, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { haptics } from '@/lib/haptics';
 import { MobileMoreDrawer } from './MobileMoreDrawer';
@@ -91,7 +91,7 @@ export function MobileBottomNav() {
             aria-label="More navigation options"
             aria-expanded={moreDrawerOpen}
           >
-            <Menu 
+            <MoreHorizontal 
               className={cn(
                 "h-5 w-5 mb-1 transition-transform",
                 (isMoreActive || moreDrawerOpen) && "scale-110"

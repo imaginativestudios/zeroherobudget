@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
+import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);
@@ -182,7 +183,8 @@ export const Budget = () => {
     budgetSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return <div className="space-y-8">
+  return <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
+    <div className="space-y-8">
       {/* Header */}
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -475,5 +477,6 @@ export const Budget = () => {
           </Card>
         </Collapsible>
       )}
-    </div>;
+    </div>
+  </SwipeablePageWrapper>;
 };

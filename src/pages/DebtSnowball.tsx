@@ -20,6 +20,7 @@ import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
 import { FreedomSlider } from "@/components/behavioral/FreedomSlider";
 import { EditableValue } from "@/components/ui/editable-value";
+import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 
 export const DebtSnowball = () => {
   const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
@@ -121,7 +122,8 @@ export const DebtSnowball = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <SwipeablePageWrapper leftRoute="/transactions" rightRoute="/budgets">
+      <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Debt Strategy</h1>
@@ -554,6 +556,7 @@ export const DebtSnowball = () => {
             />
           </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </SwipeablePageWrapper>
   );
 };

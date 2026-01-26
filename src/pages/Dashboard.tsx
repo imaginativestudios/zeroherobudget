@@ -60,6 +60,7 @@ import { CommandCenter } from "@/components/dashboard/CommandCenter";
 import { QuickAddDebtDialog } from "@/components/dashboard/QuickAddDebtDialog";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
+import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format, addMonths } from "date-fns";
@@ -310,19 +311,26 @@ export const Dashboard = () => {
   // Show empty state for new users
   if (!isCriticalLoading && !isSecondaryLoading && isNewUser) {
     return (
-      <div className="space-y-6 lg:space-y-8">
-        <DashboardEmptyState greetingName={greetingName} />
-      </div>
+      <SwipeablePageWrapper leftRoute="/budgets">
+        <div className="space-y-6 lg:space-y-8">
+          <DashboardEmptyState greetingName={greetingName} />
+        </div>
+      </SwipeablePageWrapper>
     );
   }
 
   // Show Initialize Mission if user has completed onboarding but has no debts
   if (!dashboardState.isLoading && dashboardState.shouldShowInitializeMission) {
-    return <InitializeMissionCard />;
+    return (
+      <SwipeablePageWrapper leftRoute="/budgets">
+        <InitializeMissionCard />
+      </SwipeablePageWrapper>
+    );
   }
 
   return (
-    <div className={cn("space-y-8 lg:space-y-10", showRegroupingTheme && "regrouping-theme")}>
+    <SwipeablePageWrapper leftRoute="/budgets">
+      <div className={cn("space-y-8 lg:space-y-10", showRegroupingTheme && "regrouping-theme")}>
       {/* ========================================= */}
       {/* HERO WELCOME SECTION - Command Center    */}
       {/* ========================================= */}
@@ -725,6 +733,7 @@ export const Dashboard = () => {
           setStrategy(newStrategy);
         }}
       />
-    </div>
+      </div>
+    </SwipeablePageWrapper>
   );
 };

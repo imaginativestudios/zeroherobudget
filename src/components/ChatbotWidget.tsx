@@ -211,7 +211,7 @@ export const ChatbotWidget = () => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50" data-tour="chatbot-widget">
+    <div className="fixed bottom-20 lg:bottom-4 right-4 z-50" data-tour="chatbot-widget">
       {/* Chat Panel */}
       <div
         id="chat-panel"

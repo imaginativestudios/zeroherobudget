@@ -23,6 +23,7 @@ import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } fr
 import { Transaction } from "@/types/transactions";
 import { toCsv, downloadCsv, parseCsv, validateCsvFile, mapTransactionCsv } from "@/lib/csvUtils";
 import { importFromClipboard, ImportResult, ProcessedTransaction } from "@/lib/connectorImportHandler";
+import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 
 export const Transactions = () => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -285,7 +286,8 @@ export const Transactions = () => {
     }
     event.target.value = "";
   };
-  return <div className="space-y-8">
+  return <SwipeablePageWrapper rightRoute="/debts">
+    <div className="space-y-8">
       <div className="pt-8 space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-foreground">Transactions</h1>
@@ -703,5 +705,6 @@ export const Transactions = () => {
         existingTransactions={transactions}
         onConfirmImport={handleConfirmConnectorImport}
       />
-    </div>;
+    </div>
+  </SwipeablePageWrapper>;
 };

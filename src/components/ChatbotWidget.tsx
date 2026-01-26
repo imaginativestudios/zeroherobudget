@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Loader2, Wand2 } from "lucide-react";
+import { X, Send, Loader2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -229,7 +229,7 @@ export const ChatbotWidget = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
-              <Wand2 className="h-5 w-5 text-white" aria-hidden="true" />
+              <MessageCircle className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
                 <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
                 <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
@@ -348,7 +348,7 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-6 w-6 text-white" aria-hidden="true" />
         ) : (
-          <Wand2 className="h-8 w-8 text-white" aria-hidden="true" />
+          <MessageCircle className="h-7 w-7 text-white" aria-hidden="true" />
         )}
       </Button>
     </div>

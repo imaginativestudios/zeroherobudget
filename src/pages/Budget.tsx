@@ -5,6 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
@@ -249,20 +250,17 @@ export const Budget = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 pt-0">
-          <div className="flex items-center gap-4">
-            <label htmlFor="income-amount" className="text-muted-foreground font-medium">Income Amount:</label>
-            <Input 
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <label htmlFor="income-amount" className="text-muted-foreground font-medium whitespace-nowrap">
+              Income Amount:
+            </label>
+            <CurrencyInput 
               id="income-amount"
-              type="number" 
-              step="0.01" 
+              prefix="$"
               value={income} 
               onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
-              className="w-48"
-              aria-describedby="income-display"
+              className="w-full sm:w-48"
             />
-            <span id="income-display" className="text-2xl font-bold text-primary" aria-live="polite">
-              {formatCurrency(income)}
-            </span>
           </div>
         </CardContent>
       </Card>

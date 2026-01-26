@@ -1,118 +1,87 @@
 
 
-# Add Swipe Navigation to Core Pages
+# Fix Budget Page Income Section Mobile Overflow
 
-## Overview
+## Problem
 
-Wrap the Dashboard, Budget, Debts, and Transactions pages with the existing `SwipeablePageWrapper` component to enable horizontal swipe navigation between them on mobile devices.
+The Income Section has a horizontal layout with three elements that overflow on mobile:
+1. Label: "Income Amount:"
+2. Input field with raw number value
+3. Formatted currency display (`$5,000.00`)
 
----
+This creates unnecessary redundancy and causes the content to extend beyond the viewport on smaller screens.
 
-## Navigation Flow
+## Solution
 
-Users can swipe between pages in this sequence:
+Remove the redundant formatted currency display and use the `CurrencyInput` component instead of a plain `Input`. This provides:
+- A `$` prefix for context (so users know it's currency)
+- Proper decimal formatting
+- Mobile-optimized keyboard (`inputMode="decimal"`)
+- Single source of truth for the value
 
-```text
-Dashboard ←→ Budget ←→ Debts ←→ Transactions
-```
+## Changes
 
-| Page | Swipe Left → | ← Swipe Right |
-|------|--------------|---------------|
-| Dashboard | Budget | (edge - no route) |
-| Budget | Debts | Dashboard |
-| Debts | Transactions | Budget |
-| Transactions | (edge - no route) | Debts |
+### File: `src/pages/Budget.tsx`
 
----
-
-## Implementation
-
-### File Modifications
-
-Each page will be wrapped with the `SwipeablePageWrapper` component, passing the appropriate left and right routes.
-
-#### 1. Dashboard.tsx
-
-Wrap the return JSX with `SwipeablePageWrapper`:
-- `leftRoute="/budgets"` (swipe left goes to Budget)
-- `rightRoute={undefined}` (no route - Dashboard is the start)
-
-#### 2. Budget.tsx
-
-Wrap the return JSX with `SwipeablePageWrapper`:
-- `leftRoute="/debts"` (swipe left goes to Debts)
-- `rightRoute="/dashboard"` (swipe right goes to Dashboard)
-
-#### 3. DebtSnowball.tsx
-
-Wrap the return JSX with `SwipeablePageWrapper`:
-- `leftRoute="/transactions"` (swipe left goes to Transactions)
-- `rightRoute="/budgets"` (swipe right goes to Budget)
-
-#### 4. Transactions.tsx
-
-Wrap the return JSX with `SwipeablePageWrapper`:
-- `leftRoute={undefined}` (no route - Transactions is the end)
-- `rightRoute="/debts"` (swipe right goes to Debts)
-
----
-
-## Technical Details
-
-### Import Statement (same for all pages)
-
-```typescript
-import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
-```
-
-### Wrapper Pattern
-
-Each page's outermost `<div>` will be wrapped:
-
-```typescript
-// Before
-return (
-  <div className="space-y-8">
-    {/* page content */}
+**Current code (lines 251-266):**
+```tsx
+<CardContent className="p-6 pt-0">
+  <div className="flex items-center gap-4">
+    <label htmlFor="income-amount" className="text-muted-foreground font-medium">Income Amount:</label>
+    <Input 
+      id="income-amount"
+      type="number" 
+      step="0.01" 
+      value={income} 
+      onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
+      className="w-48"
+      aria-describedby="income-display"
+    />
+    <span id="income-display" className="text-2xl font-bold text-primary" aria-live="polite">
+      {formatCurrency(income)}
+    </span>
   </div>
-);
-
-// After
-return (
-  <SwipeablePageWrapper leftRoute="/next-page" rightRoute="/prev-page">
-    <div className="space-y-8">
-      {/* page content */}
-    </div>
-  </SwipeablePageWrapper>
-);
+</CardContent>
 ```
 
----
+**Updated code:**
+```tsx
+<CardContent className="p-6 pt-0">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+    <label htmlFor="income-amount" className="text-muted-foreground font-medium whitespace-nowrap">
+      Income Amount:
+    </label>
+    <CurrencyInput 
+      id="income-amount"
+      value={income} 
+      onChange={setIncome} 
+      className="w-full sm:w-48"
+    />
+  </div>
+</CardContent>
+```
 
-## User Experience
+**Additional change:** Add `CurrencyInput` to the imports at the top of the file.
 
-- **Visual Indicators**: Edge chevrons appear when swiping to show direction
-- **Haptic Feedback**: Medium vibration triggers on successful navigation
-- **Threshold**: 100px swipe distance required to trigger navigation
-- **Edge Resistance**: When at first/last page, swipe has strong resistance (20%)
-- **Mobile Only**: Swipe indicators are hidden on desktop (`lg:hidden`)
+## Benefits
 
----
+| Before | After |
+|--------|-------|
+| Redundant display of income value | Single input with $ prefix |
+| Fixed horizontal layout overflows | Responsive stacked layout on mobile |
+| Plain number input | Currency-formatted input with decimal keyboard |
+| 3 elements in a row | 2 elements, stacking on mobile |
 
-## Files to Modify
+## Visual Result
 
-| File | Change |
-|------|--------|
-| `src/pages/Dashboard.tsx` | Wrap content with SwipeablePageWrapper (leftRoute="/budgets") |
-| `src/pages/Budget.tsx` | Wrap content with SwipeablePageWrapper (leftRoute="/debts", rightRoute="/dashboard") |
-| `src/pages/DebtSnowball.tsx` | Wrap content with SwipeablePageWrapper (leftRoute="/transactions", rightRoute="/budgets") |
-| `src/pages/Transactions.tsx` | Wrap content with SwipeablePageWrapper (rightRoute="/debts") |
+**Mobile (stacked):**
+```
+Income Amount:
+[$     5,000.00]
+```
 
----
-
-## Accessibility
-
-- Swipe gestures only activate for horizontal movements (vertical scrolling unaffected)
-- Screen reader users can still navigate via bottom navigation tabs
-- Touch gestures don't interfere with other interactive elements
+**Desktop (inline):**
+```
+Income Amount: [$     5,000.00]
+```
 

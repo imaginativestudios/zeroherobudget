@@ -504,6 +504,7 @@ export type Database = {
           category: string
           created_at: string
           date: string
+          debt_id: string | null
           description: string
           expense_id: string | null
           flow: string
@@ -519,6 +520,7 @@ export type Database = {
           category: string
           created_at?: string
           date: string
+          debt_id?: string | null
           description: string
           expense_id?: string | null
           flow: string
@@ -534,6 +536,7 @@ export type Database = {
           category?: string
           created_at?: string
           date?: string
+          debt_id?: string | null
           description?: string
           expense_id?: string | null
           flow?: string
@@ -549,6 +552,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_debt_id_fkey"
+            columns: ["debt_id"]
+            isOneToOne: false
+            referencedRelation: "debts"
             referencedColumns: ["id"]
           },
           {

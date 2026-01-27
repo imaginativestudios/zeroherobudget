@@ -16,6 +16,7 @@ import { ShadowImpactCard } from "@/components/behavioral/ShadowImpactCard";
 import { ConnectorReviewModal } from "@/components/import/ConnectorReviewModal";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
+import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useExpenses } from "@/hooks/useLocalSettings";
 import { useTransactionCategorization } from "@/hooks/useTransactionCategorization";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
@@ -31,7 +32,7 @@ export const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [expenses] = useExpenses();
+const [expenses] = useExpenses();
   const {
     recordCategorization
   } = useTransactionCategorization();
@@ -40,6 +41,7 @@ export const Transactions = () => {
     getActiveAccounts
   } = useLocalAccounts();
   const activeAccounts = getActiveAccounts();
+  const { debts, updateDebt } = useLocalDebts();
   const {
     transactions: rawTransactions,
     addTransaction: addRawTransaction,
@@ -60,6 +62,7 @@ export const Transactions = () => {
     accountId: t.account_id,
     flow: t.flow,
     expenseId: t.expense_id,
+    debtId: t.debt_id,
     notes: t.notes
   }));
 
@@ -68,14 +71,16 @@ export const Transactions = () => {
     return addRawTransaction({
       ...transaction,
       account_id: transaction.accountId,
-      expense_id: transaction.expenseId
+      expense_id: transaction.expenseId,
+      debt_id: transaction.debtId
     });
   };
   const addTransactionsBulk = (transactions: any[]) => {
     const mappedTransactions = transactions.map(t => ({
       ...t,
       account_id: t.accountId,
-      expense_id: t.expenseId
+      expense_id: t.expenseId,
+      debt_id: t.debtId
     }));
     return addRawTransactionsBulk(mappedTransactions);
   };
@@ -83,7 +88,8 @@ export const Transactions = () => {
     const mappedUpdates = {
       ...updates,
       account_id: updates.accountId,
-      expense_id: updates.expenseId
+      expense_id: updates.expenseId,
+      debt_id: updates.debtId
     };
     return updateRawTransaction(id, mappedUpdates);
   };
@@ -99,6 +105,7 @@ export const Transactions = () => {
       accountId: t.account_id,
       flow: t.flow,
       expenseId: t.expense_id,
+      debtId: t.debt_id,
       notes: t.notes
     }));
   };
@@ -113,6 +120,7 @@ export const Transactions = () => {
     accountId: activeAccounts[0]?.id || 'default-checking',
     flow: 'out' as 'in' | 'out',
     expenseId: "",
+    debtId: "",
     notes: ""
   });
   
@@ -147,16 +155,36 @@ export const Transactions = () => {
   };
   
   const handleConfirmConnectorImport = (selected: ProcessedTransaction[]) => {
-    const transactionsToAdd = selected.map(t => ({
-      date: t.date,
-      description: t.description,
-      amount: t.amount,
-      category: t.category,
-      accountId: activeAccounts[0]?.id || 'default-checking',
-      flow: t.flow,
-      expenseId: undefined,
-      notes: `Imported from Connector: ${t.rawText.slice(0, 100)}`,
-    }));
+    // For debt payments, try to match to existing debts
+    const transactionsToAdd = selected.map(t => {
+      let debtId: string | undefined;
+      
+      // If this is a debt payment, try to find a matching debt
+      if (t.category === 'Debt Payments' && t.description) {
+        const matchedDebt = debts.find(d => 
+          t.description.toLowerCase().includes(d.name.toLowerCase())
+        );
+        if (matchedDebt) {
+          debtId = matchedDebt.id;
+          // Update the debt balance
+          updateDebt(matchedDebt.id, {
+            balance: Math.max(0, matchedDebt.balance - t.amount)
+          });
+        }
+      }
+      
+      return {
+        date: t.date,
+        description: t.description,
+        amount: t.amount,
+        category: t.category,
+        accountId: activeAccounts[0]?.id || 'default-checking',
+        flow: t.flow,
+        expenseId: undefined,
+        debtId,
+        notes: `Imported from Connector: ${t.rawText.slice(0, 100)}`,
+      };
+    });
     
     addTransactionsBulk(transactionsToAdd);
     
@@ -173,8 +201,20 @@ export const Transactions = () => {
     if (!newTransaction.description || newTransaction.amount <= 0) return;
     addTransaction({
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined
+      expenseId: newTransaction.expenseId || undefined,
+      debtId: newTransaction.debtId || undefined
     });
+
+    // If this is a debt payment with a linked debt, update the debt balance
+    if (newTransaction.category === 'Debt Payments' && newTransaction.debtId) {
+      const debt = debts.find(d => d.id === newTransaction.debtId);
+      if (debt) {
+        updateDebt(newTransaction.debtId, {
+          balance: Math.max(0, debt.balance - newTransaction.amount)
+        });
+        toast.success(`${debt.name} balance updated to ${formatCurrency(Math.max(0, debt.balance - newTransaction.amount))}`);
+      }
+    }
 
     // Record manual categorization for learning
     recordCategorization(newTransaction.description, null,
@@ -188,6 +228,7 @@ export const Transactions = () => {
       accountId: activeAccounts[0]?.id || 'default-checking',
       flow: 'out' as 'in' | 'out',
       expenseId: "",
+      debtId: "",
       notes: ""
     });
     setShowAddDialog(false);
@@ -202,14 +243,50 @@ export const Transactions = () => {
       accountId: transaction.accountId,
       flow: transaction.flow,
       expenseId: transaction.expenseId || "",
+      debtId: transaction.debtId || "",
       notes: transaction.notes || ""
     });
   };
   const handleUpdateTransaction = () => {
     if (!editingTransaction || !newTransaction.description || newTransaction.amount <= 0) return;
+    
+    const oldDebtId = editingTransaction.debtId;
+    const newDebtId = newTransaction.debtId || undefined;
+    const amountChanged = editingTransaction.amount !== newTransaction.amount;
+    const debtChanged = oldDebtId !== newDebtId;
+
+    // Handle debt balance adjustments when editing
+    if (newTransaction.category === 'Debt Payments') {
+      // If debt changed or amount changed, we need to adjust balances
+      if (oldDebtId && (debtChanged || amountChanged)) {
+        // Restore old debt balance
+        const oldDebt = debts.find(d => d.id === oldDebtId);
+        if (oldDebt) {
+          updateDebt(oldDebtId, {
+            balance: oldDebt.balance + editingTransaction.amount
+          });
+        }
+      }
+      
+      if (newDebtId && (debtChanged || amountChanged)) {
+        // Apply new payment to new/same debt
+        const newDebt = debts.find(d => d.id === newDebtId);
+        if (newDebt) {
+          const adjustedBalance = debtChanged 
+            ? newDebt.balance 
+            : newDebt.balance + editingTransaction.amount; // If same debt, we restored it above
+          updateDebt(newDebtId, {
+            balance: Math.max(0, adjustedBalance - newTransaction.amount)
+          });
+          toast.success(`${newDebt.name} balance updated!`);
+        }
+      }
+    }
+
     updateTransaction(editingTransaction.id, {
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined
+      expenseId: newTransaction.expenseId || undefined,
+      debtId: newDebtId
     });
 
     // Record categorization update for learning (only if category changed)
@@ -227,6 +304,7 @@ export const Transactions = () => {
       accountId: activeAccounts[0]?.id || 'default-checking',
       flow: 'out' as 'in' | 'out',
       expenseId: "",
+      debtId: "",
       notes: ""
     });
   };
@@ -414,6 +492,35 @@ export const Transactions = () => {
                     </div>
                   </div>
                   
+                  {/* Debt Selector - only show when category is Debt Payments */}
+                  {newTransaction.category === 'Debt Payments' && debts.length > 0 && (
+                    <div className="space-y-2 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                      <Label htmlFor="transaction-debt">Which Debt?</Label>
+                      <Select 
+                        value={newTransaction.debtId} 
+                        onValueChange={value => setNewTransaction({
+                          ...newTransaction,
+                          debtId: value === "none" ? "" : value
+                        })}
+                      >
+                        <SelectTrigger id="transaction-debt">
+                          <SelectValue placeholder="Select debt to update balance" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Don't update a debt balance</SelectItem>
+                          {debts.filter(d => d.balance > 0).map(debt => (
+                            <SelectItem key={debt.id} value={debt.id}>
+                              {debt.name} - {formatCurrency(debt.balance)} balance
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Selecting a debt will automatically reduce its balance by this amount.
+                      </p>
+                    </div>
+                  )}
+                  
                   {/* AI Category Suggestion */}
                   <CategorySuggestion description={newTransaction.description} amount={newTransaction.amount} currentCategory={newTransaction.category} onSuggestionAccepted={category => setNewTransaction({
                   ...newTransaction,
@@ -556,6 +663,7 @@ export const Transactions = () => {
                           accountId: activeAccounts[0]?.id || 'default-checking',
                           flow: 'out' as 'in' | 'out',
                           expenseId: "",
+                          debtId: "",
                           notes: ""
                         });
                       }

@@ -359,7 +359,7 @@ function generateDemoTransactions() {
       notes: '',
     });
     
-    // Debt payments
+    // Debt payments - linked to specific debts for balance tracking
     transactions.push({
       id: uuidv4(),
       date: format(addDays(monthStart, 20), 'yyyy-MM-dd'),
@@ -368,7 +368,8 @@ function generateDemoTransactions() {
       category: 'Debt Payments',
       flow: 'outflow',
       expense_id: 'e34',
-      notes: 'Auto-pay',
+      debt_id: 'd1', // Links to Best Egg Loan
+      notes: 'Auto-pay - Balance auto-updated',
     });
     transactions.push({
       id: uuidv4(),
@@ -378,7 +379,8 @@ function generateDemoTransactions() {
       category: 'Debt Payments',
       flow: 'outflow',
       expense_id: 'e35',
-      notes: '',
+      debt_id: 'c1', // Links to Amex Card
+      notes: 'Minimum payment',
     });
     transactions.push({
       id: uuidv4(),
@@ -388,6 +390,7 @@ function generateDemoTransactions() {
       category: 'Debt Payments',
       flow: 'outflow',
       expense_id: 'e34',
+      debt_id: 'r1', // Links to 401k Loan
       notes: 'Payroll deduction',
     });
     
@@ -447,6 +450,7 @@ function generateDemoTransactions() {
         category: 'Debt Payments',
         flow: 'outflow',
         expense_id: null,
+        debt_id: 'c1', // Links to Amex Card
         notes: 'Strike payment: Saved $45 in interest',
       });
       transactions.push({
@@ -457,6 +461,7 @@ function generateDemoTransactions() {
         category: 'Debt Payments',
         flow: 'outflow',
         expense_id: null,
+        debt_id: 'd1', // Links to Best Egg Loan
         notes: 'Strike payment: Tax refund applied!',
       });
     }

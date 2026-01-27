@@ -79,7 +79,7 @@ export function StrikePaymentModal({
     const newBalance = Math.max(0, debt.balance - paymentAmount);
     updateDebt(debt.id, { balance: newBalance });
     
-    // Log the transaction for history tracking
+    // Log the transaction for history tracking with debt_id for linking
     addTransaction({
       date: format(new Date(), 'yyyy-MM-dd'),
       description: `Extra Payment - ${debt.name}`,
@@ -88,6 +88,7 @@ export function StrikePaymentModal({
       account_id: null,
       flow: 'out',
       expense_id: undefined,
+      debt_id: debt.id, // Link to the specific debt
       notes: impact 
         ? `Strike payment: Saved $${impact.totalInterestSaved.toFixed(0)} in interest`
         : 'Strike payment',

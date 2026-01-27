@@ -49,7 +49,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
   const { toast } = useToast();
   const { transactions, addTransaction } = useLocalTransactions();
   const { expenses, addExpense } = useLocalExpenses();
-  const { debts, setDebts } = useLocalDebts();
+  const { debts, setDebts, updateDebt } = useLocalDebts();
 
   const existingData = useMemo(() => {
     switch (importType) {
@@ -114,6 +114,21 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
     try {
       if (importType === 'transactions') {
         rowsToImport.forEach(row => {
+          // Try to match debt payments to existing debts
+          let debtId: string | undefined;
+          if (row.data.category === 'Debt Payments' && row.data.description) {
+            const matchedDebt = debts.find(d => 
+              row.data.description.toLowerCase().includes(d.name.toLowerCase())
+            );
+            if (matchedDebt) {
+              debtId = matchedDebt.id;
+              // Update the debt balance
+              updateDebt(matchedDebt.id, {
+                balance: Math.max(0, matchedDebt.balance - (row.data.amount || 0))
+              });
+            }
+          }
+
           addTransaction({
             date: row.data.date,
             description: row.data.description || 'Imported',
@@ -122,6 +137,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
             account_id: null,
             flow: row.data.flow || 'out',
             notes: row.data.notes || '',
+            debt_id: debtId,
           });
         });
       } else if (importType === 'expenses') {

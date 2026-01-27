@@ -15,6 +15,7 @@ export interface Transaction {
   accountId: string; // Account this transaction belongs to
   flow: 'in' | 'out'; // Money flowing in or out
   expenseId?: string; // Link to budget expense for comparison
+  debtId?: string; // Link to debt for automatic balance updates
   notes?: string;
 }
 

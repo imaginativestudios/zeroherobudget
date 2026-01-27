@@ -14,6 +14,7 @@ export interface Transaction {
   account_id: string | null;
   flow: 'in' | 'out';
   expense_id?: string;
+  debt_id?: string;
   notes?: string;
   user_id: string;
   household_id?: string;

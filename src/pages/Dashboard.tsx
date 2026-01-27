@@ -60,11 +60,14 @@ import { CommandCenter } from "@/components/dashboard/CommandCenter";
 import { QuickAddDebtDialog } from "@/components/dashboard/QuickAddDebtDialog";
 import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanner";
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
+import { EmergencyFundCard } from "@/components/dashboard/EmergencyFundCard";
+import { BehavioralHintCard } from "@/components/dashboard/BehavioralHintCard";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format, addMonths } from "date-fns";
 import { getSurvivalCategories } from "@/lib/behavioralEngine";
+import { simulatePayoff as simulatePayoffCalc } from "@/lib/debtCalculations";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -98,7 +101,7 @@ export const Dashboard = () => {
   const { profile: userProfile } = useProfile();
   
   // Hero Profile for moat calculations
-  const { profile: heroProfile } = useHeroProfile();
+  const { profile: heroProfile, setMoatCurrent, setMoatTarget } = useHeroProfile();
   
   // Moat status for regrouping detection
   const { isRegrouping, isVulnerable, bannerDismissed } = useMoatStatus();
@@ -171,6 +174,49 @@ export const Dashboard = () => {
       type: d.type as 'card' | 'loan'
     })), [debts]
   );
+
+  // Calculate avalanche vs snowball savings for behavioral hints
+  const avalancheSavings = useMemo(() => {
+    const activeDebtItems = debtItems.filter(d => d.balance > 0);
+    if (activeDebtItems.length === 0 || leftover <= 0) return 0;
+    
+    const snowballResult = simulatePayoffCalc(activeDebtItems, leftover, 'Snowball');
+    const avalancheResult = simulatePayoffCalc(activeDebtItems, leftover, 'Avalanche');
+    
+    return Math.max(0, snowballResult.totalInterest - avalancheResult.totalInterest);
+  }, [debtItems, leftover]);
+
+  // Get highest APR for behavioral hints
+  const highestApr = useMemo(() => {
+    if (debts.length === 0) return 0;
+    return Math.max(...debts.map(d => d.interest_rate));
+  }, [debts]);
+
+  // Check if survival budget is exceeded
+  const survivalOverBudget = useMemo(() => {
+    const survivalCategories = getSurvivalCategories();
+    const survivalExpenses = expenses.filter(e => survivalCategories.includes(e.category));
+    const survivalPlanned = survivalExpenses.reduce((sum, e) => sum + (e.planned || 0), 0);
+    const survivalActual = survivalExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    return survivalActual > survivalPlanned;
+  }, [expenses]);
+
+  // Behavioral hint data
+  const behavioralHintData = useMemo(() => ({
+    moatProgress: heroProfile.moat_target > 0 
+      ? (heroProfile.moat_current / heroProfile.moat_target) * 100 
+      : 0,
+    moatTarget: heroProfile.moat_target || 1000,
+    moatCurrent: heroProfile.moat_current || 0,
+    leftover,
+    totalDebt,
+    highestApr,
+    strategy: dashboardState.strategy,
+    avalancheSavings,
+    survivalOverBudget,
+    debtCount: debts.filter(d => d.balance > 0).length,
+    hasHighInterestDebt: highestApr > 20,
+  }), [heroProfile, leftover, totalDebt, highestApr, dashboardState.strategy, avalancheSavings, survivalOverBudget, debts]);
 
   // Calculate achievement stats
   const debtsPaidOff = useMemo(() => 
@@ -412,8 +458,6 @@ export const Dashboard = () => {
           expenses={expenses}
           leftover={leftover}
           strategy={dashboardState.strategy}
-          moatCurrent={heroProfile.moat_current || 0}
-          moatTarget={heroProfile.moat_target || 1000}
           currentBoss={dashboardState.currentBoss}
           freedomDate={freedomDate}
           onAddDebt={() => setQuickAddDebtOpen(true)}
@@ -422,7 +466,31 @@ export const Dashboard = () => {
         />
       </motion.div>
 
-      {/* Quick Add Debt Dialog */}
+      {/* ========================================= */}
+      {/* EMERGENCY FUND & BEHAVIORAL HINTS        */}
+      {/* ========================================= */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6"
+      >
+        {/* Emergency Fund Card */}
+        <EmergencyFundCard
+          current={heroProfile.moat_current || 0}
+          target={heroProfile.moat_target || 1000}
+          onCurrentChange={setMoatCurrent}
+          onTargetChange={setMoatTarget}
+          animationDelay={0.1}
+        />
+        
+        {/* Behavioral Hints Card */}
+        <BehavioralHintCard
+          data={behavioralHintData}
+          animationDelay={0.15}
+        />
+      </motion.div>
+
       <QuickAddDebtDialog
         open={quickAddDebtOpen}
         onOpenChange={setQuickAddDebtOpen}

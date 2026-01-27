@@ -2,7 +2,7 @@
  * Payoff Strategy Card
  * 
  * Two-section card that separates:
- * 1. "Your Current Path" - Current debt payoff situation
+ * 1. "Your Current Path" - Current debt payoff situation with total debt display
  * 2. "What-If Simulator" - Interactive exploration of strategy/payment changes
  */
 
@@ -15,12 +15,10 @@ import {
   Snowflake,
   Flame,
   Lightbulb,
-  Castle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
@@ -37,8 +35,6 @@ interface PayoffStrategyCardProps {
   debtItems: DebtItem[];
   leftover: number;
   strategy: 'Snowball' | 'Avalanche';
-  moatCurrent: number;
-  moatTarget: number;
   freedomDate: string;
   animationDelay?: number;
 }
@@ -48,8 +44,6 @@ export function PayoffStrategyCard({
   debtItems,
   leftover,
   strategy,
-  moatCurrent,
-  moatTarget,
   freedomDate,
   animationDelay = 0,
 }: PayoffStrategyCardProps) {
@@ -58,7 +52,7 @@ export function PayoffStrategyCard({
   const [simulatedExtra, setSimulatedExtra] = useState([0]);
 
   const activeDebts = debts.filter(d => d.balance > 0);
-  const moatPercentage = moatTarget > 0 ? Math.min(100, (moatCurrent / moatTarget) * 100) : 0;
+  const totalDebt = activeDebts.reduce((sum, d) => sum + d.balance, 0);
 
   // Calculate current path (baseline)
   const currentPath = useMemo(() => {
@@ -147,6 +141,16 @@ export function PayoffStrategyCard({
                 </div>
                 
                 <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                  {/* Total Debt Display */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">Total Debt</span>
+                    <span className="text-lg font-bold text-destructive">
+                      {formatCurrency(totalDebt)}
+                    </span>
+                  </div>
+                  
+                  <Separator className="my-2" />
+                  
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-muted-foreground">Debt-Free By</span>
                     <Badge variant="secondary" className="text-xs">
@@ -166,6 +170,16 @@ export function PayoffStrategyCard({
                     <span className="text-destructive">
                       {formatCurrency(currentPath?.totalInterest || 0)} interest
                     </span>
+                  </div>
+                  
+                  {/* Total You'll Pay */}
+                  <div className="mt-2 pt-2 border-t border-border">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Total You'll Pay</span>
+                      <span className="font-medium">
+                        {formatCurrency(totalDebt + (currentPath?.totalInterest || 0))}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -252,14 +266,11 @@ export function PayoffStrategyCard({
                       <p className="text-lg font-bold text-primary mb-1">
                         {simulatedImpact.newDate}
                       </p>
-                      <div className="flex items-center gap-3 text-xs">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                         {simulatedImpact.monthsSaved > 0 && (
                           <span className="text-success font-medium">
                             -{simulatedImpact.monthsSaved} month{simulatedImpact.monthsSaved !== 1 ? 's' : ''}
                           </span>
-                        )}
-                        {simulatedImpact.monthsSaved > 0 && simulatedImpact.interestSaved > 0 && (
-                          <span className="text-muted-foreground">•</span>
                         )}
                         {simulatedImpact.interestSaved > 0 && (
                           <span className="text-success font-medium">
@@ -271,6 +282,15 @@ export function PayoffStrategyCard({
                             No significant change
                           </span>
                         )}
+                      </div>
+                      {/* Simulated Total Paid */}
+                      <div className="mt-2 pt-2 border-t border-border/50">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Total Paid</span>
+                          <span className="font-medium text-success">
+                            {formatCurrency(totalDebt + (simulatedImpact.newInterest || 0))}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -290,7 +310,7 @@ export function PayoffStrategyCard({
               </div>
               <p className="font-medium text-success">Debt-Free!</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Focus on growing your emergency fund below.
+                Focus on growing your emergency fund.
               </p>
             </div>
           )}
@@ -304,25 +324,6 @@ export function PayoffStrategyCard({
               View Full Strategy <ArrowRight className="h-4 w-4 ml-1" />
             </Link>
           </Button>
-          
-          <Separator />
-          
-          {/* Emergency Fund Mini-Progress */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <Castle className="h-4 w-4 text-primary" />
-                <span className="font-medium">{FUNCTIONAL_COPY.emergencyFund}</span>
-              </span>
-              <span className="text-muted-foreground">
-                {formatCurrency(moatCurrent)} / {formatCurrency(moatTarget || 1000)}
-              </span>
-            </div>
-            <Progress value={moatPercentage} className="h-2" />
-            <p className="text-xs text-muted-foreground text-center">
-              {moatPercentage.toFixed(0)}% of goal
-            </p>
-          </div>
         </CardContent>
       </Card>
     </motion.div>

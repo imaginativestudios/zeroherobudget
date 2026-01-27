@@ -32,27 +32,101 @@ export const DEMO_SUBSCRIPTIONS = [
   { name: 'Adobe Creative Cloud', amount: 54.99, billing_cycle: 'monthly', category: 'Miscellaneous', next_billing_date: format(addDays(new Date(), 25), 'yyyy-MM-dd'), is_active: false }, // Canceled example
 ];
 
+// Demo accounts - realistic bank accounts for full feature testing
+export const DEMO_ACCOUNTS = [
+  { 
+    id: 'acc-checking', 
+    name: 'Main Checking', 
+    type: 'checking', 
+    balance: 2450, 
+    is_active: true 
+  },
+  { 
+    id: 'acc-savings', 
+    name: 'Emergency Savings', 
+    type: 'savings', 
+    balance: 650,  // Matches moat_current
+    is_active: true 
+  },
+  { 
+    id: 'acc-credit', 
+    name: 'Amex Card', 
+    type: 'credit', 
+    balance: -3500,  // Matches demo debt (negative for credit)
+    is_active: true 
+  },
+  { 
+    id: 'acc-401k', 
+    name: '401k Retirement', 
+    type: 'investment', 
+    balance: 25000, 
+    is_active: true 
+  },
+];
+
+// Demo consistency streak data for StreakTrackerWidget
+export const DEMO_CONSISTENCY_STREAK = {
+  currentStreak: 5,
+  longestStreak: 12,
+  lastLogDate: format(new Date(), 'yyyy-MM-dd'),
+};
+
+// Demo achievements for Achievements page
+export const DEMO_ACHIEVEMENTS = {
+  unlockedIds: ['first-blood', 'quarter-mark'],
+  timestamps: {
+    'first-blood': format(subDays(new Date(), 35), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+    'quarter-mark': format(subDays(new Date(), 20), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+  },
+  initialDebt: 72000, // Slightly higher to show ~25% progress
+};
+
 // Demo hero profile - shows progress through the journey
 export const DEMO_HERO_PROFILE = {
   onboardingComplete: true,
+  onboarding_completed: true, // Alternative key
   onboardingStep: 6 as const,
   hourlyWage: 28, // ~$58k/year - median US income
+  hourly_wage: 28, // Alternative key
   moatTarget: 1000,
+  moat_target: 1000, // Alternative key
   moatCurrent: 650, // 65% progress - showing momentum
-  createdAt: format(subDays(new Date(), 45), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''), // 45 days ago
+  moat_current: 650, // Alternative key
+  createdAt: format(subDays(new Date(), 45), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"), // 45 days ago
+  last_active_date: format(new Date(), 'yyyy-MM-dd'),
+  trial_started: true,
+  // Activity log with dates for streak calculation (5-day streak with a gap)
   activityLog: [
     { date: format(subDays(new Date(), 0), 'yyyy-MM-dd'), type: 'login' },
     { date: format(subDays(new Date(), 1), 'yyyy-MM-dd'), type: 'login' },
     { date: format(subDays(new Date(), 2), 'yyyy-MM-dd'), type: 'login' },
     { date: format(subDays(new Date(), 3), 'yyyy-MM-dd'), type: 'transaction' },
-    { date: format(subDays(new Date(), 5), 'yyyy-MM-dd'), type: 'payment' },
+    { date: format(subDays(new Date(), 4), 'yyyy-MM-dd'), type: 'login' },
+    // Gap on day 5 for realism
+    { date: format(subDays(new Date(), 6), 'yyyy-MM-dd'), type: 'payment' },
+    { date: format(subDays(new Date(), 7), 'yyyy-MM-dd'), type: 'login' },
+    { date: format(subDays(new Date(), 10), 'yyyy-MM-dd'), type: 'login' },
+    { date: format(subDays(new Date(), 12), 'yyyy-MM-dd'), type: 'login' },
+  ],
+  // Array format for alternative parsing
+  activity_log: [
+    format(subDays(new Date(), 0), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 1), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 3), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 4), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 6), 'yyyy-MM-dd'),
+    format(subDays(new Date(), 7), 'yyyy-MM-dd'),
   ],
 };
 
-// Demo savings vault for Moat visualization
+// Demo savings vault for Moat visualization with enhanced fields
 export const DEMO_SAVINGS_VAULT = {
   balance: 650,
   target: 1000,
+  moat_balance: 650,
+  moat_target: 1000,
+  last_deposit_date: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
   deposits: [
     { amount: 200, date: format(subDays(new Date(), 30), 'yyyy-MM-dd'), note: 'Initial deposit' },
     { amount: 150, date: format(subDays(new Date(), 20), 'yyyy-MM-dd'), note: 'Bonus from work' },
@@ -60,6 +134,20 @@ export const DEMO_SAVINGS_VAULT = {
     { amount: 100, date: format(subDays(new Date(), 7), 'yyyy-MM-dd'), note: 'Weekly transfer' },
     { amount: 100, date: format(subDays(new Date(), 1), 'yyyy-MM-dd'), note: 'Weekly transfer' },
   ],
+  deposit_history: [
+    { amount: 200, date: format(subDays(new Date(), 30), 'yyyy-MM-dd') },
+    { amount: 150, date: format(subDays(new Date(), 20), 'yyyy-MM-dd') },
+    { amount: 100, date: format(subDays(new Date(), 14), 'yyyy-MM-dd') },
+    { amount: 100, date: format(subDays(new Date(), 7), 'yyyy-MM-dd') },
+    { amount: 100, date: format(subDays(new Date(), 1), 'yyyy-MM-dd') },
+  ],
+  // Milestone achievements for UI badges
+  achieved_milestones: [25, 50],
+  // RegroupingBanner fields
+  was_secure: false,
+  last_secure_date: null,
+  breach_acknowledged: false,
+  repair_mode_active: false,
   breachAcknowledged: false,
   repairMode: false,
 };
@@ -202,7 +290,7 @@ function generateDemoTransactions() {
       });
     }
     
-    // Dining out
+    // Dining out (discretionary - for shadow cost calculations)
     const restaurants = ['Chipotle', 'Olive Garden', 'Local Pizza Shop', 'Starbucks', 'Panera Bread'];
     for (let i = 0; i < 5; i++) {
       transactions.push({
@@ -315,7 +403,7 @@ function generateDemoTransactions() {
       notes: 'Building the Moat!',
     });
     
-    // Entertainment/Hobbies
+    // Entertainment/Hobbies (discretionary)
     transactions.push({
       id: uuidv4(),
       date: format(addDays(monthStart, 16), 'yyyy-MM-dd'),
@@ -326,6 +414,30 @@ function generateDemoTransactions() {
       expense_id: 'e30',
       notes: '',
     });
+    
+    // Additional discretionary spending for shadow cost demo
+    if (monthOffset === 0) {
+      transactions.push({
+        id: uuidv4(),
+        date: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+        description: 'Amazon Purchase - Electronics',
+        amount: 89.99,
+        category: 'Miscellaneous',
+        flow: 'outflow',
+        expense_id: null,
+        notes: 'New headphones',
+      });
+      transactions.push({
+        id: uuidv4(),
+        date: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
+        description: 'Target',
+        amount: 67.50,
+        category: 'Miscellaneous',
+        flow: 'outflow',
+        expense_id: null,
+        notes: 'Home goods',
+      });
+    }
   }
   
   // Sort by date descending (most recent first)
@@ -388,7 +500,18 @@ function convertDemoTransactions() {
     ...tx,
     user_id: DEMO_USER_ID,
     household_id: undefined,
-    account_id: null,
+    account_id: 'acc-checking', // Link to demo checking account
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }));
+}
+
+// Convert demo accounts to the format used by localStorage hooks
+function convertDemoAccounts() {
+  return DEMO_ACCOUNTS.map(account => ({
+    ...account,
+    user_id: DEMO_USER_ID,
+    household_id: undefined,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }));
@@ -436,6 +559,11 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     const subscriptions = convertDemoSubscriptions();
     localStorage.setItem(`${prefix}subscriptions`, JSON.stringify(subscriptions));
     
+    // Accounts (NEW)
+    const accounts = convertDemoAccounts();
+    localStorage.setItem(`${prefix}accounts`, JSON.stringify(accounts));
+    localStorage.setItem(`${prefix}bdt_accounts`, JSON.stringify(accounts)); // Alternative key
+    
     // Hero Profile
     localStorage.setItem(`${prefix}hero_profile`, JSON.stringify(DEMO_HERO_PROFILE));
     
@@ -448,7 +576,15 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     // Strategy (key must match what DebtSnowball.tsx uses)
     localStorage.setItem(`${prefix}bdt_strategy`, JSON.stringify('Snowball'));
     
-    // Behavioral engine state (shows some history)
+    // Consistency Streak (NEW) - for StreakTrackerWidget
+    localStorage.setItem(`${prefix}bdt_consistency_streak`, JSON.stringify(DEMO_CONSISTENCY_STREAK));
+    
+    // Achievements (NEW) - for Achievements page
+    localStorage.setItem(`${prefix}unlocked-achievements`, JSON.stringify(DEMO_ACHIEVEMENTS.unlockedIds));
+    localStorage.setItem(`${prefix}achievement-timestamps`, JSON.stringify(DEMO_ACHIEVEMENTS.timestamps));
+    localStorage.setItem(`${prefix}initial-debt-total`, JSON.stringify(DEMO_ACHIEVEMENTS.initialDebt));
+    
+    // Behavioral engine state (enhanced)
     localStorage.setItem(`${prefix}behavioral_engine`, JSON.stringify({
       lastCheckIn: new Date().toISOString(),
       streakDays: 5,
@@ -456,7 +592,19 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
       lifetimeSaved: 450,
     }));
     
-    const summary = `Loaded ${expenses.length} expenses, ${debts.length} debts, ${transactions.length} transactions, ${subscriptions.length} subscriptions`;
+    // Getting started checklist progress (NEW)
+    localStorage.setItem(`${prefix}getting_started_completed`, JSON.stringify([
+      'add_income',
+      'add_expenses', 
+      'add_debts',
+      'set_moat_goal',
+      'review_strategy',
+      // 'add_investment' - left incomplete for demo
+    ]));
+    
+    const summary = `Loaded ${expenses.length} expenses, ${debts.length} debts, ${transactions.length} transactions, ${subscriptions.length} subscriptions, ${accounts.length} accounts, ${DEMO_ACHIEVEMENTS.unlockedIds.length} achievements`;
+    
+    console.log('[Demo Data]', summary);
     
     return { loaded: true, summary };
   } catch (error) {

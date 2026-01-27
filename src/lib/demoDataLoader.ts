@@ -437,6 +437,28 @@ function generateDemoTransactions() {
         expense_id: null,
         notes: 'Home goods',
       });
+      
+      // Extra debt payments (Strike examples) - showcase the Strike feature
+      transactions.push({
+        id: uuidv4(),
+        date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+        description: 'Extra Payment - Amex Card',
+        amount: 200,
+        category: 'Debt Payments',
+        flow: 'outflow',
+        expense_id: null,
+        notes: 'Strike payment: Saved $45 in interest',
+      });
+      transactions.push({
+        id: uuidv4(),
+        date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
+        description: 'Extra Payment - Best Egg Loan',
+        amount: 150,
+        category: 'Debt Payments',
+        flow: 'outflow',
+        expense_id: null,
+        notes: 'Strike payment: Tax refund applied!',
+      });
     }
   }
   

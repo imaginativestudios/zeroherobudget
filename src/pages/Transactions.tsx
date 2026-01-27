@@ -88,7 +88,9 @@ export const Transactions = () => {
     return updateRawTransaction(id, mappedUpdates);
   };
   const getTransactionsByMonth = (month: string, accountId?: string) => {
-    return getRawTransactionsByMonth(month, accountId).map(t => ({
+    // Convert "all" to undefined so the filter shows all accounts
+    const filterAccountId = accountId === 'all' ? undefined : accountId;
+    return getRawTransactionsByMonth(month, filterAccountId).map(t => ({
       id: t.id,
       date: t.date,
       description: t.description,

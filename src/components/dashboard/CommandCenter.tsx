@@ -7,33 +7,27 @@
  * 3. Payoff Strategy - Freedom date calculator with real-time updates
  */
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   CreditCard, 
   Wallet, 
-  Calendar, 
   Plus, 
   ArrowRight,
-  Castle,
   TrendingUp,
   AlertCircle,
-  Snowflake,
-  Flame
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { EditableValue } from '@/components/ui/editable-value';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CompactDebtRow } from './CompactDebtRow';
-import { FreedomSlider } from '@/components/behavioral/FreedomSlider';
+import { PayoffStrategyCard } from './PayoffStrategyCard';
 import { formatCurrency } from '@/lib/utils';
 import { FUNCTIONAL_COPY, HEROIC_SUBTEXTS } from '@/lib/functionalVocabulary';
-import { simulatePayoff } from '@/lib/debtCalculations';
 import type { Debt } from '@/hooks/useLocalDebts';
 import type { DebtItem } from '@/lib/debtCalculations';
 
@@ -80,7 +74,6 @@ export function CommandCenter({
 }: CommandCenterProps) {
   // Calculate totals
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.planned || 0), 0);
-  const moatPercentage = moatTarget > 0 ? Math.min(100, (moatCurrent / moatTarget) * 100) : 0;
   const activeDebts = debts.filter(d => d.balance > 0);
   const totalDebt = activeDebts.reduce((sum, d) => sum + d.balance, 0);
   
@@ -89,33 +82,6 @@ export function CommandCenter({
     .sort((a, b) => (b.planned || 0) - (a.planned || 0))
     .slice(0, 5);
 
-  // Calculate outcomes for both strategies
-  const strategyComparison = useMemo(() => {
-    const activeDebtItems = debtItems.filter(d => d.balance > 0);
-    if (activeDebtItems.length === 0 || leftover <= 0) return null;
-    
-    const snowball = simulatePayoff(activeDebtItems, leftover, 'Snowball');
-    const avalanche = simulatePayoff(activeDebtItems, leftover, 'Avalanche');
-    
-    const snowballMonths = snowball.timeline.length;
-    const avalancheMonths = avalanche.timeline.length;
-    
-    return {
-      snowball: {
-        months: snowballMonths,
-        totalInterest: snowball.totalInterest,
-        date: snowball.timeline[snowballMonths - 1]?.label || 'Debt Free!',
-      },
-      avalanche: {
-        months: avalancheMonths,
-        totalInterest: avalanche.totalInterest,
-        date: avalanche.timeline[avalancheMonths - 1]?.label || 'Debt Free!',
-      },
-      interestDifference: Math.abs(snowball.totalInterest - avalanche.totalInterest),
-      monthsDifference: Math.abs(snowballMonths - avalancheMonths),
-      avalancheSavesMore: avalanche.totalInterest < snowball.totalInterest,
-    };
-  }, [debtItems, leftover]);
 
   // Animation variants
   const cardVariants = {
@@ -346,136 +312,16 @@ export function CommandCenter({
         </motion.div>
 
         {/* Column 3: Payoff Strategy */}
-        <motion.div
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={cardVariants}
-        >
-          <Card className="shadow-royal hover-lift h-full bg-white dark:bg-card">
-            <CardHeader className="pb-3">
-              <div>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  {FUNCTIONAL_COPY.strategy}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {HEROIC_SUBTEXTS.strategy}
-                </p>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              {/* Freedom Date Display */}
-              {activeDebts.length > 0 ? (
-                <>
-                  <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      Debt-Free By
-                    </p>
-                    <p className="text-2xl font-bold text-primary">
-                      {strategy === 'Snowball' 
-                        ? strategyComparison?.snowball.date || freedomDate
-                        : strategyComparison?.avalanche.date || freedomDate}
-                    </p>
-                    <Badge variant="secondary" className="mt-2 text-xs">
-                      {strategy === 'Snowball' ? (
-                        <><Snowflake className="h-3 w-3 mr-1" /> Snowball</>
-                      ) : (
-                        <><Flame className="h-3 w-3 mr-1" /> Avalanche</>
-                      )} Strategy
-                    </Badge>
-                    
-                    {/* Strategy Comparison Insight */}
-                    {strategyComparison && strategyComparison.interestDifference > 0 && (
-                      <div className="mt-3 pt-3 border-t border-border/50">
-                        <p className="text-xs text-muted-foreground">
-                          {strategy === 'Avalanche' ? (
-                            <>
-                              <span className="text-success font-medium">
-                                Saving {formatCurrency(strategyComparison.interestDifference)}
-                              </span>
-                              {' '}in interest vs. Snowball
-                            </>
-                          ) : (
-                            <>
-                              {strategyComparison.avalancheSavesMore ? (
-                                <>
-                                  <span className="text-primary font-medium">Quick wins mode</span>
-                                  {' '}• Avalanche saves {formatCurrency(strategyComparison.interestDifference)}
-                                </>
-                              ) : (
-                                <span className="text-success font-medium">
-                                  Best option for your debts!
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Embedded FreedomSlider (compact) */}
-                  {leftover > 0 ? (
-                    <FreedomSlider 
-                      debts={debtItems} 
-                      currentExtraBudget={leftover}
-                      strategy={strategy}
-                      variant="compact"
-                      maxAmount={Math.min(1000, leftover * 2)}
-                    />
-                  ) : (
-                    <div className="text-center py-4 px-3 rounded-lg bg-muted/50 border border-border">
-                      <p className="text-sm text-muted-foreground">
-                        Increase income or reduce expenses to unlock the freedom simulator.
-                      </p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-6">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-success/10 flex items-center justify-center mb-3">
-                    <TrendingUp className="h-6 w-6 text-success" />
-                  </div>
-                  <p className="font-medium text-success">Debt-Free!</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Focus on growing your emergency fund below.
-                  </p>
-                </div>
-              )}
-              
-              <Button 
-                variant="outline" 
-                className="w-full min-h-[44px]"
-                asChild
-              >
-                <Link to="/debts">
-                  View Full Strategy <ArrowRight className="h-4 w-4 ml-1" />
-                </Link>
-              </Button>
-              
-              <Separator />
-              
-              {/* Emergency Fund Mini-Progress */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2">
-                    <Castle className="h-4 w-4 text-primary" />
-                    <span className="font-medium">{FUNCTIONAL_COPY.emergencyFund}</span>
-                  </span>
-                  <span className="text-muted-foreground">
-                    {formatCurrency(moatCurrent)} / {formatCurrency(moatTarget || 1000)}
-                  </span>
-                </div>
-                <Progress value={moatPercentage} className="h-2" />
-                <p className="text-xs text-muted-foreground text-center">
-                  {moatPercentage.toFixed(0)}% of goal
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <PayoffStrategyCard
+          debts={debts}
+          debtItems={debtItems}
+          leftover={leftover}
+          strategy={strategy}
+          moatCurrent={moatCurrent}
+          moatTarget={moatTarget}
+          freedomDate={freedomDate}
+          animationDelay={0.2}
+        />
       </div>
     </TooltipProvider>
   );

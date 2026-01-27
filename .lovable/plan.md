@@ -1,244 +1,264 @@
 
-# Enhance Debt Payment Tracking with Demo Data
+
+# Link Debt Payment Transactions to Debt Balances
 
 ## Summary
 
-This plan improves debt payment visibility and adds demo data to showcase the full debt payment workflow. Currently, debt payments can be logged as transactions, but the "Strike" payment feature (extra payments) doesn't create transaction records.
+This plan implements automatic debt balance updates when users log "Debt Payments" category transactions, creating a bidirectional link between transaction records and debt balances. We'll also add a `debt_id` field to transactions for precise tracking.
 
 ---
 
 ## Current State Analysis
 
-### How Users Can Add Debt Payments:
+### How Debt Payments Work Today:
 
-| Method | Where | Creates Transaction? | Updates Debt Balance? |
-|--------|-------|---------------------|----------------------|
-| Log Transaction | `/transactions` → Add Transaction → Category: "Debt Payments" | Yes | No |
-| Strike Payment | Dashboard/Debt cards → "Strike" button | No | Yes |
-| Edit Balance | `/debts` → Click on balance → Edit | No | Yes |
+| Entry Point | Location | Updates Debt Balance? | Creates Transaction? |
+|-------------|----------|----------------------|---------------------|
+| Add Transaction | `/transactions` dialog | No | Yes |
+| Import Transactions | CSV/Connector import | No | Yes |
+| Strike Payment | Dashboard/Debt cards | Yes | Yes (recently added) |
+| Edit Balance | `/debts` inline edit | Yes | No |
+| Data Import Wizard | `/budgets` → Import | No | Yes |
 
-### Demo Data Already Includes:
-- 3 months of debt payment transactions (Best Egg: $808, Amex: $150, 401k Loan: $469)
-- 5 demo debts with realistic balances
-
-### Gap:
-Strike payments update balances without creating transaction records, making payment history incomplete.
+### Gap Identified:
+When users log a "Debt Payments" transaction via the Transactions page, the debt balance is **not automatically updated**. Users must manually adjust the balance on the Debts page.
 
 ---
 
-## Proposed Enhancements
+## Proposed Solution
 
-### 1. Add "Extra Payment" Transaction Recording to StrikePaymentModal
+### 1. Add `debt_id` Field to Transaction Model
 
-When a user makes a strike payment, also log it as a transaction so it appears in transaction history.
+This enables precise linking between transactions and specific debts.
 
-**File:** `src/components/dashboard/StrikePaymentModal.tsx`
+**Files to modify:**
+- `src/hooks/useLocalTransactions.ts` - Add `debt_id` to Transaction interface
+- `src/types/transactions.ts` - Add `debtId` to local Transaction type
+- `supabase/migrations/` - Add `debt_id` column to transactions table
 
-**Changes:**
+**Transaction Interface Update:**
 ```typescript
-// Add transaction import
-import { useLocalTransactions } from '@/hooks/useLocalTransactions';
-
-// Inside component
-const { addTransaction } = useLocalTransactions();
-
-// In handleStrike(), after updating debt balance:
-addTransaction({
-  date: format(new Date(), 'yyyy-MM-dd'),
-  description: `Extra Payment - ${debt.name}`,
-  amount: paymentAmount,
-  category: 'Debt Payments',
-  account_id: null, // User could select account
-  flow: 'out',
-  expense_id: undefined,
-  notes: `Strike payment: Saved ${formatCurrency(impact?.totalInterestSaved || 0)} in interest`,
-});
-```
-
-### 2. Enhance Demo Data with Strike Payment Examples
-
-Add recent "extra payment" transactions to showcase the Strike feature.
-
-**File:** `src/lib/demoDataLoader.ts`
-
-**Add to generateDemoTransactions():**
-```typescript
-// Extra debt payments (Strike examples) - only in current month
-if (monthOffset === 0) {
-  // Show a recent strike payment
-  transactions.push({
-    id: uuidv4(),
-    date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
-    description: 'Extra Payment - Amex Card',
-    amount: 200,
-    category: 'Debt Payments',
-    flow: 'outflow',
-    expense_id: null,
-    notes: 'Strike payment: Saved $45 in interest',
-  });
-  
-  // Show another strike from earlier this month
-  transactions.push({
-    id: uuidv4(),
-    date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-    description: 'Extra Payment - Best Egg Loan',
-    amount: 150,
-    category: 'Debt Payments',
-    flow: 'outflow',
-    expense_id: null,
-    notes: 'Strike payment: Tax refund applied!',
-  });
+export interface Transaction {
+  // ... existing fields
+  debt_id?: string;  // NEW: Link to specific debt for balance updates
 }
 ```
 
-### 3. Add Demo Debt Payment History Badge
+### 2. Add Debt Selector to Transaction Form
 
-Show recent strike payment count in the Transactions page header.
+When category is "Debt Payments", show a dropdown to select which debt this payment applies to.
 
 **File:** `src/pages/Transactions.tsx`
 
-Add a visual indicator showing debt payments this month:
-```typescript
-const debtPaymentsThisMonth = monthTransactions.filter(
-  t => t.category === 'Debt Payments'
-).length;
+**Changes:**
+- Add `useLocalDebts` hook import
+- Add `debtId` to `newTransaction` state
+- Add conditional debt selector when category is "Debt Payments"
+- Modify `handleAddTransaction` to update debt balance when debt is selected
 
-// In header area, add badge:
-{debtPaymentsThisMonth > 0 && (
-  <Badge variant="outline" className="text-success">
-    {debtPaymentsThisMonth} debt payment{debtPaymentsThisMonth !== 1 ? 's' : ''} this month
-  </Badge>
-)}
+**UI Addition:**
+```text
+┌─────────────────────────────────────────────────┐
+│ Category: [Debt Payments ▼]                     │
+│                                                 │
+│ Which Debt? ────────────────────────────────────│
+│ [ Amex - $3,500 balance           ▼ ]          │ ← NEW
+│                                                 │
+│ Budget Line (Optional): [Credit Card Payment ▼] │
+└─────────────────────────────────────────────────┘
+```
+
+### 3. Update Debt Balance on Transaction Save
+
+**File:** `src/pages/Transactions.tsx`
+
+Modify `handleAddTransaction()`:
+```typescript
+const handleAddTransaction = () => {
+  // ... existing validation
+  
+  addTransaction({
+    ...newTransaction,
+    expenseId: newTransaction.expenseId || undefined,
+    debt_id: newTransaction.debtId || undefined,  // NEW
+  });
+
+  // NEW: If this is a debt payment, update the debt balance
+  if (newTransaction.category === 'Debt Payments' && newTransaction.debtId) {
+    const debt = debts.find(d => d.id === newTransaction.debtId);
+    if (debt) {
+      updateDebt(newTransaction.debtId, {
+        balance: Math.max(0, debt.balance - newTransaction.amount)
+      });
+      toast.success(`${debt.name} balance updated!`);
+    }
+  }
+  
+  // ... rest of function
+};
+```
+
+### 4. Apply Same Logic to Other Transaction Entry Points
+
+**A. CSV Import (`src/pages/Transactions.tsx` - `importTransactions`):**
+- Parse debt name from description
+- Match to existing debts by name similarity
+- Update balances for matched debt payments
+
+**B. Connector Import (`handleConfirmConnectorImport`):**
+- Add debt matching for "Debt Payments" category
+- Update balances automatically
+
+**C. Data Import Wizard (`src/components/import/DataImportWizard.tsx`):**
+- Add debt_id column mapping option
+- Update debt balances on import
+
+**D. Transaction Edit (`handleUpdateTransaction`):**
+- If debt_id changes or amount changes, adjust debt balances accordingly
+- Handle reversing old payment and applying new one
+
+### 5. Add Demo Data Linking
+
+**File:** `src/lib/demoDataLoader.ts`
+
+Update demo transactions to include `debt_id` references:
+
+```typescript
+// Debt payments with debt_id linking
+transactions.push({
+  id: uuidv4(),
+  date: format(addDays(monthStart, 20), 'yyyy-MM-dd'),
+  description: 'Best Egg Loan Payment',
+  amount: 808,
+  category: 'Debt Payments',
+  flow: 'outflow',
+  expense_id: 'e34',
+  debt_id: 'd1',  // NEW: Links to Best Egg Loan
+  notes: 'Auto-pay - Balance auto-updated',
+});
+
+transactions.push({
+  id: uuidv4(),
+  date: format(addDays(monthStart, 25), 'yyyy-MM-dd'),
+  description: 'Amex Payment',
+  amount: 150,
+  category: 'Debt Payments',
+  flow: 'outflow',
+  expense_id: 'e35',
+  debt_id: 'c1',  // NEW: Links to Amex
+  notes: 'Minimum payment',
+});
 ```
 
 ---
 
 ## Technical Implementation
 
-### Files to Modify
+### Files to Create/Modify
 
 | File | Changes |
 |------|---------|
-| `src/components/dashboard/StrikePaymentModal.tsx` | Add transaction recording when strike payment is made |
-| `src/lib/demoDataLoader.ts` | Add 2 extra payment (strike) demo transactions |
-| `src/pages/Transactions.tsx` | Add debt payments badge in header (optional) |
+| `supabase/migrations/[new]_add_debt_id_to_transactions.sql` | Add `debt_id` column with FK to debts |
+| `src/integrations/supabase/types.ts` | Regenerate to include `debt_id` |
+| `src/hooks/useLocalTransactions.ts` | Add `debt_id` to Transaction interface |
+| `src/types/transactions.ts` | Add `debtId` to local type |
+| `src/pages/Transactions.tsx` | Add debt selector, update handlers |
+| `src/components/import/DataImportWizard.tsx` | Add debt linking on import |
+| `src/lib/demoDataLoader.ts` | Add debt_id to demo transactions |
 
-### StrikePaymentModal Changes
+### Database Migration
 
-```typescript
-// Line ~7: Add import
-import { useLocalTransactions } from '@/hooks/useLocalTransactions';
-import { format } from 'date-fns';
+```sql
+-- Add debt_id column to transactions table
+ALTER TABLE public.transactions 
+ADD COLUMN debt_id uuid REFERENCES public.debts(id) ON DELETE SET NULL;
 
-// Line ~44: Add hook
-const { addTransaction } = useLocalTransactions();
+-- Create index for efficient lookups
+CREATE INDEX idx_transactions_debt_id ON public.transactions(debt_id);
 
-// Line ~73-77: After updateDebt, add transaction logging
-const handleStrike = () => {
-  if (paymentAmount <= 0) return;
-  
-  const newBalance = Math.max(0, debt.balance - paymentAmount);
-  updateDebt(debt.id, { balance: newBalance });
-  
-  // Log the transaction for history
-  addTransaction({
-    date: format(new Date(), 'yyyy-MM-dd'),
-    description: `Extra Payment - ${debt.name}`,
-    amount: paymentAmount,
-    category: 'Debt Payments',
-    account_id: null,
-    flow: 'out',
-    expense_id: undefined,
-    notes: impact 
-      ? `Strike payment: Saved $${impact.totalInterestSaved.toFixed(0)} in interest`
-      : 'Strike payment',
-  });
-  
-  // ... rest of celebration effects
-};
+-- Comment for documentation
+COMMENT ON COLUMN public.transactions.debt_id IS 
+  'Optional link to debt for automatic balance updates on debt payments';
 ```
 
-### Demo Data Changes
+### Transaction Form State Update
 
 ```typescript
-// In generateDemoTransactions(), inside monthOffset === 0 block:
-
-// Extra debt payments (Strike examples)
-transactions.push({
-  id: uuidv4(),
-  date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
-  description: 'Extra Payment - Amex Card',
-  amount: 200,
-  category: 'Debt Payments',
-  flow: 'outflow',
-  expense_id: null,
-  notes: 'Strike payment: Saved $45 in interest',
+const [newTransaction, setNewTransaction] = useState({
+  date: formatDate(new Date()),
+  description: "",
+  amount: 0,
+  category: "",
+  accountId: activeAccounts[0]?.id || 'default-checking',
+  flow: 'out' as 'in' | 'out',
+  expenseId: "",
+  debtId: "",       // NEW
+  notes: ""
 });
+```
 
-transactions.push({
-  id: uuidv4(),
-  date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-  description: 'Extra Payment - Best Egg Loan',
-  amount: 150,
-  category: 'Debt Payments',
-  flow: 'outflow',
-  expense_id: null,
-  notes: 'Strike payment: Tax refund applied!',
-});
+### Debt Selector Component
+
+```typescript
+{newTransaction.category === 'Debt Payments' && debts.length > 0 && (
+  <div className="space-y-2">
+    <Label htmlFor="transaction-debt">Which Debt?</Label>
+    <Select 
+      value={newTransaction.debtId} 
+      onValueChange={value => setNewTransaction({
+        ...newTransaction,
+        debtId: value === "none" ? "" : value
+      })}
+    >
+      <SelectTrigger id="transaction-debt">
+        <SelectValue placeholder="Select debt to update balance" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="none">Don't update a debt balance</SelectItem>
+        {debts.filter(d => d.balance > 0).map(debt => (
+          <SelectItem key={debt.id} value={debt.id}>
+            {debt.name} - {formatCurrency(debt.balance)} balance
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+    <p className="text-xs text-muted-foreground">
+      Selecting a debt will automatically reduce its balance by this amount.
+    </p>
+  </div>
+)}
 ```
 
 ---
 
-## User Experience Flow
+## Entry Points Summary (After Implementation)
 
-After implementation, the debt payment workflow will be:
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                  DEBT PAYMENT METHODS                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. Regular Minimum Payments                                │
-│     └─→ /transactions → Add Transaction                     │
-│         └─→ Category: "Debt Payments"                       │
-│         └─→ Links to budget line item                       │
-│                                                             │
-│  2. Extra "Strike" Payments                                 │
-│     └─→ Dashboard → Boss Card → "Strike" button             │
-│     └─→ /debts → Debt card → "Strike" button                │
-│         └─→ Opens StrikePaymentModal                        │
-│         └─→ Shows impact (interest saved, time saved)       │
-│         └─→ Updates debt balance                            │
-│         └─→ Creates transaction record (NEW!)               │
-│                                                             │
-│  3. Manual Balance Adjustment                               │
-│     └─→ /debts → Click balance → Edit inline                │
-│         └─→ No transaction created (adjustment only)        │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+| Entry Point | Updates Debt Balance? | Creates Transaction? |
+|-------------|----------------------|---------------------|
+| Add Transaction (with debt selected) | **Yes** | Yes |
+| Add Transaction (no debt selected) | No | Yes |
+| Import Transactions (matched) | **Yes** | Yes |
+| Strike Payment | Yes | Yes |
+| Edit Balance | Yes | No |
+| Data Import Wizard | **Yes** | Yes |
 
 ---
 
-## Demo Data Summary
+## Edge Cases Handled
+
+1. **Overpayment**: Balance capped at $0 (cannot go negative)
+2. **Debt not found**: Graceful fallback, no balance update
+3. **Optional selection**: Users can choose "Don't update" to skip auto-update
+4. **Edit transaction**: Original debt balance restored, new debt balance updated
+5. **Delete transaction**: Could optionally reverse the balance change (future enhancement)
+
+---
+
+## Demo Data Verification
 
 After implementation, demo users will see:
+- Transactions page showing debt payments with linked debt names
+- Debt balances that reflect historical payments
+- "Which Debt?" dropdown when adding debt payments
+- Toast confirmation when debt balance is updated
 
-**In Transactions Page (current month):**
-- Regular debt payments: Best Egg ($808), Amex ($150), 401k Loan ($469)
-- Extra strike payments: Amex ($200), Best Egg ($150)
-- Total debt payments visible: 5 transactions
-
-**In Debt Strategy Page:**
-- 5 demo debts with realistic balances
-- Strike button available on each debt card
-- Payment schedule showing projected payoff
-
----
-
-## Expected Outcomes
-
-1. **Complete Payment History**: Strike payments now appear in transaction history
-2. **Demo Showcase**: New users see examples of extra payments with impact notes
-3. **Clear Workflow**: Users understand both regular and extra payment methods
-4. **Data Consistency**: Debt balances and transaction records stay in sync

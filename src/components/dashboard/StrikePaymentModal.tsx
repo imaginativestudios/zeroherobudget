@@ -7,6 +7,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, DollarSign, Clock, TrendingDown, Sparkles } from 'lucide-react';
+import { format } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +21,7 @@ import { CurrencyInput } from '@/components/ui/currency-input';
 import { Debt, useLocalDebts } from '@/hooks/useLocalDebts';
 import { calculateFreedomImpact, translateToHumanTime } from '@/lib/freedomEngine';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
+import { useLocalTransactions } from '@/hooks/useLocalTransactions';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
@@ -43,6 +45,7 @@ export function StrikePaymentModal({
   const [amount, setAmount] = useState('');
   const { updateDebt } = useLocalDebts();
   const { profile } = useHeroProfile();
+  const { addTransaction } = useLocalTransactions();
 
   const paymentAmount = parseFloat(amount) || 0;
   
@@ -75,6 +78,20 @@ export function StrikePaymentModal({
     
     const newBalance = Math.max(0, debt.balance - paymentAmount);
     updateDebt(debt.id, { balance: newBalance });
+    
+    // Log the transaction for history tracking
+    addTransaction({
+      date: format(new Date(), 'yyyy-MM-dd'),
+      description: `Extra Payment - ${debt.name}`,
+      amount: paymentAmount,
+      category: 'Debt Payments',
+      account_id: null,
+      flow: 'out',
+      expense_id: undefined,
+      notes: impact 
+        ? `Strike payment: Saved $${impact.totalInterestSaved.toFixed(0)} in interest`
+        : 'Strike payment',
+    });
     
     // Celebration effects
     haptics.success();

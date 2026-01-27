@@ -45,12 +45,9 @@ interface CommandCenterProps {
   expenses: ExpenseWithId[];
   leftover: number;
   strategy: 'Snowball' | 'Avalanche';
-  moatCurrent: number;
-  moatTarget: number;
   currentBoss: Debt | null;
   freedomDate: string;
   onAddDebt?: () => void;
-  // Note: onStrategyUpdate removed - strategy changes now happen on /debts page
   // Budget editing props
   onIncomeChange?: (newIncome: number) => void;
   onExpenseChange?: (id: string, newAmount: number) => void;
@@ -63,12 +60,9 @@ export function CommandCenter({
   expenses,
   leftover,
   strategy,
-  moatCurrent,
-  moatTarget,
   currentBoss,
   freedomDate,
   onAddDebt,
-  // Note: onStrategyUpdate removed
   onIncomeChange,
   onExpenseChange,
 }: CommandCenterProps) {
@@ -317,8 +311,6 @@ export function CommandCenter({
           debtItems={debtItems}
           leftover={leftover}
           strategy={strategy}
-          moatCurrent={moatCurrent}
-          moatTarget={moatTarget}
           freedomDate={freedomDate}
           animationDelay={0.2}
         />

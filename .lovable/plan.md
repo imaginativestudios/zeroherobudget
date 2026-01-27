@@ -1,313 +1,244 @@
 
-# Audit All Cards & Enhance Demo Data for Full Application Testing
+# Enhance Debt Payment Tracking with Demo Data
 
-## Executive Summary
+## Summary
 
-This plan audits every card/widget in the application and enhances the demo data loader to populate realistic data that showcases the full capacity of each component. Currently, the demo data exists but is incomplete for several behavioral features.
-
----
-
-## Complete Card Inventory
-
-### Dashboard Cards (`src/components/dashboard/`)
-
-| Card | Purpose | Current Demo Support | Needs Enhancement |
-|------|---------|---------------------|-------------------|
-| **BossCard** | Shows current target debt with "Make Extra Payment" button | Yes - Has demo debts | No |
-| **EmergencyFundCard** | Editable emergency fund with milestone markers | Yes - 65% complete ($650/$1000) | No |
-| **BehavioralHintCard** | AI-driven financial insights | Partial - Needs more diverse states | Yes |
-| **CommandCenter** | 3-column layout (Debts, Budget, Strategy) | Yes | No |
-| **PayoffStrategyCard** | Current path + What-If Simulator | Yes - Has debts and strategy | No |
-| **GettingStartedChecklist** | 6-task onboarding checklist | Partial - Missing investing step | Yes |
-| **IntelFeed** | Quest Insights (progressive cards) | Partial - Missing streak/shadow data | Yes |
-| **StatusBanner** | Motivational status message | Yes | No |
-| **InitializeMissionCard** | Empty state for new users | N/A - Not shown in demo mode | No |
-| **TrialCountdownBanner** | Trial expiration warning | N/A - Demo doesn't use trials | No |
-
-### Behavioral Cards (`src/components/behavioral/`)
-
-| Card | Purpose | Current Demo Support | Needs Enhancement |
-|------|---------|---------------------|-------------------|
-| **StreakTrackerWidget** | Consistency streak with level badges | Missing - No streak data | **Yes** |
-| **SurplusPowerCard** | Income - Survival - Debt Minimums | Yes - Calculated from demo data | No |
-| **ShadowBudgetSummary** | Hidden costs of discretionary spending | Partial - Needs discretionary transactions | Yes |
-| **FreedomTimelineWidget** | Debt-free date visualization | Yes - Uses demo debts | No |
-| **HeroMoatCard** | Alternative emergency fund display | Yes - Uses hero profile | No |
-| **ShadowCostPreview** | Transaction-level shadow cost | Yes - Calculated | No |
-| **ShadowCostToast** | Toast notification for shadow costs | Yes - Triggered by transactions | No |
-| **ShadowImpactCard** | Detailed shadow cost breakdown | Yes - Calculated | No |
-| **FreedomSlider** | Extra payment impact slider | Yes - Uses leftover | No |
-| **HeroTipsFeed** | Dynamic tips based on state | Partial - Needs diverse states | Yes |
-| **DebtVictoryModal** | Celebration when debt paid off | N/A - Triggered by action | No |
-| **LevelUpModal** | Strategy upgrade celebration | N/A - Triggered by action | No |
-| **StrategyPivotDialog** | Strategy change confirmation | N/A - Triggered by action | No |
-| **SurplusStrikeModal** | Extra payment modal | N/A - Triggered by action | No |
-
-### Defense Cards (`src/components/defense/`)
-
-| Card | Purpose | Current Demo Support | Needs Enhancement |
-|------|---------|---------------------|-------------------|
-| **MoatBuilder** | Enhanced emergency fund with water animation | Yes - Uses hero profile | No |
-| **FortressLevelBadge** | Castle level indicator | Yes - Calculated from moat % | No |
-| **RegroupingBanner** | Recovery mode indicator | Missing - No breach state | Yes |
-
-### Page-Specific Cards
-
-| Card/Component | Page | Current Demo Support | Needs Enhancement |
-|----------------|------|---------------------|-------------------|
-| **JourneyStepCard** | Journey | Partial - Missing investment tracking | Yes |
-| **AchievementCard** | Achievements | Missing - No achievements tracked | **Yes** |
-| **BudgetOverviewCard** | Budget | Yes - Has demo expenses | No |
-| **PaymentScheduleTable** | Debt Snowball | Yes - Uses demo debts | No |
-| **StrategyComparison** | Debt Snowball | Yes - Uses demo debts | No |
-| **SubscriptionForm** | Subscriptions | Yes - Has demo subscriptions | No |
+This plan improves debt payment visibility and adds demo data to showcase the full debt payment workflow. Currently, debt payments can be logged as transactions, but the "Strike" payment feature (extra payments) doesn't create transaction records.
 
 ---
 
-## Data Gaps Identified
+## Current State Analysis
 
-### 1. **Consistency Streak Data** (Critical)
-The `StreakTrackerWidget` and `useBehavioralEngine` rely on stored streak data that isn't populated.
+### How Users Can Add Debt Payments:
 
-**Missing localStorage key:** `{DEMO_USER_ID}_bdt_consistency_streak`
+| Method | Where | Creates Transaction? | Updates Debt Balance? |
+|--------|-------|---------------------|----------------------|
+| Log Transaction | `/transactions` → Add Transaction → Category: "Debt Payments" | Yes | No |
+| Strike Payment | Dashboard/Debt cards → "Strike" button | No | Yes |
+| Edit Balance | `/debts` → Click on balance → Edit | No | Yes |
 
-**Required structure:**
+### Demo Data Already Includes:
+- 3 months of debt payment transactions (Best Egg: $808, Amex: $150, 401k Loan: $469)
+- 5 demo debts with realistic balances
+
+### Gap:
+Strike payments update balances without creating transaction records, making payment history incomplete.
+
+---
+
+## Proposed Enhancements
+
+### 1. Add "Extra Payment" Transaction Recording to StrikePaymentModal
+
+When a user makes a strike payment, also log it as a transaction so it appears in transaction history.
+
+**File:** `src/components/dashboard/StrikePaymentModal.tsx`
+
+**Changes:**
 ```typescript
-{
-  currentStreak: 5,
-  longestStreak: 12,
-  lastLogDate: "2026-01-27"
+// Add transaction import
+import { useLocalTransactions } from '@/hooks/useLocalTransactions';
+
+// Inside component
+const { addTransaction } = useLocalTransactions();
+
+// In handleStrike(), after updating debt balance:
+addTransaction({
+  date: format(new Date(), 'yyyy-MM-dd'),
+  description: `Extra Payment - ${debt.name}`,
+  amount: paymentAmount,
+  category: 'Debt Payments',
+  account_id: null, // User could select account
+  flow: 'out',
+  expense_id: undefined,
+  notes: `Strike payment: Saved ${formatCurrency(impact?.totalInterestSaved || 0)} in interest`,
+});
+```
+
+### 2. Enhance Demo Data with Strike Payment Examples
+
+Add recent "extra payment" transactions to showcase the Strike feature.
+
+**File:** `src/lib/demoDataLoader.ts`
+
+**Add to generateDemoTransactions():**
+```typescript
+// Extra debt payments (Strike examples) - only in current month
+if (monthOffset === 0) {
+  // Show a recent strike payment
+  transactions.push({
+    id: uuidv4(),
+    date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+    description: 'Extra Payment - Amex Card',
+    amount: 200,
+    category: 'Debt Payments',
+    flow: 'outflow',
+    expense_id: null,
+    notes: 'Strike payment: Saved $45 in interest',
+  });
+  
+  // Show another strike from earlier this month
+  transactions.push({
+    id: uuidv4(),
+    date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
+    description: 'Extra Payment - Best Egg Loan',
+    amount: 150,
+    category: 'Debt Payments',
+    flow: 'outflow',
+    expense_id: null,
+    notes: 'Strike payment: Tax refund applied!',
+  });
 }
 ```
 
-### 2. **Savings Vault Data** (Enhancement)
-Current demo has basic vault data but missing some fields for full feature display.
+### 3. Add Demo Debt Payment History Badge
 
-**Missing fields:**
-- `achieved_milestones: [25, 50]` - Shows milestone badges
-- `was_secure: false` - For RegroupingBanner
-- `last_secure_date: null`
-- `breach_acknowledged: false`
-- `repair_mode_active: false`
+Show recent strike payment count in the Transactions page header.
 
-### 3. **Accounts Data** (Critical)
-The `useLocalAccounts` hook auto-creates a default account, but demo should have realistic accounts for:
-- Journey Step 5 (investment tracking)
-- Transaction account assignment
-- Account balance display
+**File:** `src/pages/Transactions.tsx`
 
-**Missing localStorage key:** `{DEMO_USER_ID}_accounts`
-
-**Required structure:**
+Add a visual indicator showing debt payments this month:
 ```typescript
-[
-  { id: 'acc-1', name: 'Main Checking', type: 'checking', balance: 2450, is_active: true },
-  { id: 'acc-2', name: 'Emergency Savings', type: 'savings', balance: 650, is_active: true },
-  { id: 'acc-3', name: 'Credit Card', type: 'credit', balance: -3500, is_active: true },
-  { id: 'acc-4', name: '401k', type: 'investment', balance: 25000, is_active: true },
-]
-```
+const debtPaymentsThisMonth = monthTransactions.filter(
+  t => t.category === 'Debt Payments'
+).length;
 
-### 4. **Achievement Tracking** (Missing)
-No achievements are currently tracked in demo mode.
-
-**Missing localStorage key:** `{DEMO_USER_ID}_bdt_achievements`
-
-**Required structure:**
-```typescript
-[
-  { id: 'first_budget', unlockedAt: '2026-01-15T...', type: 'milestone' },
-  { id: 'first_debt_payment', unlockedAt: '2026-01-20T...', type: 'action' },
-  { id: 'moat_25', unlockedAt: '2026-01-22T...', type: 'milestone' },
-  { id: 'moat_50', unlockedAt: '2026-01-25T...', type: 'milestone' },
-]
-```
-
-### 5. **Hero Profile Enhancement**
-Current demo hero profile is missing some fields.
-
-**Missing/incomplete fields:**
-- `onboarding_completed: true` - Ensures onboarding doesn't show
-- `trial_started: true` - For trial flow testing
-- Richer `activity_log` with more dates for streak calculation
-
----
-
-## Implementation Plan
-
-### File: `src/lib/demoDataLoader.ts`
-
-#### Step 1: Add Accounts Demo Data
-```typescript
-const DEMO_ACCOUNTS = [
-  { 
-    id: 'acc-checking', 
-    name: 'Main Checking', 
-    type: 'checking', 
-    balance: 2450, 
-    is_active: true 
-  },
-  { 
-    id: 'acc-savings', 
-    name: 'Emergency Savings', 
-    type: 'savings', 
-    balance: 650,  // Matches moat_current
-    is_active: true 
-  },
-  { 
-    id: 'acc-credit', 
-    name: 'Amex Card', 
-    type: 'credit', 
-    balance: -3500,  // Matches demo debt
-    is_active: true 
-  },
-  { 
-    id: 'acc-401k', 
-    name: '401k Retirement', 
-    type: 'investment', 
-    balance: 25000, 
-    is_active: true 
-  },
-];
-```
-
-#### Step 2: Add Consistency Streak Data
-```typescript
-const DEMO_CONSISTENCY_STREAK = {
-  currentStreak: 5,
-  longestStreak: 12,
-  lastLogDate: format(new Date(), 'yyyy-MM-dd'),
-};
-```
-
-#### Step 3: Enhance Savings Vault Data
-```typescript
-export const DEMO_SAVINGS_VAULT = {
-  moat_balance: 650,
-  moat_target: 1000,
-  last_deposit_date: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
-  deposit_history: [
-    { amount: 200, date: format(subDays(new Date(), 30), 'yyyy-MM-dd') },
-    { amount: 150, date: format(subDays(new Date(), 20), 'yyyy-MM-dd') },
-    { amount: 100, date: format(subDays(new Date(), 14), 'yyyy-MM-dd') },
-    { amount: 100, date: format(subDays(new Date(), 7), 'yyyy-MM-dd') },
-    { amount: 100, date: format(subDays(new Date(), 1), 'yyyy-MM-dd') },
-  ],
-  achieved_milestones: [25, 50],  // NEW: Shows milestone badges
-  was_secure: false,
-  last_secure_date: null,
-  breach_acknowledged: false,
-  repair_mode_active: false,
-};
-```
-
-#### Step 4: Add Achievements Data
-```typescript
-const DEMO_ACHIEVEMENTS = [
-  { 
-    id: 'first_budget', 
-    unlockedAt: format(subDays(new Date(), 40), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''),
-    type: 'milestone' 
-  },
-  { 
-    id: 'first_debt_payment', 
-    unlockedAt: format(subDays(new Date(), 35), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''),
-    type: 'action' 
-  },
-  { 
-    id: 'moat_25', 
-    unlockedAt: format(subDays(new Date(), 25), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''),
-    type: 'milestone' 
-  },
-  { 
-    id: 'moat_50', 
-    unlockedAt: format(subDays(new Date(), 10), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''),
-    type: 'milestone' 
-  },
-  { 
-    id: 'streak_7', 
-    unlockedAt: format(subDays(new Date(), 5), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\''),
-    type: 'consistency' 
-  },
-];
-```
-
-#### Step 5: Enhance Hero Profile with Activity Log
-```typescript
-export const DEMO_HERO_PROFILE = {
-  onboarding_completed: true,
-  hourly_wage: 28,
-  moat_target: 1000,
-  moat_current: 650,
-  last_active_date: format(new Date(), 'yyyy-MM-dd'),
-  activity_log: [
-    format(subDays(new Date(), 0), 'yyyy-MM-dd'),
-    format(subDays(new Date(), 1), 'yyyy-MM-dd'),
-    format(subDays(new Date(), 2), 'yyyy-MM-dd'),
-    format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-    format(subDays(new Date(), 4), 'yyyy-MM-dd'),
-    format(subDays(new Date(), 6), 'yyyy-MM-dd'),  // Gap for realism
-  ],
-  onboarding_step: undefined,
-  onboarding_data: undefined,
-  trial_started: true,
-};
-```
-
-#### Step 6: Update loadDemoData() Function
-Add new localStorage writes:
-
-```typescript
-// Accounts
-const accounts = convertDemoAccounts();
-localStorage.setItem(`${prefix}accounts`, JSON.stringify(accounts));
-
-// Consistency Streak
-localStorage.setItem(`${prefix}bdt_consistency_streak`, JSON.stringify(DEMO_CONSISTENCY_STREAK));
-
-// Achievements
-localStorage.setItem(`${prefix}bdt_achievements`, JSON.stringify(DEMO_ACHIEVEMENTS));
-
-// Update summary
-const summary = `Loaded ${expenses.length} expenses, ${debts.length} debts, ${transactions.length} transactions, ${subscriptions.length} subscriptions, ${accounts.length} accounts, ${DEMO_ACHIEVEMENTS.length} achievements`;
+// In header area, add badge:
+{debtPaymentsThisMonth > 0 && (
+  <Badge variant="outline" className="text-success">
+    {debtPaymentsThisMonth} debt payment{debtPaymentsThisMonth !== 1 ? 's' : ''} this month
+  </Badge>
+)}
 ```
 
 ---
 
-## Files to Modify
+## Technical Implementation
+
+### Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/lib/demoDataLoader.ts` | Add accounts, streak, achievements, enhance vault & profile |
+| `src/components/dashboard/StrikePaymentModal.tsx` | Add transaction recording when strike payment is made |
+| `src/lib/demoDataLoader.ts` | Add 2 extra payment (strike) demo transactions |
+| `src/pages/Transactions.tsx` | Add debt payments badge in header (optional) |
+
+### StrikePaymentModal Changes
+
+```typescript
+// Line ~7: Add import
+import { useLocalTransactions } from '@/hooks/useLocalTransactions';
+import { format } from 'date-fns';
+
+// Line ~44: Add hook
+const { addTransaction } = useLocalTransactions();
+
+// Line ~73-77: After updateDebt, add transaction logging
+const handleStrike = () => {
+  if (paymentAmount <= 0) return;
+  
+  const newBalance = Math.max(0, debt.balance - paymentAmount);
+  updateDebt(debt.id, { balance: newBalance });
+  
+  // Log the transaction for history
+  addTransaction({
+    date: format(new Date(), 'yyyy-MM-dd'),
+    description: `Extra Payment - ${debt.name}`,
+    amount: paymentAmount,
+    category: 'Debt Payments',
+    account_id: null,
+    flow: 'out',
+    expense_id: undefined,
+    notes: impact 
+      ? `Strike payment: Saved $${impact.totalInterestSaved.toFixed(0)} in interest`
+      : 'Strike payment',
+  });
+  
+  // ... rest of celebration effects
+};
+```
+
+### Demo Data Changes
+
+```typescript
+// In generateDemoTransactions(), inside monthOffset === 0 block:
+
+// Extra debt payments (Strike examples)
+transactions.push({
+  id: uuidv4(),
+  date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+  description: 'Extra Payment - Amex Card',
+  amount: 200,
+  category: 'Debt Payments',
+  flow: 'outflow',
+  expense_id: null,
+  notes: 'Strike payment: Saved $45 in interest',
+});
+
+transactions.push({
+  id: uuidv4(),
+  date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
+  description: 'Extra Payment - Best Egg Loan',
+  amount: 150,
+  category: 'Debt Payments',
+  flow: 'outflow',
+  expense_id: null,
+  notes: 'Strike payment: Tax refund applied!',
+});
+```
 
 ---
 
-## Testing Checklist
+## User Experience Flow
 
-After implementation, verify these cards show data:
+After implementation, the debt payment workflow will be:
 
-- [ ] **Dashboard**: All 3 Command Center columns populated
-- [ ] **Emergency Fund Card**: 65% progress with 2 milestone badges
-- [ ] **Behavioral Hints**: At least 1-2 relevant hints showing
-- [ ] **Streak Tracker**: "5 day streak" with "Building Habits" level
-- [ ] **Surplus Power**: Positive surplus calculated from budget
-- [ ] **Shadow Budget**: Hidden costs calculated from discretionary spending
-- [ ] **Freedom Timeline**: Debt-free date ~24 months out
-- [ ] **Journey Page**: Steps 1-2 complete, Step 3 in progress
-- [ ] **Getting Started**: 5/6 tasks complete (investing pending)
-- [ ] **Accounts Page**: 4 accounts with realistic balances
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                  DEBT PAYMENT METHODS                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  1. Regular Minimum Payments                                │
+│     └─→ /transactions → Add Transaction                     │
+│         └─→ Category: "Debt Payments"                       │
+│         └─→ Links to budget line item                       │
+│                                                             │
+│  2. Extra "Strike" Payments                                 │
+│     └─→ Dashboard → Boss Card → "Strike" button             │
+│     └─→ /debts → Debt card → "Strike" button                │
+│         └─→ Opens StrikePaymentModal                        │
+│         └─→ Shows impact (interest saved, time saved)       │
+│         └─→ Updates debt balance                            │
+│         └─→ Creates transaction record (NEW!)               │
+│                                                             │
+│  3. Manual Balance Adjustment                               │
+│     └─→ /debts → Click balance → Edit inline                │
+│         └─→ No transaction created (adjustment only)        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Expected Outcome
+## Demo Data Summary
 
-When a user clicks "Explore Demo", they will see a fully populated dashboard that demonstrates:
+After implementation, demo users will see:
 
-1. A user 45 days into their debt payoff journey
-2. $54,300 total debt across 5 accounts
-3. $650 emergency fund (65% of $1,000 goal)
-4. 5-day consistency streak
-5. Positive surplus power with behavioral coaching
-6. Hidden costs calculated on discretionary spending
-7. Journey progress showing steps 1-2 complete
-8. Investment account for Journey step 5 visibility
+**In Transactions Page (current month):**
+- Regular debt payments: Best Egg ($808), Amex ($150), 401k Loan ($469)
+- Extra strike payments: Amex ($200), Best Egg ($150)
+- Total debt payments visible: 5 transactions
+
+**In Debt Strategy Page:**
+- 5 demo debts with realistic balances
+- Strike button available on each debt card
+- Payment schedule showing projected payoff
+
+---
+
+## Expected Outcomes
+
+1. **Complete Payment History**: Strike payments now appear in transaction history
+2. **Demo Showcase**: New users see examples of extra payments with impact notes
+3. **Clear Workflow**: Users understand both regular and extra payment methods
+4. **Data Consistency**: Debt balances and transaction records stay in sync

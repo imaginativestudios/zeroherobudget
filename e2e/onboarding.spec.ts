@@ -33,7 +33,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Should advance to Step 2 - "Name Your Primary Debt Boss"
-    await expect(page.getByText('Name Your Primary Debt Boss')).toBeVisible();
+    await expect(page.getByText('Name Your Primary Debt')).toBeVisible();
   });
 
   test('Step 2: Add primary debt and continue', async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Now on Step 2 - fill debt form
-    await expect(page.getByText('Name Your Primary Debt Boss')).toBeVisible();
+    await expect(page.getByText('Name Your Primary Debt')).toBeVisible();
     
     await page.locator('#debt-name').fill('Chase Sapphire');
     await page.locator('#debt-balance').fill('5200');
@@ -55,7 +55,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Should see Moat selection - "Set Your Moat Depth"
-    await expect(page.getByText('Set Your Moat Depth')).toBeVisible();
+    await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
   });
 
   test('Step 3: Select moat target and see freedom path', async ({ page }) => {
@@ -70,13 +70,13 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Should be on Step 3
-    await expect(page.getByText('Set Your Moat Depth')).toBeVisible();
+    await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
     
     // Select $1,000 moat (the middle option)
     await page.getByText('$1,000').click();
     
     // Click "See My Freedom Path"
-    await page.getByRole('button', { name: /See My Freedom Path/i }).click();
+    await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Should see Aha Moment step (Step 4)
     await expect(page.getByText(/freedom|path|debt-free/i)).toBeVisible({ timeout: 5000 });
@@ -98,7 +98,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     
     // Step 3: Moat - select $1,000 and see freedom path
     await page.getByText('$1,000').click();
-    await page.getByRole('button', { name: /See My Freedom Path/i }).click();
+    await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Step 4: Aha Moment - Continue
     await page.getByRole('button', { name: /continue/i }).click({ timeout: 5000 });
@@ -107,7 +107,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /skip|demo|explore/i }).click({ timeout: 5000 });
     
     // Step 6: Ceremony - Enter the Fortress
-    await page.getByRole('button', { name: /Enter the Fortress/i }).click({ timeout: 5000 });
+    await page.getByRole('button', { name: /Go to Dashboard/i }).click({ timeout: 5000 });
     
     // Should be on dashboard
     await expect(page).toHaveURL(/dashboard/);
@@ -123,7 +123,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /skip for now/i }).click();
     
     // Should advance to Step 2
-    await expect(page.getByText('Name Your Primary Debt Boss')).toBeVisible();
+    await expect(page.getByText('Name Your Primary Debt')).toBeVisible();
   });
 
   test('can navigate back from Step 2 to Step 1', async ({ page }) => {
@@ -134,7 +134,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Should be on Step 2
-    await expect(page.getByText('Name Your Primary Debt Boss')).toBeVisible();
+    await expect(page.getByText('Name Your Primary Debt')).toBeVisible();
     
     // Click Back
     await page.getByRole('button', { name: /back/i }).click();
@@ -156,7 +156,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Should still advance (debt is optional)
-    await expect(page.getByText('Set Your Moat Depth')).toBeVisible();
+    await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
   });
 
   test('validation shows error for negative balance', async ({ page }) => {
@@ -220,7 +220,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click(); // Skip debt
     
     // Should be on Step 3
-    await expect(page.getByText('Set Your Moat Depth')).toBeVisible();
+    await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
     
     // Click "Custom" option
     await page.getByText('Custom').click();
@@ -232,7 +232,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.locator('#custom-goal').fill('3500');
     
     // Continue to next step
-    await page.getByRole('button', { name: /See My Freedom Path/i }).click();
+    await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Should advance to Aha Moment
     await expect(page.getByText(/freedom|path|debt-free/i)).toBeVisible({ timeout: 5000 });

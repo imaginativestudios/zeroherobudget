@@ -246,9 +246,16 @@ export default function Onboarding() {
         <Link to="/">
           <Logo className="h-8 sm:h-10" variant="dark" />
         </Link>
-        {currentStep <= 5 && (
-          <StepIndicator currentStep={getDisplayStep()} totalSteps={getTotalSteps()} />
-        )}
+        <div className="flex items-center gap-3">
+          {isDemoMode && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info/10 border border-info/30 text-xs font-medium text-info">
+              Demo Mode
+            </span>
+          )}
+          {currentStep <= 5 && (
+            <StepIndicator currentStep={getDisplayStep()} totalSteps={isDemoMode ? 4 : getTotalSteps()} />
+          )}
+        </div>
       </header>
 
       {/* Main Content */}

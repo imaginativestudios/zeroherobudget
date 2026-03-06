@@ -232,13 +232,23 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [setTrialStarted, showCeremony]);
 
   const enterDashboard = useCallback(() => {
+    if (isDemoMode) {
+      // Load demo data before entering dashboard
+      loadDemoData();
+      clearOnboardingProgress();
+      toast.success('Demo Loaded! 🎉', {
+        description: 'Explore a fully-populated financial dashboard.',
+      });
+      navigate('/dashboard');
+      return;
+    }
     markComplete();
     clearOnboardingProgress();
     toast.success('Welcome! You\'re ready to take control.', {
       description: 'Your profile has been created. Time to take control of your finances!',
     });
     navigate('/dashboard');
-  }, [markComplete, clearOnboardingProgress, navigate]);
+  }, [markComplete, clearOnboardingProgress, navigate, isDemoMode]);
 
   return {
     currentStep,

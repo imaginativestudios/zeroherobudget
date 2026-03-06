@@ -82,6 +82,7 @@ export default function Onboarding() {
     skipTrial,
     enterDashboard,
     isCompleting,
+    isDemoMode,
   } = useOnboardingState();
 
   // Track slide direction for animations

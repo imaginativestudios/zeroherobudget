@@ -15,6 +15,7 @@ interface AhaMomentStepProps {
     minimumPayment: number;
   } | null;
   onContinue: () => void;
+  isDemoMode?: boolean;
 }
 
 export function AhaMomentStep({ hourlyWage, debt, onContinue }: AhaMomentStepProps) {

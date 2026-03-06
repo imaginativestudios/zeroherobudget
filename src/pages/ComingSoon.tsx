@@ -186,7 +186,7 @@ const ComingSoon = () => {
                 }
                 
                 navigate('/onboarding?demo=true');
-              }
+              }}
             >
               Explore Demo
               <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />

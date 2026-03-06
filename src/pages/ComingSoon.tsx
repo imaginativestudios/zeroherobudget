@@ -185,20 +185,7 @@ const ComingSoon = () => {
                   return;
                 }
                 
-                const result = loadDemoData();
-                if (result.loaded) {
-                  toast({
-                    title: "Demo Loaded! 🎉",
-                    description: "Explore a fully-populated financial dashboard",
-                  });
-                  navigate('/dashboard');
-                } else {
-                  toast({
-                    title: "Demo Not Available",
-                    description: result.summary,
-                    variant: "destructive"
-                  });
-                }
+                navigate('/onboarding?demo=true');
               }}
             >
               Explore Demo
@@ -443,7 +430,6 @@ const ComingSoon = () => {
               variant="inverse"
               className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6"
               onClick={async () => {
-                // Safety check: Ensure user is logged out before entering demo mode
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                   toast({
@@ -455,20 +441,7 @@ const ComingSoon = () => {
                   return;
                 }
                 
-                const result = loadDemoData();
-                if (result.loaded) {
-                  toast({
-                    title: "Demo Loaded! 🎉",
-                    description: "Explore a fully-populated financial dashboard",
-                  });
-                  navigate('/dashboard');
-                } else {
-                  toast({
-                    title: "Demo Not Available",
-                    description: result.summary,
-                    variant: "destructive"
-                  });
-                }
+                navigate('/onboarding?demo=true');
               }}
             >
               Explore Demo

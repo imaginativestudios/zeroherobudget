@@ -4,6 +4,7 @@ import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
+import { loadDemoData } from '@/lib/demoDataLoader';
 
 export interface DebtEntry {
   name: string;
@@ -34,12 +35,14 @@ export interface UseOnboardingStateResult {
   enterDashboard: () => void;
   isCompleting: boolean;
   isReturning: boolean;
+  isDemoMode: boolean;
 }
 
 export function useOnboardingState(): UseOnboardingStateResult {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const isDemoMode = searchParams.get('demo') === 'true';
   const { 
     setMoatTarget: setProfileMoatTarget, 
     completeOnboarding: markComplete,
@@ -68,16 +71,30 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isReturning, setIsReturning] = useState(!!savedStep && savedStep > 1);
   
-  const [data, setData] = useState<OnboardingDataState>(() => ({
-    hourlyWage: savedData?.hourlyWage || null,
-    primaryDebt: savedData?.debtName ? {
-      name: savedData.debtName,
-      balance: savedData.debtBalance || 0,
-      apr: savedData.debtApr || 0,
-      minimumPayment: savedData.debtMinPayment || 25,
-    } : null,
-    moatTarget: savedData?.moatTarget || 1000,
-  }));
+  const [data, setData] = useState<OnboardingDataState>(() => {
+    if (isDemoMode) {
+      return {
+        hourlyWage: 25,
+        primaryDebt: {
+          name: 'Amex',
+          balance: 3500,
+          apr: 23.99,
+          minimumPayment: 90,
+        },
+        moatTarget: 1000,
+      };
+    }
+    return {
+      hourlyWage: savedData?.hourlyWage || null,
+      primaryDebt: savedData?.debtName ? {
+        name: savedData.debtName,
+        balance: savedData.debtBalance || 0,
+        apr: savedData.debtApr || 0,
+        minimumPayment: savedData.debtMinPayment || 25,
+      } : null,
+      moatTarget: savedData?.moatTarget || 1000,
+    };
+  });
 
   // Handle Stripe redirect (canceled only - success now goes to /checkout-success)
   useEffect(() => {
@@ -151,9 +168,24 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [data, saveProgress]);
 
   const showPricing = useCallback(() => {
+    if (isDemoMode) {
+      // Demo mode skips pricing, go straight to ceremony
+      setIsCompleting(true);
+      try {
+        saveOnboardingData();
+        setCurrentStep(6);
+        saveProgress(6, data);
+      } catch (error) {
+        console.error('Onboarding error:', error);
+        toast.error('Something went wrong. Please try again.');
+      } finally {
+        setIsCompleting(false);
+      }
+      return;
+    }
     setCurrentStep(5);
     saveProgress(5, data);
-  }, [data, saveProgress]);
+  }, [data, saveProgress, isDemoMode]);
 
   const saveOnboardingData = useCallback(() => {
     // Store hourly wage in localStorage
@@ -200,13 +232,23 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [setTrialStarted, showCeremony]);
 
   const enterDashboard = useCallback(() => {
+    if (isDemoMode) {
+      // Load demo data before entering dashboard
+      loadDemoData();
+      clearOnboardingProgress();
+      toast.success('Demo Loaded! 🎉', {
+        description: 'Explore a fully-populated financial dashboard.',
+      });
+      navigate('/dashboard');
+      return;
+    }
     markComplete();
     clearOnboardingProgress();
     toast.success('Welcome! You\'re ready to take control.', {
       description: 'Your profile has been created. Time to take control of your finances!',
     });
     navigate('/dashboard');
-  }, [markComplete, clearOnboardingProgress, navigate]);
+  }, [markComplete, clearOnboardingProgress, navigate, isDemoMode]);
 
   return {
     currentStep,
@@ -224,5 +266,6 @@ export function useOnboardingState(): UseOnboardingStateResult {
     enterDashboard,
     isCompleting,
     isReturning,
+    isDemoMode,
   };
 }

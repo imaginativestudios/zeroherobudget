@@ -168,9 +168,24 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [data, saveProgress]);
 
   const showPricing = useCallback(() => {
+    if (isDemoMode) {
+      // Demo mode skips pricing, go straight to ceremony
+      setIsCompleting(true);
+      try {
+        saveOnboardingData();
+        setCurrentStep(6);
+        saveProgress(6, data);
+      } catch (error) {
+        console.error('Onboarding error:', error);
+        toast.error('Something went wrong. Please try again.');
+      } finally {
+        setIsCompleting(false);
+      }
+      return;
+    }
     setCurrentStep(5);
     saveProgress(5, data);
-  }, [data, saveProgress]);
+  }, [data, saveProgress, isDemoMode]);
 
   const saveOnboardingData = useCallback(() => {
     // Store hourly wage in localStorage

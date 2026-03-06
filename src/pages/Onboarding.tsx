@@ -637,7 +637,15 @@ export default function Onboarding() {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 text-center">
+      <footer className="p-4 text-center space-y-1">
+        {isDemoMode && currentStep <= 5 && (
+          <button
+            onClick={handleEnterDashboard}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
+          >
+            Skip to Dashboard →
+          </button>
+        )}
         <p className="text-xs text-muted-foreground">
           Your data stays on your device.{' '}
           <Link to="/privacy" className="underline hover:text-foreground">

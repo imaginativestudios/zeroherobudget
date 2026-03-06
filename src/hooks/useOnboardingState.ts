@@ -4,6 +4,7 @@ import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
+import { loadDemoData } from '@/lib/demoDataLoader';
 
 export interface DebtEntry {
   name: string;

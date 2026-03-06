@@ -504,6 +504,7 @@ export default function Onboarding() {
                   hourlyWage={data.hourlyWage}
                   debt={data.primaryDebt}
                   onContinue={handleAhaMomentContinue}
+                  isDemoMode={isDemoMode}
                 />
               </motion.div>
             )}

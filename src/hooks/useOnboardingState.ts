@@ -266,5 +266,6 @@ export function useOnboardingState(): UseOnboardingStateResult {
     enterDashboard,
     isCompleting,
     isReturning,
+    isDemoMode,
   };
 }

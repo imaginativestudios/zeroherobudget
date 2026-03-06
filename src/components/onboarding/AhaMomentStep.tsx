@@ -186,7 +186,7 @@ export function AhaMomentStep({ hourlyWage, debt, onContinue, isDemoMode }: AhaM
           className="w-full h-12"
           size="lg"
         >
-          Continue
+          {isDemoMode ? 'Continue to Demo' : 'Continue'}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </motion.div>

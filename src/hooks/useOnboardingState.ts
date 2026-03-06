@@ -71,16 +71,30 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isReturning, setIsReturning] = useState(!!savedStep && savedStep > 1);
   
-  const [data, setData] = useState<OnboardingDataState>(() => ({
-    hourlyWage: savedData?.hourlyWage || null,
-    primaryDebt: savedData?.debtName ? {
-      name: savedData.debtName,
-      balance: savedData.debtBalance || 0,
-      apr: savedData.debtApr || 0,
-      minimumPayment: savedData.debtMinPayment || 25,
-    } : null,
-    moatTarget: savedData?.moatTarget || 1000,
-  }));
+  const [data, setData] = useState<OnboardingDataState>(() => {
+    if (isDemoMode) {
+      return {
+        hourlyWage: 25,
+        primaryDebt: {
+          name: 'Amex',
+          balance: 3500,
+          apr: 23.99,
+          minimumPayment: 90,
+        },
+        moatTarget: 1000,
+      };
+    }
+    return {
+      hourlyWage: savedData?.hourlyWage || null,
+      primaryDebt: savedData?.debtName ? {
+        name: savedData.debtName,
+        balance: savedData.debtBalance || 0,
+        apr: savedData.debtApr || 0,
+        minimumPayment: savedData.debtMinPayment || 25,
+      } : null,
+      moatTarget: savedData?.moatTarget || 1000,
+    };
+  });
 
   // Handle Stripe redirect (canceled only - success now goes to /checkout-success)
   useEffect(() => {

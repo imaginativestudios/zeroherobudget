@@ -18,7 +18,7 @@ interface AhaMomentStepProps {
   isDemoMode?: boolean;
 }
 
-export function AhaMomentStep({ hourlyWage, debt, onContinue }: AhaMomentStepProps) {
+export function AhaMomentStep({ hourlyWage, debt, onContinue, isDemoMode }: AhaMomentStepProps) {
   // Calculate freedom metrics if we have debt data
   const hasDebt = debt && debt.balance > 0;
   

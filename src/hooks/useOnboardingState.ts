@@ -35,6 +35,7 @@ export interface UseOnboardingStateResult {
   enterDashboard: () => void;
   isCompleting: boolean;
   isReturning: boolean;
+  isDemoMode: boolean;
 }
 
 export function useOnboardingState(): UseOnboardingStateResult {

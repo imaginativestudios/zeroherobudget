@@ -185,21 +185,8 @@ const ComingSoon = () => {
                   return;
                 }
                 
-                const result = loadDemoData();
-                if (result.loaded) {
-                  toast({
-                    title: "Demo Loaded! 🎉",
-                    description: "Explore a fully-populated financial dashboard",
-                  });
-                  navigate('/dashboard');
-                } else {
-                  toast({
-                    title: "Demo Not Available",
-                    description: result.summary,
-                    variant: "destructive"
-                  });
-                }
-              }}
+                navigate('/onboarding?demo=true');
+              }
             >
               Explore Demo
               <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />

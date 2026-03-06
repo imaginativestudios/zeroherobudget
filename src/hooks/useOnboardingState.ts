@@ -42,6 +42,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const isDemoMode = searchParams.get('demo') === 'true';
   const { 
     setMoatTarget: setProfileMoatTarget, 
     completeOnboarding: markComplete,

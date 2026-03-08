@@ -59,7 +59,31 @@ export function DebtSimulatorCard({
     setSimExtra(val);
   };
 
-  if (activeDebts.length === 0) return null;
+  if (activeDebts.length === 0) {
+    return (
+      <Card className="border-2 border-dashed border-primary/20 overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            Debt Payoff Simulator
+          </CardTitle>
+          <CardDescription>
+            Add your debts below to unlock the simulator and see how extra payments accelerate your freedom
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-8 text-center space-y-3">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <TrendingDown className="h-6 w-6 text-primary" />
+            </div>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              Once you add at least one debt, the simulator will show your current payoff timeline and let you explore "what if" scenarios.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const totalMinimums = activeDebts.reduce((sum, d) => sum + d.min, 0);
   const currentMonthlyPayment = totalMinimums + extraBudget;

@@ -133,12 +133,12 @@ export function useDashboardState(): DashboardState {
     // Build unlocked cards array for staggered animation
     const unlockedCards: DashboardState['unlockedCards'] = ['surplus'];
     
-    if (canShowConsistencyXP) {
-      unlockedCards.push('consistency');
-    }
-    
     if (canShowShadowBudget) {
       unlockedCards.push('shadow');
+    }
+    
+    if (canShowBoss) {
+      unlockedCards.push('freedom');
     }
     
     // Freedom timeline always shows if there are debts

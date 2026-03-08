@@ -95,6 +95,9 @@ export const Dashboard = () => {
   const [victoryModalOpen, setVictoryModalOpen] = useState(false);
   const [victoryDebtName, setVictoryDebtName] = useState('');
   const [quickAddDebtOpen, setQuickAddDebtOpen] = useState(false);
+  const [draftBudgetOpen, setDraftBudgetOpen] = useState(false);
+  const [draftResult, setDraftResult] = useState<BudgetDraft | null>(null);
+  const [isDrafting, setIsDrafting] = useState(false);
   const previousPaidOffRef = useRef<Set<string>>(new Set());
   const { toast } = useToast();
 

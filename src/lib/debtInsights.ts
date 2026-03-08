@@ -520,6 +520,124 @@ export function calculateFreedomDateDelay(amount: number, monthlyDebtPayment: nu
   return Math.round((amount / monthlyDebtPayment) * 30);
 }
 
+// =====================================================================
+// SECTION 6: DEBT COACH TIPS
+// =====================================================================
+
+export interface CoachTip {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  priority: number;
+}
+
+export function generateDebtCoachTips(
+  debts: DebtItem[],
+  extraBudget: number,
+  strategy: 'Snowball' | 'Avalanche'
+): CoachTip[] {
+  const activeDebts = debts.filter(d => d.balance > 0);
+  if (activeDebts.length === 0) return [];
+
+  const tips: CoachTip[] = [];
+  const totalDebt = activeDebts.reduce((s, d) => s + d.balance, 0);
+  const avgApr = activeDebts.reduce((s, d) => s + d.apr, 0) / activeDebts.length;
+  const highAprDebts = activeDebts.filter(d => d.apr > 20);
+  const smallDebts = activeDebts.filter(d => d.balance < 500);
+
+  // High-APR alert
+  if (highAprDebts.length > 0) {
+    const worst = highAprDebts.sort((a, b) => b.apr - a.apr)[0];
+    tips.push({
+      id: 'high-apr',
+      icon: '🔥',
+      title: 'High-Interest Alert',
+      description: `${worst.name} has a ${worst.apr}% APR. Consider a balance transfer or targeting this debt first to stop the bleeding.`,
+      priority: 1,
+    });
+  }
+
+  // Small balance quick win
+  if (smallDebts.length > 0) {
+    const easiest = smallDebts.sort((a, b) => a.balance - b.balance)[0];
+    tips.push({
+      id: 'quick-win',
+      icon: '⚡',
+      title: 'Quick Win Available',
+      description: `${easiest.name} is only $${easiest.balance.toFixed(0)}. Knock it out for a motivational boost!`,
+      priority: 2,
+    });
+  }
+
+  // Extra payment impact
+  if (extraBudget === 0) {
+    const testSchedule = getDetailedPaymentSchedule(activeDebts, 0, strategy);
+    const boostSchedule = getDetailedPaymentSchedule(activeDebts, 100, strategy);
+    const interestSaved = testSchedule.summary.totalInterest - boostSchedule.summary.totalInterest;
+    const monthsSaved = testSchedule.summary.totalMonths - boostSchedule.summary.totalMonths;
+    if (interestSaved > 0) {
+      tips.push({
+        id: 'extra-payment',
+        icon: '💰',
+        title: 'Extra $100/mo Impact',
+        description: `Adding just $100/mo saves you $${interestSaved.toFixed(0)} in interest and gets you debt-free ${monthsSaved} month${monthsSaved !== 1 ? 's' : ''} sooner.`,
+        priority: 3,
+      });
+    }
+  }
+
+  // Refinance opportunity
+  if (totalDebt > 10000 && avgApr > 15) {
+    tips.push({
+      id: 'refinance',
+      icon: '🏦',
+      title: 'Consider Consolidation',
+      description: `With $${(totalDebt / 1000).toFixed(0)}k in debt at ${avgApr.toFixed(1)}% avg APR, a consolidation loan at a lower rate could save you significantly.`,
+      priority: 4,
+    });
+  }
+
+  // Strategy-specific motivation
+  if (strategy === 'Snowball') {
+    tips.push({
+      id: 'snowball-motivation',
+      icon: '❄️',
+      title: 'Snowball Momentum',
+      description: 'You\'re using the Snowball method — great for building momentum. Each payoff frees up more cash for the next target!',
+      priority: 5,
+    });
+  } else {
+    tips.push({
+      id: 'avalanche-math',
+      icon: '📐',
+      title: 'Mathematically Optimal',
+      description: 'The Avalanche method minimizes total interest paid. You\'re making the smartest financial move!',
+      priority: 5,
+    });
+  }
+
+  // Round-up suggestion
+  const targetDebt = [...activeDebts].sort(
+    strategy === 'Avalanche' ? (a, b) => b.apr - a.apr : (a, b) => a.balance - b.balance
+  )[0];
+  if (targetDebt) {
+    const roundedMin = Math.ceil(targetDebt.min / 50) * 50;
+    const diff = roundedMin - targetDebt.min;
+    if (diff > 0 && diff <= 25) {
+      tips.push({
+        id: 'round-up',
+        icon: '🔄',
+        title: 'Round Up Your Payment',
+        description: `Round your $${targetDebt.min} payment on ${targetDebt.name} up to $${roundedMin} — just $${diff.toFixed(0)} more per month can shave months off your payoff.`,
+        priority: 6,
+      });
+    }
+  }
+
+  return tips.sort((a, b) => a.priority - b.priority).slice(0, 5);
+}
+
 export function formatTriggerCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',

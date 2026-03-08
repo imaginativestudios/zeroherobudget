@@ -10,7 +10,8 @@ import { toast } from "sonner";
 import {
   Compass, Target, Plus, Download, Upload, Trash2,
   TrendingDown, Calendar, Snowflake, Flame, ArrowRight,
-  Info, Sparkles, CheckCircle2, Zap, Scale,
+  Info, Sparkles, CheckCircle2, Zap, Scale, SlidersHorizontal,
+  Lightbulb,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";

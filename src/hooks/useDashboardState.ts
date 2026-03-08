@@ -20,7 +20,6 @@ export interface DashboardState {
   
   // Progressive disclosure flags
   canShowShadowBudget: boolean;        // >= 3 transactions
-  canShowConsistencyXP: boolean;       // Active >= 48 hours
   canShowBoss: boolean;                // Has debt with balance > 0
   canShowMoat: boolean;                // Past onboarding
   

@@ -146,10 +146,11 @@ export const Layout = ({ children }: LayoutProps) => {
     );
   }
 
-  // Redirect unauthenticated users to landing page (unless in demo mode)
+  // Redirect unauthenticated users to auth page (unless in demo mode)
   const isInDemoMode = !user && isDemoDataLoaded();
   if (!user && !isInDemoMode) {
-    return <Navigate to="/" replace />;
+    const returnTo = location.pathname + location.search;
+    return <Navigate to={`/auth?returnTo=${encodeURIComponent(returnTo)}`} replace />;
   }
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);

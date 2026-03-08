@@ -169,16 +169,16 @@ export function formatRepairTimeline(days: number): string {
 }
 
 /**
- * Get heroic message based on status
+ * Get status message based on recovery state
  */
 export function getStatusMessage(status: RecoveryStatus, fortressIntegrity: number): string {
   switch (status) {
     case 'SECURE':
-      return 'Your Fortress stands strong! The Moat is complete.';
+      return 'Your emergency fund is fully funded. Well done.';
     case 'REGROUPING':
-      return `Tactical Alert: Fortress Integrity at ${fortressIntegrity}%. Prioritizing repairs.`;
+      return `Fund health at ${fortressIntegrity}%. Focus on rebuilding.`;
     case 'VULNERABLE':
-      return 'Critical Alert: Your defenses are exposed. Immediate action required.';
+      return 'Your emergency fund needs immediate attention.';
     default:
       return '';
   }

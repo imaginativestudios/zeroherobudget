@@ -106,7 +106,7 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     // Step 5: Pricing - Skip to demo mode
     await page.getByRole('button', { name: /skip|demo|explore/i }).click({ timeout: 5000 });
     
-    // Step 6: Ceremony - Enter the Fortress
+    // Step 6: Ceremony - Go to Dashboard
     await page.getByRole('button', { name: /Go to Dashboard/i }).click({ timeout: 5000 });
     
     // Should be on dashboard

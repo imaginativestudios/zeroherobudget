@@ -259,16 +259,12 @@ These icons will appear in:
 // Store listing copy
 export const STORE_LISTING = {
   name: "Zero Hero Connector: Privacy-First Bank Scout",
-  shortDescription: "A local-first data scout. Securely import bank transactions into Zero Herong passwords or data.",
+  shortDescription: "A local-first data scout. Securely import bank transactions into Zero Heror data.",
   longDescription: `YOUR DATA NEVER LEAVES YOUR DEVICE
 
 Unlike traditional bank aggregators like Plaid or Yodlee, Zero Hero Connector operates entirely within your browser. No servers. No third-party access. No passwords shared. Your financial data stays exactly where it belongs — on your machine, under your control.
 
-HEROIC CONTROLFULLYOUR FINANCES
-
-You decide what gets imported. The Connector scans transaction tables on your banking page only when you explicitly click the Scan button. Each transaction is displayed for your review before being copied to your clipboard. Nothing is automatic. Nothing is hidden. You are the hero of your own financial journey.
-
-TRANSPARENT AND SECURE BY DESIGN
+HEROIC CONTROLFULLYOUR FINANFULLou decide what gets imported. The Connector scans transaction tables on your banking page only when you explicitly click the Scan button. Each transaction is displayed for your review before being copied to your clipboard. Nothing is automatic. Nothing is hidden. You are the hero of stay in control of your financial dataND SECURE BY DESIGN
 
 Zero Hero Connector is built with privacy as a first principle. The code is minimal, auditable, and uses only the permissions absolutely necessary: activeTab (to read the current page when you click), scripting (to run the scanner), and clipboardWrite (to copy your data). No background processes. No remote code execution. Just a simple, focused tool for privacy-conscious users.`,
   permissionJustification: `This extension uses the "activeTab" permission to access the DOM of the user's current banking tab only when explicitly triggered by the user via the extension popup. This is required to parse transaction tables for local export to the clipboard. No data is accessed without direct user interaction, and no data is transmitted to external servers.

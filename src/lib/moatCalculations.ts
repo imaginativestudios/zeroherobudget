@@ -95,26 +95,29 @@ export function calculateMoatHealth(
 }
 
 /**
- * Get the castle icon type based on the castle level
+ * Get the progress icon type based on the fund level
  */
-export function getCastleIconType(level: CastleLevel): 'cabin' | 'tower' | 'castle' | 'fortress' {
+export function getFundIconType(level: CastleLevel): 'starting' | 'growing' | 'strong' | 'complete' {
   switch (level) {
-    case 1: return 'cabin';
-    case 2: return 'tower';
-    case 3: return 'castle';
-    case 4: return 'fortress';
+    case 1: return 'starting';
+    case 2: return 'growing';
+    case 3: return 'strong';
+    case 4: return 'complete';
   }
 }
 
-/**
- * Emergency fund level display labels for the badge
- */
-export const FORTRESS_LEVEL_LABELS: Record<CastleLevel, string> = {
+/** @deprecated Use FUND_LEVEL_LABELS instead */
+export const FORTRESS_LEVEL_LABELS = {
   1: 'Starting',
   2: 'Growing',
   3: 'Strong',
   4: 'Complete',
-};
+} as const satisfies Record<CastleLevel, string>;
+
+/**
+ * Emergency fund level display labels
+ */
+export const FUND_LEVEL_LABELS = FORTRESS_LEVEL_LABELS;
 
 /**
  * Emergency Fund Milestone definitions for celebrations

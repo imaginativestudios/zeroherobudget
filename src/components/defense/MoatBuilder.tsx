@@ -217,7 +217,7 @@ export function MoatBuilder({
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="relative"
               >
-                {getCastleIcon(moatHealth.castleLevel)}
+                {getFundIcon(moatHealth.castleLevel)}
               </motion.div>
             </AnimatePresence>
           </div>

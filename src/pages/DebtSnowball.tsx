@@ -638,6 +638,201 @@ export const DebtSnowball = () => {
               onStrategyChange={newStrategy => setStrategy(newStrategy)}
             />
           </TabsContent>
+
+          <TabsContent value="simulator" className="space-y-6 mt-8">
+            {activeDebts.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <SlidersHorizontal className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
+                  <p className="text-muted-foreground">Add debts in the Overview tab to use the Simulator.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Simulator Controls */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center gap-3">
+                      <SlidersHorizontal className="h-5 w-5 text-accent" />
+                      What-If Simulator
+                    </CardTitle>
+                    <CardDescription>
+                      Experiment with different strategies and extra payments to see how they affect your payoff.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Strategy Toggle */}
+                    <div>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Strategy</label>
+                      <div className="flex border border-border rounded-lg overflow-hidden w-full sm:w-auto">
+                        <Button
+                          variant={simStrategy === "Snowball" ? "royal" : "ghost"}
+                          className="rounded-none flex-1 sm:flex-initial text-xs sm:text-sm"
+                          onClick={() => setSimStrategy("Snowball")}
+                        >
+                          <Snowflake className="h-4 w-4 mr-1" /> Snowball
+                        </Button>
+                        <Button
+                          variant={simStrategy === "Avalanche" ? "royal" : "ghost"}
+                          className="rounded-none flex-1 sm:flex-initial text-xs sm:text-sm"
+                          onClick={() => setSimStrategy("Avalanche")}
+                        >
+                          <Flame className="h-4 w-4 mr-1" /> Avalanche
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Extra Payment Slider */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-foreground">Extra Monthly Payment</label>
+                        <span className="text-lg font-bold text-accent-dark">{formatCurrency(simExtra)}</span>
+                      </div>
+                      <Slider
+                        value={[simExtra]}
+                        onValueChange={([v]) => setSimExtra(v)}
+                        min={0}
+                        max={1000}
+                        step={25}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <span>$0</span>
+                        <span>$500</span>
+                        <span>$1,000</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Results Panel */}
+                <Card className="border-2 border-accent/30 bg-accent/5">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <TrendingDown className="h-5 w-5 text-accent" />
+                      Simulation Results
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total Interest</p>
+                        <p className="text-lg font-bold text-foreground">{formatCurrency(simPlan.totalInterest)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Debt-Free Date</p>
+                        <p className="text-lg font-bold text-foreground">{simPlan.debtFreeDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Interest Saved</p>
+                        <p className={cn("text-lg font-bold", simInterestSaved > 0 ? "text-success" : "text-muted-foreground")}>
+                          {simInterestSaved > 0 ? `−${formatCurrency(simInterestSaved)}` : '—'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Months Saved</p>
+                        <p className={cn("text-lg font-bold", simMonthsSaved > 0 ? "text-success" : "text-muted-foreground")}>
+                          {simMonthsSaved > 0 ? simMonthsSaved : '—'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {(simInterestSaved > 0 || simMonthsSaved > 0) && (
+                      <Button onClick={handleApplySimPlan} variant="royal" className="w-full sm:w-auto">
+                        <CheckCircle2 className="h-4 w-4 mr-2" /> Apply This Plan
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Timeline Comparison Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                      <TrendingDown className="h-5 w-5 text-accent" />
+                      Timeline Comparison
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {simPlan.timeline.length > 0 ? (
+                      <>
+                        <CustomLineLegend items={[
+                          { label: "Current Plan", color: "hsl(var(--muted-foreground))" },
+                          { label: "Simulated Plan", color: "hsl(var(--primary))" },
+                        ]} />
+                        <div className="h-[350px] sm:h-[400px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart margin={{ left: 12, right: 12, top: 10, bottom: 10 }}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                              <XAxis
+                                dataKey="label"
+                                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                                allowDuplicatedCategory={false}
+                              />
+                              <YAxis tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                              <Tooltip formatter={currencyFormatter} contentStyle={STANDARD_TOOLTIP_STYLE} />
+                              <Line
+                                data={baselinePlan.timeline}
+                                type="monotone"
+                                dataKey="totalBalance"
+                                name="Current Plan"
+                                strokeWidth={2}
+                                dot={false}
+                                stroke="hsl(var(--muted-foreground))"
+                                strokeDasharray="6 3"
+                              />
+                              <Line
+                                data={simPlan.timeline}
+                                type="monotone"
+                                dataKey="totalBalance"
+                                name="Simulated Plan"
+                                strokeWidth={3}
+                                dot={false}
+                                stroke="hsl(var(--primary))"
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </>
+                    ) : (
+                      <EmptyChartNotice title="No Data" message="Adjust the slider to see the impact." />
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Coach Tips */}
+                {coachTips.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Lightbulb className="h-5 w-5 text-warning" />
+                        Your Coach Says
+                      </CardTitle>
+                      <CardDescription>
+                        Personalized tips based on your debt profile
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {coachTips.map(tip => (
+                        <motion.div
+                          key={tip.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 transition-colors"
+                        >
+                          <span className="text-xl flex-shrink-0 mt-0.5">{tip.icon}</span>
+                          <div>
+                            <p className="font-semibold text-sm text-foreground">{tip.title}</p>
+                            <p className="text-sm text-muted-foreground mt-0.5">{tip.description}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            )}
+          </TabsContent>
         </Tabs>
       </div>
     </SwipeablePageWrapper>

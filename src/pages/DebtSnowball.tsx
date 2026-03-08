@@ -74,6 +74,32 @@ export const DebtSnowball = () => {
     [debts, leftover, strategy]
   );
 
+  // Simulator calculations
+  const baselinePlan = useMemo(() =>
+    calculatePayoffPlan(debts, leftover, strategy as "Snowball" | "Avalanche"),
+    [debts, leftover, strategy]
+  );
+
+  const simPlan = useMemo(() =>
+    calculatePayoffPlan(debts, leftover + simExtra, simStrategy),
+    [debts, leftover, simExtra, simStrategy]
+  );
+
+  const simInterestSaved = baselinePlan.totalInterest - simPlan.totalInterest;
+  const simMonthsSaved = baselinePlan.months - simPlan.months;
+
+  const coachTips = useMemo(() =>
+    generateDebtCoachTips(debts, leftover + simExtra, simStrategy),
+    [debts, leftover, simExtra, simStrategy]
+  );
+
+  const handleApplySimPlan = () => {
+    setStrategy(simStrategy);
+    toast.success(`Applied ${simStrategy} strategy with $${simExtra}/mo extra!`, {
+      icon: <CheckCircle2 className="h-5 w-5 text-success" />,
+    });
+  };
+
   const totalDebt = debts.filter(d => d.balance > 0).reduce((sum, d) => sum + d.balance, 0);
   const totalOriginal = debts.reduce((sum, d) => sum + (d._orig || d.balance || 0), 0);
   const overallProgress = totalOriginal > 0 ? ((totalOriginal - totalDebt) / totalOriginal) * 100 : 0;

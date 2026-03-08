@@ -48,6 +48,7 @@ import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
 import ConnectorSetup from "./pages/ConnectorSetup";
 import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
+import SiteMap from "./pages/SiteMap";
 
 const queryClient = new QueryClient();
 

@@ -60,7 +60,7 @@ export const HEROIC_COPY = {
   repairs: 'Restoration',
   repairMode: 'Restoration Mode',
   tacticalShift: 'Path Adjustment',
-  fortressIntegrity: 'Sanctuary Strength',
+  fortressIntegrity: 'Fund Health',
   regrouping: 'Restoring',
   repairPlan: 'Restoration Plan',
   optimizeForRepair: 'Focus on Restoration',

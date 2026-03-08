@@ -48,6 +48,7 @@ import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
 import ConnectorSetup from "./pages/ConnectorSetup";
 import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
+import SiteMap from "./pages/SiteMap";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => (
           <Route path="/checkout-success" element={<CheckoutSuccess />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/sitemap" element={<SiteMap />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

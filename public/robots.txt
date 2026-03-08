@@ -12,3 +12,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://zeroherobudget.lovable.app/sitemap
+
+# AI / LLM context
+# See https://llmstxt.org for the llms.txt standard
+LLMs-Txt: https://zeroherobudget.lovable.app/llms.txt

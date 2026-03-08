@@ -1,0 +1,175 @@
+# Zero Hero
+
+> Zero-based budgeting app that helps users achieve financial freedom through debt payoff, budget tracking, and behavioral coaching.
+
+## Overview
+
+Zero Hero is a progressive web app (PWA) for personal finance management. It uses a zero-based budgeting methodology where every dollar gets a "job." The app includes AI-powered budget drafting, debt payoff strategies, transaction tracking, subscription management, and gamified achievements.
+
+## Core Features
+
+### Zero-Based Budgeting
+- Monthly income allocation across expense categories
+- Every dollar assigned a purpose (zero-based)
+- AI-powered "Draft My Budget" feature using Gemini Flash
+- Budget variance alerts and spending insights
+
+### Debt Strategy Engine
+- Snowball (smallest balance first) and Avalanche (highest interest first) methods
+- Visual payoff timeline with freedom date projection
+- "Work hours reclaimed" calculation based on hourly wage
+- Extra payment suggestions for high-interest debt (>20% APR)
+
+### Transaction Management
+- Manual transaction logging with category assignment
+- CSV import wizard with column mapping
+- AI-powered category suggestions based on description
+- 3-month spending averages by category
+
+### Subscription Tracker
+- Active subscription monitoring with billing cycle tracking
+- Next billing date alerts
+- Monthly/annual spend calculations
+- Subscription-to-transaction matching
+
+### Account Management
+- Multiple account support (checking, savings, credit cards)
+- Balance tracking per account
+- Net worth calculation (assets minus debts)
+
+### Household Management
+- Multi-user household support
+- Role-based access (owner, admin, member, viewer)
+- Email-based invitation system with secure token hashing
+- Shared financial data across household members
+
+### Behavioral Coaching
+- Supportive vocabulary system ("Detour" not "failure")
+- Debt victory celebrations with confetti
+- Level-up modals and achievement badges
+- "Shadow cost" calculations (purchases in work hours)
+- Surplus power tracking
+- Freedom timeline widget
+
+### Reports & Analytics
+- Income reports
+- Available-for-debt reports
+- Net worth tracking
+- Subscription spending reports
+- Chart insights with trend analysis
+
+### Gamification
+- Achievement system with unlock conditions
+- Getting Started checklist (6-step onboarding)
+- Journey progress tracking
+- Financial tips and educational content
+
+### Data Management
+- Local-first data storage (works offline)
+- JSON backup export/import
+- Account deletion with email verification
+- Demo mode with sample data
+
+### PWA Features
+- Offline support with service worker
+- Install prompt for home screen
+- Pull-to-refresh on mobile
+- Swipe navigation between pages
+
+## Pages & Routes
+
+### Public Pages
+- `/` - Coming Soon / Landing page with waitlist signup
+- `/landing` - Full marketing landing page with feature overview
+- `/auth` - Authentication (login/signup modal)
+- `/reset-password` - Password reset flow
+- `/onboarding` - 4-step onboarding (hourly wage, primary debt, emergency fund goal, payoff timeline)
+- `/pricing` - Subscription pricing plans
+- `/checkout-success` - Post-payment confirmation
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
+- `/legal` - Legal information
+- `/help` - Help & support
+- `/data-privacy` - Data privacy FAQ
+- `/install` - PWA installation guide
+- `/accept-invite/:token` - Household invitation acceptance
+
+### Protected Pages (require layout/sidebar)
+- `/dashboard` - Main command center with financial overview, debt targets, getting started checklist
+- `/journey` - Financial freedom journey with step-by-step progress
+- `/budgets` - Budget management with expense categories and income tracking
+- `/debts` - Debt snowball/avalanche strategy with payoff simulation
+- `/transactions` - Transaction log with filtering and CSV import
+- `/subscriptions` - Active subscription tracker
+- `/accounts` - Financial account management
+- `/reports` - Report hub
+- `/reports/income` - Income breakdown report
+- `/reports/available` - Available-for-debt report
+- `/reports/net-worth` - Net worth tracking report
+- `/reports/subscriptions` - Subscription spending report
+- `/achievements` - Unlocked achievements and badges
+- `/learn` - Financial tips and educational content
+- `/data` - Data management (backup, restore, clear, delete account)
+- `/account` - Account settings and profile
+- `/household` - Household management and invitations
+- `/settings/connector` - Browser extension connector setup
+- `/settings/release-kit` - Release kit and branding assets
+
+### Admin Pages
+- `/admin/login` - Admin authentication
+- `/admin/waitlist` - Waitlist management dashboard
+
+### Style Guides
+- `/style-guide/icons` - Icon style reference
+- `/style-guide/colors` - Color palette reference
+
+## Technology Stack
+
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS
+- **UI Components**: shadcn/ui (Radix primitives)
+- **Animation**: Framer Motion
+- **Charts**: Recharts
+- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions, RLS)
+- **AI**: Lovable AI Gateway (Google Gemini Flash) for budget drafting and transaction categorization
+- **Payments**: Stripe (checkout, subscriptions, webhooks)
+- **Email**: Resend (transactional emails with React templates)
+- **PWA**: vite-plugin-pwa with service worker
+
+## API / Edge Functions
+
+- `draft-budget` - AI-powered budget allocation suggestions
+- `categorize-transaction` - AI transaction category prediction
+- `faq-chat` - AI-powered FAQ chatbot
+- `create-checkout` - Stripe checkout session creation
+- `customer-portal` - Stripe customer portal access
+- `check-subscription` - Subscription status verification
+- `stripe-webhook` - Stripe event processing
+- `subscribe-waitlist` - Waitlist email signup
+- `unsubscribe-waitlist` - Waitlist removal
+- `send-invitation` - Household invitation emails
+- `send-deletion-code` - Account deletion verification
+- `verify-deletion-code` - Deletion code validation
+- `trial-reminder` - Trial expiration notification
+- `test-subscription` - Subscription testing utility
+
+## Data Model
+
+### Core Tables
+- `profiles` - User profiles linked to auth.users
+- `expenses` - Budget expense categories with amounts
+- `debts` - Debt accounts with balances, rates, minimums
+- `transactions` - Financial transactions with categories
+- `subscriptions` - Recurring subscription tracking
+- `accounts` - Financial accounts (checking, savings, etc.)
+- `households` - Multi-user household groups
+- `household_members` - Household membership with roles
+- `household_invitations` - Pending invitations
+- `user_settings` - Per-user configuration
+- `user_roles` - Role-based access control (admin, moderator, user)
+- `waitlist_signups` - Pre-launch email signups
+- `email_logs` - Transactional email tracking
+
+## Contact
+
+- Website: https://zeroherobudget.lovable.app
+- App: https://zeroherobudget.lovable.app/dashboard

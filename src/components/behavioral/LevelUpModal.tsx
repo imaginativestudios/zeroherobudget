@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Trophy, Target, TrendingUp, Sparkles } from 'lucide-react';
-import { formatTriggerCurrency } from '@/lib/behavioralTriggers';
+import { formatTriggerCurrency } from '@/lib/debtInsights';
 
 interface HighestInterestDebt {
   name: string;

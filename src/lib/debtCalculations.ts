@@ -190,6 +190,121 @@ export function simulatePayoff(
   return { timeline, totalInterest, perDebt };
 }
 
+export interface PayoffPlan {
+  priorityOrder: Array<{
+    id: string;
+    name: string;
+    balance: number;
+    apr: number;
+    min: number;
+    type: string;
+    priority: number;
+    payoffMonth: number | null;
+    payoffLabel: string;
+    totalInterest: number;
+  }>;
+  totalDebt: number;
+  totalInterest: number;
+  totalPaid: number;
+  debtFreeDate: string;
+  months: number;
+  timeline: Array<{ label: string; totalBalance: number }>;
+}
+
+export interface PayoffComparison {
+  current: PayoffPlan;
+  optimized: PayoffPlan;
+  interestSaved: number;
+  monthsSaved: number;
+  coachMessage: string;
+}
+
+export function calculatePayoffPlan(
+  rawDebts: DebtItem[],
+  extraMonthly: number,
+  strategy: "Snowball" | "Avalanche" = "Avalanche"
+): PayoffPlan {
+  const activeDebts = rawDebts.filter(d => d.balance > 0);
+  const totalDebt = activeDebts.reduce((sum, d) => sum + d.balance, 0);
+
+  if (!activeDebts.length) {
+    return {
+      priorityOrder: [],
+      totalDebt: 0,
+      totalInterest: 0,
+      totalPaid: 0,
+      debtFreeDate: '—',
+      months: 0,
+      timeline: [],
+    };
+  }
+
+  // Sort by strategy for priority order display
+  const sortedDebts = [...activeDebts].sort(
+    strategy === "Avalanche"
+      ? (a, b) => b.apr - a.apr || a.balance - b.balance
+      : (a, b) => a.balance - b.balance || b.apr - a.apr
+  );
+
+  const result = simulatePayoff(activeDebts, extraMonthly, strategy);
+
+  const priorityOrder = sortedDebts.map((debt, index) => {
+    const perDebtInfo = result.perDebt.find(d => d.id === debt.id);
+    return {
+      id: debt.id,
+      name: debt.name,
+      balance: debt.balance,
+      apr: debt.apr,
+      min: debt.min,
+      type: debt.type,
+      priority: index + 1,
+      payoffMonth: perDebtInfo?.months ?? null,
+      payoffLabel: perDebtInfo?.payoffLabel ?? '—',
+      totalInterest: perDebtInfo?.totalInterest ?? 0,
+    };
+  });
+
+  const months = result.timeline.length;
+  const debtFreeDate = result.timeline[months - 1]?.label || '—';
+
+  return {
+    priorityOrder,
+    totalDebt,
+    totalInterest: result.totalInterest,
+    totalPaid: totalDebt + result.totalInterest,
+    debtFreeDate,
+    months,
+    timeline: result.timeline,
+  };
+}
+
+export function compareStrategies(
+  rawDebts: DebtItem[],
+  extraMonthly: number,
+  currentStrategy: "Snowball" | "Avalanche"
+): PayoffComparison {
+  const current = calculatePayoffPlan(rawDebts, extraMonthly, currentStrategy);
+  const optimizedStrategy: "Snowball" | "Avalanche" = "Avalanche";
+  const optimized = calculatePayoffPlan(rawDebts, extraMonthly, optimizedStrategy);
+
+  const interestSaved = current.totalInterest - optimized.totalInterest;
+  const monthsSaved = current.months - optimized.months;
+
+  const formatMoney = (v: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
+
+  let coachMessage: string;
+  if (interestSaved > 0) {
+    coachMessage = `Hey! If we stick to the Avalanche method, I can save you ${formatMoney(interestSaved)} in interest.`;
+  } else if (monthsSaved > 0) {
+    coachMessage = `Great news! The Avalanche method gets you debt-free ${monthsSaved} month${monthsSaved !== 1 ? 's' : ''} sooner.`;
+  } else {
+    coachMessage = `You're already on the optimal path — keep going, you've got this!`;
+  }
+
+  return { current, optimized, interestSaved, monthsSaved, coachMessage };
+}
+
 export function getDetailedPaymentSchedule(
   rawDebts: DebtItem[],
   extraBudget: number,

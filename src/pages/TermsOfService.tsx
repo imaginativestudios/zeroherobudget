@@ -251,7 +251,7 @@ const TermsOfService = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Limitation of Liability</h2>
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
-              <p className="text-foreground/90 font-semibold mb-2 uppercase">Important Legal Notice</p>
+              <p className="text-foreground/90 font-semibold mb-2 uppercase tracking-wider">Important Legal Notice</p>
               <p className="text-foreground/80 leading-relaxed text-sm">
                 Please read this section carefully as it limits our liability to you.
               </p>

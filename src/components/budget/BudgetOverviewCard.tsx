@@ -329,7 +329,7 @@ export function BudgetOverviewCard({
                 ? `${overBudgetCategories.length} Over`
                 : "On Track"}
             </div>
-            <div className="text-xs text-muted-foreground mt-1 truncate hidden sm:block">
+            <div className="text-xs text-muted-foreground mt-1 hidden sm:block line-clamp-2">
               {overBudgetCategories.length > 0 
                 ? overBudgetCategories.slice(0, 2).map(c => c.name).join(', ')
                 : "All categories on track"}

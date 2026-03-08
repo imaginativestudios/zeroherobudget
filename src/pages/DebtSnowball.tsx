@@ -36,6 +36,8 @@ import { StrategyComparison } from "@/components/debt/StrategyComparison";
 import { FreedomSlider } from "@/components/behavioral/FreedomSlider";
 import { EditableValue } from "@/components/ui/editable-value";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
+import { Slider } from "@/components/ui/slider";
+import { generateDebtCoachTips } from "@/lib/debtInsights";
 import { cn } from "@/lib/utils";
 
 export const DebtSnowball = () => {

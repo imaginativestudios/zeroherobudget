@@ -151,7 +151,6 @@ export function useDashboardState(): DashboardState {
       hasNoDebts,
       shouldShowInitializeMission,
       canShowShadowBudget,
-      canShowConsistencyXP,
       canShowBoss,
       canShowMoat,
       canShowMoatBuilder,

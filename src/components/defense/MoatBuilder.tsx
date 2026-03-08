@@ -362,7 +362,7 @@ export function MoatBuilder({
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <Castle className="h-5 w-5 text-primary" />
+                     <Shield className="h-5 w-5 text-primary" />
                       Add to Emergency Fund
                     </DialogTitle>
                     <DialogDescription>

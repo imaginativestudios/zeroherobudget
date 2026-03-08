@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sprout, Home, Heart, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { CastleLevel, FORTRESS_LEVEL_LABELS } from '@/lib/moatCalculations';
+import { CastleLevel, FUND_LEVEL_LABELS } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
 
-interface FortressLevelBadgeProps {
+interface FundLevelBadgeProps {
   level: CastleLevel;
   isSecure?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -57,15 +57,20 @@ const sizeClasses = {
   lg: 'text-sm px-2.5 py-1.5 gap-2',
 };
 
-export function FortressLevelBadge({
+/** @deprecated Use FundLevelBadge instead */
+export function FortressLevelBadge(props: FundLevelBadgeProps) {
+  return <FundLevelBadge {...props} />;
+}
+
+export function FundLevelBadge({
   level,
   isSecure = false,
   size = 'md',
   showLabel = true,
   className,
-}: FortressLevelBadgeProps) {
+}: FundLevelBadgeProps) {
   const colorClass = getLevelColorClass(level, isSecure);
-  const label = FORTRESS_LEVEL_LABELS[level];
+  const label = FUND_LEVEL_LABELS[level];
   
   return (
     <AnimatePresence mode="wait">

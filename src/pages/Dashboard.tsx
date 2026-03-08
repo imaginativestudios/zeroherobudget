@@ -7,7 +7,7 @@
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
 import { FinancialCard } from "@/components/FinancialCard";

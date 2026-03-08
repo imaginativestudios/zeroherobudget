@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Expense } from "@/hooks/useLocalExpenses";
-import type { Transaction } from "@/types/transactions";
+import type { Transaction } from "@/hooks/useLocalTransactions";
 
 export interface BudgetAllocation {
   expenseId: string;

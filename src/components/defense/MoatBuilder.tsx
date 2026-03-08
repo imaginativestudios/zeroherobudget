@@ -187,7 +187,7 @@ export function MoatBuilder({
         )}>
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-2">
-              <Castle className="h-5 w-5 text-primary" />
+              <Shield className="h-5 w-5 text-primary" />
               Emergency Fund
             </span>
             <span className="text-xs font-normal text-muted-foreground">Build your $1,000 safety net</span>

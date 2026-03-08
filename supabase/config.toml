@@ -38,3 +38,6 @@ verify_jwt = false
 
 [functions.generate-store-images]
 verify_jwt = false
+
+[functions.draft-budget]
+verify_jwt = false

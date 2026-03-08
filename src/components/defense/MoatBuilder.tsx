@@ -1,19 +1,18 @@
 /**
- * Moat Builder Component
+ * Emergency Fund Builder
  * 
- * Enhanced emergency fund visualization with:
+ * Emergency fund visualization with:
  * - Animated water reservoir using Framer Motion
- * - Evolving castle icons based on progress
- * - Primary Quest highlighting when moat < $1,000
+ * - Evolving icons based on progress
+ * - Current Focus highlighting when fund < $1,000
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home, 
-  Building, 
-  Castle, 
   Shield, 
+  TrendingUp, 
   Plus, 
   Check, 
   Droplets,
@@ -36,7 +35,7 @@ import {
 import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { calculateMoatHealth, MOAT_MILESTONES, type CastleLevel } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
-import { FortressLevelBadge } from './FortressLevelBadge';
+import { FundLevelBadge } from './FortressLevelBadge';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
@@ -139,29 +138,24 @@ export function MoatBuilder({
     }
   };
 
-  // Get castle icon based on level
-  const getCastleIcon = (level: CastleLevel) => {
+  // Get fund icon based on level
+  const getFundIcon = (level: CastleLevel) => {
     const iconClass = cn(
       "transition-all duration-500",
       variant === 'full' ? "h-16 w-16" : "h-12 w-12"
     );
     
     switch (level) {
-      case 1: // 0-25% - Wood Cabin (Vulnerable)
+      case 1: // 0-25% - Starting
         return <Home className={cn(iconClass, "text-muted-foreground")} />;
-      case 2: // 26-50% - Small Tower
-        return <Building className={cn(iconClass, "text-primary/60")} />;
-      case 3: // 51-75% - Castle
-        return <Castle className={cn(iconClass, "text-primary")} />;
-      case 4: // 76-100% - Stone Fortress
+      case 2: // 26-50% - Growing
+        return <TrendingUp className={cn(iconClass, "text-primary/60")} />;
+      case 3: // 51-75% - Strong
+        return <Shield className={cn(iconClass, "text-primary")} />;
+      case 4: // 76-100% - Complete
         return (
           <div className="relative">
-            <Castle className={cn(iconClass, moatHealth.status === 'secure' ? "text-success" : "text-primary")} />
-            <Shield className={cn(
-              "absolute -bottom-1 -right-1",
-              variant === 'full' ? "h-6 w-6" : "h-5 w-5",
-              moatHealth.status === 'secure' ? "text-success" : "text-primary"
-            )} />
+            <Shield className={cn(iconClass, moatHealth.status === 'secure' ? "text-success" : "text-primary")} />
           </div>
         );
     }
@@ -192,12 +186,12 @@ export function MoatBuilder({
         )}>
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-2">
-              <Castle className="h-5 w-5 text-primary" />
+              <Shield className="h-5 w-5 text-primary" />
               Emergency Fund
             </span>
             <span className="text-xs font-normal text-muted-foreground">Build your $1,000 safety net</span>
           </div>
-          <FortressLevelBadge 
+          <FundLevelBadge 
             level={moatHealth.castleLevel}
             isSecure={moatHealth.status === 'secure'}
             size="sm"
@@ -222,7 +216,7 @@ export function MoatBuilder({
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="relative"
               >
-                {getCastleIcon(moatHealth.castleLevel)}
+                {getFundIcon(moatHealth.castleLevel)}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -367,7 +361,7 @@ export function MoatBuilder({
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <Castle className="h-5 w-5 text-primary" />
+                     <Shield className="h-5 w-5 text-primary" />
                       Add to Emergency Fund
                     </DialogTitle>
                     <DialogDescription>

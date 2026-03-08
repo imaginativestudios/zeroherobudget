@@ -229,7 +229,7 @@ const CheckoutSuccess = () => {
                         className="flex-1 bg-white text-primary hover:bg-white/90 font-semibold"
                         onClick={() => navigate('/dashboard')}
                       >
-                        Enter the Fortress
+                        Go to Dashboard
                       </Button>
                       <Button
                         size="lg"

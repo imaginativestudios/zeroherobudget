@@ -106,7 +106,7 @@ test.describe('Stripe Checkout Success Page', () => {
     
     // Look for the main CTA (either dashboard or pricing depending on subscription state)
     await expect(
-      page.getByRole('button', { name: /fortress|dashboard|pricing/i })
+      page.getByRole('button', { name: /dashboard|pricing/i })
     ).toBeVisible({ timeout: 10000 });
   });
 

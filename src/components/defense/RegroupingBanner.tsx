@@ -1,8 +1,8 @@
 /**
- * Regrouping Banner
+ * Recovery Banner
  * 
- * Heroic reassurance banner displayed when the Moat needs repairs.
- * Uses calming colors and encouraging copy to reinforce the protective purpose.
+ * Reassurance banner displayed when the emergency fund needs rebuilding.
+ * Uses calming colors and encouraging copy.
  */
 
 import { useState } from 'react';

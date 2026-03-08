@@ -21,7 +21,7 @@ export interface RecoveryState {
   status: RecoveryStatus;
   breachAmount: number;
   breachPercentage: number;
-  fortressIntegrity: number; // Percentage of moat remaining (0-100)
+  fortressIntegrity: number; // Percentage of fund remaining (0-100) — kept for API compat
   previouslySecure: boolean;
   lastSecureDate: string | null;
 }

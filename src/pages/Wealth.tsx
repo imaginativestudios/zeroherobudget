@@ -248,9 +248,9 @@ export default function Wealth() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.25 }}
             >
-              <Card className="border-2 border-green-500/30 bg-green-500/5">
+              <Card className="border-2 border-accent/30 bg-accent/5">
                 <CardContent className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                  <CheckCircle2 className="h-12 w-12 text-green-500" />
+                  <CheckCircle2 className="h-12 w-12 text-accent" />
                   <h3 className="text-lg font-bold text-foreground">Sweep Complete!</h3>
                   <p className="text-sm text-muted-foreground max-w-sm">
                     Your lazy cash is now working for you. Check your Transactions log for the transfer details.

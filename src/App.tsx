@@ -49,6 +49,7 @@ import ConnectorSetup from "./pages/ConnectorSetup";
 import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
+import Wealth from "./pages/Wealth";
 
 const queryClient = new QueryClient();
 

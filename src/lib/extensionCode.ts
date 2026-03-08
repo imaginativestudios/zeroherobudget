@@ -259,12 +259,12 @@ These icons will appear in:
 // Store listing copy
 export const STORE_LISTING = {
   name: "Zero Hero Connector: Privacy-First Bank Scout",
-  shortDescription: "A local-first data scout. Securely import bank transactions into Zero Hero without sharing passwords or data.",
+  shortDescription: "A local-first data scout. Securely import bank transactions into Zero Herong passwords or data.",
   longDescription: `YOUR DATA NEVER LEAVES YOUR DEVICE
 
 Unlike traditional bank aggregators like Plaid or Yodlee, Zero Hero Connector operates entirely within your browser. No servers. No third-party access. No passwords shared. Your financial data stays exactly where it belongs — on your machine, under your control.
 
-HEROIC CONTROL OVER YOUR FINANCES
+HEROIC CONTROLFULLYOUR FINANCES
 
 You decide what gets imported. The Connector scans transaction tables on your banking page only when you explicitly click the Scan button. Each transaction is displayed for your review before being copied to your clipboard. Nothing is automatic. Nothing is hidden. You are the hero of your own financial journey.
 

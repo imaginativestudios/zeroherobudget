@@ -14,6 +14,7 @@ import {
   Settings,
   Shield,
   Plug,
+  TrendingUp,
 } from 'lucide-react';
 
 interface MobileMoreDrawerProps {

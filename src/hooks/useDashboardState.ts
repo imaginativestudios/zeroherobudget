@@ -105,7 +105,6 @@ export function useDashboardState(): DashboardState {
     const shouldShowInitializeMission = hasNoDebts && profile.onboarding_completed;
     
     const canShowShadowBudget = transactions.length >= 3;
-    const canShowConsistencyXP = accountAgeHours >= 48;
     const canShowBoss = activeDebtCount > 0;
     const canShowMoat = profile.onboarding_completed || !hasNoDebts;
 

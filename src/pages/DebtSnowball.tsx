@@ -51,6 +51,10 @@ export const DebtSnowball = () => {
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingNameValue, setEditingNameValue] = useState<string>('');
 
+  // Simulator state (independent from main strategy)
+  const [simStrategy, setSimStrategy] = useState<"Snowball" | "Avalanche">(strategy as "Snowball" | "Avalanche");
+  const [simExtra, setSimExtra] = useState<number>(0);
+
   const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
   const leftover = Math.max(0, (income || 0) - totalExpenses);
 

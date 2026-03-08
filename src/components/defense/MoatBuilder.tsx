@@ -139,29 +139,24 @@ export function MoatBuilder({
     }
   };
 
-  // Get castle icon based on level
-  const getCastleIcon = (level: CastleLevel) => {
+  // Get fund icon based on level
+  const getFundIcon = (level: CastleLevel) => {
     const iconClass = cn(
       "transition-all duration-500",
       variant === 'full' ? "h-16 w-16" : "h-12 w-12"
     );
     
     switch (level) {
-      case 1: // 0-25% - Wood Cabin (Vulnerable)
+      case 1: // 0-25% - Starting
         return <Home className={cn(iconClass, "text-muted-foreground")} />;
-      case 2: // 26-50% - Small Tower
-        return <Building className={cn(iconClass, "text-primary/60")} />;
-      case 3: // 51-75% - Castle
-        return <Castle className={cn(iconClass, "text-primary")} />;
-      case 4: // 76-100% - Stone Fortress
+      case 2: // 26-50% - Growing
+        return <TrendingUp className={cn(iconClass, "text-primary/60")} />;
+      case 3: // 51-75% - Strong
+        return <Shield className={cn(iconClass, "text-primary")} />;
+      case 4: // 76-100% - Complete
         return (
           <div className="relative">
-            <Castle className={cn(iconClass, moatHealth.status === 'secure' ? "text-success" : "text-primary")} />
-            <Shield className={cn(
-              "absolute -bottom-1 -right-1",
-              variant === 'full' ? "h-6 w-6" : "h-5 w-5",
-              moatHealth.status === 'secure' ? "text-success" : "text-primary"
-            )} />
+            <Shield className={cn(iconClass, moatHealth.status === 'secure' ? "text-success" : "text-primary")} />
           </div>
         );
     }

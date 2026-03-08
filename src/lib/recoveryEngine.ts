@@ -1,8 +1,7 @@
 /**
  * Recovery Engine
  * 
- * Core logic for moat breach detection and repair planning.
- * Uses heroic vocabulary: Breach, Repairs, Tactical Shift, Fortress Integrity.
+ * Core logic for emergency fund recovery detection and planning.
  */
 
 import { Expense } from '@/hooks/useLocalExpenses';

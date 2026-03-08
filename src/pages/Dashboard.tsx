@@ -62,9 +62,11 @@ import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanne
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
 import { EmergencyFundCard } from "@/components/dashboard/EmergencyFundCard";
 import { BehavioralHintCard } from "@/components/dashboard/BehavioralHintCard";
+import { DraftBudgetSheet } from "@/components/dashboard/DraftBudgetSheet";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
+import { generateBudgetDraft, type BudgetDraft, type BudgetAllocation } from "@/lib/budgetDraftEngine";
 import { format, addMonths } from "date-fns";
 import { getSurvivalCategories } from "@/lib/debtInsights";
 import { simulatePayoff as simulatePayoffCalc } from "@/lib/debtCalculations";

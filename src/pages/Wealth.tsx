@@ -2,28 +2,26 @@
  * Wealth Optimizer — Move 'Lazy Cash' into High-Yield Savings
  *
  * Supportive Coach voice. Safety Floor slider, Lazy Cash calculator,
- * Opportunity Card with sweep action.
+ * Opportunity Card with sweep action + confirmation dialog.
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import {
-  TrendingUp, Shield, Banknote, ArrowRight, Sparkles,
-  DollarSign, Percent, Clock, CheckCircle2, Wallet,
-} from 'lucide-react';
+import { TrendingUp, Percent, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useAccounts } from '@/hooks/useAccounts';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { formatCurrency } from '@/lib/constants';
-import { cn } from '@/lib/utils';
+
+import { SafetyFloorCard } from '@/components/wealth/SafetyFloorCard';
+import { OpportunityCard } from '@/components/wealth/OpportunityCard';
+import { SweepSuccessCard } from '@/components/wealth/SweepSuccessCard';
+import { NoLazyCashCard } from '@/components/wealth/NoLazyCashCard';
+import { AccountSelector } from '@/components/wealth/AccountSelector';
 
 // Mock Global Rates API
 const MOCK_HYS_APY = 4.09;
@@ -42,14 +40,33 @@ export default function Wealth() {
   const [safetyFloor, setSafetyFloor] = useUserLocalStorage('bdt_safety_floor', 1000);
   const [swept, setSwept] = useState(false);
 
-  // Find checking & savings accounts
-  const checkingAccount = useMemo(
-    () => accounts.find(a => a.type === 'checking' && a.isActive),
+  // Filter active checking & savings accounts
+  const checkingAccounts = useMemo(
+    () => accounts.filter(a => a.type === 'checking' && a.isActive),
     [accounts],
   );
-  const savingsAccount = useMemo(
-    () => accounts.find(a => a.type === 'savings' && a.isActive),
+  const savingsAccounts = useMemo(
+    () => accounts.filter(a => a.type === 'savings' && a.isActive),
     [accounts],
+  );
+
+  // Selected account IDs (default to first)
+  const [selectedCheckingId, setSelectedCheckingId] = useUserLocalStorage<string | undefined>(
+    'bdt_wealth_checking_id',
+    undefined,
+  );
+  const [selectedSavingsId, setSelectedSavingsId] = useUserLocalStorage<string | undefined>(
+    'bdt_wealth_savings_id',
+    undefined,
+  );
+
+  const checkingAccount = useMemo(
+    () => checkingAccounts.find(a => a.id === selectedCheckingId) ?? checkingAccounts[0],
+    [checkingAccounts, selectedCheckingId],
+  );
+  const savingsAccount = useMemo(
+    () => savingsAccounts.find(a => a.id === selectedSavingsId) ?? savingsAccounts[0],
+    [savingsAccounts, selectedSavingsId],
   );
 
   const checkingBalance = checkingAccount?.balance ?? 0;
@@ -73,12 +90,13 @@ export default function Wealth() {
     }
 
     const today = new Date().toISOString().slice(0, 10);
+    const sweepAmount = lazyCash;
 
     // Log outflow from checking
     addTransaction({
       date: today,
       description: `Sweep to High-Yield Savings`,
-      amount: lazyCash,
+      amount: sweepAmount,
       category: 'Transfer',
       accountId: checkingAccount.id,
       flow: 'out',
@@ -89,7 +107,7 @@ export default function Wealth() {
     addTransaction({
       date: today,
       description: `Sweep from Checking`,
-      amount: lazyCash,
+      amount: sweepAmount,
       category: 'Transfer',
       accountId: savingsAccount.id,
       flow: 'in',
@@ -97,10 +115,10 @@ export default function Wealth() {
     });
 
     setSwept(true);
-    toast.success(`Swept ${formatCurrency(lazyCash)} into your High-Yield Savings! 🎉`);
+    toast.success(`Swept ${formatCurrency(sweepAmount)} into your High-Yield Savings! 🎉`);
   };
 
-  const maxSlider = Math.max(checkingBalance, 5000);
+  const maxSlider = Math.max(checkingBalance, 1000);
 
   return (
     <SwipeablePageWrapper>
@@ -108,7 +126,7 @@ export default function Wealth() {
         {/* Header */}
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <TrendingUp className="h-7 w-7 text-primary" />
+            <TrendingUp className="h-7 w-7 text-primary" aria-hidden="true" />
             Wealth Optimizer
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base">
@@ -116,68 +134,44 @@ export default function Wealth() {
           </p>
         </div>
 
-        {/* Rate Badge */}
-        <div className="flex items-center gap-2">
+        {/* Rate Badge + Disclaimer */}
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant="secondary" className="gap-1.5 text-xs">
-            <Percent className="h-3 w-3" />
-            Current HYS Rate: {MOCK_HYS_APY}% APY
+            <Percent className="h-3 w-3" aria-hidden="true" />
+            HYS Rate: {MOCK_HYS_APY}% APY
           </Badge>
-          <span className="text-[11px] text-muted-foreground">via Global Rates API</span>
+          <span className="text-[11px] text-muted-foreground">(illustrative — not a live rate)</span>
         </div>
 
+        {/* Account selectors for multi-account users */}
+        {(checkingAccounts.length > 1 || savingsAccounts.length > 1) && (
+          <div className="flex flex-wrap gap-4">
+            <AccountSelector
+              label="Checking account"
+              accounts={checkingAccounts}
+              selectedId={checkingAccount?.id}
+              onSelect={setSelectedCheckingId}
+            />
+            <AccountSelector
+              label="Savings account"
+              accounts={savingsAccounts}
+              selectedId={savingsAccount?.id}
+              onSelect={setSelectedSavingsId}
+            />
+          </div>
+        )}
+
         {/* Safety Floor Card */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              Safety Floor
-            </CardTitle>
-            <CardDescription>
-              How much do you want to keep in checking for peace of mind?
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="flex items-center gap-4">
-              <Slider
-                value={[safetyFloor]}
-                onValueChange={handleSafetyFloorChange}
-                min={0}
-                max={maxSlider}
-                step={50}
-                className="flex-1"
-              />
-              <div className="relative w-28 shrink-0">
-                <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="number"
-                  value={safetyFloor}
-                  onChange={handleInputChange}
-                  className="pl-8 h-11 text-right font-mono"
-                  min={0}
-                  max={checkingBalance}
-                />
-              </div>
-            </div>
+        <SafetyFloorCard
+          safetyFloor={safetyFloor}
+          checkingBalance={checkingBalance}
+          lazyCash={lazyCash}
+          maxSlider={maxSlider}
+          onSliderChange={handleSafetyFloorChange}
+          onInputChange={handleInputChange}
+        />
 
-            {/* Visual breakdown */}
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-lg bg-muted/50 p-3 space-y-1">
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Checking</p>
-                <p className="font-bold text-foreground">{formatCurrency(checkingBalance)}</p>
-              </div>
-              <div className="rounded-lg bg-muted/50 p-3 space-y-1">
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Safety Floor</p>
-                <p className="font-bold text-foreground">{formatCurrency(safetyFloor)}</p>
-              </div>
-              <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 space-y-1">
-                <p className="text-[11px] uppercase tracking-wider text-primary">Lazy Cash</p>
-                <p className="font-bold text-primary text-lg">{formatCurrency(lazyCash)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Opportunity Card */}
+        {/* Opportunity / Success / Empty */}
         <AnimatePresence mode="wait">
           {lazyCash > 0 && !swept ? (
             <motion.div
@@ -187,59 +181,16 @@ export default function Wealth() {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.2 }}
             >
-              <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-background overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    Opportunity Detected
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-5">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    You have <span className="font-bold text-foreground">{formatCurrency(lazyCash)}</span> sitting
-                    in checking. At <span className="font-semibold text-primary">{MOCK_HYS_APY}% APY</span>, this
-                    could be earning you{' '}
-                    <span className="font-bold text-primary">{formatCurrency(monthlyEarning)}/mo</span> in a
-                    High-Yield account. Want to sweep it?
-                  </p>
-
-                  {/* Earnings preview */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-lg border border-border bg-background p-4 space-y-1">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="text-[11px] uppercase tracking-wider">Monthly</span>
-                      </div>
-                      <p className="text-xl font-bold text-primary">{formatCurrency(monthlyEarning)}</p>
-                    </div>
-                    <div className="rounded-lg border border-border bg-background p-4 space-y-1">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <TrendingUp className="h-3.5 w-3.5" />
-                        <span className="text-[11px] uppercase tracking-wider">Yearly</span>
-                      </div>
-                      <p className="text-xl font-bold text-primary">{formatCurrency(yearlyEarning)}</p>
-                    </div>
-                  </div>
-
-                  {!savingsAccount && (
-                    <p className="text-xs text-destructive">
-                      ⚠️ You need a <strong>Savings</strong> account to sweep. Add one in{' '}
-                      <a href="/accounts" className="underline">Accounts</a>.
-                    </p>
-                  )}
-
-                  <Button
-                    size="lg"
-                    className="w-full gap-2 h-12"
-                    onClick={handleSweep}
-                    disabled={!savingsAccount || lazyCash <= 0}
-                  >
-                    <Banknote className="h-5 w-5" />
-                    Sweep {formatCurrency(lazyCash)} Now
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
+              <OpportunityCard
+                lazyCash={lazyCash}
+                monthlyEarning={monthlyEarning}
+                yearlyEarning={yearlyEarning}
+                apy={MOCK_HYS_APY}
+                hasSavingsAccount={!!savingsAccount}
+                checkingAccountName={checkingAccount?.name}
+                savingsAccountName={savingsAccount?.name}
+                onSweep={handleSweep}
+              />
             </motion.div>
           ) : lazyCash > 0 && swept ? (
             <motion.div
@@ -248,18 +199,7 @@ export default function Wealth() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.25 }}
             >
-              <Card className="border-2 border-accent/30 bg-accent/5">
-                <CardContent className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                  <CheckCircle2 className="h-12 w-12 text-accent" />
-                  <h3 className="text-lg font-bold text-foreground">Sweep Complete!</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm">
-                    Your lazy cash is now working for you. Check your Transactions log for the transfer details.
-                  </p>
-                  <Button variant="outline" size="sm" onClick={() => setSwept(false)}>
-                    Sweep Again
-                  </Button>
-                </CardContent>
-              </Card>
+              <SweepSuccessCard onSweepAgain={() => setSwept(false)} />
             </motion.div>
           ) : (
             <motion.div
@@ -267,15 +207,7 @@ export default function Wealth() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                  <Wallet className="h-10 w-10 text-muted-foreground/50" />
-                  <h3 className="text-base font-semibold text-foreground">No Lazy Cash Right Now</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm">
-                    Your checking balance is at or below your safety floor. Lower the floor or add funds to unlock optimization opportunities.
-                  </p>
-                </CardContent>
-              </Card>
+              <NoLazyCashCard />
             </motion.div>
           )}
         </AnimatePresence>
@@ -283,13 +215,14 @@ export default function Wealth() {
         {/* Educational tip */}
         <Card className="bg-muted/30">
           <CardContent className="py-4 flex items-start gap-3">
-            <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" aria-hidden="true" />
             <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">Why High-Yield Savings?</p>
+              <p className="text-sm font-medium text-foreground">What is "Lazy Cash"?</p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Traditional checking accounts pay ~0.01% interest. A High-Yield Savings account at {MOCK_HYS_APY}% APY
-                earns roughly <strong>400×</strong> more on the same balance — with no extra risk. Your money works
-                harder while staying fully accessible.
+                Lazy Cash is any money in your checking account <strong>above</strong> your Safety Floor — the
+                minimum you want to keep on hand. Instead of sitting idle at ~0.01% interest, it could earn
+                roughly <strong>400×</strong> more in a High-Yield Savings account. This tool helps you spot
+                and track those transfers.
               </p>
             </div>
           </CardContent>

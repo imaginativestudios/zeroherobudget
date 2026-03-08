@@ -597,7 +597,7 @@ export const Dashboard = () => {
         >
           <div className="flex items-center gap-4">
             <div className="h-px bg-border flex-1"></div>
-            <h2 className="text-sm font-semibold text-muted-foreground tracking-wide uppercase">
+            <h2 className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
               Insights & Progress
             </h2>
             <div className="h-px bg-border flex-1"></div>

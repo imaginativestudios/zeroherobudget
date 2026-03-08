@@ -157,7 +157,7 @@ export const Dashboard = () => {
         debts: debts.map(d => ({ name: d.name, balance: d.balance, interest_rate: d.interest_rate, minimum_payment: d.minimum_payment })),
         transactions,
         subscriptions,
-      });
+      }, !!user);
       setDraftResult(result);
     } catch (e) {
       toast({ title: "Budget draft failed", description: e instanceof Error ? e.message : "Please try again", variant: "destructive" });

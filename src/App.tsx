@@ -105,6 +105,7 @@ const App = () => (
                 <Route path="/household" element={<Household />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/accounts" element={<Accounts />} />
+                <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
                 <Route path="/settings/release-kit" element={<ReleaseKit />} />

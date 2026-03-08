@@ -66,7 +66,7 @@ import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
 import { format, addMonths } from "date-fns";
-import { getSurvivalCategories } from "@/lib/behavioralEngine";
+import { getSurvivalCategories } from "@/lib/debtInsights";
 import { simulatePayoff as simulatePayoffCalc } from "@/lib/debtCalculations";
 
 export const Dashboard = () => {

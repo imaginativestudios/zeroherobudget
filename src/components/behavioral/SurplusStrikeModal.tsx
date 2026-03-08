@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { formatTriggerCurrency } from '@/lib/behavioralTriggers';
+import { formatTriggerCurrency } from '@/lib/debtInsights';
 
 interface SurplusStrikeData {
   surplusAmount: number;

@@ -9,7 +9,7 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { Ghost, TrendingDown, Calendar, X } from 'lucide-react';
-import { formatTriggerCurrency } from '@/lib/behavioralTriggers';
+import { formatTriggerCurrency } from '@/lib/debtInsights';
 
 interface ShadowCostData {
   transactionId: string;

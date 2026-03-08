@@ -9,7 +9,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Calendar, Rocket, Clock, DollarSign, Lightbulb, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { calculateFreedomImpact, translateToHumanTime } from '@/lib/freedomEngine';
+import { calculateFreedomImpact, translateToHumanTime } from '@/lib/debtInsights';
 import { DebtItem } from '@/lib/debtCalculations';
 import { formatCurrency } from '@/lib/constants';
 import { format, differenceInMonths } from 'date-fns';

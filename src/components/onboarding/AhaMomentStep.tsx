@@ -3,7 +3,7 @@ import { Calendar, Clock, Sparkles, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { HeroTip } from './HeroTip';
-import { calculateFreedomImpact, translateToHumanTime } from '@/lib/freedomEngine';
+import { calculateFreedomImpact, translateToHumanTime } from '@/lib/debtInsights';
 import { DebtItem } from '@/lib/debtCalculations';
 
 interface AhaMomentStepProps {

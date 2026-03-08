@@ -14,7 +14,7 @@ import {
   RepairPlan,
   calculateRecoveryState,
   calculateRepairPlan,
-} from '@/lib/recoveryEngine';
+} from '@/lib/debtInsights';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
 import { haptics } from '@/lib/haptics';
 import confetti from 'canvas-confetti';

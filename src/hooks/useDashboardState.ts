@@ -20,7 +20,6 @@ export interface DashboardState {
   
   // Progressive disclosure flags
   canShowShadowBudget: boolean;        // >= 3 transactions
-  canShowConsistencyXP: boolean;       // Active >= 48 hours
   canShowBoss: boolean;                // Has debt with balance > 0
   canShowMoat: boolean;                // Past onboarding
   
@@ -37,7 +36,7 @@ export interface DashboardState {
   canShowAnalytics: boolean;           // Any analytics chart visible
   
   // Intel Feed unlocks (for staggered animations)
-  unlockedCards: Array<'surplus' | 'consistency' | 'shadow' | 'freedom'>;
+  unlockedCards: Array<'surplus' | 'shadow' | 'freedom'>;
   
   // Current target debt ("The Boss")
   currentBoss: Debt | null;
@@ -106,7 +105,6 @@ export function useDashboardState(): DashboardState {
     const shouldShowInitializeMission = hasNoDebts && profile.onboarding_completed;
     
     const canShowShadowBudget = transactions.length >= 3;
-    const canShowConsistencyXP = accountAgeHours >= 48;
     const canShowBoss = activeDebtCount > 0;
     const canShowMoat = profile.onboarding_completed || !hasNoDebts;
 
@@ -135,12 +133,12 @@ export function useDashboardState(): DashboardState {
     // Build unlocked cards array for staggered animation
     const unlockedCards: DashboardState['unlockedCards'] = ['surplus'];
     
-    if (canShowConsistencyXP) {
-      unlockedCards.push('consistency');
-    }
-    
     if (canShowShadowBudget) {
       unlockedCards.push('shadow');
+    }
+    
+    if (canShowBoss) {
+      unlockedCards.push('freedom');
     }
     
     // Freedom timeline always shows if there are debts
@@ -153,7 +151,6 @@ export function useDashboardState(): DashboardState {
       hasNoDebts,
       shouldShowInitializeMission,
       canShowShadowBudget,
-      canShowConsistencyXP,
       canShowBoss,
       canShowMoat,
       canShowMoatBuilder,

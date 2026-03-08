@@ -7,7 +7,7 @@
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart } from "lucide-react";
+import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HouseholdViewToggle } from "@/components/HouseholdViewToggle";
 import { FinancialCard } from "@/components/FinancialCard";
@@ -62,9 +62,11 @@ import { TrialCountdownBanner } from "@/components/dashboard/TrialCountdownBanne
 import { GettingStartedChecklist } from "@/components/dashboard/GettingStartedChecklist";
 import { EmergencyFundCard } from "@/components/dashboard/EmergencyFundCard";
 import { BehavioralHintCard } from "@/components/dashboard/BehavioralHintCard";
+import { DraftBudgetSheet } from "@/components/dashboard/DraftBudgetSheet";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";
 import { useBehavioralEngine } from "@/hooks/useBehavioralEngine";
+import { generateBudgetDraft, type BudgetDraft, type BudgetAllocation } from "@/lib/budgetDraftEngine";
 import { format, addMonths } from "date-fns";
 import { getSurvivalCategories } from "@/lib/debtInsights";
 import { simulatePayoff as simulatePayoffCalc } from "@/lib/debtCalculations";
@@ -79,10 +81,10 @@ export const Dashboard = () => {
   
   // Critical data loads first
   const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
-  const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
+  const { subscriptions, getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
   
   // For inline expense editing
-  const { updateExpense } = useLocalExpenses('critical');
+  const { expenses: localExpenses, updateExpense, addExpense } = useLocalExpenses('critical');
   
   // Accounts for checklist
   const { accounts } = useLocalAccounts();
@@ -93,6 +95,9 @@ export const Dashboard = () => {
   const [victoryModalOpen, setVictoryModalOpen] = useState(false);
   const [victoryDebtName, setVictoryDebtName] = useState('');
   const [quickAddDebtOpen, setQuickAddDebtOpen] = useState(false);
+  const [draftBudgetOpen, setDraftBudgetOpen] = useState(false);
+  const [draftResult, setDraftResult] = useState<BudgetDraft | null>(null);
+  const [isDrafting, setIsDrafting] = useState(false);
   const previousPaidOffRef = useRef<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -139,6 +144,41 @@ export const Dashboard = () => {
   const handleExpenseChange = useCallback((id: string, newAmount: number) => {
     updateExpense(id, { amount: newAmount });
   }, [updateExpense]);
+
+  // Draft Budget handler
+  const handleDraftBudget = useCallback(async () => {
+    setIsDrafting(true);
+    setDraftResult(null);
+    setDraftBudgetOpen(true);
+    try {
+      const result = await generateBudgetDraft({
+        income: income || 0,
+        expenses: localExpenses,
+        debts: debts.map(d => ({ name: d.name, balance: d.balance, interest_rate: d.interest_rate, minimum_payment: d.minimum_payment })),
+        transactions,
+        subscriptions,
+      });
+      setDraftResult(result);
+    } catch (e) {
+      toast({ title: "Budget draft failed", description: e instanceof Error ? e.message : "Please try again", variant: "destructive" });
+      setDraftBudgetOpen(false);
+    } finally {
+      setIsDrafting(false);
+    }
+  }, [income, localExpenses, debts, transactions, subscriptions, toast]);
+
+  // Apply draft allocations
+  const handleApplyDraft = useCallback((allocations: BudgetAllocation[]) => {
+    allocations.forEach((a) => {
+      if (a.expenseId && a.expenseId !== 'new') {
+        updateExpense(a.expenseId, { amount: a.suggestedAmount });
+      } else {
+        addExpense({ name: a.name, amount: a.suggestedAmount, category: a.category, is_income: false });
+      }
+    });
+    setDraftBudgetOpen(false);
+    toast({ title: "Budget applied!", description: "Your budget has been updated with the AI suggestions." });
+  }, [updateExpense, addExpense, toast]);
   
   const schedule = useMemo(() => 
     simulatePayoff(debts.map(d => ({
@@ -409,6 +449,16 @@ export const Dashboard = () => {
             </div>
             <HouseholdViewToggle />
             <Button 
+              variant="outline" 
+              size="lg" 
+              className="min-w-[140px] font-semibold rounded-xl"
+              onClick={handleDraftBudget}
+              disabled={isDrafting}
+            >
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+              <span className="text-sm sm:text-base">{isDrafting ? 'Drafting...' : 'Draft My Budget'}</span>
+            </Button>
+            <Button 
               variant="default" 
               size="lg" 
               className="min-w-[140px] font-semibold rounded-xl"
@@ -509,6 +559,16 @@ export const Dashboard = () => {
       <QuickAddDebtDialog
         open={quickAddDebtOpen}
         onOpenChange={setQuickAddDebtOpen}
+      />
+
+      {/* AI Budget Draft Sheet */}
+      <DraftBudgetSheet
+        open={draftBudgetOpen}
+        onOpenChange={setDraftBudgetOpen}
+        draft={draftResult}
+        isLoading={isDrafting}
+        currentExpenses={localExpenses.map(e => ({ id: e.id, name: e.name, amount: e.amount }))}
+        onApply={handleApplyDraft}
       />
 
       {/* Debt Victory Modal */}

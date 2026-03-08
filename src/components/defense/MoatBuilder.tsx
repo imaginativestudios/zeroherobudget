@@ -11,8 +11,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home, 
-  Building, 
-  Castle, 
+  Shield, 
+  TrendingUp, 
   Shield, 
   Plus, 
   Check, 

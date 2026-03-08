@@ -81,10 +81,10 @@ export const Dashboard = () => {
   
   // Critical data loads first
   const { debts, isLoading: isLoadingDebts } = useLocalDebts('critical');
-  const { getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
+  const { subscriptions, getTotalMonthlySpend, isLoading: isLoadingSubscriptions } = useLocalSubscriptions('critical');
   
   // For inline expense editing
-  const { updateExpense } = useLocalExpenses('critical');
+  const { expenses: localExpenses, updateExpense, addExpense } = useLocalExpenses('critical');
   
   // Accounts for checklist
   const { accounts } = useLocalAccounts();

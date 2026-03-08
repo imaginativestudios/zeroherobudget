@@ -36,7 +36,7 @@ export interface DashboardState {
   canShowAnalytics: boolean;           // Any analytics chart visible
   
   // Intel Feed unlocks (for staggered animations)
-  unlockedCards: Array<'surplus' | 'consistency' | 'shadow' | 'freedom'>;
+  unlockedCards: Array<'surplus' | 'shadow' | 'freedom'>;
   
   // Current target debt ("The Boss")
   currentBoss: Debt | null;

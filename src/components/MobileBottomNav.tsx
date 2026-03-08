@@ -29,6 +29,7 @@ export function MobileBottomNav() {
   const isMoreActive = [
     '/journey',
     '/accounts',
+    '/wealth',
     '/achievements',
     '/reports',
     '/data',

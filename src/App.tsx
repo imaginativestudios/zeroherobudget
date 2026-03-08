@@ -49,6 +49,7 @@ import ConnectorSetup from "./pages/ConnectorSetup";
 import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
+import Wealth from "./pages/Wealth";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +106,7 @@ const App = () => (
                 <Route path="/household" element={<Household />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/accounts" element={<Accounts />} />
+                <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
                 <Route path="/settings/release-kit" element={<ReleaseKit />} />

@@ -14,6 +14,7 @@ import {
   Settings,
   Shield,
   Plug,
+  TrendingUp,
 } from 'lucide-react';
 
 interface MobileMoreDrawerProps {
@@ -24,6 +25,7 @@ interface MobileMoreDrawerProps {
 const moreNavItems = [
   { name: 'Journey', href: '/journey', icon: Rocket },
   { name: 'Accounts', href: '/accounts', icon: Wallet },
+  { name: 'Wealth', href: '/wealth', icon: TrendingUp },
   { name: 'Achievements', href: '/achievements', icon: Trophy },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data Management', href: '/data', icon: Database },

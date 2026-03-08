@@ -1,46 +1,48 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+## Flatten Debt Crusher into a Single Scrollable Page
 
-## Issues Found
+### Problem
+Content hidden behind tabs (Schedule, Compare, Simulator) is unlikely to be discovered. Users see only the Overview tab and miss the most impactful features.
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+### Solution
+Remove the tab structure entirely. Present all modules as sequential sections on one scrollable page, ordered by user journey priority:
 
-| Test Expects | Actual UI |
+```text
+┌─────────────────────────────┐
+│ Header + Import/Export      │
+│ Coach Banner                │
+│ Overall Progress Bar        │
+├─────────────────────────────┤
+│ § Strategy Toggle + Cards   │
+│ § Your Debts (priority list)│
+│ § Freedom Slider            │
+│ § Debt Balance Timeline     │
+├─────────────────────────────┤
+│ § What-If Simulator         │  ← was "Simulator" tab
+│   (strategy + slider +      │
+│    results + chart)          │
+│ § Coach Tips                │
+├─────────────────────────────┤
+│ § Strategy Comparison       │  ← was "Compare" tab
+│ § Payment Schedule          │  ← was "Schedule" tab
+│   (collapsed by default)    │
+├─────────────────────────────┤
+│ § Commit to Plan CTA        │
+└─────────────────────────────┘
+```
+
+### Key decisions
+- **Payment Schedule** gets wrapped in a Collapsible (accordion) since it's a large data table most users won't need on every visit. Collapsed by default with a "View Full Schedule" trigger.
+- **Strategy Comparison** stays fully visible — it's a key decision-making module.
+- **Potential Savings card** remains conditionally shown between Strategy and Debts list.
+- All existing functionality preserved, just the `<Tabs>` wrapper removed.
+
+### File changes
+
+| File | Change |
 |---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+| `src/pages/DebtSnowball.tsx` | Remove `Tabs`/`TabsList`/`TabsTrigger`/`TabsContent` wrapper. Render all sections sequentially in a single `space-y-8` container. Wrap `PaymentScheduleTable` in a `Collapsible` with a toggle button. |
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
-
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
-
----
-
-## Plan
-
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+No new files or dependencies needed.
 

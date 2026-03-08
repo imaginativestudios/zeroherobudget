@@ -144,6 +144,41 @@ export const Dashboard = () => {
   const handleExpenseChange = useCallback((id: string, newAmount: number) => {
     updateExpense(id, { amount: newAmount });
   }, [updateExpense]);
+
+  // Draft Budget handler
+  const handleDraftBudget = useCallback(async () => {
+    setIsDrafting(true);
+    setDraftResult(null);
+    setDraftBudgetOpen(true);
+    try {
+      const result = await generateBudgetDraft({
+        income: income || 0,
+        expenses: localExpenses,
+        debts: debts.map(d => ({ name: d.name, balance: d.balance, interest_rate: d.interest_rate, minimum_payment: d.minimum_payment })),
+        transactions,
+        subscriptions,
+      });
+      setDraftResult(result);
+    } catch (e) {
+      toast({ title: "Budget draft failed", description: e instanceof Error ? e.message : "Please try again", variant: "destructive" });
+      setDraftBudgetOpen(false);
+    } finally {
+      setIsDrafting(false);
+    }
+  }, [income, localExpenses, debts, transactions, subscriptions, toast]);
+
+  // Apply draft allocations
+  const handleApplyDraft = useCallback((allocations: BudgetAllocation[]) => {
+    allocations.forEach((a) => {
+      if (a.expenseId && a.expenseId !== 'new') {
+        updateExpense(a.expenseId, { amount: a.suggestedAmount });
+      } else {
+        addExpense({ name: a.name, amount: a.suggestedAmount, category: a.category, is_income: false });
+      }
+    });
+    setDraftBudgetOpen(false);
+    toast({ title: "Budget applied!", description: "Your budget has been updated with the AI suggestions." });
+  }, [updateExpense, addExpense, toast]);
   
   const schedule = useMemo(() => 
     simulatePayoff(debts.map(d => ({

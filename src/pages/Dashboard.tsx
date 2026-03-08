@@ -491,6 +491,21 @@ export const Dashboard = () => {
         />
       </motion.div>
 
+      {/* Financial Insights - Surplus Power, Shadow Budget, Freedom Timeline */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <IntelFeed
+          canShowShadowBudget={dashboardState.canShowShadowBudget}
+          canShowFreedom={debtItems.length > 0}
+          debts={debtItems}
+          extraBudget={leftover}
+          strategy={dashboardState.strategy}
+        />
+      </motion.div>
+
       <QuickAddDebtDialog
         open={quickAddDebtOpen}
         onOpenChange={setQuickAddDebtOpen}

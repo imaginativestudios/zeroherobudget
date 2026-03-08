@@ -36,7 +36,7 @@ import {
 import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { calculateMoatHealth, MOAT_MILESTONES, type CastleLevel } from '@/lib/moatCalculations';
 import { cn } from '@/lib/utils';
-import { FortressLevelBadge } from './FortressLevelBadge';
+import { FundLevelBadge } from './FortressLevelBadge';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';

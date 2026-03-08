@@ -192,7 +192,7 @@ export function MoatBuilder({
             </span>
             <span className="text-xs font-normal text-muted-foreground">Build your $1,000 safety net</span>
           </div>
-          <FortressLevelBadge 
+          <FundLevelBadge 
             level={moatHealth.castleLevel}
             isSecure={moatHealth.status === 'secure'}
             size="sm"

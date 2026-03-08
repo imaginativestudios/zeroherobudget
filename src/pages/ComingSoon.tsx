@@ -218,9 +218,9 @@ const ComingSoon = () => {
                   <Button
                     type="submit"
                     size="lg"
-                    variant="inverse"
+                    variant="inverse-outline"
                     disabled={isLoading}
-                    className="h-12 font-semibold shadow-lg disabled:opacity-50"
+                    className="h-12 font-semibold disabled:opacity-50"
                   >
                     {isLoading ? "Subscribing..." : "Notify Me"}
                   </Button>

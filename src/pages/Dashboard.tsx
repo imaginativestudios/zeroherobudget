@@ -561,6 +561,16 @@ export const Dashboard = () => {
         onOpenChange={setQuickAddDebtOpen}
       />
 
+      {/* AI Budget Draft Sheet */}
+      <DraftBudgetSheet
+        open={draftBudgetOpen}
+        onOpenChange={setDraftBudgetOpen}
+        draft={draftResult}
+        isLoading={isDrafting}
+        currentExpenses={localExpenses.map(e => ({ id: e.id, name: e.name, amount: e.amount }))}
+        onApply={handleApplyDraft}
+      />
+
       {/* Debt Victory Modal */}
       <DebtVictoryModal
         open={victoryModalOpen}

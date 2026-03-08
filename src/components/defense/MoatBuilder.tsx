@@ -1,10 +1,10 @@
 /**
- * Moat Builder Component
+ * Emergency Fund Builder
  * 
- * Enhanced emergency fund visualization with:
+ * Emergency fund visualization with:
  * - Animated water reservoir using Framer Motion
- * - Evolving castle icons based on progress
- * - Primary Quest highlighting when moat < $1,000
+ * - Evolving icons based on progress
+ * - Current Focus highlighting when fund < $1,000
  */
 
 import { useState } from 'react';

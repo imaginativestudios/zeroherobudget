@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { Debt, useLocalDebts } from '@/hooks/useLocalDebts';
-import { calculateFreedomImpact, translateToHumanTime } from '@/lib/freedomEngine';
+import { calculateFreedomImpact, translateToHumanTime } from '@/lib/debtInsights';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
 import { useLocalTransactions } from '@/hooks/useLocalTransactions';
 import { cn } from '@/lib/utils';

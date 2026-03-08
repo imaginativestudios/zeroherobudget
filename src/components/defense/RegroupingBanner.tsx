@@ -19,7 +19,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useMoatStatus } from '@/hooks/useMoatStatus';
 import { useHeroProfile } from '@/hooks/useHeroProfile';
-import { formatRepairTimeline } from '@/lib/recoveryEngine';
+import { formatRepairTimeline } from '@/lib/debtInsights';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Calendar, Flag, Sparkles, ArrowRight, PartyPopper } from 'lucide-react';
-import { calculateFreedomImpact } from '@/lib/freedomEngine';
+import { calculateFreedomImpact } from '@/lib/debtInsights';
 import { DebtItem } from '@/lib/debtCalculations';
 import { format } from 'date-fns';
 

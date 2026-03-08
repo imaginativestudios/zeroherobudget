@@ -13,7 +13,6 @@ import {
   Home, 
   Shield, 
   TrendingUp, 
-  Shield, 
   Plus, 
   Check, 
   Droplets,

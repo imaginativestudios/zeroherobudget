@@ -65,7 +65,7 @@ export const TrialEndingReminderEmail = ({
             {/* Urgency Box */}
             <Section style={urgencyBox}>
               <Text style={urgencyText}>
-                Don't lose access to your financial fortress! Your budget tracking, debt strategies, and progress will remain safe when you continue.
+                Don't lose access to your financial tools! Your budget tracking, debt strategies, and progress will remain safe when you continue.
               </Text>
             </Section>
 

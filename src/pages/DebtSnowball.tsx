@@ -250,6 +250,7 @@ export const DebtSnowball = () => {
               { value: "overview", icon: Compass, label: "Overview" },
               { value: "schedule", icon: Calendar, label: "Schedule" },
               { value: "compare", icon: Scale, label: "Compare" },
+              { value: "simulator", icon: SlidersHorizontal, label: "Simulator" },
             ].map(tab => (
               <TabsTrigger
                 key={tab.value}

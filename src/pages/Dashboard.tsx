@@ -449,6 +449,16 @@ export const Dashboard = () => {
             </div>
             <HouseholdViewToggle />
             <Button 
+              variant="outline" 
+              size="lg" 
+              className="min-w-[140px] font-semibold rounded-xl"
+              onClick={handleDraftBudget}
+              disabled={isDrafting}
+            >
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+              <span className="text-sm sm:text-base">{isDrafting ? 'Drafting...' : 'Draft My Budget'}</span>
+            </Button>
+            <Button 
               variant="default" 
               size="lg" 
               className="min-w-[140px] font-semibold rounded-xl"

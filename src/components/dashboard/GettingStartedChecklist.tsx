@@ -14,7 +14,8 @@ import {
   Sparkles,
   Rocket,
   Sprout,
-  Building2
+  Building2,
+  Landmark
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

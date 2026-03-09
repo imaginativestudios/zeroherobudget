@@ -17,7 +17,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { DEFAULT_BUDGET_CATEGORIES, type DefaultCategoryGroup } from "@/lib/defaultBudgetCategories";
+import { DEFAULT_BUDGET_CATEGORIES, INCOME_GROUP_NAME, type DefaultCategoryGroup } from "@/lib/defaultBudgetCategories";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/constants";
 

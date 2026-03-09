@@ -71,6 +71,7 @@ export function LinkedAccountsList() {
         <BankLinkingFlow
           onComplete={() => setIsLinking(false)}
           onCancel={() => setIsLinking(false)}
+          addAccounts={addAccounts}
         />
       </div>
     );

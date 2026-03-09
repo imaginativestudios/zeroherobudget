@@ -59,8 +59,7 @@ interface BankLinkingFlowProps {
   addAccounts: (accounts: LinkedAccountMeta[]) => Promise<{ added: number; skipped: number }>;
 }
 
-export function BankLinkingFlow({ onComplete, onCancel }: BankLinkingFlowProps) {
-  const { addAccounts } = useLinkedAccounts();
+export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinkingFlowProps) {
   const [step, setStep] = useState<Step>('consent');
   const [query, setQuery] = useState('');
   const [selectedInstitution, setSelectedInstitution] = useState<MockInstitution | null>(null);

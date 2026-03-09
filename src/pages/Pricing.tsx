@@ -173,31 +173,27 @@ const Pricing = () => {
 
           {/* ROI Pro Tip Card */}
           <motion.div
-            className="mt-6 max-w-3xl mx-auto"
+            className="mt-4 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
           >
-            <div className="relative rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 overflow-hidden">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
-              
-              <div className="flex items-center gap-2 mb-1.5">
+            <div className="relative rounded-lg ring-1 ring-accent/20 bg-gradient-to-r from-accent/8 to-transparent backdrop-blur-sm px-4 py-2.5 overflow-hidden">
+              <div className="flex items-center gap-2 mb-1">
                 <Lightbulb className="h-3.5 w-3.5 text-accent-foreground shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wider text-accent-foreground/80">Pro Tip</span>
                 <span className="text-sm font-semibold text-foreground">"Is this app a bill or an investment?"</span>
               </div>
 
-              <div className="flex items-center justify-center gap-2 flex-wrap mb-1.5">
-                <span className="text-sm font-bold text-foreground">$47 <span className="font-normal text-muted-foreground">lazy cash found</span></span>
+              <div className="flex items-center justify-center gap-2 flex-wrap text-sm">
+                <span className="font-bold text-foreground">$47 <span className="font-normal text-muted-foreground">lazy cash</span></span>
                 <span className="text-muted-foreground/40">·</span>
-                <span className="text-sm font-bold text-foreground">4 mo <span className="font-normal text-muted-foreground">debt payoff cut</span></span>
+                <span className="font-bold text-foreground">4 mo <span className="font-normal text-muted-foreground">faster</span></span>
                 <span className="text-muted-foreground/40">·</span>
-                <span className="text-sm font-bold text-foreground">$1,200+ <span className="font-normal text-muted-foreground">interest saved</span></span>
+                <span className="font-bold text-foreground">$1,200+ <span className="font-normal text-muted-foreground">saved</span></span>
+                <span className="text-muted-foreground/40">·</span>
+                <span className="font-semibold text-foreground">pays for itself 10×</span>
               </div>
-
-              <p className="text-xs text-muted-foreground text-center">
-                Zero Hero is designed to <span className="text-foreground font-semibold">pay for itself 10× over</span>.
-              </p>
             </div>
           </motion.div>
         </motion.div>

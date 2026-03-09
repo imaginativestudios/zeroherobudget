@@ -72,7 +72,7 @@ export function Household() {
   };
 
   return (
-    <div className="pt-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Household Management</h1>

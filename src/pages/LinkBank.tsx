@@ -211,8 +211,8 @@ export default function LinkBank() {
       {step === 'success' && (
         <Card className="py-12">
           <CardContent className="flex flex-col items-center text-center space-y-4">
-            <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/30">
-              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+            <div className="p-3 rounded-full bg-green-100 dark:bg-green-950/30">
+              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-500" />
             </div>
             <div>
               <p className="text-lg font-semibold text-foreground">Account Linked!</p>

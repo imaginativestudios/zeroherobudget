@@ -68,33 +68,41 @@ export function useLinkedAccounts() {
 
   const removeAccount = useCallback(
     async (accountId: string) => {
-      await persist(accounts.filter((a) => a.id !== accountId));
+      setAccounts((prev) => {
+        const next = prev.filter((a) => a.id !== accountId);
+        encryptAndStore(userId, STORAGE_KEY, next);
+        return next;
+      });
     },
-    [accounts, persist]
+    [userId]
   );
 
   const updateAccountToken = useCallback(
     async (accountId: string, newToken: string) => {
-      await persist(
-        accounts.map((a) =>
+      setAccounts((prev) => {
+        const next = prev.map((a) =>
           a.id === accountId
             ? { ...a, accessToken: newToken, status: 'active' as const, linkedAt: new Date().toISOString() }
             : a
-        )
-      );
+        );
+        encryptAndStore(userId, STORAGE_KEY, next);
+        return next;
+      });
     },
-    [accounts, persist]
+    [userId]
   );
 
   const markExpired = useCallback(
     async (accountId: string) => {
-      await persist(
-        accounts.map((a) =>
+      setAccounts((prev) => {
+        const next = prev.map((a) =>
           a.id === accountId ? { ...a, status: 'expired' as const } : a
-        )
-      );
+        );
+        encryptAndStore(userId, STORAGE_KEY, next);
+        return next;
+      });
     },
-    [accounts, persist]
+    [userId]
   );
 
   return {

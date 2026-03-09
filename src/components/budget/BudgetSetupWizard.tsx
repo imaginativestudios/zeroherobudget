@@ -41,7 +41,7 @@ interface SetupGroup {
 }
 
 interface BudgetSetupWizardProps {
-  onComplete: (items: { name: string; amount: number; category: string }[]) => void;
+  onComplete: (items: { name: string; amount: number; category: string; isIncome: boolean }[]) => void;
   onSkip: () => void;
 }
 

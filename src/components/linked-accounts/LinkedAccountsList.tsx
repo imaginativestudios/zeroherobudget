@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { Building2, Plus, Loader2 } from 'lucide-react';
+import { Building2, Plus, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
@@ -18,6 +18,26 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable } = useLinkedAccounts();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
   const [reconnecting, setReconnecting] = useState<LinkedAccountMeta | null>(null);
+  const [isIncognito, setIsIncognito] = useState(false);
+
+  useEffect(() => {
+    // Detect private/incognito mode by testing storage persistence
+    try {
+      const testKey = '__zh_incognito_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+      // Estimate storage quota — very low quota suggests incognito
+      if (navigator.storage?.estimate) {
+        navigator.storage.estimate().then((est) => {
+          if (est.quota && est.quota < 120_000_000) {
+            setIsIncognito(true);
+          }
+        });
+      }
+    } catch {
+      setIsIncognito(true);
+    }
+  }, []);
 
   if (isLoading) {
     return (
@@ -41,6 +61,16 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
 
   return (
     <div className="space-y-4">
+      {isIncognito && (
+        <Card className="border-warning/40 bg-warning/5">
+          <CardContent className="py-3 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              You appear to be in a private/incognito window. Linked account data may not persist after you close this session.
+            </p>
+          </CardContent>
+        </Card>
+      )}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Linked Bank Accounts</h3>
         <Button size="sm" onClick={onLinkNew} className="min-h-[36px]">

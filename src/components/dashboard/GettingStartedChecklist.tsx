@@ -59,7 +59,24 @@ export function GettingStartedChecklist({
   const [isHidden, setIsHidden] = useState(false);
   const { linkedAccounts } = useLinkedAccounts();
 
-  // Check for investment tracking (matches Journey step 5 logic)
+  // Check for savings / HYSA accounts
+  const hasSavingsAccount = accounts.some(a =>
+    a.type.toLowerCase().includes('savings') ||
+    a.type.toLowerCase().includes('high-yield') ||
+    a.type.toLowerCase().includes('hysa') ||
+    a.type.toLowerCase().includes('money market')
+  );
+  const savingsBalance = accounts
+    .filter(a =>
+      a.type.toLowerCase().includes('savings') ||
+      a.type.toLowerCase().includes('high-yield') ||
+      a.type.toLowerCase().includes('hysa') ||
+      a.type.toLowerCase().includes('money market')
+    )
+    .reduce((sum, a) => sum + a.balance, 0);
+  const isWealthStarted = hasSavingsAccount && savingsBalance > 0;
+
+  // Check for investment tracking (matches Journey step 6 logic)
   const hasInvestmentAccount = accounts.some(a => 
     a.type.toLowerCase().includes('investment') || 
     a.type.toLowerCase().includes('retirement') ||

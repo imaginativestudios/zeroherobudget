@@ -112,6 +112,14 @@ export function GettingStartedChecklist({
       href: '/transactions'
     },
     { 
+      id: 'bank', 
+      title: 'Link a bank account', 
+      description: 'Auto-import account names securely',
+      icon: Building2,
+      isComplete: linkedAccounts.length > 0, 
+      href: '/accounts'
+    },
+    { 
       id: 'investing', 
       title: 'Start investing', 
       description: 'Plant seeds for your future wealth',

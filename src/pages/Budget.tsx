@@ -21,6 +21,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
+import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);

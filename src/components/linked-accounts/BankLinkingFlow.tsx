@@ -56,6 +56,7 @@ function StepIndicator({ currentStep }: { currentStep: Step }) {
 interface BankLinkingFlowProps {
   onComplete: () => void;
   onCancel: () => void;
+  addAccounts: (accounts: LinkedAccountMeta[]) => Promise<{ added: number; skipped: number }>;
 }
 
 export function BankLinkingFlow({ onComplete, onCancel }: BankLinkingFlowProps) {

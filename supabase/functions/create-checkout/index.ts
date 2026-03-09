@@ -9,8 +9,8 @@ const corsHeaders = {
 
 // Fixed price IDs for monthly and annual plans
 const PRICE_IDS = {
-  monthly: 'price_1SsW56LOOLpslU1kncgwtvl1',
-  annual: 'price_1SsW5ULOOLpslU1kdyaY3yy1',
+  monthly: 'price_1T8uXbLOOLpslU1kYziRovGh',
+  annual: 'price_1T8uY7LOOLpslU1kOaOq6kVT',
 } as const;
 
 type PricingInterval = keyof typeof PRICE_IDS;

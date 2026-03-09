@@ -61,6 +61,16 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
 
   return (
     <div className="space-y-4">
+      {isIncognito && (
+        <Card className="border-warning/40 bg-warning/5">
+          <CardContent className="py-3 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              You appear to be in a private/incognito window. Linked account data may not persist after you close this session.
+            </p>
+          </CardContent>
+        </Card>
+      )}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Linked Bank Accounts</h3>
         <Button size="sm" onClick={onLinkNew} className="min-h-[36px]">

@@ -1,46 +1,64 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Auto-Generate Default Budget Categories
 
-## Issues Found
+## Problem
+New users land on the Budget page with zero categories and zero expenses. They must manually create every group and item from scratch, which is friction-heavy and discouraging.
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+## Solution
+Add a **Budget Setup** flow that appears when a user has no expenses. It presents the default categories grouped by type, lets users toggle/edit/reorder them, then seeds their budget with the selected items.
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+## Architecture
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### 1. Default category data — `src/lib/defaultBudgetCategories.ts`
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+A structured array of category groups, each with a Lucide icon name and child items with suggested amounts:
 
----
+```text
+Housing        → Rent/Mortgage ($1,500), Property Taxes ($200), Home Insurance ($125)
+Utilities      → Internet ($75)
+Transportation → Car Payment ($400), Gas/Fuel ($150), Car Insurance ($130), Maintenance ($75), Public Transit ($0)
+Food           → Groceries ($600), Restaurants/Takeout ($200), Coffee/Snacks ($50)
+Health         → Health Insurance ($350), Medical/Doctor ($50), Pharmacy ($25)
+Lifestyle      → Shopping ($100), Entertainment ($75), Hobbies ($50), Subscriptions ($50)
+Financial      → Savings ($200), Investments ($100), Debt Payments ($0), Emergency Fund ($200)
+Family/Personal→ Childcare ($0), Education ($0), Pets ($50), Personal Care ($40)
+Other          → Gifts/Donations ($50), Travel ($75), Miscellaneous ($50)
+```
 
-## Plan
+Each group has an icon key (e.g. `Home`, `Zap`, `Car`, `UtensilsCrossed`, `Heart`, `Sparkles`, `PiggyBank`, `Users`, `MoreHorizontal`).
 
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
+### 2. Budget Setup component — `src/components/budget/BudgetSetupWizard.tsx`
 
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
+Single-screen card (not a multi-step wizard) shown when `expenses.length === 0`:
 
----
+- **Header**: "Set Up Your Budget" with subtitle
+- **Category groups**: Accordion-style, each group header shows icon + name + toggle-all checkbox
+- **Category items**: Each row has a checkbox (on/off), name (editable inline), and suggested amount (editable)
+- **Actions**: "Start with Selected" primary button, "Start from Scratch" ghost link
+- Clicking "Start with Selected" calls `addExpense()` for each enabled item with its category and amount
 
-## Files to Modify
+### 3. Integration into Budget page — `src/pages/Budget.tsx`
 
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+Conditional render: if `expenses.length === 0 && !isLoadingExpenses`, show `<BudgetSetupWizard>` instead of the normal budget content. Once the user seeds categories, the normal GroupableExpenses UI takes over. All existing editing, reordering, renaming, and deletion features already work.
+
+### 4. Icon mapping utility
+
+A small map from group name → Lucide icon component for use in the setup wizard and optionally in GroupCard headers later.
+
+## Edge cases handled
+- **User deletes all categories**: Setup wizard reappears (expenses.length === 0 check)
+- **Duplicate names**: Validate before seeding; skip duplicates
+- **Category reordering**: Handled by existing `useExpenseGroups` drag-and-drop
+- **Zero-amount items**: Allowed — user can fill in amounts later
+
+## Files to create/modify
+1. **Create** `src/lib/defaultBudgetCategories.ts` — data + icon map
+2. **Create** `src/components/budget/BudgetSetupWizard.tsx` — setup UI
+3. **Modify** `src/pages/Budget.tsx` — conditional render of setup vs normal budget
+
+## What stays the same
+- `useLocalExpenses`, `useExpenseGroups`, `GroupCard`, `ExpenseItemRow` — no changes needed
+- Onboarding flow — unchanged; budget setup is a separate concern
+- Demo mode — demo users already get `DEMO_EXPENSES` seeded
 

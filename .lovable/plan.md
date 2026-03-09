@@ -1,22 +1,46 @@
 
 
-# Tighten & Polish the Pro Tip Card
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-Condense the card into a single-line feel and add subtle visual refinement.
+## Issues Found
 
-## Changes — `src/pages/Pricing.tsx` (lines 174–202)
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-1. **Reduce vertical margin**: `mt-6` → `mt-4`, reduce `max-w-3xl` → `max-w-2xl`
-2. **Tighten padding**: `px-4 py-3` → `px-4 py-2.5`
-3. **Merge header + stats into fewer rows**:
-   - Row 1: Lightbulb icon + "Pro Tip" badge + headline — all on one line (keep)
-   - Row 2: Merge the stat chips AND the closing "10× over" line into a single row, removing the separate closing `<p>`. Format: `$47 lazy cash · 4 mo faster · $1,200+ saved · pays for itself 10×`
-4. **Remove `mb-1.5`** between sections → `mb-1`
-5. **Polish touches**:
-   - Swap the flat left-border for a subtle `bg-gradient-to-r from-accent/8 to-transparent` background
-   - Add `backdrop-blur-sm` for depth
-   - Use `ring-1 ring-accent/20` instead of `border border-accent/30` for a thinner, more refined border
-   - Slightly reduce border radius: `rounded-xl` → `rounded-lg`
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-Net result: ~2 lines of text total, tighter spacing, more polished appearance.
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
+
+## Plan
+
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
+
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
+
+---
+
+## Files to Modify
+
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

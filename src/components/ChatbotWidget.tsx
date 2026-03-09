@@ -337,9 +337,21 @@ export const ChatbotWidget = () => {
         </div>
       </div>
 
+      {/* Helper tooltip */}
+      {!isOpen && !hasOpened && (
+        <div className="absolute bottom-4 right-[4.5rem] animate-fade-in">
+          <div className="bg-card border border-border shadow-lg rounded-full px-3 py-1.5 text-sm font-medium text-foreground whitespace-nowrap">
+            Ask me anything ✨
+          </div>
+        </div>
+      )}
+
       {/* Floating Bubble */}
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!hasOpened) setHasOpened(true);
+        }}
         size="icon"
         className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
@@ -347,9 +359,9 @@ export const ChatbotWidget = () => {
         aria-controls="chat-panel"
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-white" aria-hidden="true" />
+          <X className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <MessageCircle className="h-7 w-7 text-white" aria-hidden="true" />
+          <Bot className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         )}
       </Button>
     </div>

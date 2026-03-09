@@ -37,31 +37,33 @@ export function useLinkedAccounts() {
     return () => { cancelled = true; };
   }, [userId, encryptionAvailable]);
 
-  const persist = useCallback(
-    async (next: LinkedAccountMeta[]) => {
-      setAccounts(next);
-      await encryptAndStore(userId, STORAGE_KEY, next);
-    },
-    [userId]
-  );
+  const persistRef = useRef<(next: LinkedAccountMeta[]) => Promise<void>>();
+  persistRef.current = async (next: LinkedAccountMeta[]) => {
+    setAccounts(next);
+    await encryptAndStore(userId, STORAGE_KEY, next);
+  };
 
   const addAccounts = useCallback(
     async (newAccounts: LinkedAccountMeta[]) => {
-      // Deduplicate by institutionId + maskedAccountName
-      const deduped = newAccounts.filter(
-        (newAcc) =>
-          !accounts.some(
-            (existing) =>
-              existing.institutionId === newAcc.institutionId &&
-              existing.maskedAccountName === newAcc.maskedAccountName
-          )
-      );
-      const skipped = newAccounts.length - deduped.length;
-      const merged = [...accounts, ...deduped];
-      await persist(merged);
-      return { added: deduped.length, skipped };
+      return new Promise<{ added: number; skipped: number }>((resolve) => {
+        setAccounts((prev) => {
+          const deduped = newAccounts.filter(
+            (newAcc) =>
+              !prev.some(
+                (existing) =>
+                  existing.institutionId === newAcc.institutionId &&
+                  existing.maskedAccountName === newAcc.maskedAccountName
+              )
+          );
+          const merged = [...prev, ...deduped];
+          // Persist outside state updater
+          encryptAndStore(userId, STORAGE_KEY, merged);
+          resolve({ added: deduped.length, skipped: newAccounts.length - deduped.length });
+          return merged;
+        });
+      });
     },
-    [accounts, persist]
+    [userId]
   );
 
   const removeAccount = useCallback(

@@ -7,8 +7,8 @@ import {
   isEncryptedStorageAvailable,
 } from '@/lib/encryptedStorage';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
-
 const STORAGE_KEY = 'linked_bank_accounts';
+const SIMULATED_EXPIRY_DAYS = 7; // Simulate token expiry after 7 days
 
 export function useLinkedAccounts() {
   const { user } = useAuth();

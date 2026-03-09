@@ -18,6 +18,26 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable } = useLinkedAccounts();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
   const [reconnecting, setReconnecting] = useState<LinkedAccountMeta | null>(null);
+  const [isIncognito, setIsIncognito] = useState(false);
+
+  useEffect(() => {
+    // Detect private/incognito mode by testing storage persistence
+    try {
+      const testKey = '__zh_incognito_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+      // Estimate storage quota — very low quota suggests incognito
+      if (navigator.storage?.estimate) {
+        navigator.storage.estimate().then((est) => {
+          if (est.quota && est.quota < 120_000_000) {
+            setIsIncognito(true);
+          }
+        });
+      }
+    } catch {
+      setIsIncognito(true);
+    }
+  }, []);
 
   if (isLoading) {
     return (

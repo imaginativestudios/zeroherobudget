@@ -26,12 +26,12 @@ export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical'
   const sortedExpenses = [...expenses].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
   const addExpense = (expense: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'sort_order'>) => {
-    if (!user) return;
+    const userId = user?.id ?? DEMO_USER_ID;
     const maxSortOrder = expenses.reduce((max, e) => Math.max(max, e.sort_order ?? 0), -1);
     const newExpense: Expense = {
       ...expense,
       id: uuidv4(),
-      user_id: user.id,
+      user_id: userId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       sort_order: maxSortOrder + 1,

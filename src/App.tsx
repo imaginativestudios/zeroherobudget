@@ -50,7 +50,7 @@ import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
-import LinkBank from "./pages/LinkBank";
+
 
 const queryClient = new QueryClient();
 

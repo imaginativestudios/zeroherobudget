@@ -21,6 +21,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
+import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);
@@ -183,6 +184,41 @@ export const Budget = () => {
   const scrollToBudget = () => {
     budgetSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const handleSetupComplete = (items: { name: string; amount: number; category: string }[]) => {
+    items.forEach((item) => {
+      addSupabaseExpense({
+        name: item.name,
+        amount: item.amount,
+        category: item.category,
+        is_income: false,
+      });
+    });
+  };
+
+  const showSetupWizard = expenses.length === 0 && !isLoadingExpenses;
+
+  if (showSetupWizard) {
+    return (
+      <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
+        <div className="space-y-4 sm:space-y-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Budget</h1>
+          <BudgetSetupWizard
+            onComplete={handleSetupComplete}
+            onSkip={() => {
+              // Add a single empty expense so the wizard dismisses
+              addSupabaseExpense({
+                name: "New Expense",
+                amount: 0,
+                category: "Uncategorized",
+                is_income: false,
+              });
+            }}
+          />
+        </div>
+      </SwipeablePageWrapper>
+    );
+  }
 
   return <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
     <div className="space-y-4 sm:space-y-8">

@@ -84,8 +84,13 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
         onClose={() => setDisconnecting(null)}
         onConfirm={async () => {
           if (disconnecting) {
+            const name = disconnecting.institutionName;
             await removeAccount(disconnecting.id);
             setDisconnecting(null);
+            toast({
+              title: 'Account disconnected',
+              description: `${name} has been removed from this device.`,
+            });
           }
         }}
       />

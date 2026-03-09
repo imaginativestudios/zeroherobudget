@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Building2, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,43 @@ import { cn } from '@/lib/utils';
 
 type Step = 'list' | 'consent' | 'search' | 'connecting' | 'success' | 'error';
 
+const STEPS: { key: Step; label: string }[] = [
+  { key: 'consent', label: 'Privacy' },
+  { key: 'search', label: 'Select Bank' },
+  { key: 'connecting', label: 'Connecting' },
+  { key: 'success', label: 'Done' },
+];
+
+const CONNECTION_TIMEOUT_MS = 15_000;
+
+function StepIndicator({ currentStep }: { currentStep: Step }) {
+  const activeIndex = STEPS.findIndex((s) => s.key === currentStep);
+  if (activeIndex === -1) return null;
+
+  return (
+    <div className="flex items-center justify-center gap-1.5 mb-2" role="navigation" aria-label="Linking progress">
+      {STEPS.map((s, i) => (
+        <div key={s.key} className="flex items-center gap-1.5">
+          <div
+            className={cn(
+              'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors',
+              i < activeIndex && 'bg-primary/15 text-primary',
+              i === activeIndex && 'bg-primary text-primary-foreground',
+              i > activeIndex && 'bg-muted text-muted-foreground'
+            )}
+          >
+            <span className="tabular-nums">{i + 1}</span>
+            <span className="hidden sm:inline">{s.label}</span>
+          </div>
+          {i < STEPS.length - 1 && (
+            <div className={cn('w-4 h-px', i < activeIndex ? 'bg-primary/40' : 'bg-border')} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function LinkBank() {
   const navigate = useNavigate();
   const { addAccounts } = useLinkedAccounts();
@@ -26,20 +63,48 @@ export default function LinkBank() {
   const [selectedInstitution, setSelectedInstitution] = useState<MockInstitution | null>(null);
   const [newlyLinked, setNewlyLinked] = useState<LinkedAccountMeta[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const filteredInstitutions = searchInstitutions(query);
+
+  const clearConnectionTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
 
   const handleSelectInstitution = async (institution: MockInstitution) => {
     setSelectedInstitution(institution);
     setStep('connecting');
+
+    // Start a 15s timeout
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutRef.current = setTimeout(() => {
+        reject(new Error('CONNECTION_TIMEOUT'));
+      }, CONNECTION_TIMEOUT_MS);
+    });
+
     try {
-      const accounts = await exchangeToken(institution.id);
-      await addAccounts(accounts);
+      const accounts = await Promise.race([exchangeToken(institution.id), timeoutPromise]);
+      clearConnectionTimeout();
+      const result = await addAccounts(accounts);
       setNewlyLinked(accounts);
       setStep('success');
-    } catch {
+
+      if (result.skipped > 0) {
+        toast({
+          title: 'Some accounts already linked',
+          description: `${result.skipped} account${result.skipped > 1 ? 's were' : ' was'} already connected and skipped.`,
+        });
+      }
+    } catch (err) {
+      clearConnectionTimeout();
+      const isTimeout = err instanceof Error && err.message === 'CONNECTION_TIMEOUT';
       setErrorMessage(
-        `We couldn't connect to ${institution.name}. This can happen if the bank's systems are temporarily unavailable. Please try again.`
+        isTimeout
+          ? `The connection to ${institution.name} is taking too long. Please check your internet connection and try again.`
+          : `We couldn't connect to ${institution.name}. This can happen if the bank's systems are temporarily unavailable. Please try again.`
       );
       setStep('error');
     }
@@ -48,12 +113,15 @@ export default function LinkBank() {
   const handleStartLinking = () => setStep('consent');
 
   const reset = () => {
+    clearConnectionTimeout();
     setStep('list');
     setQuery('');
     setSelectedInstitution(null);
     setNewlyLinked([]);
     setErrorMessage('');
   };
+
+  const showStepIndicator = step !== 'list' && step !== 'error';
 
   return (
     <div className="pt-8 space-y-6 max-w-2xl mx-auto">
@@ -67,6 +135,9 @@ export default function LinkBank() {
           <p className="text-sm text-muted-foreground">Securely connect your checking or savings account</p>
         </div>
       </div>
+
+      {/* Step Indicator */}
+      {showStepIndicator && <StepIndicator currentStep={step} />}
 
       {/* Step: List existing linked accounts */}
       {step === 'list' && (
@@ -100,6 +171,7 @@ export default function LinkBank() {
               <button
                 key={inst.id}
                 onClick={() => handleSelectInstitution(inst)}
+                aria-label={`Link ${inst.name} bank account`}
                 className={cn(
                   'w-full flex items-center gap-3 p-3 rounded-lg border border-border/50',
                   'hover:bg-accent/50 transition-colors text-left cursor-pointer'

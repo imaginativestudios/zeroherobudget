@@ -345,7 +345,7 @@ export const ChatbotWidget = () => {
           if (!hasOpened) setHasOpened(true);
         }}
         size="icon"
-        className="h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
+        className="h-16 w-16 rounded-full shadow-[0_0_20px_hsl(var(--primary)/0.4)] bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
         aria-expanded={isOpen}
         aria-controls="chat-panel"

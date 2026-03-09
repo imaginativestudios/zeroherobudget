@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { Building2, Plus, Loader2 } from 'lucide-react';
+import { Building2, Plus, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';

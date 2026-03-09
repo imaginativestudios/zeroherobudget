@@ -1,46 +1,45 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Redesign Pricing Page — Visual Polish
 
-## Issues Found
+The current page is functional but flat. The goal is to elevate it to match the Landing page's quality (framer-motion, gradients, visual depth) while keeping the same structure and logic.
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+## Changes to `src/pages/Pricing.tsx`
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+### 1. Hero section with gradient background and motion
+- Add a full-width gradient hero area using the project's teal/accent tokens (`from-primary/5 via-background to-accent/5`)
+- Animate heading and subtitle in with `framer-motion` fade-up (matching Landing page patterns)
+- Add a subtle decorative glow/blur circle behind the hero text for depth
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### 2. Interval toggle — pill refinement
+- Add a subtle border and shadow to the toggle container
+- Animate the active indicator sliding between options (transform transition)
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+### 3. Pricing cards — elevated design
+- Make the selected card scale slightly (`scale-[1.02]`) with a shadow lift
+- Add a subtle radial gradient overlay on the selected card
+- Annual card: make the "BEST VALUE" badge more prominent with a shimmer/pulse animation
+- Add a crossed-out "was $144" comparison price on the annual card
+- Add framer-motion `layoutId` transitions when switching between cards
 
----
+### 4. Features grid — icon polish
+- Increase icon container size slightly, add subtle shadow
+- Stagger animate features in on mount using framer-motion
 
-## Plan
+### 5. CTA button area
+- Add a subtle glow/shadow behind the primary CTA button
+- Add animated sparkle effect or gentle pulse to draw attention
 
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
+### 6. Transparency / social proof section
+- Add subtle card-like containers or a light background section break
+- Add trust badges row (e.g., Shield icon + "256-bit encryption", Lock + "Stripe secured", etc.)
 
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
+### 7. Overall page
+- Add subtle decorative background elements (blurred circles/orbs) for depth, similar to modern SaaS pricing pages
+- Ensure smooth scroll behavior and spacing rhythm on the 8pt grid
 
----
+## Files modified
+- `src/pages/Pricing.tsx` — all visual changes, add framer-motion imports
 
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+No logic, routing, or Stripe integration changes. Pure visual polish.
 

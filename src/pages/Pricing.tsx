@@ -159,7 +159,7 @@ const Pricing = () => {
           <div className="relative inline-block mb-6">
             <div className="absolute inset-0 -m-8 rounded-full bg-primary/8 blur-2xl" />
             <h1 className="relative text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
-              Choose Your Plan
+              Invest in the version of you that's debt-free.
             </h1>
           </div>
           <motion.div

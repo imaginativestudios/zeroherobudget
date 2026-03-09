@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { STRIPE_PRICES } from '@/lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -203,7 +204,7 @@ export function AuthModal({
                   {contextTitle || 'Create Your Account'}
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm sm:text-base">
-                  7 days free, then just $5/month
+                  7 days free, then just ${STRIPE_PRICES.monthly.amount}/month
                 </DialogDescription>
               </DialogHeader>
 

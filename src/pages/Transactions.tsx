@@ -367,7 +367,7 @@ const [expenses] = useExpenses();
     event.target.value = "";
   };
   return <SwipeablePageWrapper rightRoute="/debts">
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-foreground">Transactions</h1>

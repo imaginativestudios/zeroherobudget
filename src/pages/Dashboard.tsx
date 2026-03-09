@@ -416,7 +416,7 @@ export const Dashboard = () => {
 
   return (
     <SwipeablePageWrapper leftRoute="/budgets">
-      <div className={cn("space-y-12 lg:space-y-16", showRegroupingTheme && "regrouping-theme")}>
+      <div className={cn("space-y-6 lg:space-y-8", showRegroupingTheme && "regrouping-theme")}>
       {/* ========================================= */}
       {/* HERO WELCOME SECTION - Command Center    */}
       {/* ========================================= */}
@@ -586,7 +586,7 @@ export const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="space-y-8"
+          className="space-y-6"
         >
           <div className="flex items-center gap-4">
             <div className="h-px bg-border flex-1"></div>
@@ -668,7 +668,7 @@ export const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="space-y-8"
+          className="space-y-6"
         >
           <div className="flex items-center gap-4">
             <div className="h-px bg-border flex-1"></div>

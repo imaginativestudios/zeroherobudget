@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { STRIPE_PRICES } from '@/lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {

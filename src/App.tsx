@@ -45,7 +45,7 @@ import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import { OfflineBanner } from "./components/OfflineBanner";
 import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
- import Journey from "./pages/Journey";
+ import import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
 
@@ -106,7 +106,7 @@ const App = () => (
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
-                <Route path="/settings/connector" element={<Connecto element={<ReleaseKit />} />
+                <Route path="/serelease-kit"onnecto element={<ReleaseKit />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

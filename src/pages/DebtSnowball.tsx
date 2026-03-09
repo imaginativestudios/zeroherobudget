@@ -157,7 +157,7 @@ export const DebtSnowball = () => {
 
   return (
     <SwipeablePageWrapper leftRoute="/transactions" rightRoute="/budgets">
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Header */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

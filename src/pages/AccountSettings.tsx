@@ -186,7 +186,7 @@ const AccountSettings = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 pt-8 pb-16 space-y-8">
+    <div className="container mx-auto px-4 pb-16 space-y-6">
       {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>

@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/lib/constants";
+import { buildCategoryColorMap, DEFAULT_GROUPS } from "@/lib/categoryRegistry";
 
 // Standard tooltip styling for all charts
 export const STANDARD_TOOLTIP_STYLE = {
@@ -9,33 +10,13 @@ export const STANDARD_TOOLTIP_STYLE = {
   fontSize: '14px'
 };
 
-// Consistent category colors for budget categories
-export const CATEGORY_COLORS: Record<string, string> = {
-  "Housing": "hsl(var(--chart-1))",
-  "Utilities": "hsl(var(--chart-2))",
-  "Transportation": "hsl(var(--chart-3))",
-  "Food": "hsl(var(--chart-4))",
-  "Insurance & Healthcare": "hsl(var(--chart-5))",
-  "Personal Care": "hsl(var(--chart-6))",
-  "Entertainment": "hsl(var(--chart-7))",
-  "Savings & Investments": "hsl(var(--chart-8))",
-  "Debt Payments": "hsl(var(--chart-9))",
-  "Miscellaneous": "hsl(var(--chart-10))"
-};
+// Consistent category colors derived from registry groups
+export const CATEGORY_COLORS: Record<string, string> = buildCategoryColorMap();
 
 // Fallback color palette for non-category charts
-export const CHART_COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "hsl(var(--chart-6))",
-  "hsl(var(--chart-7))",
-  "hsl(var(--chart-8))",
-  "hsl(var(--chart-9))",
-  "hsl(var(--chart-10))"
-];
+export const CHART_COLORS = DEFAULT_GROUPS
+  .filter((g) => !g.isIncome)
+  .map((g) => g.color);
 
 // Helper function to get consistent category color
 export const getCategoryColor = (categoryName: string, index: number): string => {

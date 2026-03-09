@@ -22,6 +22,7 @@ import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChar
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { CategorySuggestionBanner } from '@/components/budget/CategorySuggestionBanner';
+import { CategoryManager } from '@/components/budget/CategoryManager';
 import { DEFAULT_BUDGET_CATEGORIES, INCOME_GROUP_NAME } from '@/lib/defaultBudgetCategories';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 
@@ -249,6 +250,7 @@ export const Budget = () => {
                 <span className="hidden sm:inline ml-2">Import</span>
               </Button>
               <input id="import-file" type="file" accept=".csv" className="hidden" onChange={importExpenses} />
+              <CategoryManager />
             </div>
           </div>
         </div>

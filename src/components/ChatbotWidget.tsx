@@ -217,7 +217,7 @@ export const ChatbotWidget = () => {
       <div
         id="chat-panel"
         role="dialog"
-        aria-label="Zero Hero Assistant chat"
+        aria-label="Zora chat"
         aria-hidden={!isOpen}
         className={cn(
           "absolute bottom-16 right-0 w-[90vw] max-w-[380px] transition-all duration-300 ease-in-out origin-bottom-right",
@@ -232,7 +232,7 @@ export const ChatbotWidget = () => {
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
-                <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
+                <h3 id="chat-title" className="font-semibold text-white">Zora</h3>
                 <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
               </div>
             </div>
@@ -253,7 +253,7 @@ export const ChatbotWidget = () => {
               <div className="space-y-4">
                 <div className="bg-muted/50 rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-3">
-                    👋 Hi! I'm your AI-powered Zero Hero assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
+                    👋 Hi! I'm Zora, your AI-powered assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
                   </p>
                   <p className="text-[11px] text-muted-foreground/80 mb-3 italic border-l-2 border-muted pl-2">
                     Note: I may occasionally provide inaccurate information. My responses are for educational purposes only and do not constitute personalized financial, legal, or tax advice.

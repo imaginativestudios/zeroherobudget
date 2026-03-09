@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { Download, Uplownload, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
+import { Download, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

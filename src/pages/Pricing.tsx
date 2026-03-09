@@ -162,14 +162,22 @@ const Pricing = () => {
               Choose Your Plan
             </h1>
           </div>
-          <motion.p
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+          <motion.div
+            className="max-w-2xl mx-auto space-y-2 text-muted-foreground"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
           >
-            Start with 7 days free. All features included. Cancel anytime.
-        </motion.p>
+            <p className="text-lg md:text-xl italic">
+              Don't think of it as a cost. Think of it as a strategy.
+            </p>
+            <p className="text-sm md:text-base">
+              Typical Pro User Savings: <span className="font-semibold text-foreground">$140+/month</span> in found "lazy cash" and interest reduction.
+            </p>
+            <p className="text-sm md:text-base">
+              The Goal: We aim for Zero Hero to pay for its annual subscription within your <span className="font-semibold text-foreground">first 30 days</span>.
+            </p>
+          </motion.div>
         </motion.div>
 
         {loading ? (

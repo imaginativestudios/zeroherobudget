@@ -1,46 +1,25 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Fix: Auto-Seeding Fails for Unauthenticated (Demo) Users
 
-## Issues Found
+## Root Cause
+In `src/hooks/useLocalExpenses.ts` line 28, the `addExpense` function has a guard: `if (!user) return;`. When you're not logged in, `user` is `null`, so every call to `addSupabaseExpense` during auto-seeding silently does nothing.
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+The `useUserLocalStorage` hook already handles demo users by falling back to a `DEMO_USER_ID`, but `addExpense` doesn't use that same fallback — it requires a real auth user.
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+## Fix
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### `src/hooks/useLocalExpenses.ts`
+Update `addExpense` to use the same demo-user fallback pattern used elsewhere:
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+1. Import `DEMO_USER_ID` from `@/lib/demoDataLoader`
+2. Replace the `if (!user) return;` guard with a fallback: `const userId = user?.id ?? DEMO_USER_ID;`
+3. Use `userId` instead of `user.id` when constructing the new expense
 
----
+This is a 1-line logic change — aligns `addExpense` with the persistence model already used by `useUserLocalStorage` and `useLocalTransactions`.
 
-## Plan
-
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+## Scope
+- 1 file modified (`src/hooks/useLocalExpenses.ts`)
+- No new dependencies
+- Consistent with existing demo-first architecture
 

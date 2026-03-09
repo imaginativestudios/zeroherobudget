@@ -21,8 +21,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
-import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
 import { CategorySuggestionBanner } from '@/components/budget/CategorySuggestionBanner';
+import { DEFAULT_BUDGET_CATEGORIES, INCOME_GROUP_NAME } from '@/lib/defaultBudgetCategories';
+import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);

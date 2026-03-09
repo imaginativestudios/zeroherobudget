@@ -2,6 +2,7 @@ import { usePriorityLocalStorage } from './usePriorityLocalStorage';
 import { useProgressiveLoad, useShouldLoad } from './useProgressiveLoad';
 import { useAuth } from './useAuth';
 import { v4 as uuidv4 } from 'uuid';
+import { DEMO_USER_ID } from '@/lib/constants';
 
 export interface Expense {
   id: string;

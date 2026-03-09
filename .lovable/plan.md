@@ -1,46 +1,46 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Suggest Budget Categories from Spending Patterns
 
-## Issues Found
+## Problem
+Users may start with default categories but over time their transaction history reveals spending patterns that don't map to any existing budget category (e.g., recurring "Pet Supplies" transactions with no Pet category).
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+## Approach
+Create a detection engine that analyzes the user's transaction history, finds categories with significant spending that aren't yet in their budget, and surfaces an inline suggestion card on the Budget page.
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+## Changes
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### 1. New file: `src/lib/categorySuggestionEngine.ts`
+- Compare transaction categories (from `category` field on transactions) against existing expense categories
+- Identify categories where:
+  - There are 2+ transactions in the last 90 days
+  - The category doesn't match any existing budget expense category (case-insensitive)
+  - Total spend exceeds a minimum threshold (e.g., $20)
+- Return suggested categories with: name, transaction count, total amount, and average monthly spend
+- Pure utility function, no hooks or side effects
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+### 2. New component: `src/components/budget/CategorySuggestionBanner.tsx`
+- Accepts: existing expenses, transactions, and an `onAddCategory` callback
+- Runs the detection engine on render
+- If suggestions exist, renders a subtle card below the budget header with:
+  - Icon + heading: "We noticed spending that isn't in your budget"
+  - List of suggested categories as chips/badges showing name + monthly average
+  - "Add" button per suggestion → calls `onAddCategory(name, avgAmount, category)`
+  - "Dismiss" button per suggestion → stores dismissal in localStorage so it doesn't reappear
+- If no suggestions or all dismissed, renders nothing
 
----
+### 3. Update: `src/pages/Budget.tsx`
+- Import `CategorySuggestionBanner`
+- Place it between the budget overview card and the expense groups section
+- Wire `onAddCategory` to call `addSupabaseExpense` with the suggested name, average amount, and category
+- Pass current expenses and transactions as props
 
-## Plan
+### 4. Dismissal persistence
+- Use `useUserLocalStorage` to store an array of dismissed category names
+- Dismissed suggestions won't resurface unless the user clears preferences
 
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+## Scope
+- 2 new files, 1 file modified
+- No database changes needed — uses existing transaction and expense data from localStorage
+- No new dependencies
 

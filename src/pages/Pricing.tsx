@@ -169,7 +169,52 @@ const Pricing = () => {
             transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
           >
             Start with 7 days free. All features included. Cancel anytime.
-          </motion.p>
+        </motion.p>
+
+          {/* ROI Pro Tip Card */}
+          <motion.div
+            className="mt-10 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
+          >
+            <div className="relative rounded-xl border border-accent/30 bg-accent/5 p-6 md:p-8 overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
+              
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-8 w-8 rounded-lg bg-accent/15 flex items-center justify-center">
+                  <Lightbulb className="h-4 w-4 text-accent-foreground" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-wider text-accent-foreground/80">Pro Tip</span>
+              </div>
+
+              <p className="text-lg md:text-xl font-semibold text-foreground mb-6">
+                "Wait, is this app a bill or an investment?"
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="rounded-lg bg-background/80 border border-border/40 p-4 text-center">
+                  <DollarSign className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-foreground">$47</p>
+                  <p className="text-xs text-muted-foreground mt-1">Lazy Cash identified in first 14 days</p>
+                </div>
+                <div className="rounded-lg bg-background/80 border border-border/40 p-4 text-center">
+                  <Clock className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-foreground">4 months</p>
+                  <p className="text-xs text-muted-foreground mt-1">Debt payoff timeline reduced</p>
+                </div>
+                <div className="rounded-lg bg-background/80 border border-border/40 p-4 text-center">
+                  <TrendingUp className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-foreground">$1,200+</p>
+                  <p className="text-xs text-muted-foreground mt-1">Interest savings with Avalanche Strategy</p>
+                </div>
+              </div>
+
+              <p className="text-sm text-muted-foreground text-center font-medium">
+                The math is simple: Zero Hero is designed to <span className="text-foreground font-semibold">pay for itself 10× over</span>.
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
 
         {loading ? (

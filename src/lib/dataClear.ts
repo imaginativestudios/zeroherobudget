@@ -124,6 +124,7 @@ export function clearSelectiveData(userId: string, options: ClearDataOptions): n
     localStorage.removeItem(`${userId}_onboarding_complete`);
     localStorage.removeItem(`${userId}_privacy_notice_dismissed`);
     localStorage.removeItem(`${userId}_pwa-banner-dismissed`);
+    localStorage.removeItem(`${userId}_budget_seeded`);
     
     // Backup metadata
     localStorage.removeItem(`${userId}_last_backup`);

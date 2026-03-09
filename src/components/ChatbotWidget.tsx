@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Loader2, Bot } from "lucide-react";
+import { X, Send, Loader2, Bot, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -337,15 +337,6 @@ export const ChatbotWidget = () => {
         </div>
       </div>
 
-      {/* Helper tooltip */}
-      {!isOpen && !hasOpened && (
-        <div className="absolute bottom-[5.5rem] right-0 animate-fade-in flex justify-center w-16">
-          <div className="relative bg-accent text-accent-foreground font-bold text-base rounded-2xl px-4 py-2 shadow-lg">
-            HI!
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-accent" />
-          </div>
-        </div>
-      )}
 
       {/* Floating Bubble */}
       <Button
@@ -354,7 +345,7 @@ export const ChatbotWidget = () => {
           if (!hasOpened) setHasOpened(true);
         }}
         size="icon"
-        className="h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
+        className="h-16 w-16 rounded-full shadow-[0_0_20px_hsl(var(--primary)/0.4)] bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
         aria-expanded={isOpen}
         aria-controls="chat-panel"
@@ -362,7 +353,7 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <Bot className="h-12 w-12 text-primary-foreground" aria-hidden="true" />
+          <Sparkles className="h-8 w-8 text-primary-foreground" aria-hidden="true" />
         )}
       </Button>
     </div>

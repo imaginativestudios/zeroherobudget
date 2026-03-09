@@ -217,8 +217,7 @@ export const ChatbotWidget = () => {
       <div
         id="chat-panel"
         role="dialog"
-        aria-label="Zora chat"
-        aria-hidden={!isOpen}
+        aria-label="Zoraaria-hidden={!isOpen}
         className={cn(
           "absolute bottom-16 right-0 w-[90vw] max-w-[380px] transition-all duration-300 ease-in-out origin-bottom-right",
           isOpen
@@ -232,8 +231,7 @@ export const ChatbotWidget = () => {
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
-                <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
-                <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
+                <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistora       <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
               </div>
             </div>
             <Button

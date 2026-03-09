@@ -50,7 +50,6 @@ import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
-import LinkBank from "./pages/LinkBank";
 
 const queryClient = new QueryClient();
 
@@ -111,7 +110,6 @@ const App = () => (
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
                 <Route path="/settings/release-kit" element={<ReleaseKit />} />
-                <Route path="/link-bank" element={<LinkBank />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

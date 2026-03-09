@@ -1,11 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Building2, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Search, Building2, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { ConsentScreen } from '@/components/linked-accounts/ConsentScreen';
-import { LinkedAccountsList } from '@/components/linked-accounts/LinkedAccountsList';
+import { ConsentScreen } from './ConsentScreen';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import {
   searchInstitutions,
@@ -16,7 +14,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
-type Step = 'list' | 'consent' | 'search' | 'connecting' | 'success' | 'error';
+type Step = 'consent' | 'search' | 'connecting' | 'success' | 'error';
 
 const STEPS: { key: Step; label: string }[] = [
   { key: 'consent', label: 'Privacy' },
@@ -55,10 +53,14 @@ function StepIndicator({ currentStep }: { currentStep: Step }) {
   );
 }
 
-export default function LinkBank() {
-  const navigate = useNavigate();
+interface BankLinkingFlowProps {
+  onComplete: () => void;
+  onCancel: () => void;
+}
+
+export function BankLinkingFlow({ onComplete, onCancel }: BankLinkingFlowProps) {
   const { addAccounts } = useLinkedAccounts();
-  const [step, setStep] = useState<Step>('list');
+  const [step, setStep] = useState<Step>('consent');
   const [query, setQuery] = useState('');
   const [selectedInstitution, setSelectedInstitution] = useState<MockInstitution | null>(null);
   const [newlyLinked, setNewlyLinked] = useState<LinkedAccountMeta[]>([]);
@@ -74,12 +76,9 @@ export default function LinkBank() {
     }
   }, []);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -87,7 +86,6 @@ export default function LinkBank() {
     setSelectedInstitution(institution);
     setStep('connecting');
 
-    // Start a 15s timeout
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutRef.current = setTimeout(() => {
         reject(new Error('CONNECTION_TIMEOUT'));
@@ -119,49 +117,16 @@ export default function LinkBank() {
     }
   };
 
-  const handleStartLinking = () => setStep('consent');
-
-  const reset = () => {
-    clearConnectionTimeout();
-    setStep('list');
-    setQuery('');
-    setSelectedInstitution(null);
-    setNewlyLinked([]);
-    setErrorMessage('');
-  };
-
-  const showStepIndicator = step !== 'list' && step !== 'error';
+  const showStepIndicator = step !== 'error';
 
   return (
-    <div className="pt-8 space-y-6 max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => step === 'list' ? navigate(-1) : reset()} className="h-9 w-9">
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Link Bank Account</h1>
-          <p className="text-sm text-muted-foreground">Securely connect your checking or savings account</p>
-        </div>
-      </div>
-
-      {/* Step Indicator */}
+    <div className="space-y-4">
       {showStepIndicator && <StepIndicator currentStep={step} />}
 
-      {/* Step: List existing linked accounts */}
-      {step === 'list' && (
-        <LinkedAccountsList onLinkNew={handleStartLinking} />
-      )}
-
-      {/* Step: Consent */}
       {step === 'consent' && (
-        <ConsentScreen
-          onConsent={() => setStep('search')}
-          onCancel={reset}
-        />
+        <ConsentScreen onConsent={() => setStep('search')} onCancel={onCancel} />
       )}
 
-      {/* Step: Institution search */}
       {step === 'search' && (
         <div className="space-y-4">
           <div className="relative">
@@ -174,7 +139,6 @@ export default function LinkBank() {
               autoFocus
             />
           </div>
-
           <div className="space-y-1.5">
             {filteredInstitutions.map((inst) => (
               <button
@@ -198,10 +162,12 @@ export default function LinkBank() {
               </p>
             )}
           </div>
+          <Button variant="ghost" onClick={onCancel} className="w-full min-h-[44px]">
+            Cancel
+          </Button>
         </div>
       )}
 
-      {/* Step: Connecting */}
       {step === 'connecting' && (
         <Card className="py-16">
           <CardContent className="flex flex-col items-center text-center">
@@ -216,7 +182,6 @@ export default function LinkBank() {
         </Card>
       )}
 
-      {/* Step: Success */}
       {step === 'success' && (
         <Card className="py-12">
           <CardContent className="flex flex-col items-center text-center space-y-4">
@@ -229,7 +194,6 @@ export default function LinkBank() {
                 {newlyLinked.length} account{newlyLinked.length > 1 ? 's' : ''} from {selectedInstitution?.name} connected.
               </p>
             </div>
-
             <div className="w-full max-w-sm space-y-2">
               {newlyLinked.map((acc) => (
                 <div key={acc.id} className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-muted/30">
@@ -241,15 +205,13 @@ export default function LinkBank() {
                 </div>
               ))}
             </div>
-
-            <Button onClick={reset} className="min-h-[44px]">
+            <Button onClick={onComplete} className="min-h-[44px]">
               Done
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Step: Error */}
       {step === 'error' && (
         <Card className="py-12">
           <CardContent className="flex flex-col items-center text-center space-y-4">
@@ -261,7 +223,7 @@ export default function LinkBank() {
               <p className="text-sm text-muted-foreground mt-1 max-w-sm">{errorMessage}</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={reset} className="min-h-[44px]">
+              <Button variant="outline" onClick={onCancel} className="min-h-[44px]">
                 Cancel
               </Button>
               <Button onClick={() => selectedInstitution && handleSelectInstitution(selectedInstitution)} className="min-h-[44px]">

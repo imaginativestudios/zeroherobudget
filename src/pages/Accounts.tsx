@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Plus, Wallet, PiggyBank, CreditCard, Banknote, TrendingUp, Pencil, Trash2, Power, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +23,6 @@ const ACCOUNT_TYPE_CONFIG = {
 } as const;
 
 export function Accounts() {
-  const navigate = useNavigate();
   const { accounts, addAccount, updateAccount, removeAccount } = useLocalAccounts();
   const [showForm, setShowForm] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
@@ -296,7 +294,7 @@ export function Accounts() {
 
       {/* Linked Bank Accounts Section */}
       <Separator />
-      <LinkedAccountsList onLinkNew={() => navigate('/link-bank')} />
+      <LinkedAccountsList />
 
       {/* Add/Edit Form Dialog */}
       <AccountForm

@@ -1,32 +1,28 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { Building2, Plus, Loader2, AlertTriangle } from 'lucide-react';
+import { Building2, Plus, Loader2, AlertTriangle, Shield, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import { LinkedAccountCard } from './LinkedAccountCard';
 import { DisconnectDialog } from './DisconnectDialog';
 import { ReconnectDialog } from './ReconnectDialog';
 import { DeviceLossWarning } from './DeviceLossWarning';
+import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
 
-interface LinkedAccountsListProps {
-  onLinkNew: () => void;
-}
-
-export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
+export function LinkedAccountsList() {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable } = useLinkedAccounts();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
   const [reconnecting, setReconnecting] = useState<LinkedAccountMeta | null>(null);
   const [isIncognito, setIsIncognito] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
 
   useEffect(() => {
-    // Detect private/incognito mode by testing storage persistence
     try {
       const testKey = '__zh_incognito_test__';
       localStorage.setItem(testKey, '1');
       localStorage.removeItem(testKey);
-      // Estimate storage quota — very low quota suggests incognito
       if (navigator.storage?.estimate) {
         navigator.storage.estimate().then((est) => {
           if (est.quota && est.quota < 120_000_000) {
@@ -59,6 +55,27 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
     );
   }
 
+  // Show inline linking flow
+  if (isLinking) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Building2 className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Link Bank Account</h3>
+            <p className="text-sm text-muted-foreground">Securely connect your checking or savings account</p>
+          </div>
+        </div>
+        <BankLinkingFlow
+          onComplete={() => setIsLinking(false)}
+          onCancel={() => setIsLinking(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {isIncognito && (
@@ -71,9 +88,27 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Value proposition — shown when no accounts linked */}
+      {linkedAccounts.length === 0 && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="py-4 flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <Sparkles className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Why link your bank?</p>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                Linking gives you real account names and types without manual entry. Your data stays encrypted on this device — nothing is sent to our servers.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Linked Bank Accounts</h3>
-        <Button size="sm" onClick={onLinkNew} className="min-h-[36px]">
+        <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
           <Plus className="h-4 w-4 mr-1.5" />
           Link Account
         </Button>
@@ -89,7 +124,7 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
             <p className="text-xs text-muted-foreground mb-4 max-w-xs">
               Link a bank account to automatically see your account names and types — no manual entry needed.
             </p>
-            <Button onClick={onLinkNew} className="min-h-[44px]">
+            <Button onClick={() => setIsLinking(true)} className="min-h-[44px]">
               <Plus className="h-4 w-4 mr-2" />
               Link Your First Account
             </Button>
@@ -105,6 +140,14 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
               onDisconnect={setDisconnecting}
             />
           ))}
+        </div>
+      )}
+
+      {/* Subtle privacy reminder when accounts exist */}
+      {linkedAccounts.length > 0 && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+          <Shield className="h-3 w-3 shrink-0" />
+          <span>All bank data is encrypted and stored only on this device.</span>
         </div>
       )}
 

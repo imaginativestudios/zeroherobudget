@@ -1,43 +1,46 @@
 
 
-# Move Bank Linking Into Accounts Page & Add Value Messaging
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-## Current State
+## Issues Found
 
-- `/link-bank` is a standalone page with the full multi-step flow (consent → search → connecting → success)
-- `/accounts` already shows `LinkedAccountsList` at the bottom, but clicking "Link Account" navigates away to `/link-bank`
-- No messaging anywhere explains *why* linking a bank account matters
-- No prompts on the dashboard or onboarding guide users toward bank linking
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
+
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
 
 ## Plan
 
-### 1. Inline the bank linking flow into `/accounts`
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
 
-Instead of navigating to `/link-bank`, the consent → search → connecting → success flow will happen inline on the Accounts page. Move the multi-step state machine from `LinkBank.tsx` into a new `BankLinkingFlow` component that `LinkedAccountsList` renders in-place when the user clicks "Link Account."
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
 
-Remove:
-- `src/pages/LinkBank.tsx`
-- Route `/link-bank` from `App.tsx`
-- Import of `LinkBank` from `App.tsx`
+---
 
-### 2. Add a value proposition card
+## Files to Modify
 
-Above the linked accounts section on `/accounts`, add a brief card explaining why linking matters:
-
-> **Why link your bank?**
-> Linking gives you real account names and types without manual entry. Your data stays encrypted on this device — nothing is sent to our servers.
-
-This replaces the generic empty-state copy and gives returning users context too. Show it when no accounts are linked; collapse to a subtle inline hint once accounts exist.
-
-### 3. Add a prompt on the Dashboard
-
-In the `GettingStartedChecklist`, add a task: "Link a bank account" pointing to `/accounts`. This gives first-time users a nudge from the dashboard.
-
-### Technical Details
-
-- Extract the step state machine (consent/search/connecting/success/error) from `LinkBank.tsx` into `src/components/linked-accounts/BankLinkingFlow.tsx`
-- `LinkedAccountsList` gains internal state: when `onLinkNew` is triggered, it renders `BankLinkingFlow` inline instead of navigating
-- On completion/cancel, `BankLinkingFlow` calls back to hide itself and refresh the list
-- The `StepIndicator`, institution search, connecting/success/error cards all move into `BankLinkingFlow`
-- `GettingStartedChecklist` gets a new task checking `linkedAccounts.length > 0`
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

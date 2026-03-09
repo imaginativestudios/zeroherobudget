@@ -13,12 +13,14 @@ import {
   Check,
   Sparkles,
   Rocket,
-  Sprout
+  Sprout,
+  Building2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
+import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import confetti from 'canvas-confetti';
 import type { Expense } from '@/hooks/useLocalExpenses';
 import type { Debt } from '@/hooks/useLocalDebts';
@@ -54,6 +56,7 @@ export function GettingStartedChecklist({
   const [isCollapsed, setIsCollapsed] = useUserLocalStorage('bdt_checklist_collapsed', false);
   const [hasShownCelebration, setHasShownCelebration] = useUserLocalStorage('bdt_checklist_celebrated', false);
   const [isHidden, setIsHidden] = useState(false);
+  const { linkedAccounts } = useLinkedAccounts();
 
   // Check for investment tracking (matches Journey step 5 logic)
   const hasInvestmentAccount = accounts.some(a => 
@@ -107,6 +110,14 @@ export function GettingStartedChecklist({
       icon: Receipt,
       isComplete: transactions.length > 0, 
       href: '/transactions'
+    },
+    { 
+      id: 'bank', 
+      title: 'Link a bank account', 
+      description: 'Auto-import account names securely',
+      icon: Building2,
+      isComplete: linkedAccounts.length > 0, 
+      href: '/accounts'
     },
     { 
       id: 'investing', 

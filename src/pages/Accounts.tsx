@@ -294,6 +294,10 @@ export function Accounts() {
         </Card>
       )}
 
+      {/* Linked Bank Accounts Section */}
+      <Separator />
+      <LinkedAccountsList onLinkNew={() => navigate('/link-bank')} />
+
       {/* Add/Edit Form Dialog */}
       <AccountForm
         open={showForm}

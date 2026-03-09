@@ -111,6 +111,7 @@ const App = () => (
                 <Route path="/account" element={<AccountSettings />} />
                 <Route path="/settings/connector" element={<ConnectorSetup />} />
                 <Route path="/settings/release-kit" element={<ReleaseKit />} />
+                <Route path="/link-bank" element={<LinkBank />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

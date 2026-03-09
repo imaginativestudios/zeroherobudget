@@ -123,6 +123,14 @@ export function GettingStartedChecklist({
       href: '/wealth'
     },
     { 
+      id: 'wealth', 
+      title: 'Explore high-yield savings', 
+      description: 'Make your money work harder for you',
+      icon: Landmark,
+      isComplete: isWealthStarted, 
+      href: '/wealth'
+    },
+    { 
       id: 'transaction', 
       title: 'Record a transaction', 
       description: 'Log your first spending entry',
@@ -130,7 +138,7 @@ export function GettingStartedChecklist({
       isComplete: transactions.length > 0, 
       href: '/transactions'
     },
-    { 
+    {
       id: 'bank', 
       title: 'Link a bank account', 
       description: 'Auto-import account names securely',

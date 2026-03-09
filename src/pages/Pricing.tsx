@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, Lightbulb, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -170,32 +170,6 @@ const Pricing = () => {
           >
             Start with 7 days free. All features included. Cancel anytime.
         </motion.p>
-
-          {/* ROI Pro Tip Card */}
-          <motion.div
-            className="mt-4 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
-          >
-            <div className="relative rounded-lg ring-1 ring-accent/20 bg-gradient-to-r from-accent/8 to-transparent backdrop-blur-sm px-4 py-2.5 overflow-hidden">
-              <div className="flex items-center gap-2 mb-1">
-                <Lightbulb className="h-3.5 w-3.5 text-accent-foreground shrink-0" />
-                <span className="text-xs font-bold uppercase tracking-wider text-accent-foreground/80">Pro Tip</span>
-                <span className="text-sm font-semibold text-foreground">"Is this app a bill or an investment?"</span>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 flex-wrap text-sm">
-                <span className="font-bold text-foreground">$47 <span className="font-normal text-muted-foreground">lazy cash</span></span>
-                <span className="text-muted-foreground/40">·</span>
-                <span className="font-bold text-foreground">4 mo <span className="font-normal text-muted-foreground">faster</span></span>
-                <span className="text-muted-foreground/40">·</span>
-                <span className="font-bold text-foreground">$1,200+ <span className="font-normal text-muted-foreground">saved</span></span>
-                <span className="text-muted-foreground/40">·</span>
-                <span className="font-semibold text-foreground">pays for itself 10×</span>
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
 
         {loading ? (

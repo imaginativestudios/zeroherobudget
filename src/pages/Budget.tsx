@@ -22,6 +22,7 @@ import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChar
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
+import { CategorySuggestionBanner } from '@/components/budget/CategorySuggestionBanner';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);

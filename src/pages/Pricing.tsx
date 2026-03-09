@@ -178,36 +178,25 @@ const Pricing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
           >
-            <div className="relative rounded-xl border border-accent/30 bg-accent/5 p-4 md:p-5 overflow-hidden">
+            <div className="relative rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 overflow-hidden">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
               
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-7 w-7 rounded-lg bg-accent/15 flex items-center justify-center shrink-0">
-                  <Lightbulb className="h-3.5 w-3.5 text-accent-foreground" />
-                </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <Lightbulb className="h-3.5 w-3.5 text-accent-foreground shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wider text-accent-foreground/80">Pro Tip</span>
-                <p className="text-sm md:text-base font-semibold text-foreground">
-                  "Wait, is this app a bill or an investment?"
-                </p>
+                <span className="text-sm font-semibold text-foreground">"Is this app a bill or an investment?"</span>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                <div className="rounded-lg bg-background/80 border border-border/40 p-3 text-center">
-                  <p className="text-xl font-bold text-foreground">$47</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Lazy Cash found in 14 days</p>
-                </div>
-                <div className="rounded-lg bg-background/80 border border-border/40 p-3 text-center">
-                  <p className="text-xl font-bold text-foreground">4 months</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Debt payoff reduced</p>
-                </div>
-                <div className="rounded-lg bg-background/80 border border-border/40 p-3 text-center">
-                  <p className="text-xl font-bold text-foreground">$1,200+</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Interest saved</p>
-                </div>
+              <div className="flex items-center justify-center gap-2 flex-wrap mb-1.5">
+                <span className="text-sm font-bold text-foreground">$47 <span className="font-normal text-muted-foreground">lazy cash found</span></span>
+                <span className="text-muted-foreground/40">·</span>
+                <span className="text-sm font-bold text-foreground">4 mo <span className="font-normal text-muted-foreground">debt payoff cut</span></span>
+                <span className="text-muted-foreground/40">·</span>
+                <span className="text-sm font-bold text-foreground">$1,200+ <span className="font-normal text-muted-foreground">interest saved</span></span>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center font-medium">
-                The math is simple: Zero Hero is designed to <span className="text-foreground font-semibold">pay for itself 10× over</span>.
+              <p className="text-xs text-muted-foreground text-center">
+                Zero Hero is designed to <span className="text-foreground font-semibold">pay for itself 10× over</span>.
               </p>
             </div>
           </motion.div>

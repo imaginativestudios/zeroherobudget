@@ -1,16 +1,46 @@
 
 
-# Make ROI Pro Tip Card Even Slimmer
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-Condense the card into a single-row inline layout instead of stacked sections.
+## Issues Found
 
-## Changes — `src/pages/Pricing.tsx` (lines 174–213)
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-1. **Remove the stat grid entirely** — inline the three stats as a single horizontal row of text badges instead of bordered cards
-2. **Merge everything into ~3 vertical lines**: header row → stat chips row → closing line
-3. **Reduce padding**: `p-4 md:p-5` → `px-4 py-3`
-4. **Remove margin between sections**: `mb-3` → `mb-2` or `mb-1`
-5. **Stat chips**: Simple `span` elements with `text-sm font-bold` separated by dots, no cards/borders/backgrounds
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-Result: the card becomes roughly the height of 3 lines of text (~80px) instead of ~160px.
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
+
+## Plan
+
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
+
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
+
+---
+
+## Files to Modify
+
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

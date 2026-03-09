@@ -13,12 +13,14 @@ import {
   Check,
   Sparkles,
   Rocket,
-  Sprout
+  Sprout,
+  Building2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
+import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import confetti from 'canvas-confetti';
 import type { Expense } from '@/hooks/useLocalExpenses';
 import type { Debt } from '@/hooks/useLocalDebts';

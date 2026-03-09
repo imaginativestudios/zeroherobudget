@@ -349,21 +349,21 @@ const Pricing = () => {
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className="relative"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                  <span className="bg-accent text-accent-foreground text-xs px-4 py-1.5 rounded-full font-bold shadow-md animate-pulse">
-                    BEST VALUE
-                  </span>
-                </div>
                 <Card
                   className={cn(
-                    "border-2 cursor-pointer transition-all duration-300 h-full",
+                    "border-2 cursor-pointer transition-all duration-300 h-full overflow-hidden",
                     selectedInterval === 'annual'
                       ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
                       : "border-border/50 hover:border-border"
                   )}
                   onClick={() => setSelectedInterval('annual')}
                 >
-                  <CardHeader className="text-center pb-2 pt-8">
+                  <div className="flex justify-center pt-5 pb-0">
+                    <span className="bg-accent text-accent-foreground text-xs px-4 py-1.5 rounded-full font-bold shadow-sm animate-pulse">
+                      BEST VALUE
+                    </span>
+                  </div>
+                  <CardHeader className="text-center pb-2 pt-3">
                     <CardTitle className="text-lg font-semibold">Annual</CardTitle>
                   </CardHeader>
                   <CardContent className="text-center pb-8">

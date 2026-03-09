@@ -34,6 +34,15 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Validate shared secret — only the pg_cron job should call this
+  const cronSecret = req.headers.get("x-cron-secret");
+  if (!cronSecret || cronSecret !== Deno.env.get("CRON_SECRET")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
   const resendKey = Deno.env.get("RESEND_API_KEY");
   const supabaseUrl = Deno.env.get("SUPABASE_URL");

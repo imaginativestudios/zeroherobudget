@@ -40,6 +40,7 @@ export const Budget = () => {
     addExpense: addSupabaseExpense,
     updateExpense: updateSupabaseExpense,
     removeExpense: removeSupabaseExpense,
+    batchAddExpenses,
     setExpensesOrder
   } = useLocalExpenses('critical');
 
@@ -51,19 +52,25 @@ export const Budget = () => {
   } = useLocalTransactions('secondary');
   const [budgetSeeded, setBudgetSeeded] = useUserLocalStorage('budget_seeded', false);
 
+  // Recovery: reset stale seed flag if seeded but no expenses exist
+  useEffect(() => {
+    if (!isLoadingExpenses && budgetSeeded && expenses.length === 0) {
+      setBudgetSeeded(false);
+    }
+  }, [isLoadingExpenses, budgetSeeded, expenses.length]);
+
   // Auto-seed default categories for new users
   useEffect(() => {
     if (isLoadingExpenses || budgetSeeded || expenses.length > 0) return;
-    DEFAULT_BUDGET_CATEGORIES.forEach((group) => {
-      group.items.forEach((item) => {
-        addSupabaseExpense({
-          name: item.name,
-          amount: item.suggestedAmount,
-          category: group.name,
-          is_income: group.name === INCOME_GROUP_NAME,
-        });
-      });
-    });
+    const items = DEFAULT_BUDGET_CATEGORIES.flatMap(group =>
+      group.items.map(item => ({
+        name: item.name,
+        amount: item.suggestedAmount,
+        category: group.name,
+        is_income: group.name === INCOME_GROUP_NAME,
+      }))
+    );
+    batchAddExpenses(items);
     setBudgetSeeded(true);
   }, [isLoadingExpenses, budgetSeeded, expenses.length]);
 

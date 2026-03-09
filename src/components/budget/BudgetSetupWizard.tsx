@@ -190,6 +190,7 @@ export function BudgetSetupWizard({ onComplete, onSkip }: BudgetSetupWizardProps
       name: i.name,
       amount: i.amount,
       category: i.groupName,
+      isIncome: i.groupName === INCOME_GROUP_NAME,
     }));
     onComplete(items);
   };

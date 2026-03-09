@@ -24,6 +24,7 @@ const ACCOUNT_TYPE_CONFIG = {
 } as const;
 
 export function Accounts() {
+  const navigate = useNavigate();
   const { accounts, addAccount, updateAccount, removeAccount } = useLocalAccounts();
   const [showForm, setShowForm] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);

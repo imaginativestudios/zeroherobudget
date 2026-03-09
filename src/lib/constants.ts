@@ -98,20 +98,20 @@ export const DEMO_USER_ID = 'demo-hero-00000000';
 // Stripe Pricing Configuration
 export const STRIPE_PRICES = {
   monthly: {
-    priceId: 'price_1SsW56LOOLpslU1kncgwtvl1',
-    productId: 'prod_TqCUft00OmYfZR',
-    amount: 5,
+    priceId: 'price_1T8uXbLOOLpslU1kYziRovGh',
+    productId: 'prod_U78pyZd39SBV1J',
+    amount: 12,
     interval: 'month' as const,
     label: 'Monthly',
   },
   annual: {
-    priceId: 'price_1SsW5ULOOLpslU1kdyaY3yy1',
-    productId: 'prod_TqCUwrl7vHhSB3',
-    amount: 50,
+    priceId: 'price_1T8uY7LOOLpslU1kOaOq6kVT',
+    productId: 'prod_U78pT2HaHyVVq9',
+    amount: 99,
     interval: 'year' as const,
     label: 'Annual',
-    savings: 10, // $60 - $50 = $10 saved
-    monthlyEquivalent: 4.17,
+    savings: 45, // $144 - $99 = $45 saved
+    monthlyEquivalent: 8.25,
   },
 } as const;
 

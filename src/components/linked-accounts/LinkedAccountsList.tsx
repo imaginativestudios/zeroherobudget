@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '@/hooks/use-toast';
 import { Building2, Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,8 +85,13 @@ export function LinkedAccountsList({ onLinkNew }: LinkedAccountsListProps) {
         onClose={() => setDisconnecting(null)}
         onConfirm={async () => {
           if (disconnecting) {
+            const name = disconnecting.institutionName;
             await removeAccount(disconnecting.id);
             setDisconnecting(null);
+            toast({
+              title: 'Account disconnected',
+              description: `${name} has been removed from this device.`,
+            });
           }
         }}
       />

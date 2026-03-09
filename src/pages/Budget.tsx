@@ -43,6 +43,7 @@ export const Budget = () => {
 
   // Secondary: Load transactions for actuals comparison
   const {
+    transactions,
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');

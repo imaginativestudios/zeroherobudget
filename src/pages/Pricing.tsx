@@ -285,7 +285,7 @@ const Pricing = () => {
                 >
                   Annual
                   <span className="absolute -top-2 -right-2 bg-chart-3 text-chart-3-foreground text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                    Save $10
+                    Save ${STRIPE_PRICES.annual.savings}
                   </span>
                 </button>
               </div>

@@ -339,12 +339,12 @@ export const ChatbotWidget = () => {
 
       {/* Helper tooltip */}
       {!isOpen && !hasOpened && (
-        <div className="absolute bottom-4 right-[5rem] animate-fade-in">
+        <div className="absolute bottom-[5.5rem] right-0 animate-fade-in flex justify-center w-16">
           <div className="relative bg-card border border-border shadow-lg rounded-2xl px-4 py-2 text-sm font-medium text-foreground whitespace-nowrap">
             Ask me anything ✨
-            {/* Speech bubble tail */}
-            <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-border" />
-            <div className="absolute top-1/2 -right-[7px] -translate-y-1/2 w-0 h-0 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[7px] border-l-card" />
+            {/* Downward-pointing tail */}
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-border" />
+            <div className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[7px] border-t-card" />
           </div>
         </div>
       )}
@@ -364,7 +364,7 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <Bot className="h-8 w-8 text-primary-foreground" aria-hidden="true" />
+          <Bot className="h-12 w-12 text-primary-foreground" aria-hidden="true" />
         )}
       </Button>
     </div>

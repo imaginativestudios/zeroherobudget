@@ -226,26 +226,17 @@ export const ChatbotWidget = () => {
             : "scale-95 opacity-0 pointer-events-none"
         )}
       >
-        <div className="bg-card border border-border rounded-lg shadow-2xl flex flex-col h-[450px] max-h-[80vh]">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
-            <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-white" aria-hidden="true" />
-              <div>
-                <h3 id="chat-title" className="font-semibold text-white">Zora</h3>
-                <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-              className="h-8 w-8 text-white hover:bg-white/20"
-              aria-label="Close chat"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          </div>
+        <div className="bg-card border border-border rounded-lg shadow-2xl flex flex-col h-[450px] max-h-[80vh] relative">
+          {/* Close Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(false)}
+            className="absolute top-2 right-2 z-10 h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
+            aria-label="Close chat"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </Button>
 
           {/* Messages Area */}
           <ScrollArea className="flex-1 p-4" ref={scrollRef} aria-live="polite" aria-atomic="false">
@@ -254,9 +245,6 @@ export const ChatbotWidget = () => {
                 <div className="bg-muted/50 rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-3">
                     👋 Hi! I'm Zora, your AI-powered assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/80 mb-3 italic border-l-2 border-muted pl-2">
-                    Note: I may occasionally provide inaccurate information. My responses are for educational purposes only and do not constitute personalized financial, legal, or tax advice.
                   </p>
                   <div className="space-y-2">
                     <p className="text-xs font-medium text-muted-foreground mb-2">

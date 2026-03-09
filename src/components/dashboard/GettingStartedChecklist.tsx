@@ -101,7 +101,8 @@ export function GettingStartedChecklist({
       title: 'Start your emergency fund', 
       description: 'Build your financial safety net',
       icon: Heart,
-      isComplete: moatCurrent > 0
+      isComplete: moatCurrent > 0,
+      href: '/wealth'
     },
     { 
       id: 'transaction', 

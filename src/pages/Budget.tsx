@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { DollarSign, Download, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -21,8 +21,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
-import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
 import { CategorySuggestionBanner } from '@/components/budget/CategorySuggestionBanner';
+import { DEFAULT_BUDGET_CATEGORIES, INCOME_GROUP_NAME } from '@/lib/defaultBudgetCategories';
+import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,24 @@ export const Budget = () => {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
+  const [budgetSeeded, setBudgetSeeded] = useUserLocalStorage('budget_seeded', false);
+
+  // Auto-seed default categories for new users
+  useEffect(() => {
+    if (isLoadingExpenses || budgetSeeded || expenses.length > 0) return;
+    DEFAULT_BUDGET_CATEGORIES.forEach((group) => {
+      group.items.forEach((item) => {
+        addSupabaseExpense({
+          name: item.name,
+          amount: item.suggestedAmount,
+          category: group.name,
+          is_income: group.name === INCOME_GROUP_NAME,
+        });
+      });
+    });
+    setBudgetSeeded(true);
+  }, [isLoadingExpenses, budgetSeeded, expenses.length]);
+
   const isCriticalLoading = isLoadingExpenses;
   const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
@@ -187,40 +206,6 @@ export const Budget = () => {
     budgetSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSetupComplete = (items: { name: string; amount: number; category: string; isIncome: boolean }[]) => {
-    items.forEach((item) => {
-      addSupabaseExpense({
-        name: item.name,
-        amount: item.amount,
-        category: item.category,
-        is_income: item.isIncome,
-      });
-    });
-  };
-
-  const showSetupWizard = expenses.length === 0 && !isLoadingExpenses;
-
-  if (showSetupWizard) {
-    return (
-      <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
-        <div className="space-y-4 sm:space-y-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Budget</h1>
-          <BudgetSetupWizard
-            onComplete={handleSetupComplete}
-            onSkip={() => {
-              // Add a single empty expense so the wizard dismisses
-              addSupabaseExpense({
-                name: "New Expense",
-                amount: 0,
-                category: "Uncategorized",
-                is_income: false,
-              });
-            }}
-          />
-        </div>
-      </SwipeablePageWrapper>
-    );
-  }
 
   return <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
     <div className="space-y-4 sm:space-y-8">

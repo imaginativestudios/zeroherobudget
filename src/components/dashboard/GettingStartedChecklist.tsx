@@ -14,7 +14,8 @@ import {
   Sparkles,
   Rocket,
   Sprout,
-  Building2
+  Building2,
+  Landmark
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,7 +59,24 @@ export function GettingStartedChecklist({
   const [isHidden, setIsHidden] = useState(false);
   const { linkedAccounts } = useLinkedAccounts();
 
-  // Check for investment tracking (matches Journey step 5 logic)
+  // Check for savings / HYSA accounts
+  const hasSavingsAccount = accounts.some(a =>
+    a.type.toLowerCase().includes('savings') ||
+    a.type.toLowerCase().includes('high-yield') ||
+    a.type.toLowerCase().includes('hysa') ||
+    a.type.toLowerCase().includes('money market')
+  );
+  const savingsBalance = accounts
+    .filter(a =>
+      a.type.toLowerCase().includes('savings') ||
+      a.type.toLowerCase().includes('high-yield') ||
+      a.type.toLowerCase().includes('hysa') ||
+      a.type.toLowerCase().includes('money market')
+    )
+    .reduce((sum, a) => sum + a.balance, 0);
+  const isWealthStarted = hasSavingsAccount && savingsBalance > 0;
+
+  // Check for investment tracking (matches Journey step 6 logic)
   const hasInvestmentAccount = accounts.some(a => 
     a.type.toLowerCase().includes('investment') || 
     a.type.toLowerCase().includes('retirement') ||
@@ -105,6 +123,14 @@ export function GettingStartedChecklist({
       href: '/wealth'
     },
     { 
+      id: 'wealth', 
+      title: 'Explore high-yield savings', 
+      description: 'Make your money work harder for you',
+      icon: Landmark,
+      isComplete: isWealthStarted, 
+      href: '/wealth'
+    },
+    { 
       id: 'transaction', 
       title: 'Record a transaction', 
       description: 'Log your first spending entry',
@@ -112,7 +138,7 @@ export function GettingStartedChecklist({
       isComplete: transactions.length > 0, 
       href: '/transactions'
     },
-    { 
+    {
       id: 'bank', 
       title: 'Link a bank account', 
       description: 'Auto-import account names securely',

@@ -6,18 +6,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const CATEGORIES = [
-  "Housing",
-  "Utilities",
-  "Transportation",
-  "Food",
-  "Insurance & Healthcare",
-  "Personal Care",
-  "Entertainment",
-  "Savings & Investments",
-  "Debt Payments",
-  "Miscellaneous"
+// ── Category groups with keyword hints ───────────────────────────────
+const CATEGORY_GROUPS = [
+  { group: "Housing",    categories: ["Rent / Mortgage", "Property Taxes", "Home Insurance", "Home Maintenance"], keywords: ["rent", "mortgage", "landlord", "zillow", "home depot", "lowes", "plumber"] },
+  { group: "Utilities",  categories: ["Electric", "Water / Sewer", "Internet", "Phone"], keywords: ["electric", "power", "comcast", "xfinity", "spectrum", "t-mobile", "verizon", "at&t"] },
+  { group: "Transportation", categories: ["Car Payment", "Gas / Fuel", "Car Insurance", "Maintenance / Repairs", "Public Transportation"], keywords: ["shell", "chevron", "exxon", "geico", "progressive", "uber", "lyft", "metro"] },
+  { group: "Food",       categories: ["Groceries", "Restaurants / Takeout", "Coffee / Snacks"], keywords: ["whole foods", "kroger", "aldi", "doordash", "uber eats", "starbucks", "mcdonald", "chipotle"] },
+  { group: "Health",     categories: ["Health Insurance", "Medical / Doctor", "Pharmacy", "Gym / Fitness"], keywords: ["cvs", "walgreens", "pharmacy", "doctor", "copay", "blue cross", "planet fitness"] },
+  { group: "Lifestyle",  categories: ["Shopping", "Entertainment", "Hobbies", "Subscriptions"], keywords: ["amazon", "target", "netflix", "spotify", "hulu", "disney+", "apple music"] },
+  { group: "Financial",  categories: ["Savings", "Investments", "Debt Payments", "Emergency Fund"], keywords: ["savings", "transfer", "robinhood", "credit card payment", "student loan"] },
+  { group: "Family / Personal", categories: ["Childcare", "Pets", "Personal Care"], keywords: ["daycare", "vet", "petsmart", "salon", "barber"] },
+  { group: "Children & Education", categories: ["Tuition / School Fees", "School Supplies", "Activities / Lessons"], keywords: ["tuition", "school", "textbook", "lesson"] },
+  { group: "Other",      categories: ["Gifts / Donations", "Travel", "Miscellaneous"], keywords: ["gift", "donation", "airline", "hotel", "airbnb", "atm", "cash"] },
 ];
+
+// Flat list of all valid category names
+const ALL_CATEGORIES = CATEGORY_GROUPS.flatMap(g => g.categories);
 
 // Helper to sanitize strings for SQL LIKE patterns
 const sanitizeForLike = (str: string): string => {
@@ -26,44 +30,35 @@ const sanitizeForLike = (str: string): string => {
 
 // Simple in-memory rate limiter per user
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_MAX = 10; // max requests per window
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute window
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW_MS = 60000;
 
 const checkRateLimit = (userId: string): boolean => {
   const now = Date.now();
   const userLimit = rateLimitMap.get(userId);
-  
   if (!userLimit || now > userLimit.resetTime) {
     rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
     return true;
   }
-  
-  if (userLimit.count >= RATE_LIMIT_MAX) {
-    return false;
-  }
-  
+  if (userLimit.count >= RATE_LIMIT_MAX) return false;
   userLimit.count++;
   return true;
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { description, amount } = await req.json();
-    
-    // Input validation
+
     if (!description) {
       return new Response(
         JSON.stringify({ error: "Transaction description is required" }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    
-    // Validate description length to prevent abuse
     if (typeof description !== 'string' || description.length > 500) {
       return new Response(
         JSON.stringify({ error: "Invalid description format or length" }),
@@ -71,24 +66,19 @@ serve(async (req) => {
       );
     }
 
-    // Get authorization header for authenticated requests
     const authHeader = req.headers.get('authorization');
-    
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey, {
       global: { headers: { Authorization: authHeader ?? '' } }
     });
-    
-    // Get user ID for rate limiting
+
     let userId: string | null = null;
     if (authHeader) {
       const { data: { user } } = await supabase.auth.getUser();
       userId = user?.id ?? null;
     }
-    
-    // Check rate limit for authenticated users
+
     if (userId && !checkRateLimit(userId)) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please wait a moment before trying again." }),
@@ -96,12 +86,10 @@ serve(async (req) => {
       );
     }
 
-    // Query user's categorization history for similar transactions
+    // Query user's categorization history
     let historicalContext = "";
     if (authHeader) {
-      // Sanitize input for LIKE pattern to prevent pattern injection
       const firstWord = sanitizeForLike(description.split(' ')[0] || '');
-      
       if (firstWord.length > 0) {
         const { data: history } = await supabase
           .from('transaction_categorization_history')
@@ -111,7 +99,7 @@ serve(async (req) => {
           .limit(5);
 
         if (history && history.length > 0) {
-          historicalContext = `\n\nUser's past categorization patterns for similar transactions:\n${
+          historicalContext = `\n\nUser's past categorization patterns:\n${
             history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
           }`;
         }
@@ -127,25 +115,28 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `You are a financial transaction categorization assistant. Your job is to analyze transaction descriptions and suggest the most appropriate category.
+    // Build keyword hints for the prompt
+    const keywordHints = CATEGORY_GROUPS.map(g =>
+      `${g.group}: ${g.categories.join(", ")} — keywords: ${g.keywords.join(", ")}`
+    ).join("\n");
 
-Available categories:
-${CATEGORIES.map((cat, i) => `${i + 1}. ${cat}`).join('\n')}
+    const systemPrompt = `You are a financial transaction categorization assistant. Analyze the description and suggest the best category.
 
-Analyze the transaction description and amount (if provided) and return ONLY the category name that best fits. Return exactly one category name from the list above, with no additional text or explanation.
+Available category groups and their sub-categories:
+${keywordHints}
+
+Return ONLY one category name from the sub-categories above (e.g. "Groceries", "Gas / Fuel", "Subscriptions"). Return the exact name, no explanation.
 
 Examples:
-- "Whole Foods Market" → Food
-- "Shell Gas Station" → Transportation
-- "Netflix Subscription" → Entertainment
-- "Electric Company" → Utilities
-- "Mortgage Payment" → Housing
-- "CVS Pharmacy" → Insurance & Healthcare
-- "Target" → Personal Care (if small amount) or Miscellaneous
-- "Starbucks" → Food
+- "Whole Foods Market" → Groceries
+- "Shell Gas Station" → Gas / Fuel
+- "Netflix" → Subscriptions
+- "Duke Energy" → Electric
+- "State Farm" → Car Insurance
+- "Starbucks" → Coffee / Snacks
 - "ATM Withdrawal" → Miscellaneous${historicalContext}`;
 
-    const userPrompt = amount 
+    const userPrompt = amount
       ? `Transaction: "${description}", Amount: $${amount.toFixed(2)}`
       : `Transaction: "${description}"`;
 
@@ -168,21 +159,18 @@ Examples:
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI Gateway error:", response.status, errorText);
-      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "AI service requires payment. Please contact support." }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      
       return new Response(
         JSON.stringify({ error: "Failed to categorize transaction" }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -191,11 +179,10 @@ Examples:
 
     const data = await response.json();
     let suggestedCategory = data.choices?.[0]?.message?.content?.trim() || "";
-    
-    // Validate the category is one of our allowed categories
-    if (!CATEGORIES.includes(suggestedCategory)) {
-      // Try to find a partial match
-      const match = CATEGORIES.find(cat => 
+
+    // Validate against our known categories
+    if (!ALL_CATEGORIES.includes(suggestedCategory)) {
+      const match = ALL_CATEGORIES.find(cat =>
         suggestedCategory.toLowerCase().includes(cat.toLowerCase()) ||
         cat.toLowerCase().includes(suggestedCategory.toLowerCase())
       );
@@ -203,17 +190,12 @@ Examples:
     }
 
     return new Response(
-      JSON.stringify({ 
-        category: suggestedCategory,
-        confidence: "high" 
-      }),
+      JSON.stringify({ category: suggestedCategory, confidence: "high" }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    // Log detailed error server-side only
     console.error("Error in categorize-transaction function:", error);
-    // Return generic error to client
     return new Response(
       JSON.stringify({ error: "Unable to categorize transaction. Please try again later." }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

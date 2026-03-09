@@ -250,6 +250,7 @@ export const Budget = () => {
                 <span className="hidden sm:inline ml-2">Import</span>
               </Button>
               <input id="import-file" type="file" accept=".csv" className="hidden" onChange={importExpenses} />
+              <CategoryManager />
             </div>
           </div>
         </div>

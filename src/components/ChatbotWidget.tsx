@@ -340,11 +340,9 @@ export const ChatbotWidget = () => {
       {/* Helper tooltip */}
       {!isOpen && !hasOpened && (
         <div className="absolute bottom-[5.5rem] right-0 animate-fade-in flex justify-center w-16">
-          <div className="relative bg-card border border-border shadow-lg rounded-2xl px-4 py-2 text-sm font-medium text-foreground whitespace-nowrap">
-            Ask me anything ✨
-            {/* Downward-pointing tail */}
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-border" />
-            <div className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[7px] border-t-card" />
+          <div className="relative bg-accent text-accent-foreground font-bold text-base rounded-2xl px-4 py-2 shadow-lg">
+            HI!
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-accent" />
           </div>
         </div>
       )}

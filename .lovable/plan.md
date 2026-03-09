@@ -1,46 +1,21 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Auto-Populate Default Categories for New Users
 
-## Issues Found
+## What Changes
+Instead of showing a separate setup wizard card when a new user visits the Budget page, we'll automatically seed the default budget categories into their expense list. The user will land directly on the normal budget page with all categories pre-populated (amounts at $0), ready to customize inline.
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+## Changes
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+### `src/pages/Budget.tsx`
+1. Remove the `showSetupWizard` conditional block (lines 201–222) that renders `BudgetSetupWizard`
+2. Remove the `BudgetSetupWizard` import
+3. Add a `useEffect` that runs once: if `expenses.length === 0` and not loading, iterate over `DEFAULT_BUDGET_CATEGORIES` and call `addSupabaseExpense` for each item (setting `is_income` based on the Income group name)
+4. Use a localStorage flag (e.g. `budget_seeded`) to prevent re-seeding if the user intentionally clears all expenses later
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### Files no longer needed (can keep for now, just unused)
+- `src/components/budget/BudgetSetupWizard.tsx` — no longer imported or rendered
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
-
----
-
-## Plan
-
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+## Result
+New users see the full budget page immediately with all default categories listed at $0. They can edit names, amounts, reorder, delete, or add new categories directly — no wizard step required.
 

@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Plus, Wallet, PiggyBank, CreditCard, Banknote, TrendingUp, Pencil, Trash2, Power } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, Wallet, PiggyBank, CreditCard, Banknote, TrendingUp, Pencil, Trash2, Power, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLocalAccounts, Account } from "@/hooks/useLocalAccounts";
+import { useLinkedAccounts } from "@/hooks/useLinkedAccounts";
 import { AccountForm } from "@/components/accounts/AccountForm";
+import { LinkedAccountsList } from "@/components/linked-accounts/LinkedAccountsList";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +24,7 @@ const ACCOUNT_TYPE_CONFIG = {
 } as const;
 
 export function Accounts() {
+  const navigate = useNavigate();
   const { accounts, addAccount, updateAccount, removeAccount } = useLocalAccounts();
   const [showForm, setShowForm] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
@@ -288,6 +293,10 @@ export function Accounts() {
           </CardContent>
         </Card>
       )}
+
+      {/* Linked Bank Accounts Section */}
+      <Separator />
+      <LinkedAccountsList onLinkNew={() => navigate('/link-bank')} />
 
       {/* Add/Edit Form Dialog */}
       <AccountForm

@@ -8,6 +8,7 @@ import {
   PiggyBank,
   Users,
   MoreHorizontal,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,7 +23,19 @@ export interface DefaultCategoryGroup {
   items: DefaultCategoryItem[];
 }
 
+export const INCOME_GROUP_NAME = "Income";
+
 export const DEFAULT_BUDGET_CATEGORIES: DefaultCategoryGroup[] = [
+  {
+    name: INCOME_GROUP_NAME,
+    icon: TrendingUp,
+    items: [
+      { name: "Salary / Wages", suggestedAmount: 0 },
+      { name: "Side Income", suggestedAmount: 0 },
+      { name: "Freelance / Contract", suggestedAmount: 0 },
+      { name: "Investments / Dividends", suggestedAmount: 0 },
+    ],
+  },
   {
     name: "Housing",
     icon: Home,

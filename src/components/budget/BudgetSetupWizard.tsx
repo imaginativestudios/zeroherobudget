@@ -17,7 +17,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { DEFAULT_BUDGET_CATEGORIES, type DefaultCategoryGroup } from "@/lib/defaultBudgetCategories";
+import { DEFAULT_BUDGET_CATEGORIES, INCOME_GROUP_NAME, type DefaultCategoryGroup } from "@/lib/defaultBudgetCategories";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/constants";
 
@@ -41,7 +41,7 @@ interface SetupGroup {
 }
 
 interface BudgetSetupWizardProps {
-  onComplete: (items: { name: string; amount: number; category: string }[]) => void;
+  onComplete: (items: { name: string; amount: number; category: string; isIncome: boolean }[]) => void;
   onSkip: () => void;
 }
 
@@ -190,6 +190,7 @@ export function BudgetSetupWizard({ onComplete, onSkip }: BudgetSetupWizardProps
       name: i.name,
       amount: i.amount,
       category: i.groupName,
+      isIncome: i.groupName === INCOME_GROUP_NAME,
     }));
     onComplete(items);
   };

@@ -185,13 +185,13 @@ export const Budget = () => {
     budgetSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSetupComplete = (items: { name: string; amount: number; category: string }[]) => {
+  const handleSetupComplete = (items: { name: string; amount: number; category: string; isIncome: boolean }[]) => {
     items.forEach((item) => {
       addSupabaseExpense({
         name: item.name,
         amount: item.amount,
         category: item.category,
-        is_income: false,
+        is_income: item.isIncome,
       });
     });
   };

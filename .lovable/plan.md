@@ -1,27 +1,46 @@
 
 
-# Enhance Chat Bubble with Bot Icon and Helper Text
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-## Changes — `src/components/ChatbotWidget.tsx`
+## Issues Found
 
-### 1. Replace MessageCircle with Bot icon
-- Import `Bot` from `lucide-react`
-- Swap the bubble's `MessageCircle` (line 351) for `Bot` icon
-- Also swap the header icon (line 232) for consistency
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-### 2. Add floating helper tooltip
-- Add a small pill/label next to the bubble that says **"Ask me anything"**
-- Only show it when the chat is **closed** — hide when open
-- Animate it with a subtle fade/slide-in using Tailwind transitions
-- Position it to the left of the bubble (`right-16`) with an arrow or rounded pill style
-- Auto-dismiss after first open (optional: use local state so it only shows until first interaction)
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-### Layout
-```text
-┌──────────────────┐
-│  Ask me anything  │  ●  (Bot icon bubble)
-└──────────────────┘
-```
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
 
-The pill uses `bg-card border shadow-lg rounded-full px-3 py-1.5 text-sm font-medium` styling with a gentle `animate-bounce` or pulse to draw attention, settling after a moment.
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
+
+## Plan
+
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
+
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
+
+---
+
+## Files to Modify
+
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

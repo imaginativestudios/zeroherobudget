@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Loader2, MessageCircle } from "lucide-react";
+import { X, Send, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,6 +25,7 @@ export const ChatbotWidget = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -229,7 +230,7 @@ export const ChatbotWidget = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-white" aria-hidden="true" />
+              <Bot className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
                 <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
                 <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
@@ -336,9 +337,21 @@ export const ChatbotWidget = () => {
         </div>
       </div>
 
+      {/* Helper tooltip */}
+      {!isOpen && !hasOpened && (
+        <div className="absolute bottom-4 right-[4.5rem] animate-fade-in">
+          <div className="bg-card border border-border shadow-lg rounded-full px-3 py-1.5 text-sm font-medium text-foreground whitespace-nowrap">
+            Ask me anything ✨
+          </div>
+        </div>
+      )}
+
       {/* Floating Bubble */}
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!hasOpened) setHasOpened(true);
+        }}
         size="icon"
         className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
@@ -346,9 +359,9 @@ export const ChatbotWidget = () => {
         aria-controls="chat-panel"
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-white" aria-hidden="true" />
+          <X className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <MessageCircle className="h-7 w-7 text-white" aria-hidden="true" />
+          <Bot className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         )}
       </Button>
     </div>

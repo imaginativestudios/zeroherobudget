@@ -280,6 +280,15 @@ export const Budget = () => {
         onScrollToBudget={scrollToBudget}
       />
 
+      {/* Category Suggestions from spending patterns */}
+      <CategorySuggestionBanner
+        expenses={expenses}
+        transactions={transactions}
+        onAddCategory={(name, amount, category) => {
+          addSupabaseExpense({ name, amount, category, is_income: false });
+        }}
+      />
+
       {/* Income Section */}
       <Card className="shadow-royal hover-lift" data-tour="budget-income">
         <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">

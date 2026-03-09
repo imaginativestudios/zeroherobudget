@@ -1,17 +1,46 @@
 
 
-# Add Subtle Shine Animation to Chatbot FAB
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-## Approach
-Add a CSS pseudo-element shine sweep that plays every 4–5 seconds on the floating action button. The shine is a diagonal white gradient that slides across the button, creating a subtle "glint" effect.
+## Issues Found
 
-## Changes
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-### 1. `src/index.css` — Add shine keyframe
-Add a `@keyframes fab-shine` animation that translates a diagonal white gradient across the button from left to right. Apply it via a utility class `.fab-shine` using `::before` pseudo-element with `overflow: hidden` on the parent.
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-### 2. `src/components/ChatbotWidget.tsx` — Apply class
-Add `overflow-hidden relative fab-shine` to the FAB button's className (line 336).
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
 
-The animation will run every ~5s with a quick 0.6s sweep, using a low-opacity white gradient so it feels subtle and polished.
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
+
+## Plan
+
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
+
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
+
+---
+
+## Files to Modify
+
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

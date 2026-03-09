@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock } from 'lucide-react';
+import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, Lightbulb, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

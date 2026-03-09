@@ -1,18 +1,46 @@
 
 
-# Remove Monthly Income Card from Budget Page
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-The Budget page has a standalone "Monthly Income" card (lines 286–308 in `Budget.tsx`) with a currency input for setting income. This duplicates/conflicts with the income category group already present in the budget's expense list (seeded from `DEFAULT_BUDGET_CATEGORIES` which includes an income group).
+## Issues Found
 
-## Changes
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-### `src/pages/Budget.tsx`
-- **Delete lines 286–308** — the entire "Income Section" `<Card>` block containing the `CurrencyInput` for monthly income.
-- The `useIncome` hook import and `[income, setIncome]` destructuring can also be removed if no other code on this page references them. (Will verify — the Budget Overview Card likely reads `income` so the hook may need to stay for read-only use; only the standalone card and its input are removed.)
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-### No other files affected
-- The Dashboard's `FinancialCard` for "Monthly Income" stays — it reads from the same hook and links to the Income Report, which is a different concern.
-- The income value will now be managed solely through the budget category groups (the "Income" group items).
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
 
-**One file, one deletion block.**
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+
+---
+
+## Plan
+
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
+
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
+
+---
+
+## Files to Modify
+
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

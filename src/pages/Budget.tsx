@@ -1,11 +1,10 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { DollarSign, Download, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
+import { Download, Upload, Calendar, ChevronDown, BarChart3, Plus, Trash2, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CurrencyInput } from "@/components/ui/currency-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
@@ -283,29 +282,6 @@ export const Budget = () => {
         }}
       />
 
-      {/* Income Section */}
-      <Card className="shadow-royal hover-lift" data-tour="budget-income">
-        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-success" aria-hidden="true" />
-            Monthly Income
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <label htmlFor="income-amount" className="text-sm sm:text-base text-muted-foreground font-medium whitespace-nowrap">
-              Income Amount:
-            </label>
-            <CurrencyInput 
-              id="income-amount"
-              prefix="$"
-              value={income} 
-              onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
-              className="w-full sm:w-48"
-            />
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Expenses Section */}
       <Card ref={budgetSectionRef} className="shadow-royal hover-lift">

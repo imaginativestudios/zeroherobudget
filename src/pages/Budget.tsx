@@ -48,6 +48,24 @@ export const Budget = () => {
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
+  const [budgetSeeded, setBudgetSeeded] = useUserLocalStorage('budget_seeded', false);
+
+  // Auto-seed default categories for new users
+  useEffect(() => {
+    if (isLoadingExpenses || budgetSeeded || expenses.length > 0) return;
+    DEFAULT_BUDGET_CATEGORIES.forEach((group) => {
+      group.items.forEach((item) => {
+        addSupabaseExpense({
+          name: item.name,
+          amount: item.suggestedAmount,
+          category: group.name,
+          is_income: group.name === INCOME_GROUP_NAME,
+        });
+      });
+    });
+    setBudgetSeeded(true);
+  }, [isLoadingExpenses, budgetSeeded, expenses.length]);
+
   const isCriticalLoading = isLoadingExpenses;
   const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);

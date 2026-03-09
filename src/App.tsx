@@ -106,7 +106,7 @@ const App = () => (
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
-                <Route path="/settings/release-kit" element={<ReleaseKit />} />
+                
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

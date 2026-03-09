@@ -282,29 +282,6 @@ export const Budget = () => {
         }}
       />
 
-      {/* Income Section */}
-      <Card className="shadow-royal hover-lift" data-tour="budget-income">
-        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-          <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2 sm:gap-3">
-            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-success" aria-hidden="true" />
-            Monthly Income
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <label htmlFor="income-amount" className="text-sm sm:text-base text-muted-foreground font-medium whitespace-nowrap">
-              Income Amount:
-            </label>
-            <CurrencyInput 
-              id="income-amount"
-              prefix="$"
-              value={income} 
-              onChange={e => setIncome(parseFloat(e.target.value) || 0)} 
-              className="w-full sm:w-48"
-            />
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Expenses Section */}
       <Card ref={budgetSectionRef} className="shadow-royal hover-lift">

@@ -1,62 +1,46 @@
 
 
-# Fix Budget Categories Not Showing
+# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
 
-## Root Cause
+## Issues Found
 
-The auto-seed logic in `Budget.tsx` (lines 55-68) has a **stale closure bug**. It calls `addSupabaseExpense` inside a `forEach` loop, but each call does `setExpenses([...expenses, newExpense])` where `expenses` is always the initial empty array `[]` from the closure. Every iteration overwrites the previous one, so only the **last expense** survives. Then `setBudgetSeeded(true)` fires, preventing re-seeding.
+### 1. E2E Tests Out of Sync with Live UI
+The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
 
-## Fix — `src/pages/Budget.tsx` (lines 54-68)
+| Test Expects | Actual UI |
+|---|---|
+| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
+| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
+| "See My Freedom Path" button | "See My Payoff Timeline" button |
+| "Enter the Fortress" button | "Go to Dashboard" button |
 
-Replace the loop of individual `addSupabaseExpense` calls with a single batch write. Build the full array of expenses first, then call the underlying `setExpenses` once via `useLocalExpenses`:
+### 2. Orphaned MobileOnboardingCarousel
+`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
 
-1. **Add a `setAllExpenses` method** to `useLocalExpenses` (or use the existing storage setter directly) that accepts a full array.
-2. **In the seed `useEffect`**: Build the complete expenses array in memory, then write it in one call.
+### 3. Subscription Model in PricingStep
+The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
 
-### `src/hooks/useLocalExpenses.ts`
+---
 
-Add a `batchAddExpenses` function that builds the full array and writes once:
+## Plan
 
-```ts
-const batchAddExpenses = (items: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'sort_order'>[]) => {
-  const userId = user?.id ?? DEMO_USER_ID;
-  const now = new Date().toISOString();
-  const startOrder = expenses.reduce((max, e) => Math.max(max, e.sort_order ?? 0), -1) + 1;
-  const newExpenses = items.map((item, i) => ({
-    ...item,
-    id: uuidv4(),
-    user_id: userId,
-    created_at: now,
-    updated_at: now,
-    sort_order: startOrder + i,
-  }));
-  setExpenses([...expenses, ...newExpenses]);
-};
-```
+### File: `e2e/onboarding.spec.ts`
+Update all assertions to match current Stoic Wisdom UI labels:
+- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
+- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
+- `"See My Freedom Path"` → `"See My Payoff Timeline"`
+- `"Enter the Fortress"` → `"Go to Dashboard"`
+- `"Custom"` → verify the custom goal selector still uses this label
 
-Return it alongside existing methods.
+### File: `src/components/MobileOnboardingCarousel.tsx`
+**Delete** this orphaned component. It is not imported or rendered anywhere.
 
-### `src/pages/Budget.tsx` (seed useEffect)
+---
 
-Replace the forEach loop with a single batch call:
+## Files to Modify
 
-```ts
-useEffect(() => {
-  if (isLoadingExpenses || budgetSeeded || expenses.length > 0) return;
-  const items = DEFAULT_BUDGET_CATEGORIES.flatMap(group =>
-    group.items.map(item => ({
-      name: item.name,
-      amount: item.suggestedAmount,
-      category: group.name,
-      is_income: group.name === INCOME_GROUP_NAME,
-    }))
-  );
-  batchAddExpenses(items);
-  setBudgetSeeded(true);
-}, [isLoadingExpenses, budgetSeeded, expenses.length]);
-```
-
-### Reset stale seed flag
-
-Since the user already has `budgetSeeded = true` with no (or one) expense, also add a recovery check: if `budgetSeeded` is true but `expenses.length === 0`, reset it to `false` so the seed re-runs.
+| File | Action |
+|---|---|
+| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
+| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
 

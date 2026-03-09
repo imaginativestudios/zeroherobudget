@@ -49,6 +49,21 @@ export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical'
     setExpenses(expenses.filter((expense) => expense.id !== id));
   };
 
+  const batchAddExpenses = (items: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'sort_order'>[]) => {
+    const userId = user?.id ?? DEMO_USER_ID;
+    const now = new Date().toISOString();
+    const startOrder = expenses.reduce((max, e) => Math.max(max, e.sort_order ?? 0), -1) + 1;
+    const newExpenses = items.map((item, i) => ({
+      ...item,
+      id: uuidv4(),
+      user_id: userId,
+      created_at: now,
+      updated_at: now,
+      sort_order: startOrder + i,
+    }));
+    setExpenses([...expenses, ...newExpenses]);
+  };
+
   const setExpensesOrder = (orderedIds: string[]) => {
     const updatedExpenses = expenses.map(expense => ({
       ...expense,
@@ -58,5 +73,5 @@ export function useLocalExpenses(priority: 'critical' | 'secondary' = 'critical'
     setExpenses(updatedExpenses);
   };
 
-  return { expenses: sortedExpenses, isLoading, addExpense, updateExpense, removeExpense, setExpensesOrder };
+  return { expenses: sortedExpenses, isLoading, addExpense, updateExpense, removeExpense, batchAddExpenses, setExpensesOrder };
 }

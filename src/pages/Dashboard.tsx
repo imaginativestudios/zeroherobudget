@@ -416,7 +416,7 @@ export const Dashboard = () => {
 
   return (
     <SwipeablePageWrapper leftRoute="/budgets">
-      <div className={cn("space-y-12 lg:space-y-16", showRegroupingTheme && "regrouping-theme")}>
+      <div className={cn("space-y-6 lg:space-y-8", showRegroupingTheme && "regrouping-theme")}>
       {/* ========================================= */}
       {/* HERO WELCOME SECTION - Command Center    */}
       {/* ========================================= */}

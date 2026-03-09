@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Loader2, MessageCircle } from "lucide-react";
+import { X, Send, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";

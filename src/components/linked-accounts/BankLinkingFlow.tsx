@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ConsentScreen } from './ConsentScreen';
-import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
+
 import {
   searchInstitutions,
   exchangeToken,

@@ -253,7 +253,7 @@ export const ChatbotWidget = () => {
               <div className="space-y-4">
                 <div className="bg-muted/50 rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-3">
-                    👋 Hi! I'm your AI-powered Zero Hero assiZora, your AI-poweredout budgeting, debt payoff strategies, or how to use the app!
+                    👋 Hi! I'm Zora, your AI-powered assistant. Ask me anything about budgeting, debt payoff strategies, or how to use the app!
                   </p>
                   <p className="text-[11px] text-muted-foreground/80 mb-3 italic border-l-2 border-muted pl-2">
                     Note: I may occasionally provide inaccurate information. My responses are for educational purposes only and do not constitute personalized financial, legal, or tax advice.

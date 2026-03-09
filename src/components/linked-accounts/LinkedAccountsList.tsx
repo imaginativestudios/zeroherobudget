@@ -99,8 +99,11 @@ export function LinkedAccountsList() {
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">Why link your bank?</p>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                Linking gives you real account names and types without manual entry. Your data stays encrypted on this device — nothing is sent to our servers.
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Linking lets us identify your accounts automatically—no manual entry needed.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Your banking data stays encrypted on this device and is never stored on our servers.
               </p>
             </div>
           </CardContent>

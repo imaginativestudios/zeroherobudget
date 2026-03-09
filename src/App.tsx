@@ -45,7 +45,7 @@ import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import { OfflineBanner } from "./components/OfflineBanner";
 import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
- Journey from "./pages/Journey";
+ import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
 

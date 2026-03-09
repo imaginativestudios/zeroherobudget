@@ -49,7 +49,8 @@ export function JourneyProgressBar({ steps, currentStep }: JourneyProgressBarPro
                step.id === 2 ? 'Starter' :
                step.id === 3 ? 'Debt Free' :
                step.id === 4 ? 'Safety Net' :
-               step.id === 5 ? 'Invest' :
+               step.id === 5 ? 'Wealth' :
+               step.id === 6 ? 'Invest' :
                'Freedom'}
             </span>
           </div>

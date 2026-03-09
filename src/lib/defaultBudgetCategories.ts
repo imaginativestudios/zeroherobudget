@@ -8,6 +8,7 @@ import {
   PiggyBank,
   Users,
   MoreHorizontal,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 

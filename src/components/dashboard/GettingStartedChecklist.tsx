@@ -56,6 +56,7 @@ export function GettingStartedChecklist({
   const [isCollapsed, setIsCollapsed] = useUserLocalStorage('bdt_checklist_collapsed', false);
   const [hasShownCelebration, setHasShownCelebration] = useUserLocalStorage('bdt_checklist_celebrated', false);
   const [isHidden, setIsHidden] = useState(false);
+  const { linkedAccounts } = useLinkedAccounts();
 
   // Check for investment tracking (matches Journey step 5 logic)
   const hasInvestmentAccount = accounts.some(a => 

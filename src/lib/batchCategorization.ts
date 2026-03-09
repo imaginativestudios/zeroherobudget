@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getAllCategoryNames } from '@/lib/categoryRegistry';
 
 export interface CategorizationResult {
   duplicateKey: string;
@@ -13,11 +14,8 @@ export interface CategorizationResult {
   error?: string;
 }
 
-const DELAY_BETWEEN_REQUESTS_MS = 200; // Delay to respect rate limits
+const DELAY_BETWEEN_REQUESTS_MS = 200;
 
-/**
- * Categorize a single transaction via the edge function
- */
 async function categorizeSingleTransaction(
   description: string,
   amount?: number
@@ -26,12 +24,10 @@ async function categorizeSingleTransaction(
     const { data, error } = await supabase.functions.invoke('categorize-transaction', {
       body: { description, amount },
     });
-
     if (error) {
       console.error('Categorization error:', error);
       return null;
     }
-
     return data?.category || null;
   } catch (error) {
     console.error('Error calling categorization function:', error);
@@ -39,9 +35,6 @@ async function categorizeSingleTransaction(
   }
 }
 
-/**
- * Helper to delay between requests
- */
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -60,27 +53,15 @@ export interface BatchCategorizationProgress {
   currentDescription: string;
 }
 
-/**
- * Batch categorize multiple transactions
- * Processes sequentially with delays to respect rate limits
- * 
- * @param transactions - Array of transactions to categorize
- * @param onProgress - Optional callback for progress updates
- * @returns Map of duplicateKey -> suggested category
- */
 export async function batchCategorizeTransactions(
   transactions: TransactionToCategorize[],
   onProgress?: (progress: BatchCategorizationProgress) => void
 ): Promise<Map<string, string>> {
   const results = new Map<string, string>();
-  
-  // Filter out income transactions (they don't need categorization)
   const toCategorize = transactions.filter(t => t.flow === 'out');
   
   for (let i = 0; i < toCategorize.length; i++) {
     const transaction = toCategorize[i];
-    
-    // Report progress
     if (onProgress) {
       onProgress({
         current: i + 1,
@@ -88,42 +69,24 @@ export async function batchCategorizeTransactions(
         currentDescription: transaction.description.slice(0, 30),
       });
     }
-    
-    // Use rawText for better categorization (more context)
     const textForCategorization = transaction.rawText || transaction.description;
-    
     const suggestedCategory = await categorizeSingleTransaction(
       textForCategorization,
       transaction.amount
     );
-    
     if (suggestedCategory) {
       results.set(transaction.duplicateKey, suggestedCategory);
     }
-    
-    // Add delay between requests (except for the last one)
     if (i < toCategorize.length - 1) {
       await delay(DELAY_BETWEEN_REQUESTS_MS);
     }
   }
-  
   return results;
 }
 
 /**
- * Categories available in the system
+ * Categories available in the system — derived from the central registry.
  */
-export const BUDGET_CATEGORIES = [
-  "Housing",
-  "Utilities",
-  "Transportation",
-  "Food",
-  "Insurance & Healthcare",
-  "Personal Care",
-  "Entertainment",
-  "Savings & Investments",
-  "Debt Payments",
-  "Miscellaneous"
-] as const;
+export const BUDGET_CATEGORIES = getAllCategoryNames();
 
-export type BudgetCategory = typeof BUDGET_CATEGORIES[number];
+export type BudgetCategory = string;

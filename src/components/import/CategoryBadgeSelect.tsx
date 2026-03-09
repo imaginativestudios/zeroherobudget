@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -8,7 +7,7 @@ import {
 } from '@/components/ui/popover';
 import { ChevronDown, Sparkles, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BUDGET_CATEGORIES } from '@/lib/batchCategorization';
+import { DEFAULT_GROUPS, DEFAULT_CATEGORIES, type CategoryDefinition } from '@/lib/categoryRegistry';
 
 interface CategoryBadgeSelectProps {
   value: string;
@@ -49,7 +48,7 @@ export function CategoryBadgeSelect({
           <ChevronDown className="h-3 w-3 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-1" align="start">
+      <PopoverContent className="w-56 p-1 max-h-72 overflow-y-auto" align="start">
         <div className="space-y-0.5">
           {aiSuggested && (
             <>
@@ -72,26 +71,33 @@ export function CategoryBadgeSelect({
               <div className="border-t my-1" />
             </>
           )}
-          
-          <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
-            All Categories
-          </div>
-          
-          {BUDGET_CATEGORIES.map((category) => (
-            <Button
-              key={category}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "w-full justify-start text-xs h-8 px-2",
-                value === category && !isAiCategory && "bg-accent"
-              )}
-              onClick={() => handleSelect(category)}
-            >
-              {value === category && <Check className="h-3 w-3 mr-1" />}
-              <span className="truncate">{category}</span>
-            </Button>
-          ))}
+
+          {DEFAULT_GROUPS.filter(g => !g.isIncome).map((group) => {
+            const cats = DEFAULT_CATEGORIES.filter(c => c.groupId === group.id);
+            if (cats.length === 0) return null;
+            return (
+              <div key={group.id}>
+                <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {group.name}
+                </div>
+                {cats.map((cat) => (
+                  <Button
+                    key={cat.id}
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "w-full justify-start text-xs h-7 px-2",
+                      value === cat.name && "bg-accent/20"
+                    )}
+                    onClick={() => handleSelect(cat.name)}
+                  >
+                    {value === cat.name && <Check className="h-3 w-3 mr-1" />}
+                    <span className="truncate">{cat.name}</span>
+                  </Button>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>

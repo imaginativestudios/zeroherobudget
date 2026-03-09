@@ -1,3 +1,7 @@
+/**
+ * Default Budget Categories — backward-compatible re-export from categoryRegistry.
+ */
+
 import {
   Home,
   Zap,
@@ -9,8 +13,17 @@ import {
   Users,
   MoreHorizontal,
   TrendingUp,
+  GraduationCap,
+  HeartPulse,
   type LucideIcon,
 } from "lucide-react";
+
+import {
+  DEFAULT_GROUPS,
+  DEFAULT_CATEGORIES,
+  getCategoriesByGroup,
+  type CategoryGroup as RegistryGroup,
+} from "./categoryRegistry";
 
 export interface DefaultCategoryItem {
   name: string;
@@ -25,102 +38,34 @@ export interface DefaultCategoryGroup {
 
 export const INCOME_GROUP_NAME = "Income";
 
-export const DEFAULT_BUDGET_CATEGORIES: DefaultCategoryGroup[] = [
-  {
-    name: INCOME_GROUP_NAME,
-    icon: TrendingUp,
-    items: [
-      { name: "Salary / Wages", suggestedAmount: 0 },
-      { name: "Side Income", suggestedAmount: 0 },
-      { name: "Freelance / Contract", suggestedAmount: 0 },
-      { name: "Investments / Dividends", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Housing",
-    icon: Home,
-    items: [
-      { name: "Rent / Mortgage", suggestedAmount: 0 },
-      { name: "Property Taxes", suggestedAmount: 0 },
-      { name: "Home Insurance", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Utilities",
-    icon: Zap,
-    items: [
-      { name: "Internet", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Transportation",
-    icon: Car,
-    items: [
-      { name: "Car Payment", suggestedAmount: 0 },
-      { name: "Gas / Fuel", suggestedAmount: 0 },
-      { name: "Car Insurance", suggestedAmount: 0 },
-      { name: "Maintenance / Repairs", suggestedAmount: 0 },
-      { name: "Public Transportation", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Food",
-    icon: UtensilsCrossed,
-    items: [
-      { name: "Groceries", suggestedAmount: 0 },
-      { name: "Restaurants / Takeout", suggestedAmount: 0 },
-      { name: "Coffee / Snacks", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Health",
-    icon: Heart,
-    items: [
-      { name: "Health Insurance", suggestedAmount: 0 },
-      { name: "Medical / Doctor", suggestedAmount: 0 },
-      { name: "Pharmacy", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Lifestyle",
-    icon: Sparkles,
-    items: [
-      { name: "Shopping", suggestedAmount: 0 },
-      { name: "Entertainment", suggestedAmount: 0 },
-      { name: "Hobbies", suggestedAmount: 0 },
-      { name: "Subscriptions", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Financial",
-    icon: PiggyBank,
-    items: [
-      { name: "Savings", suggestedAmount: 0 },
-      { name: "Investments", suggestedAmount: 0 },
-      { name: "Debt Payments", suggestedAmount: 0 },
-      { name: "Emergency Fund", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Family / Personal",
-    icon: Users,
-    items: [
-      { name: "Childcare", suggestedAmount: 0 },
-      { name: "Education", suggestedAmount: 0 },
-      { name: "Pets", suggestedAmount: 0 },
-      { name: "Personal Care", suggestedAmount: 0 },
-    ],
-  },
-  {
-    name: "Other",
-    icon: MoreHorizontal,
-    items: [
-      { name: "Gifts / Donations", suggestedAmount: 0 },
-      { name: "Travel", suggestedAmount: 0 },
-      { name: "Miscellaneous", suggestedAmount: 0 },
-    ],
-  },
-];
+// Map registry icon strings to Lucide components
+const ICON_MAP: Record<string, LucideIcon> = {
+  "trending-up": TrendingUp,
+  "home": Home,
+  "zap": Zap,
+  "car": Car,
+  "utensils-crossed": UtensilsCrossed,
+  "heart-pulse": HeartPulse,
+  "sparkles": Sparkles,
+  "piggy-bank": PiggyBank,
+  "users": Users,
+  "graduation-cap": GraduationCap,
+  "more-horizontal": MoreHorizontal,
+};
+
+/**
+ * Derive DEFAULT_BUDGET_CATEGORIES from the registry so there's one source of truth.
+ * Only includes categories that are enabled by default.
+ */
+export const DEFAULT_BUDGET_CATEGORIES: DefaultCategoryGroup[] = DEFAULT_GROUPS.map(
+  (group) => ({
+    name: group.name,
+    icon: ICON_MAP[group.icon] ?? MoreHorizontal,
+    items: getCategoriesByGroup(group.id)
+      .filter((c) => c.enabledByDefault)
+      .map((c) => ({ name: c.name, suggestedAmount: 0 })),
+  })
+).filter((g) => g.items.length > 0);
 
 /** Map group names to their Lucide icon for use elsewhere (e.g. GroupCard headers) */
 export const CATEGORY_GROUP_ICONS: Record<string, LucideIcon> = Object.fromEntries(

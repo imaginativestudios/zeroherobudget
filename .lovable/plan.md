@@ -1,46 +1,21 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+# Fix: Data Clear Should Reset Budget Seeding Flag
 
-## Issues Found
+## Problem
+After clearing local data, the `budget_seeded` flag remains in localStorage. This means:
+- Auto-seeding won't re-trigger (it checks `budgetSeeded === true` and skips)
+- The budget page stays empty after a clear
+- The "Reset Quest" button is disabled because `totalItems === 0` — so the user can't clear again
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+## Root Cause
+`src/lib/dataClear.ts` doesn't include `budget_seeded` in its list of keys to clear.
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+## Fix
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### `src/lib/dataClear.ts`
+- Add `'budget_seeded'` to the `LOCAL_STORAGE_KEYS` array (around line 41, near onboarding/UI state keys)
+- Also add it to the `settings` branch inside `clearSelectiveData` (around line 104)
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
-
----
-
-## Plan
-
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+This is a 2-line change. After clearing data, the auto-seeding will re-trigger on next Budget page visit, giving the user fresh default categories.
 

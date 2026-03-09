@@ -337,15 +337,6 @@ export const ChatbotWidget = () => {
         </div>
       </div>
 
-      {/* Helper tooltip */}
-      {!isOpen && !hasOpened && (
-        <div className="absolute bottom-[5.5rem] right-0 animate-fade-in flex justify-center w-16">
-          <div className="relative bg-accent text-accent-foreground font-bold text-base rounded-2xl px-4 py-2 shadow-lg">
-            HI!
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-accent" />
-          </div>
-        </div>
-      )}
 
       {/* Floating Bubble */}
       <Button

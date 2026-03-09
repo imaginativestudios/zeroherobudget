@@ -45,8 +45,6 @@ import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import { OfflineBanner } from "./components/OfflineBanner";
 import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
-import ConnectorSetup from "./pages/ConnectorSetup";
-import ReleaseKit from "./pages/ReleaseKit";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
@@ -108,8 +106,7 @@ const App = () => (
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
-                <Route path="/settings/connector" element={<ConnectorSetup />} />
-                <Route path="/settings/release-kit" element={<ReleaseKit />} />
+                
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { haptics } from '@/lib/haptics';
 import {
-  Menu,
   Rocket,
   Wallet,
   Trophy,
@@ -13,7 +12,6 @@ import {
   Lightbulb,
   Settings,
   Shield,
-  Plug,
   TrendingUp,
 } from 'lucide-react';
 
@@ -30,7 +28,7 @@ const moreNavItems = [
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data Management', href: '/data', icon: Database },
   { name: 'Financial Tips', href: '/learn', icon: Lightbulb },
-  { name: 'Bank Connector', href: '/settings/connector', icon: Plug },
+  
   { name: 'Account Settings', href: '/account', icon: Settings },
   { name: 'Your Privacy', href: '/data-privacy', icon: Shield },
 ];

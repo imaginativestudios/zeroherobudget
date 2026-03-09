@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { haptics } from '@/lib/haptics';
 import {
-  Menu,
   Rocket,
   Wallet,
   Trophy,
@@ -13,7 +12,6 @@ import {
   Lightbulb,
   Settings,
   Shield,
-  Plug,
   TrendingUp,
 } from 'lucide-react';
 

@@ -90,7 +90,7 @@ export const Reports = () => {
     href: "/reports/subscriptions",
     color: "text-accent"
   }];
-  return <div className="pt-8 space-y-8">
+  return <div className="space-y-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-foreground">Reports</h1>
         <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border bg-muted/50">

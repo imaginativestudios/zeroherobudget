@@ -187,7 +187,7 @@ export const Budget = () => {
   return <SwipeablePageWrapper leftRoute="/debts" rightRoute="/dashboard">
     <div className="space-y-4 sm:space-y-8">
       {/* Header */}
-      <div className="pt-4 sm:pt-8 space-y-3">
+      <div className="space-y-3">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Budget</h1>
           

@@ -230,7 +230,7 @@ export const ChatbotWidget = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-primary-light to-primary rounded-t-lg">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-white" aria-hidden="true" />
+              <Bot className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
                 <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistant</h3>
                 <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>

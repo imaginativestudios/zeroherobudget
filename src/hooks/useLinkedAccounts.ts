@@ -15,7 +15,7 @@ export function useLinkedAccounts() {
   const userId = user?.id ?? DEMO_USER_ID;
   const [accounts, setAccounts] = useState<LinkedAccountMeta[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [encryptionAvailable] = useState(isEncryptedStorageAvailable);
+  const [encryptionAvailable] = useState(() => isEncryptedStorageAvailable());
 
   // Load accounts from encrypted storage
   useEffect(() => {

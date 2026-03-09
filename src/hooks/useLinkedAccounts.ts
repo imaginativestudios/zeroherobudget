@@ -17,7 +17,7 @@ export function useLinkedAccounts() {
   const [isLoading, setIsLoading] = useState(true);
   const [encryptionAvailable] = useState(() => isEncryptedStorageAvailable());
 
-  // Load accounts from encrypted storage
+  // Load accounts from encrypted storage and auto-expire stale tokens
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
@@ -28,10 +28,28 @@ export function useLinkedAccounts() {
         return;
       }
       const data = await decryptAndLoad<LinkedAccountMeta[]>(userId, STORAGE_KEY);
-      if (!cancelled) {
-        setAccounts(data ?? []);
-        setIsLoading(false);
+      if (!cancelled && data) {
+        const now = Date.now();
+        let changed = false;
+        const updated = data.map((account) => {
+          if (
+            account.status === 'active' &&
+            account.linkedAt &&
+            now - new Date(account.linkedAt).getTime() > SIMULATED_EXPIRY_DAYS * 86_400_000
+          ) {
+            changed = true;
+            return { ...account, status: 'expired' as const };
+          }
+          return account;
+        });
+        if (changed) {
+          await encryptAndStore(userId, STORAGE_KEY, updated);
+        }
+        setAccounts(updated);
+      } else if (!cancelled) {
+        setAccounts([]);
       }
+      if (!cancelled) setIsLoading(false);
     })();
 
     return () => { cancelled = true; };

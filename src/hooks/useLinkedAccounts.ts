@@ -47,8 +47,19 @@ export function useLinkedAccounts() {
 
   const addAccounts = useCallback(
     async (newAccounts: LinkedAccountMeta[]) => {
-      const merged = [...accounts, ...newAccounts];
+      // Deduplicate by institutionId + maskedAccountName
+      const deduped = newAccounts.filter(
+        (newAcc) =>
+          !accounts.some(
+            (existing) =>
+              existing.institutionId === newAcc.institutionId &&
+              existing.maskedAccountName === newAcc.maskedAccountName
+          )
+      );
+      const skipped = newAccounts.length - deduped.length;
+      const merged = [...accounts, ...deduped];
       await persist(merged);
+      return { added: deduped.length, skipped };
     },
     [accounts, persist]
   );

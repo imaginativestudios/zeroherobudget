@@ -4,7 +4,8 @@ import { Download, Uplownload, Upload, Calendar, ChevronDown, BarChart3, Plus, T
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/inputSeimport { Curlect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChartCardSkeleton } from "@/components/ChartCardSkeleton";
 import { useIncome, useAssets } from "@/hooks/useLocalSettings";
 import { useLocalExpenses } from "@/hooks/useLocalExpenses";

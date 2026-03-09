@@ -78,14 +78,16 @@ export const HEROIC_COPY = {
   journeyStep2: 'Build Starter Fund',
   journeyStep3: 'Eliminate Consumer Debt',
   journeyStep4: 'Save 3-6 Months Expenses',
-  journeyStep5: 'Invest for the Future',
-  journeyStep6: 'Financial Freedom',
+  journeyStep5: 'Start Building Wealth',
+  journeyStep6: 'Invest for the Future',
+  journeyStep7: 'Financial Freedom',
 
   // Stoic Wisdom Subtexts
   wisdomBudget: 'You must see the path before you can walk it.',
   wisdomStarterFund: 'A hero builds on solid ground, not sand.',
   wisdomDebtFree: 'Remove the weight of the past to move forward.',
   wisdomEmergencyFund: 'True power is being ready for the unexpected.',
+  wisdomWealth: 'Let your money work as hard as you do.',
   wisdomInvesting: 'Plant the seeds today that will shade you tomorrow.',
   wisdomFreedom: 'The ultimate victory is owning your own time.',
 };

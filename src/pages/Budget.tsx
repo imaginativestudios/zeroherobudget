@@ -22,6 +22,7 @@ import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChar
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { BudgetSetupWizard } from '@/components/budget/BudgetSetupWizard';
+import { CategorySuggestionBanner } from '@/components/budget/CategorySuggestionBanner';
 
 export const Budget = () => {
   const budgetSectionRef = useRef<HTMLDivElement>(null);
@@ -42,6 +43,7 @@ export const Budget = () => {
 
   // Secondary: Load transactions for actuals comparison
   const {
+    transactions,
     getMonthlyActualsByCategory,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
@@ -276,6 +278,15 @@ export const Budget = () => {
         selectedMonth={selectedMonth}
         budgetItemCount={expenses.length}
         onScrollToBudget={scrollToBudget}
+      />
+
+      {/* Category Suggestions from spending patterns */}
+      <CategorySuggestionBanner
+        expenses={expenses}
+        transactions={transactions}
+        onAddCategory={(name, amount, category) => {
+          addSupabaseExpense({ name, amount, category, is_income: false });
+        }}
       />
 
       {/* Income Section */}

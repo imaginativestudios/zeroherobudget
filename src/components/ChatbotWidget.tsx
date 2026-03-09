@@ -232,7 +232,8 @@ export const ChatbotWidget = () => {
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-white" aria-hidden="true" />
               <div>
-                <h3 id="chat-title" className="font-semibold text-white">Zero Hero Assistora       <p clorax] text-white/70">AI-powered • Not financial advice</p>
+                <h3 id="chat-title" className="font-semibold text-white">Zora</h3>
+                <p className="text-[10px] text-white/70">AI-powered • Not financial advice</p>
               </div>
             </div>
             <Button

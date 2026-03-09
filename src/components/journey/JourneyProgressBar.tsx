@@ -9,13 +9,13 @@ interface JourneyProgressBarProps {
 
 export function JourneyProgressBar({ steps, currentStep }: JourneyProgressBarProps) {
   return (
-    <div className="w-full" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={6}>
+    <div className="w-full" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={7}>
       <div className="flex items-center justify-between relative">
         {/* Connection Line */}
         <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted" aria-hidden="true" />
         <div 
           className="absolute top-4 left-4 h-0.5 bg-primary transition-all duration-500"
-          style={{ width: `calc(${((currentStep - 1) / 5) * 100}% - 2rem)` }}
+          style={{ width: `calc(${((currentStep - 1) / 6) * 100}% - 2rem)` }}
           aria-hidden="true"
         />
         

@@ -48,7 +48,7 @@ export function JourneyStepCard({ step, isExpanded = false }: JourneyStepCardPro
               )}
             </div>
             {/* Vertical line for timeline effect (hidden on last item) */}
-            {step.id < 6 && (
+            {step.id < 7 && (
               <div 
                 className={cn(
                   "w-0.5 h-full min-h-[40px] mt-2",

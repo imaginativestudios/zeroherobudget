@@ -179,10 +179,12 @@ export default function Landing() {
               </div>
             </motion.div>
           </div>
+
+          <ScrollCue targetId="oaths-section" />
         </section>
 
         {/* The Three Oaths Section */}
-        <section className="py-16 sm:py-24 bg-background/80 backdrop-blur-sm">
+        <section id="oaths-section" className="py-16 sm:py-24 bg-background/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-foreground">

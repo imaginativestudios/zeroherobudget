@@ -266,6 +266,8 @@ const ComingSoon = () => {
             </div>
           </motion.div>
         </div>
+
+        <ScrollCue targetId="coming-soon-oaths" />
       </section>
 
       {/* The Three Oaths Section */}

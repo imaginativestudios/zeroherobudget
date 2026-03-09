@@ -217,7 +217,8 @@ export const ChatbotWidget = () => {
       <div
         id="chat-panel"
         role="dialog"
-        aria-label="ZorasOpen}
+        aria-label="Zora chat"
+        aria-hidden={!isOpen}
         className={cn(
           "absolute bottom-16 right-0 w-[90vw] max-w-[380px] transition-all duration-300 ease-in-out origin-bottom-right",
           isOpen

@@ -47,6 +47,7 @@ const LOCAL_STORAGE_KEYS = [
   'onboarding_complete',
   'privacy_notice_dismissed',
   'pwa-banner-dismissed',
+  'budget_seeded',
   
   // Backup metadata
   'last_backup',

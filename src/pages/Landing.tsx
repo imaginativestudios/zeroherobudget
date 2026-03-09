@@ -5,6 +5,7 @@ import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
 import { DeviceMockups } from '@/components/DeviceMockups';
 import { ArrowRight, Shield, TrendingDown, Target, Heart, Zap, Sprout, ChevronRight } from 'lucide-react';
+import { ScrollCue } from '@/components/ScrollCue';
 import { motion } from 'framer-motion';
 
 export default function Landing() {

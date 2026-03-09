@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ConsentScreen } from './ConsentScreen';
-import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
+
 import {
   searchInstitutions,
   exchangeToken,
@@ -56,10 +56,10 @@ function StepIndicator({ currentStep }: { currentStep: Step }) {
 interface BankLinkingFlowProps {
   onComplete: () => void;
   onCancel: () => void;
+  addAccounts: (accounts: LinkedAccountMeta[]) => Promise<{ added: number; skipped: number }>;
 }
 
-export function BankLinkingFlow({ onComplete, onCancel }: BankLinkingFlowProps) {
-  const { addAccounts } = useLinkedAccounts();
+export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinkingFlowProps) {
   const [step, setStep] = useState<Step>('consent');
   const [query, setQuery] = useState('');
   const [selectedInstitution, setSelectedInstitution] = useState<MockInstitution | null>(null);

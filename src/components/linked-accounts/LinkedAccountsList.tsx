@@ -12,7 +12,7 @@ import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
 
 export function LinkedAccountsList() {
-  const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable } = useLinkedAccounts();
+  const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts } = useLinkedAccounts();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
   const [reconnecting, setReconnecting] = useState<LinkedAccountMeta | null>(null);
   const [isIncognito, setIsIncognito] = useState(false);
@@ -71,6 +71,7 @@ export function LinkedAccountsList() {
         <BankLinkingFlow
           onComplete={() => setIsLinking(false)}
           onCancel={() => setIsLinking(false)}
+          addAccounts={addAccounts}
         />
       </div>
     );

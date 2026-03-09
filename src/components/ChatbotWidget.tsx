@@ -356,15 +356,15 @@ export const ChatbotWidget = () => {
           if (!hasOpened) setHasOpened(true);
         }}
         size="icon"
-        className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
+        className="h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
         aria-expanded={isOpen}
         aria-controls="chat-panel"
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
+          <X className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <Bot className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
+          <Bot className="h-8 w-8 text-primary-foreground" aria-hidden="true" />
         )}
       </Button>
     </div>

@@ -74,6 +74,15 @@ export default function LinkBank() {
     }
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleSelectInstitution = async (institution: MockInstitution) => {
     setSelectedInstitution(institution);
     setStep('connecting');

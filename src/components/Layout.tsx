@@ -256,30 +256,6 @@ export const Layout = ({ children }: LayoutProps) => {
                 })}
               </ul>
 
-              {/* Tools Section */}
-              <div className="mt-6 pt-4 border-t border-sidebar-border">
-                <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Tools
-                </h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      to="/settings/connector"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
-                        location.pathname === "/settings/connector"
-                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      )}
-                      aria-current={location.pathname === "/settings/connector" ? "page" : undefined}
-                    >
-                      <Plug className={cn("h-5 w-5", location.pathname === "/settings/connector" && "text-primary-foreground")} aria-hidden="true" />
-                      <span className="font-medium truncate">Bank Connector</span>
-                    </Link>
-                  </li>
-                </ul>
-              </div>
 
               {/* User section at bottom */}
               {user && (

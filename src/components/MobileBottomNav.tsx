@@ -34,7 +34,7 @@ export function MobileBottomNav() {
     '/reports',
     '/data',
     '/learn',
-    '/settings/connector',
+    
     '/account',
     '/data-privacy',
   ].some((path) => location.pathname.startsWith(path));

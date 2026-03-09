@@ -47,7 +47,7 @@ const protectedRoutes: RouteInfo[] = [
   { path: "/data", name: "Data Management", description: "Backup, restore, clear data, and delete account", icon: Database, tags: ["settings"] },
   { path: "/account", name: "Account Settings", description: "Profile editing and account preferences", icon: User, tags: ["settings"] },
   { path: "/household", name: "Household", description: "Multi-user household management with role-based invitations", icon: Users, tags: ["collaboration"] },
-  { path: "/settings/connector", name: "Connector Setup", description: "Browser extension setup for automatic transaction import", icon: Settings, tags: ["integrations"] },
+  
 ];
 
 const features = [

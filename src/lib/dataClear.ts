@@ -47,6 +47,7 @@ const LOCAL_STORAGE_KEYS = [
   'onboarding_complete',
   'privacy_notice_dismissed',
   'pwa-banner-dismissed',
+  'budget_seeded',
   
   // Backup metadata
   'last_backup',
@@ -123,6 +124,7 @@ export function clearSelectiveData(userId: string, options: ClearDataOptions): n
     localStorage.removeItem(`${userId}_onboarding_complete`);
     localStorage.removeItem(`${userId}_privacy_notice_dismissed`);
     localStorage.removeItem(`${userId}_pwa-banner-dismissed`);
+    localStorage.removeItem(`${userId}_budget_seeded`);
     
     // Backup metadata
     localStorage.removeItem(`${userId}_last_backup`);

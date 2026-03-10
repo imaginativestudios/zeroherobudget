@@ -67,19 +67,29 @@ serve(async (req) => {
     }
 
     const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader ?? '' } }
+      global: { headers: { Authorization: authHeader } }
     });
 
-    let userId: string | null = null;
-    if (authHeader) {
-      const { data: { user } } = await supabase.auth.getUser();
-      userId = user?.id ?? null;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication token" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+    const userId = user.id;
 
-    if (userId && !checkRateLimit(userId)) {
+    if (!checkRateLimit(userId)) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please wait a moment before trying again." }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -88,21 +98,19 @@ serve(async (req) => {
 
     // Query user's categorization history
     let historicalContext = "";
-    if (authHeader) {
-      const firstWord = sanitizeForLike(description.split(' ')[0] || '');
-      if (firstWord.length > 0) {
-        const { data: history } = await supabase
-          .from('transaction_categorization_history')
-          .select('transaction_description, user_selected_category')
-          .ilike('transaction_description', `%${firstWord}%`)
-          .order('created_at', { ascending: false })
-          .limit(5);
+    const firstWord = sanitizeForLike(description.split(' ')[0] || '');
+    if (firstWord.length > 0) {
+      const { data: history } = await supabase
+        .from('transaction_categorization_history')
+        .select('transaction_description, user_selected_category')
+        .ilike('transaction_description', `%${firstWord}%`)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-        if (history && history.length > 0) {
-          historicalContext = `\n\nUser's past categorization patterns:\n${
-            history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
-          }`;
-        }
+      if (history && history.length > 0) {
+        historicalContext = `\n\nUser's past categorization patterns:\n${
+          history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
+        }`;
       }
     }
 

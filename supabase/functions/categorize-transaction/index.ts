@@ -101,17 +101,16 @@ serve(async (req) => {
     const firstWord = sanitizeForLike(description.split(' ')[0] || '');
     if (firstWord.length > 0) {
       const { data: history } = await supabase
-          .from('transaction_categorization_history')
-          .select('transaction_description, user_selected_category')
-          .ilike('transaction_description', `%${firstWord}%`)
-          .order('created_at', { ascending: false })
-          .limit(5);
+        .from('transaction_categorization_history')
+        .select('transaction_description, user_selected_category')
+        .ilike('transaction_description', `%${firstWord}%`)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-        if (history && history.length > 0) {
-          historicalContext = `\n\nUser's past categorization patterns:\n${
-            history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
-          }`;
-        }
+      if (history && history.length > 0) {
+        historicalContext = `\n\nUser's past categorization patterns:\n${
+          history.map(h => `- "${h.transaction_description}" → ${h.user_selected_category}`).join('\n')
+        }`;
       }
     }
 

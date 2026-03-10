@@ -98,10 +98,9 @@ serve(async (req) => {
 
     // Query user's categorization history
     let historicalContext = "";
-    if (authHeader) {
-      const firstWord = sanitizeForLike(description.split(' ')[0] || '');
-      if (firstWord.length > 0) {
-        const { data: history } = await supabase
+    const firstWord = sanitizeForLike(description.split(' ')[0] || '');
+    if (firstWord.length > 0) {
+      const { data: history } = await supabase
           .from('transaction_categorization_history')
           .select('transaction_description, user_selected_category')
           .ilike('transaction_description', `%${firstWord}%`)

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { DEMO_USER_ID } from '@/lib/constants';
 import {
@@ -55,11 +55,6 @@ export function useLinkedAccounts() {
     return () => { cancelled = true; };
   }, [userId, encryptionAvailable]);
 
-  const persistRef = useRef<(next: LinkedAccountMeta[]) => Promise<void>>();
-  persistRef.current = async (next: LinkedAccountMeta[]) => {
-    setAccounts(next);
-    await encryptAndStore(userId, STORAGE_KEY, next);
-  };
 
   const addAccounts = useCallback(
     async (newAccounts: LinkedAccountMeta[]) => {

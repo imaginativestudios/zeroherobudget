@@ -61,7 +61,7 @@ const App = () => (
             <BehavioralTriggerProvider>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<ComingSoon />} />
+          <Route path="/" element={<RootPage />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />

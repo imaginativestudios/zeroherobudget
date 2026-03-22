@@ -55,11 +55,6 @@ export function useLinkedAccounts() {
     return () => { cancelled = true; };
   }, [userId, encryptionAvailable]);
 
-  const persistRef = useRef<(next: LinkedAccountMeta[]) => Promise<void>>();
-  persistRef.current = async (next: LinkedAccountMeta[]) => {
-    setAccounts(next);
-    await encryptAndStore(userId, STORAGE_KEY, next);
-  };
 
   const addAccounts = useCallback(
     async (newAccounts: LinkedAccountMeta[]) => {

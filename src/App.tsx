@@ -48,6 +48,7 @@ import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
 import Wealth from "./pages/Wealth";
+import { BetaTesterBadge } from "./components/BetaTesterBadge";
 
 const queryClient = new QueryClient();
 

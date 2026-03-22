@@ -117,6 +117,7 @@ const App = () => (
             <OfflineBanner />
             <UpdateAvailableBanner />
             <InstallPromptBanner />
+            <BetaTesterBadge />
             <ChatbotWidget />
             </BehavioralTriggerProvider>
           </BrowserRouter>

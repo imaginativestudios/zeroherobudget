@@ -1,46 +1,34 @@
 
 
-# Sync Onboarding Wizard: E2E Tests, Demo Data & Orphaned Components
+## Beta Testing URL Plan
 
-## Issues Found
+### Problem
+The root URL (`/`) shows the Coming Soon page. Testers need a way to bypass it and access the full app flow (Landing → Onboarding → Auth → Dashboard → all features).
 
-### 1. E2E Tests Out of Sync with Live UI
-The `e2e/onboarding.spec.ts` references old "adventure" language that was replaced with the Stoic Wisdom voice:
+### Solution
+Use a URL parameter `?beta=true` on the root route that stores a flag in `localStorage`. Once set, the root route renders the Landing page instead of Coming Soon for the rest of that browser session.
 
-| Test Expects | Actual UI |
-|---|---|
-| "Name Your Primary Debt Boss" | "Name Your Primary Debt" |
-| "Set Your Moat Depth" | "Set Your Emergency Fund Goal" |
-| "See My Freedom Path" button | "See My Payoff Timeline" button |
-| "Enter the Fortress" button | "Go to Dashboard" button |
+**Beta test URL:** `https://zeroherobudget.lovable.app/?beta=true`
 
-### 2. Orphaned MobileOnboardingCarousel
-`src/components/MobileOnboardingCarousel.tsx` is **never imported or used anywhere** in the app. It still uses old gaming language ("Welcome to Zero Hero", "Pay Down Your Debt"). It should either be removed or integrated.
+### Changes
 
-### 3. Subscription Model in PricingStep
-The PricingStep pricing is **correct** — $5/mo and $50/yr with 7-day trial, matching `STRIPE_PRICES` in constants. No changes needed here.
+**1. Update `src/App.tsx` — new root component**
+- Replace `<ComingSoon />` with a new `<RootPage />` component that checks for the beta flag.
 
----
+**2. Create `src/pages/RootPage.tsx`**
+- On mount, check for `?beta=true` query param → if present, set `localStorage.setItem('beta_access', 'true')`
+- If `localStorage.getItem('beta_access') === 'true'`, render `<Landing />`
+- Otherwise render `<ComingSoon />`
+- Include a way to exit beta mode (e.g., `?beta=false` clears the flag)
 
-## Plan
+**3. No other files need changes**
+- All existing navigation to `/` will correctly show Landing for beta testers and ComingSoon for everyone else
+- Stripe is already in test/sandbox mode via the existing keys
+- Auth, onboarding, and all features work as-is
 
-### File: `e2e/onboarding.spec.ts`
-Update all assertions to match current Stoic Wisdom UI labels:
-- `"Name Your Primary Debt Boss"` → `"Name Your Primary Debt"`
-- `"Set Your Moat Depth"` → `"Set Your Emergency Fund Goal"`
-- `"See My Freedom Path"` → `"See My Payoff Timeline"`
-- `"Enter the Fortress"` → `"Go to Dashboard"`
-- `"Custom"` → verify the custom goal selector still uses this label
-
-### File: `src/components/MobileOnboardingCarousel.tsx`
-**Delete** this orphaned component. It is not imported or rendered anywhere.
-
----
-
-## Files to Modify
-
-| File | Action |
-|---|---|
-| `e2e/onboarding.spec.ts` | Update test assertions to match current UI labels |
-| `src/components/MobileOnboardingCarousel.tsx` | Delete (orphaned, unused component) |
+### How testers use it
+1. Visit `https://zeroherobudget.lovable.app/?beta=true`
+2. They see the real Landing page
+3. They can sign up, onboard, subscribe via Stripe test mode, and test all features
+4. The beta flag persists across page refreshes until cleared
 

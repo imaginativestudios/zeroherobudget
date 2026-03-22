@@ -19,7 +19,7 @@ import AccountSettings from "@/pages/AccountSettings";
 import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
-import ComingSoon from "./pages/ComingSoon";
+import RootPage from "./pages/RootPage";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
@@ -61,7 +61,7 @@ const App = () => (
             <BehavioralTriggerProvider>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<ComingSoon />} />
+          <Route path="/" element={<RootPage />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />

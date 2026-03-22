@@ -666,6 +666,19 @@ export type Database = {
     Functions: {
       accept_invitation: { Args: { invitation_token: string }; Returns: Json }
       create_default_household: { Args: never; Returns: string }
+      get_household_member_profiles: {
+        Args: { _household_id: string }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          updated_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

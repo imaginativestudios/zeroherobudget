@@ -111,36 +111,34 @@ export function useRealHouseholds() {
     if (!currentHousehold) return;
     
     try {
-      const { data, error } = await supabase
+      // Fetch members (without profile join to avoid exposing sensitive fields)
+      const { data: membersData, error: membersError } = await supabase
         .from('household_members')
-        .select(`
-          id,
-          household_id,
-          profile_id,
-          role,
-          is_primary,
-          joined_at,
-          profiles:profile_id (
-            id,
-            email,
-            display_name,
-            first_name,
-            last_name
-          )
-        `)
+        .select('id, household_id, profile_id, role, is_primary, joined_at')
         .eq('household_id', currentHousehold);
 
-      if (error) throw error;
-      
+      if (membersError) throw membersError;
+
+      // Fetch safe profile fields via SECURITY DEFINER function
+      const { data: profilesData, error: profilesError } = await supabase
+        .rpc('get_household_member_profiles', { _household_id: currentHousehold });
+
+      if (profilesError) throw profilesError;
+
+      // Build a lookup map of profiles by id
+      const profileMap = new Map(
+        (profilesData || []).map((p: { id: string; email: string; display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null }) => [p.id, p])
+      );
+
       // Transform data to match expected interface
-      const transformedMembers: HouseholdMember[] = (data || []).map(m => ({
+      const transformedMembers: HouseholdMember[] = (membersData || []).map(m => ({
         id: m.id,
         household_id: m.household_id,
         profile_id: m.profile_id,
         role: m.role as 'owner' | 'admin' | 'member' | 'viewer',
         is_primary: m.is_primary,
         joined_at: m.joined_at,
-        profile: m.profiles as unknown as HouseholdMember['profile'],
+        profile: profileMap.get(m.profile_id) as unknown as HouseholdMember['profile'],
       }));
       
       setMembers(transformedMembers);

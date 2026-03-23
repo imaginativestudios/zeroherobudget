@@ -135,7 +135,21 @@ const TermsOfService = () => {
               <li>Financial reporting and insights</li>
               <li>Household collaboration features</li>
               <li>Transaction management and account tracking</li>
+              <li>Optional bank account linking via Plaid for importing account balances</li>
             </ul>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Bank Account Linking</h3>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              You may optionally link bank accounts through Plaid, a third-party financial service provider. 
+              By using this feature:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li>You authorize Plaid to access your bank account information on your behalf</li>
+              <li>You acknowledge that Zero Hero is not responsible for the accuracy of data provided by your bank through Plaid</li>
+              <li>You can disconnect linked accounts at any time, which permanently removes all related data from your device</li>
+              <li>You agree to Plaid's own terms of service and privacy policy</li>
+            </ul>
+
             <p className="text-foreground/80 leading-relaxed mt-4">
               We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time 
               without notice or liability. We do not guarantee that the Service will be available at all times 

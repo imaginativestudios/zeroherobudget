@@ -7,11 +7,13 @@ import {
   Shield, 
   Heart, 
   Scroll, 
-  Compass, 
+  Link2, 
   Database, 
   CreditCard, 
   AlertTriangle,
-  Cookie
+  Cookie,
+  Lock,
+  Trash2
 } from "lucide-react";
 
 const Legal = () => {
@@ -37,10 +39,10 @@ const Legal = () => {
         <div className="text-center mb-12">
           <Shield className="h-12 w-12 mx-auto text-primary mb-4" aria-hidden="true" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3">
-            The Code of the Fortress
+            Legal & Privacy
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Transparency, Privacy, and Terms of Engagement for all Wayfarers.
+            How we protect your data, what you agree to, and how bank connections work.
           </p>
         </div>
 
@@ -52,7 +54,7 @@ const Legal = () => {
               className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Heart className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <span className="hidden sm:inline">The Fortress Pledge</span>
+              <span className="hidden sm:inline">Privacy</span>
               <span className="sm:hidden">Privacy</span>
             </TabsTrigger>
             <TabsTrigger 
@@ -60,28 +62,28 @@ const Legal = () => {
               className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Scroll className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <span className="hidden sm:inline">Terms of Engagement</span>
+              <span className="hidden sm:inline">Terms of Service</span>
               <span className="sm:hidden">Terms</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="connector" 
+              value="bank-connections" 
               className="flex items-center justify-center gap-2 py-3 text-xs sm:text-sm text-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              <Compass className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <span className="hidden sm:inline">The Scout Protocol</span>
-              <span className="sm:hidden">Connector</span>
+              <Link2 className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              <span className="hidden sm:inline">Bank Connections</span>
+              <span className="sm:hidden">Banks</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Tab A: The Fortress Pledge (Privacy Policy) */}
+          {/* Tab A: Privacy */}
           <TabsContent value="privacy" className="space-y-6 animate-fade-in">
             <div className="bg-card border border-border rounded-xl p-6 sm:p-8">
               <h2 className="text-xl sm:text-2xl font-bold text-card-foreground mb-4 flex items-center gap-3">
                 <Heart className="h-6 w-6 text-primary" aria-hidden="true" />
-                The Fortress Pledge
+                Our Privacy Promise
               </h2>
-              <p className="text-muted-foreground mb-6 text-base sm:text-lg italic">
-                At Zero Hero, we believe your financial data is sovereign territory.
+              <p className="text-muted-foreground mb-6 text-base sm:text-lg">
+                Your financial data belongs to you. Here's how we keep it that way.
               </p>
 
               <div className="space-y-6">
@@ -93,9 +95,9 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">Local-First Architecture</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">Your Data Stays on Your Device</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Your financial Atlas, including all transaction history and debt data, is stored locally on your device using IndexedDB (via RxDB). Zero Hero servers do not possess, read, or monetize your personal financial records.
+                      Your financial information — transactions, debts, budgets — is stored locally in your browser's storage. Our servers don't have access to your personal financial records.
                     </p>
                   </div>
                 </div>
@@ -108,9 +110,9 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">No Third-Party Tracking</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">No Selling Your Data</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      We do not sell your data. We use anonymous telemetry only to track game progression (e.g., 'Level Ups') to improve the experience.
+                      We don't sell, trade, or share your data with advertisers. We only use anonymous usage metrics to improve the app experience.
                     </p>
                   </div>
                 </div>
@@ -123,9 +125,26 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">Payment Data</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">Payments Handled by Stripe</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Subscription payments are processed securely via Stripe. Zero Hero does not store your credit card information.
+                      Subscription payments are processed securely through Stripe. We never store your credit card number.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bank Connections via Plaid */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Link2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-card-foreground mb-2">Bank Connections via Plaid</h3>
+                    <p className="text-muted-foreground text-sm sm:text-base">
+                      If you choose to link a bank account, the connection is handled by{" "}
+                      <a href="https://plaid.com/legal/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Plaid</a>, 
+                      a trusted financial technology provider. We never see your bank login credentials. See the Bank Connections tab for full details.
                     </p>
                   </div>
                 </div>
@@ -139,38 +158,38 @@ const Legal = () => {
                   <Cookie className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-card-foreground mb-2 text-sm">Cookie Policy</h3>
+                  <h3 className="font-semibold text-card-foreground mb-2 text-sm">Cookies</h3>
                   <p className="text-muted-foreground text-sm">
-                    We use cookies solely for authentication (Supabase) and payment processing (Stripe).
+                    We only use cookies for authentication (Supabase) and payment processing (Stripe). No advertising or tracking cookies.
                   </p>
                 </div>
               </div>
             </div>
           </TabsContent>
 
-          {/* Tab B: Terms of Engagement (Terms of Service) */}
+          {/* Tab B: Terms of Service */}
           <TabsContent value="terms" className="space-y-6 animate-fade-in">
             <div className="bg-card border border-border rounded-xl p-6 sm:p-8">
               <h2 className="text-xl sm:text-2xl font-bold text-card-foreground mb-4 flex items-center gap-3">
                 <Scroll className="h-6 w-6 text-primary" aria-hidden="true" />
-                Terms of Engagement
+                Terms of Service
               </h2>
-              <p className="text-muted-foreground mb-6 text-base sm:text-lg italic">
+              <p className="text-muted-foreground mb-6 text-base sm:text-lg">
                 By using Zero Hero, you agree to the following:
               </p>
 
               <div className="space-y-6">
-                {/* Educational Purpose */}
+                {/* Not Financial Advice */}
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
+                      <AlertTriangle className="h-5 w-5 text-primary" aria-hidden="true" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">Educational Purpose</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">Not Financial Advice</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Zero Hero is a navigational tool and behavioral coach. It is not a financial advisor. All insights, including 'Shadow Budget' calculations and 'Freedom Dates,' are estimates based on user input.
+                      Zero Hero is a budgeting and debt tracking tool — not a financial advisor. Features like payoff projections and budget suggestions are estimates based on what you enter. Always consult a qualified professional for financial decisions.
                     </p>
                   </div>
                 </div>
@@ -183,9 +202,9 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">User Responsibility</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">You're in Control</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      You are the sole commander of your finances. Zero Hero is not liable for financial decisions made based on app data.
+                      You are responsible for the accuracy of the data you enter and for any financial decisions you make. Zero Hero is not liable for outcomes based on app data.
                     </p>
                   </div>
                 </div>
@@ -198,29 +217,51 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">As-Is Software</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">Provided As-Is</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      The software is provided 'as is' without warranty of any kind. We strive for perfection, but bugs may occur.
+                      The software is provided "as is" without warranty. We work hard to keep things running smoothly, but bugs can happen.
                     </p>
                   </div>
                 </div>
               </div>
+
+              <p className="text-muted-foreground text-sm mt-6">
+                For the full legal terms, see our{" "}
+                <Link to="/terms-of-service" className="text-primary hover:underline">complete Terms of Service</Link>.
+              </p>
             </div>
           </TabsContent>
 
-          {/* Tab C: The Scout Protocol (Connector Extension) */}
-          <TabsContent value="connector" className="space-y-6 animate-fade-in">
+          {/* Tab C: Bank Connections */}
+          <TabsContent value="bank-connections" className="space-y-6 animate-fade-in">
             <div className="bg-card border border-border rounded-xl p-6 sm:p-8">
               <h2 className="text-xl sm:text-2xl font-bold text-card-foreground mb-4 flex items-center gap-3">
-                <Compass className="h-6 w-6 text-primary" aria-hidden="true" />
-                The Scout Protocol
+                <Link2 className="h-6 w-6 text-primary" aria-hidden="true" />
+                Bank Connections
               </h2>
-              <p className="text-muted-foreground mb-6 text-base sm:text-lg italic">
-                Regarding the use of the Zero Hero Connector (Browser Extension):
+              <p className="text-muted-foreground mb-6 text-base sm:text-lg">
+                How linking your bank account works, and what happens with your data.
               </p>
 
               <div className="space-y-6">
-                {/* User Autonomy */}
+                {/* How it works */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Lock className="h-5 w-5 text-primary" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-card-foreground mb-2">How It Works</h3>
+                    <p className="text-muted-foreground text-sm sm:text-base">
+                      When you link a bank account, you log in directly through{" "}
+                      <a href="https://plaid.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Plaid</a>, 
+                      a trusted service used by thousands of financial apps. Plaid connects to your bank on your behalf — Zero Hero never sees or stores your bank login credentials.
+                    </p>
+                  </div>
+                </div>
+
+                {/* What we store */}
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -228,29 +269,20 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">User Autonomy</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
-                      The Connector is a tool that allows you to scrape your own data from your banking dashboard. It operates entirely on your client-side browser.
+                    <h3 className="font-semibold text-card-foreground mb-2">What We Store</h3>
+                    <p className="text-muted-foreground text-sm sm:text-base mb-2">
+                      After you connect, we only receive and store locally on your device:
                     </p>
+                    <ul className="list-disc list-inside text-muted-foreground text-sm sm:text-base space-y-1 ml-1">
+                      <li>Account name and type (e.g., "Checking")</li>
+                      <li>Last 4 digits of the account number</li>
+                      <li>Current balance</li>
+                      <li>Your bank's name</li>
+                    </ul>
                   </div>
                 </div>
 
-                {/* No Liability */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <AlertTriangle className="h-5 w-5 text-primary" aria-hidden="true" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">No Liability</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
-                      Zero Hero is not responsible for any violations of your bank's Terms of Service resulting from the use of automated scraping tools. Use the Scout responsibly.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Data Integrity */}
+                {/* What we don't store */}
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -258,11 +290,44 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">Data Integrity</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">What We Don't Store</h3>
+                    <ul className="list-disc list-inside text-muted-foreground text-sm sm:text-base space-y-1 ml-1">
+                      <li>Your bank username or password</li>
+                      <li>Full account or routing numbers</li>
+                      <li>Your bank login credentials on our servers</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Disconnect anytime */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Trash2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-card-foreground mb-2">Disconnect Anytime</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      You are responsible for verifying the accuracy of imported data before acting on it.
+                      You can unlink any bank account at any time. When you do, all data for that account is permanently removed from your device.
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Plaid privacy note */}
+            <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <Shield className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-card-foreground mb-2 text-sm">Plaid's Privacy Policy</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Plaid has its own privacy policy governing how they handle your bank data. You can review it at{" "}
+                    <a href="https://plaid.com/legal/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">plaid.com/legal</a>.
+                  </p>
                 </div>
               </div>
             </div>

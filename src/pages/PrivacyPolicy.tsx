@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Shield, Lock, Eye, Database, UserCheck, Mail } from "lucide-react";
+import { ArrowLeft, Shield, Lock, Eye, Database, UserCheck, Mail, Link2 } from "lucide-react";
 
 const PrivacyPolicy = () => {
   return (
@@ -32,7 +32,7 @@ const PrivacyPolicy = () => {
           </div>
           <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
           <p className="text-muted-foreground">
-            Last Updated: December 29, 2024
+            Last Updated: March 23, 2026
           </p>
         </div>
 
@@ -45,10 +45,9 @@ const PrivacyPolicy = () => {
               Introduction
             </h2>
             <p className="text-foreground/80 leading-relaxed">
-              At Zero Hero, we are committed to protecting your privacy and ensuring the security of your personal information. 
-              This Privacy Policy explains how we collect, use, store, and protect your data when you use our debt elimination 
-              and budget management application. By using Zero Hero, you agree to the collection and use of information in 
-              accordance with this policy.
+              This Privacy Policy explains what information Zero Hero collects, how we use it, and how we keep it safe. 
+              We've written it in plain language so you can understand exactly what's happening with your data. 
+              By using Zero Hero, you agree to the practices described here.
             </p>
           </section>
 
@@ -60,27 +59,35 @@ const PrivacyPolicy = () => {
             </h2>
             
             <h3 className="text-xl font-semibold mt-6 mb-3">Account Information</h3>
+            <p className="text-foreground/80 leading-relaxed mb-2">
+              When you create an account, we store:
+            </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li>Email address (required for account creation and authentication)</li>
-              <li>Display name and profile information (optional)</li>
-              <li>Password (encrypted and securely stored)</li>
+              <li>Your email address (for login and account recovery)</li>
+              <li>Display name and profile info (optional)</li>
+              <li>Your password (encrypted — we can never see it)</li>
             </ul>
 
-            <h3 className="text-xl font-semibold mt-6 mb-3">Financial Data</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-3">Financial Data (Stored Locally)</h3>
+            <p className="text-foreground/80 leading-relaxed mb-2">
+              Your financial information is stored on your device, not on our servers. This includes:
+            </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>Budget categories and expense amounts</li>
-              <li>Debt information (balances, interest rates, payment schedules)</li>
-              <li>Transaction records and descriptions</li>
-              <li>Subscription service information and costs</li>
-              <li>Account balances and financial goals</li>
+              <li>Debt balances, interest rates, and payment schedules</li>
+              <li>Transaction records</li>
+              <li>Subscription tracking data</li>
+              <li>Linked bank account summaries (name, type, last 4 digits, balance)</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Usage Data</h3>
+            <p className="text-foreground/80 leading-relaxed mb-2">
+              We collect basic, anonymous usage data to improve the app:
+            </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li>Device information (browser type, operating system)</li>
-              <li>IP address and general location data</li>
-              <li>Pages visited and features used within the application</li>
-              <li>Timestamps of activities and interactions</li>
+              <li>Device and browser type</li>
+              <li>Which features you use</li>
+              <li>General location (country-level, from IP address)</li>
             </ul>
           </section>
 
@@ -91,18 +98,15 @@ const PrivacyPolicy = () => {
               How We Use Your Information
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              We use the collected information for the following purposes:
+              We use your information to:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li>To provide and maintain our debt elimination and budget management services</li>
-              <li>To authenticate your identity and secure your account</li>
-              <li>To calculate debt payoff strategies and financial insights</li>
-              <li>To generate reports, charts, and personalized recommendations</li>
-              <li>To enable household collaboration features</li>
-              <li>To send important service notifications and updates</li>
-              <li>To improve our application and develop new features</li>
-              <li>To detect and prevent fraudulent activity or security breaches</li>
-              <li>To comply with legal obligations and enforce our terms of service</li>
+              <li>Provide budgeting, debt tracking, and financial insight features</li>
+              <li>Authenticate your identity and keep your account secure</li>
+              <li>Enable household collaboration (shared budgets with family/partners)</li>
+              <li>Send important service notifications</li>
+              <li>Improve the app based on anonymous usage patterns</li>
+              <li>Comply with legal obligations</li>
             </ul>
           </section>
 
@@ -113,49 +117,48 @@ const PrivacyPolicy = () => {
               Data Storage and Security
             </h2>
             
-            <h3 className="text-xl font-semibold mt-6 mb-3">Where We Store Your Data</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-3">Where Your Data Lives</h3>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Your data is stored securely using Supabase, a trusted cloud infrastructure provider built on PostgreSQL. 
-              All data is encrypted in transit using SSL/TLS protocols and at rest using industry-standard encryption.
+              Zero Hero uses a <strong>hybrid storage model</strong>:
             </p>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4 mb-4">
+              <li><strong>On your device:</strong> All financial data (budgets, debts, transactions, linked account info) is stored locally in your browser's storage. Our servers cannot access this data.</li>
+              <li><strong>On our servers (Supabase):</strong> Only your account profile (email, name), authentication tokens, subscription status, and household membership info. This is necessary to let you log in and manage your subscription.</li>
+            </ul>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Security Measures</h3>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li>Password hashing using bcrypt with salt rounds</li>
-              <li>Row-Level Security (RLS) policies to isolate user data</li>
-              <li>Secure authentication tokens with automatic expiration</li>
-              <li>Regular security audits and vulnerability assessments</li>
-              <li>HTTPS encryption for all data transmission</li>
-              <li>Access controls and permission management</li>
-              <li>Automated backup systems for data recovery</li>
+              <li>Passwords are hashed and salted — we can never read them</li>
+              <li>All data in transit is encrypted with HTTPS/TLS</li>
+              <li>Row-Level Security ensures you can only access your own server-side data</li>
+              <li>Authentication tokens expire automatically</li>
             </ul>
 
             <p className="text-foreground/80 leading-relaxed mt-4">
-              While we implement robust security measures, no method of transmission over the internet or electronic storage 
-              is 100% secure. We cannot guarantee absolute security but continuously work to protect your information.
+              No system is 100% secure, but we work continuously to protect your information.
             </p>
           </section>
 
-          {/* Your Rights Under GDPR */}
+          {/* Bank Account Linking */}
           <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Your Rights Under GDPR</h2>
+            <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+              <Link2 className="h-6 w-6 text-primary" />
+              Bank Account Linking
+            </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              If you are a resident of the European Economic Area (EEA), you have certain data protection rights:
+              Zero Hero offers optional bank account linking through{" "}
+              <a href="https://plaid.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Plaid</a>, 
+              a widely trusted financial technology provider. Here's how it works:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li><strong>Right to Access:</strong> Request copies of your personal data</li>
-              <li><strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete data</li>
-              <li><strong>Right to Erasure:</strong> Request deletion of your personal data under certain conditions</li>
-              <li><strong>Right to Restrict Processing:</strong> Request limitation of how we process your data</li>
-              <li><strong>Right to Data Portability:</strong> Request transfer of your data to another service</li>
-              <li><strong>Right to Object:</strong> Object to our processing of your personal data</li>
-              <li><strong>Right to Withdraw Consent:</strong> Withdraw consent for data processing at any time</li>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4 mb-4">
+              <li><strong>Your bank credentials stay with Plaid.</strong> When you link an account, you log in through Plaid's secure interface. Zero Hero never sees or stores your bank username or password.</li>
+              <li><strong>We only receive basic account info.</strong> After you connect, Plaid sends us the account name, type, last 4 digits, and balance. This data is stored locally on your device.</li>
+              <li><strong>No full account numbers.</strong> We do not receive or store full account numbers, routing numbers, or any credentials.</li>
+              <li><strong>Disconnect anytime.</strong> You can unlink any account at any time, which permanently removes all data for that account from your device.</li>
             </ul>
-            <p className="text-foreground/80 leading-relaxed mt-4">
-              To exercise any of these rights, please contact us at{" "}
-              <a href="mailto:privacy@zerohero.app" className="text-primary hover:underline">
-                privacy@zerohero.app
-              </a>
+            <p className="text-foreground/80 leading-relaxed">
+              Plaid has its own privacy policy that governs how they handle your bank data. You can review it at{" "}
+              <a href="https://plaid.com/legal/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">plaid.com/legal</a>.
             </p>
           </section>
 
@@ -163,31 +166,52 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Data Sharing and Third Parties</h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              We do not sell, trade, or rent your personal information to third parties. We may share your information only in 
-              the following circumstances:
+              We do not sell, trade, or rent your personal information. We only share data with these trusted service providers:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li><strong>Service Providers:</strong> Trusted third-party services (e.g., Supabase for hosting) that help us operate our application</li>
-              <li><strong>Legal Requirements:</strong> When required by law, court order, or government request</li>
-              <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
-              <li><strong>Household Members:</strong> With other members of your household (only data you choose to share)</li>
-              <li><strong>Protection of Rights:</strong> To protect the rights, property, or safety of Zero Hero, our users, or others</li>
-            </ul>
-          </section>
-
-          {/* Cookies and Tracking */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Cookies and Tracking</h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              We use cookies and similar tracking technologies to enhance your experience:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li><strong>Essential Cookies:</strong> Required for authentication and basic functionality</li>
-              <li><strong>Preference Cookies:</strong> Remember your settings and preferences</li>
-              <li><strong>Analytics Cookies:</strong> Help us understand how users interact with our application</li>
+              <li><strong>Supabase:</strong> Hosts your account profile and authentication data</li>
+              <li><strong>Stripe:</strong> Processes subscription payments securely</li>
+              <li><strong>Plaid:</strong> Handles bank account connections (only if you choose to link an account)</li>
+              <li><strong>Household members:</strong> Data you explicitly choose to share within a household</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
-              You can control cookie settings through your browser, but disabling certain cookies may affect functionality.
+              We may also share information when required by law, court order, or to protect the rights and safety of our users.
+            </p>
+          </section>
+
+          {/* Your Rights */}
+          <section className="bg-card border border-border rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">Your Rights</h2>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              You have the right to:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li><strong>Access your data:</strong> Request a copy of what we store about you</li>
+              <li><strong>Correct your data:</strong> Update inaccurate information</li>
+              <li><strong>Delete your data:</strong> Request permanent deletion of your account and data</li>
+              <li><strong>Export your data:</strong> Download your financial data as a backup file</li>
+              <li><strong>Withdraw consent:</strong> Stop data processing at any time</li>
+            </ul>
+            <p className="text-foreground/80 leading-relaxed mt-4">
+              To exercise any of these rights, contact us at{" "}
+              <a href="mailto:privacy@zeroherobudget.com" className="text-primary hover:underline">
+                privacy@zeroherobudget.com
+              </a>
+            </p>
+          </section>
+
+          {/* Cookies */}
+          <section className="bg-card border border-border rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">Cookies</h2>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              We use a minimal number of cookies:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li><strong>Authentication cookies:</strong> Keep you logged in (required)</li>
+              <li><strong>Preference cookies:</strong> Remember your app settings</li>
+            </ul>
+            <p className="text-foreground/80 leading-relaxed mt-4">
+              We do not use advertising or third-party tracking cookies.
             </p>
           </section>
 
@@ -195,9 +219,9 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Data Retention</h2>
             <p className="text-foreground/80 leading-relaxed">
-              We retain your personal data only for as long as necessary to provide our services and fulfill the purposes 
-              outlined in this policy. When you delete your account, we will delete or anonymize your personal information 
-              within 30 days, except where we are required to retain it for legal, regulatory, or security purposes.
+              We keep your server-side account data only as long as you have an active account. When you delete your account, 
+              we remove your data within 30 days, except where we're legally required to retain it. Your locally stored 
+              financial data is deleted immediately when you clear it or uninstall.
             </p>
           </section>
 
@@ -205,19 +229,8 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Children's Privacy</h2>
             <p className="text-foreground/80 leading-relaxed">
-              Zero Hero is not intended for use by individuals under the age of 18. We do not knowingly collect personal 
-              information from children. If you believe we have inadvertently collected data from a child, please contact 
-              us immediately so we can delete it.
-            </p>
-          </section>
-
-          {/* International Data Transfers */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">International Data Transfers</h2>
-            <p className="text-foreground/80 leading-relaxed">
-              Your information may be transferred to and processed in countries other than your country of residence. 
-              These countries may have different data protection laws. We ensure that appropriate safeguards are in place 
-              to protect your data in accordance with this Privacy Policy and applicable laws.
+              Zero Hero is not intended for anyone under 18. We do not knowingly collect data from children. 
+              If you believe we have, please contact us so we can delete it.
             </p>
           </section>
 
@@ -225,9 +238,8 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Changes to This Policy</h2>
             <p className="text-foreground/80 leading-relaxed">
-              We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. 
-              We will notify you of any material changes by posting the new policy on this page and updating the "Last Updated" 
-              date. Your continued use of Zero Hero after such changes constitutes acceptance of the updated policy.
+              We may update this policy from time to time. We'll update the "Last Updated" date at the top and notify you 
+              of significant changes. Continued use of Zero Hero after changes means you accept the updated policy.
             </p>
           </section>
 
@@ -238,25 +250,18 @@ const PrivacyPolicy = () => {
               Contact Us
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, 
-              please contact us:
+              Questions about this policy? Reach out:
             </p>
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <p className="text-foreground/80">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:privacy@zerohero.app" className="text-primary hover:underline">
-                  privacy@zerohero.app
-                </a>
-              </p>
-              <p className="text-foreground/80">
-                <strong>Data Protection Officer:</strong>{" "}
-                <a href="mailto:dpo@zerohero.app" className="text-primary hover:underline">
-                  dpo@zerohero.app
+                <a href="mailto:privacy@zeroherobudget.com" className="text-primary hover:underline">
+                  privacy@zeroherobudget.com
                 </a>
               </p>
             </div>
             <p className="text-foreground/80 leading-relaxed mt-4">
-              We will respond to all requests within 30 days in accordance with GDPR requirements.
+              We'll respond within 30 days.
             </p>
           </section>
         </div>

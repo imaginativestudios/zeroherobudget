@@ -112,7 +112,7 @@ const TermsOfService = () => {
               <li>Upload or transmit viruses, malware, or malicious code</li>
               <li>Attempt to gain unauthorized access to the Service or other users' accounts</li>
               <li>Interfere with or disrupt the Service or servers/networks connected to the Service</li>
-              <li>Scrape, data mine, or use automated systems to access the Service</li>
+              <li>Use automated systems to access the Service in ways not authorized by us</li>
               <li>Reverse engineer, decompile, or disassemble any part of the Service</li>
               <li>Remove or modify any copyright, trademark, or proprietary notices</li>
               <li>Use the Service to harass, abuse, or harm another person</li>

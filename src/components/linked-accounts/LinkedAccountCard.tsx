@@ -29,6 +29,14 @@ export function LinkedAccountCard({ account, onReconnect, onDisconnect }: Linked
           <div className="min-w-0">
             <p className="font-medium text-sm text-foreground truncate">{account.institutionName}</p>
             <p className="text-xs text-muted-foreground">{account.maskedAccountName}</p>
+            {account.balance != null && (
+              <p className={cn(
+                'text-sm font-semibold mt-0.5',
+                account.balance < 0 ? 'text-destructive' : 'text-foreground'
+              )}>
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(account.balance)}
+              </p>
+            )}
             <p className="text-xs text-muted-foreground mt-0.5">
               Linked {formatDistanceToNow(new Date(account.linkedAt), { addSuffix: true })}
             </p>

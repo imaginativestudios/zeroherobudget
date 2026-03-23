@@ -227,7 +227,7 @@ const Legal = () => {
 
               <p className="text-muted-foreground text-sm mt-6">
                 For the full legal terms, see our{" "}
-                <Link to="/terms-of-service" className="text-primary hover:underline">complete Terms of Service</Link>.
+                <Link to="/terms" className="text-primary hover:underline">complete Terms of Service</Link>.
               </p>
             </div>
           </TabsContent>

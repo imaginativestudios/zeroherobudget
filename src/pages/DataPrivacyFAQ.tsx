@@ -19,22 +19,6 @@ import {
   CloudOff,
   Link2,
 } from "lucide-react";
-  Shield,
-  RefreshCw,
-  AlertTriangle,
-  Download,
-  Home,
-  Smartphone,
-  Globe,
-  Trash2,
-  CheckCircle2,
-  XCircle,
-  ArrowRight,
-  Database,
-  Lock,
-  Eye,
-  CloudOff,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

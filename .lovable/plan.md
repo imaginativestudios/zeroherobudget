@@ -1,28 +1,18 @@
 
 
-## Fix Plaid Link Issues: "Connecting to undefined" and Auth Method
+## Add Balance Display to Linked Account Cards
 
-Two bugs found plus a sandbox UX clarification:
+### Change
 
-### Bug 1: "Connecting to undefined…" loading text
-In `BankLinkingFlow.tsx` line 214, when `handleConsent` sets `step = 'connecting'`, `usePlaid` is still `null` (not yet determined). Since `null` is falsy, it falls to the else branch and renders `selectedInstitution?.name` which is `undefined`.
+In `src/components/linked-accounts/LinkedAccountCard.tsx`, display the `account.balance` value (when available) as a formatted currency amount between the account name/mask and the "Linked X ago" timestamp.
 
-**Fix**: Change the connecting text condition to handle the `null` (checking) state:
-```
-usePlaid === false ? `Connecting to ${selectedInstitution?.name}…` : 'Connecting to your bank…'
-```
+### Details
 
-### Bug 2: `getClaims()` does not exist in supabase-js v2
-Both edge functions use `supabase.auth.getClaims(token)` which is not a valid method. Replace with `supabase.auth.getUser()` in both:
-- `supabase/functions/create-link-token/index.ts` (lines 33-41)
-- `supabase/functions/exchange-plaid-token/index.ts` (lines 41-47)
-
-### Bug 3: "Invalid phone number" is a sandbox UX issue
-Plaid sandbox MFA asks for a phone number. The test value is `111-111-1111` and verification code `1234`. Add a hint in the `PlaidLinkStep` component so testers know which credentials to use.
+- Format using `Intl.NumberFormat` with USD currency
+- Show balance in a slightly larger/bolder style than the metadata text
+- Handle `null`/`undefined` balance gracefully (don't render anything)
+- Credit/loan accounts with negative balances show in red (`text-destructive`)
 
 ### Files changed
-1. **`supabase/functions/create-link-token/index.ts`** — replace `getClaims` with `getUser()`
-2. **`supabase/functions/exchange-plaid-token/index.ts`** — same auth fix
-3. **`src/components/linked-accounts/BankLinkingFlow.tsx`** — fix "undefined" in connecting text
-4. **`src/components/linked-accounts/PlaidLinkStep.tsx`** — add sandbox test credentials hint
+1. **`src/components/linked-accounts/LinkedAccountCard.tsx`** — add formatted balance line after `maskedAccountName`, conditionally rendered when `balance` is not null/undefined
 

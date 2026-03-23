@@ -211,7 +211,7 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
           <CardContent className="flex flex-col items-center text-center">
             <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
             <p className="text-sm font-medium text-foreground">
-              {usePlaid ? 'Connecting to your bank…' : `Connecting to ${selectedInstitution?.name}…`}
+              {usePlaid === false ? `Connecting to ${selectedInstitution?.name}…` : 'Connecting to your bank…'}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Securely authenticating with your bank. This may take a moment.

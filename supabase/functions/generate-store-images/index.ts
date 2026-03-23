@@ -16,7 +16,7 @@ CENTER COMPOSITION:
 - Below logo: A minimalist white shield icon with a teal lock symbol inside.
 - Below shield: "CONNECTOR" in smaller white sans-serif tracking.
 
-Bottom area: Tagline "Privacy-First Bank Scout" in gold/amber (#F4A259) text.
+Bottom area: Tagline "Privacy-First Budgeting" in gold/amber (#F4A259) text.
 
 Style: Premium, sophisticated adventure aesthetic. Clean and professional.
 No busy backgrounds, no people. Ultra high resolution.`,

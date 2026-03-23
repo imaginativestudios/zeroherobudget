@@ -382,6 +382,76 @@ export default function DataPrivacyFAQ() {
               </AccordionItem>
             </Accordion>
           </section>
+
+          {/* Bank Account Linking */}
+          <section>
+            <div className="flex items-center gap-3 mb-4">
+              <Link2 className="h-6 w-6 text-primary" />
+              <h2 className="text-2xl font-bold text-foreground">Bank Account Linking</h2>
+            </div>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="what-happens-link">
+                <AccordionTrigger>What happens when I link a bank account?</AccordionTrigger>
+                <AccordionContent>
+                  <p className="mb-3">
+                    When you link a bank account, you log in through <strong>Plaid</strong>, a trusted financial 
+                    technology service used by thousands of apps. Plaid connects to your bank securely and sends 
+                    us only basic account info:
+                  </p>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                    <li>Account name and type (e.g., "Checking")</li>
+                    <li>Last 4 digits of the account number</li>
+                    <li>Current balance</li>
+                    <li>Your bank's name</li>
+                  </ul>
+                  <p className="mt-3 text-muted-foreground">
+                    This data is stored locally on your device, just like all your other financial data.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="see-bank-login">
+                <AccordionTrigger>Does Zero Hero see my bank login?</AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    <strong>No.</strong> You log in directly through Plaid's secure interface. Your bank username 
+                    and password are never sent to or stored by Zero Hero. We have no way to access your bank 
+                    account directly.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="linked-data-stored">
+                <AccordionTrigger>Where is my linked account data stored?</AccordionTrigger>
+                <AccordionContent>
+                  <p className="mb-3">
+                    The same place as all your other financial data — <strong>locally on your device</strong>, 
+                    in your browser's storage. It never gets sent to our servers.
+                  </p>
+                  <p className="text-muted-foreground">
+                    This means the same backup and data-loss precautions apply. We recommend regular backups 
+                    through the <Link to="/data" className="text-primary hover:underline">Data Management</Link> page.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="disconnect-bank">
+                <AccordionTrigger>Can I disconnect my bank?</AccordionTrigger>
+                <AccordionContent>
+                  <p className="mb-3">
+                    <strong>Yes, anytime.</strong> Go to the Accounts page and click "Disconnect" on any linked account. 
+                    All data for that account will be permanently removed from your device immediately.
+                  </p>
+                  <p className="text-muted-foreground">
+                    You can also revoke Plaid's access to your bank directly through{" "}
+                    <a href="https://my.plaid.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      my.plaid.com
+                    </a>.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </section>
         </div>
 
         {/* Visual Data Lifecycle */}

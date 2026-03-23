@@ -19,7 +19,8 @@ export interface LinkedAccountMeta {
   institutionId: string;
   institutionName: string;
   maskedAccountName: string; // e.g. "Checking ••4821"
-  accountType: 'checking' | 'savings';
+  accountType: 'checking' | 'savings' | 'credit' | 'loan' | 'investment' | string;
+  balance?: number | null;
   accessToken: string; // opaque, non-sensitive
   status: 'active' | 'expired';
   linkedAt: string;

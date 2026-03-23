@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ConsentScreen } from './ConsentScreen';
+import { PlaidLinkStep } from './PlaidLinkStep';
 
 import {
   searchInstitutions,
@@ -11,47 +12,14 @@ import {
   type MockInstitution,
   type LinkedAccountMeta,
 } from '@/lib/mockBankProvider';
+import { createLinkToken, exchangePublicToken } from '@/lib/plaidProvider';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
-type Step = 'consent' | 'search' | 'connecting' | 'success' | 'error';
-
-const STEPS: { key: Step; label: string }[] = [
-  { key: 'consent', label: 'Privacy' },
-  { key: 'search', label: 'Select Bank' },
-  { key: 'connecting', label: 'Connecting' },
-  { key: 'success', label: 'Done' },
-];
+type Step = 'consent' | 'search' | 'plaid' | 'connecting' | 'success' | 'error';
 
 const CONNECTION_TIMEOUT_MS = 15_000;
-
-function StepIndicator({ currentStep }: { currentStep: Step }) {
-  const activeIndex = STEPS.findIndex((s) => s.key === currentStep);
-  if (activeIndex === -1) return null;
-
-  return (
-    <div className="flex items-center justify-center gap-1.5 mb-2" role="navigation" aria-label="Linking progress">
-      {STEPS.map((s, i) => (
-        <div key={s.key} className="flex items-center gap-1.5">
-          <div
-            className={cn(
-              'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors',
-              i < activeIndex && 'bg-primary/15 text-primary',
-              i === activeIndex && 'bg-primary text-primary-foreground',
-              i > activeIndex && 'bg-muted text-muted-foreground'
-            )}
-          >
-            <span className="tabular-nums">{i + 1}</span>
-            <span className="hidden sm:inline">{s.label}</span>
-          </div>
-          {i < STEPS.length - 1 && (
-            <div className={cn('w-4 h-px', i < activeIndex ? 'bg-primary/40' : 'bg-border')} />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 interface BankLinkingFlowProps {
   onComplete: () => void;
@@ -60,11 +28,14 @@ interface BankLinkingFlowProps {
 }
 
 export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinkingFlowProps) {
+  const { user } = useAuth();
   const [step, setStep] = useState<Step>('consent');
   const [query, setQuery] = useState('');
   const [selectedInstitution, setSelectedInstitution] = useState<MockInstitution | null>(null);
   const [newlyLinked, setNewlyLinked] = useState<LinkedAccountMeta[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [usePlaid, setUsePlaid] = useState<boolean | null>(null); // null = checking
+  const [linkToken, setLinkToken] = useState<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const filteredInstitutions = searchInstitutions(query);
@@ -82,6 +53,68 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
     };
   }, []);
 
+  // On consent, try to get a Plaid link token. If it fails, fall back to mock.
+  const handleConsent = useCallback(async () => {
+    if (!user) {
+      // Not authenticated — use mock flow
+      setUsePlaid(false);
+      setStep('search');
+      return;
+    }
+
+    setStep('connecting'); // brief loading state
+    try {
+      const token = await createLinkToken();
+      setLinkToken(token);
+      setUsePlaid(true);
+      setStep('plaid');
+    } catch {
+      // Plaid not configured — fall back to mock
+      setUsePlaid(false);
+      setStep('search');
+    }
+  }, [user]);
+
+  // Plaid Link success
+  const handlePlaidSuccess = useCallback(
+    async (publicToken: string) => {
+      setStep('connecting');
+      try {
+        const accounts = await exchangePublicToken(publicToken);
+        const result = await addAccounts(accounts);
+        setNewlyLinked(accounts);
+        setStep('success');
+
+        if (result.skipped > 0) {
+          toast({
+            title: 'Some accounts already linked',
+            description: `${result.skipped} account${result.skipped > 1 ? 's were' : ' was'} already connected and skipped.`,
+          });
+        }
+      } catch {
+        setErrorMessage('We received your bank details but failed to save them. Please try again.');
+        setStep('error');
+      }
+    },
+    [addAccounts]
+  );
+
+  // Plaid Link exit/error
+  const handlePlaidExit = useCallback(
+    (err: any) => {
+      if (err) {
+        setErrorMessage(
+          'The bank connection was interrupted. This can happen if your bank requires additional verification. Please try again.'
+        );
+        setStep('error');
+      } else {
+        onCancel();
+      }
+    },
+    [onCancel]
+  );
+
+  // Mock flow: select institution
   const handleSelectInstitution = async (institution: MockInstitution) => {
     setSelectedInstitution(institution);
     setStep('connecting');
@@ -117,16 +150,21 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
     }
   };
 
-  const showStepIndicator = step !== 'error';
-
   return (
     <div className="space-y-4">
-      {showStepIndicator && <StepIndicator currentStep={step} />}
-
       {step === 'consent' && (
-        <ConsentScreen onConsent={() => setStep('search')} onCancel={onCancel} />
+        <ConsentScreen onConsent={handleConsent} onCancel={onCancel} />
       )}
 
+      {step === 'plaid' && linkToken && (
+        <PlaidLinkStep
+          linkToken={linkToken}
+          onSuccess={handlePlaidSuccess}
+          onExit={handlePlaidExit}
+        />
+      )}
+
+      {/* Mock flow: manual bank search */}
       {step === 'search' && (
         <div className="space-y-4">
           <div className="relative">
@@ -173,7 +211,7 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
           <CardContent className="flex flex-col items-center text-center">
             <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
             <p className="text-sm font-medium text-foreground">
-              Connecting to {selectedInstitution?.name}…
+              {usePlaid ? 'Connecting to your bank…' : `Connecting to ${selectedInstitution?.name}…`}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Securely authenticating with your bank. This may take a moment.
@@ -191,7 +229,7 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
             <div>
               <p className="text-lg font-semibold text-foreground">Account Linked!</p>
               <p className="text-sm text-muted-foreground mt-1">
-                {newlyLinked.length} account{newlyLinked.length > 1 ? 's' : ''} from {selectedInstitution?.name} connected.
+                {newlyLinked.length} account{newlyLinked.length > 1 ? 's' : ''} connected.
               </p>
             </div>
             <div className="w-full max-w-sm space-y-2">
@@ -226,7 +264,18 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
               <Button variant="outline" onClick={onCancel} className="min-h-[44px]">
                 Cancel
               </Button>
-              <Button onClick={() => selectedInstitution && handleSelectInstitution(selectedInstitution)} className="min-h-[44px]">
+              <Button
+                onClick={() => {
+                  if (usePlaid && linkToken) {
+                    setStep('plaid');
+                  } else if (selectedInstitution) {
+                    handleSelectInstitution(selectedInstitution);
+                  } else {
+                    setStep('consent');
+                  }
+                }}
+                className="min-h-[44px]"
+              >
                 Try Again
               </Button>
             </div>

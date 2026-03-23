@@ -47,6 +47,15 @@ export function PlaidLinkStep({ linkToken, onSuccess, onExit }: PlaidLinkStepPro
         <p className="text-xs text-muted-foreground mt-1">
           A secure window will open for you to log in to your bank.
         </p>
+        <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border/50 text-left max-w-sm">
+          <p className="text-xs font-medium text-foreground mb-1">🧪 Sandbox test credentials</p>
+          <p className="text-xs text-muted-foreground">
+            Username: <code className="font-mono text-foreground">user_good</code> · Password: <code className="font-mono text-foreground">pass_good</code>
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Phone: <code className="font-mono text-foreground">111-111-1111</code> · Code: <code className="font-mono text-foreground">1234</code>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

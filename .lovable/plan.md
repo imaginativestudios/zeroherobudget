@@ -1,42 +1,40 @@
 
 
-## Fix Focus Ring Overflow Across All Modals
+## Fix Remaining Focus Ring Clipping in Modals
 
 ### Problem
-On mobile, `DialogContent` and `AlertDialogContent` use `w-full` with no horizontal margin and no `overflow-hidden`. Form elements inside (inputs, textareas, buttons) use `focus-visible:ring-offset-2` which pushes the focus ring 2px beyond the element boundary. Combined with `p-6` padding, the ring just barely clips the dialog edge and bleeds outside the viewport on small screens. The screenshot shows this clearly on the textarea and "Add Transaction" button.
+The `overflow-hidden` on `DialogContent` clips the outward-facing portion of `ring-2` focus rings (which are box-shadows that extend 2px outside each element). Even with `ring-offset-0`, the ring still paints outside the element's border-box and gets clipped at the dialog's rounded corners or scroll boundaries.
 
-### Root Cause
-Three compounding issues:
-1. **Dialog/AlertDialog** have `w-full` on mobile with no margin or overflow clipping
-2. **Textarea** uses `focus-visible:ring-offset-2` (old shadcn default) while Input was already updated to `ring-offset-0`
-3. **CurrencyInput** wrapper uses `focus-within:ring-offset-2`
-4. **Button base** uses `focus-visible:ring-offset-2`
+### Solution
+Make all focus rings **inset** so they render inside the element boundary rather than outside. This eliminates any possibility of clipping by parent containers. Add `ring-inset` to the focus-visible styles on all form primitives.
 
 ### Changes
 
-**1. `src/components/ui/dialog.tsx`** — Add mobile-safe containment
-- Add `mx-4 rounded-lg` (always rounded, not just `sm:rounded-lg`)
-- Add `overflow-hidden` to clip any stray focus rings at edges
-- Change `max-w-lg` to `max-w-[calc(100vw-2rem)] sm:max-w-lg` so the dialog never touches viewport edges
+**1. `src/components/ui/input.tsx`**
+- Add `ring-inset` to `focus-visible:ring-2 focus-visible:ring-primary/30`
 
-**2. `src/components/ui/alert-dialog.tsx`** — Same treatment
-- Mirror the dialog changes: `mx-4 rounded-lg overflow-hidden`, same max-width calc
+**2. `src/components/ui/textarea.tsx`**
+- Add `ring-inset` to the focus-visible ring classes
 
-**3. `src/components/ui/textarea.tsx`** — Align ring styling with Input
-- Change `focus-visible:ring-offset-2` to `focus-visible:ring-offset-0` (matching Input's existing pattern)
-- Change `focus-visible:ring-ring` to `focus-visible:ring-primary/30` (matching Input's softer ring)
-- Update border to `border-input/50` and add `rounded-xl bg-muted/30` to match Input styling
+**3. `src/components/ui/button.tsx`**
+- Add `ring-inset` to the base cva focus-visible ring
 
-**4. `src/components/ui/currency-input.tsx`** — Fix ring offset
-- Change `focus-within:ring-offset-2` to `focus-within:ring-offset-0`
+**4. `src/components/ui/currency-input.tsx`**
+- Add `ring-inset` to the `focus-within:ring-2` wrapper
 
-**5. `src/components/ui/button.tsx`** — Fix ring offset
-- Change base `focus-visible:ring-offset-2` to `focus-visible:ring-offset-0` in the cva base string
+**5. `src/components/ui/select.tsx`**
+- Add `ring-inset` to SelectTrigger's focus ring if present
+
+### Why inset
+- `ring-2` uses `box-shadow` which renders outside the border-box by default
+- `ring-inset` flips it to an inward shadow — visually identical but contained within the element
+- Zero clipping possible regardless of parent overflow, rounded corners, or scroll containers
+- No layout shift, no padding changes needed
 
 ### Files changed
-1. `src/components/ui/dialog.tsx`
-2. `src/components/ui/alert-dialog.tsx`
-3. `src/components/ui/textarea.tsx`
+1. `src/components/ui/input.tsx`
+2. `src/components/ui/textarea.tsx`
+3. `src/components/ui/button.tsx`
 4. `src/components/ui/currency-input.tsx`
-5. `src/components/ui/button.tsx`
+5. `src/components/ui/select.tsx`
 

@@ -32,7 +32,7 @@ const PrivacyPolicy = () => {
           </div>
           <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
           <p className="text-muted-foreground">
-            Last Updated: March 23, 2026
+            Last Updated: March 25, 2026
           </p>
         </div>
 

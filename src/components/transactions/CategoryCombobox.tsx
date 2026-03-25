@@ -1,5 +1,10 @@
 import { useState, useMemo } from "react";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import {
+  Home, Zap, Car, UtensilsCrossed, HeartPulse, Sparkles,
+  PiggyBank, Users, GraduationCap, MoreHorizontal, TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +23,21 @@ import {
 } from "@/components/ui/command";
 import type { CategoryDefinition, CategoryGroup } from "@/lib/categoryRegistry";
 
-interface GroupedCategory {
-  id: string;
-  name: string;
+const ICON_MAP: Record<string, LucideIcon> = {
+  "trending-up": TrendingUp,
+  "home": Home,
+  "zap": Zap,
+  "car": Car,
+  "utensils-crossed": UtensilsCrossed,
+  "heart-pulse": HeartPulse,
+  "sparkles": Sparkles,
+  "piggy-bank": PiggyBank,
+  "users": Users,
+  "graduation-cap": GraduationCap,
+  "more-horizontal": MoreHorizontal,
+};
+
+interface GroupedCategory extends CategoryGroup {
   categories: CategoryDefinition[];
 }
 
@@ -57,10 +74,30 @@ export function CategoryCombobox({
   const isExactMatch = allCategoryNames.includes(trimmedSearch.toLowerCase());
   const showCustomOption = trimmedSearch.length > 0 && !isExactMatch;
 
+  // Find the group for the selected value to show its color
+  const selectedGroup = useMemo(() => {
+    if (!value) return null;
+    if (flow === "in") {
+      return { color: "hsl(var(--chart-8))", icon: "trending-up" };
+    }
+    for (const group of groupedCategories) {
+      if (group.categories.some((c) => c.name === value)) {
+        return group;
+      }
+    }
+    return null;
+  }, [value, flow, groupedCategories]);
+
   const handleSelect = (categoryName: string) => {
     onChange(categoryName);
     setOpen(false);
     setSearch("");
+  };
+
+  const GroupIcon = ({ iconName }: { iconName: string }) => {
+    const Icon = ICON_MAP[iconName];
+    if (!Icon) return null;
+    return <Icon className="h-3.5 w-3.5 shrink-0 opacity-60" />;
   };
 
   return (
@@ -70,10 +107,22 @@ export function CategoryCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal h-10"
+          className={cn(
+            "w-full justify-between font-normal h-10 shadow-sm",
+            "transition-colors duration-150",
+            value && "font-medium"
+          )}
         >
-          <span className={cn(!value && "text-muted-foreground")}>
-            {value || placeholder}
+          <span className="flex items-center gap-2 truncate">
+            {value && selectedGroup && (
+              <span
+                className="h-2.5 w-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: selectedGroup.color }}
+              />
+            )}
+            <span className={cn(!value && "text-muted-foreground")}>
+              {value || placeholder}
+            </span>
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -85,14 +134,17 @@ export function CategoryCombobox({
             value={search}
             onValueChange={setSearch}
           />
-          <CommandList>
+          <CommandList className="max-h-[280px]">
             <CommandEmpty>
               {trimmedSearch ? (
                 <button
-                  className="w-full px-2 py-1.5 text-sm text-left hover:bg-accent rounded-sm cursor-pointer"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-accent rounded-sm cursor-pointer transition-colors"
                   onClick={() => handleSelect(trimmedSearch)}
                 >
-                  Use "<span className="font-medium">{trimmedSearch}</span>" as category
+                  <Plus className="h-4 w-4 text-muted-foreground" />
+                  <span>
+                    Use "<span className="font-medium">{trimmedSearch}</span>" as category
+                  </span>
                 </button>
               ) : (
                 "No categories found."
@@ -100,12 +152,20 @@ export function CategoryCombobox({
             </CommandEmpty>
 
             {flow === "in" ? (
-              <CommandGroup heading="Income">
+              <CommandGroup
+                heading={
+                  <span className="flex items-center gap-1.5">
+                    <GroupIcon iconName="trending-up" />
+                    Income
+                  </span>
+                }
+              >
                 {incomeCategories.map((cat) => (
                   <CommandItem
                     key={cat.id}
                     value={cat.name}
                     onSelect={() => handleSelect(cat.name)}
+                    className="py-2"
                   >
                     <Check
                       className={cn(
@@ -119,16 +179,29 @@ export function CategoryCombobox({
               </CommandGroup>
             ) : (
               groupedCategories.map((group) => (
-                <CommandGroup key={group.id} heading={group.name}>
+                <CommandGroup
+                  key={group.id}
+                  heading={
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="h-2 w-2 rounded-full shrink-0"
+                        style={{ backgroundColor: group.color }}
+                      />
+                      <GroupIcon iconName={group.icon} />
+                      {group.name}
+                    </span>
+                  }
+                >
                   {group.categories.map((cat) => (
                     <CommandItem
                       key={cat.id}
                       value={cat.name}
                       onSelect={() => handleSelect(cat.name)}
+                      className="py-2"
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
+                          "mr-2 h-4 w-4 shrink-0",
                           value === cat.name ? "opacity-100" : "opacity-0"
                         )}
                       />
@@ -146,7 +219,9 @@ export function CategoryCombobox({
                   <CommandItem
                     value={`custom-${trimmedSearch}`}
                     onSelect={() => handleSelect(trimmedSearch)}
+                    className="py-2"
                   >
+                    <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
                     Use "<span className="font-medium">{trimmedSearch}</span>" as category
                   </CommandItem>
                 </CommandGroup>

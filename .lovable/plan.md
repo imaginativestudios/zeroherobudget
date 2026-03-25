@@ -1,40 +1,30 @@
 
 
-## Fix Remaining Focus Ring Clipping in Modals
+## Fix Button Scale Expansion Clipping in Modals
 
 ### Problem
-The `overflow-hidden` on `DialogContent` clips the outward-facing portion of `ring-2` focus rings (which are box-shadows that extend 2px outside each element). Even with `ring-offset-0`, the ring still paints outside the element's border-box and gets clipped at the dialog's rounded corners or scroll boundaries.
+Several button variants use `hover:scale-105` which enlarges the button by 5% on hover/press. Inside modals with `overflow-hidden`, buttons near the edges get visually clipped during this expansion. The dialog close button also still uses the old `ring-offset-2` pattern.
 
 ### Solution
-Make all focus rings **inset** so they render inside the element boundary rather than outside. This eliminates any possibility of clipping by parent containers. Add `ring-inset` to the focus-visible styles on all form primitives.
+Two targeted fixes:
+
+1. **Remove `hover:scale-105`** from button variants that appear inside modals (`default`, `royal`, `inverse`). Replace with a subtler effect that doesn't change the element's bounding box — use `hover:brightness-110` or simply remove the scale entirely, keeping only the shadow and color change as the hover indicator.
+
+2. **Fix dialog close button** ring style in `dialog.tsx` — update from `focus:ring-offset-2` to `focus:ring-2 focus:ring-inset focus:ring-ring focus:ring-offset-0` to match the new inset pattern.
 
 ### Changes
 
-**1. `src/components/ui/input.tsx`**
-- Add `ring-inset` to `focus-visible:ring-2 focus-visible:ring-primary/30`
+**`src/components/ui/button.tsx`**
+- Remove `hover:scale-105` from `default`, `royal`, and `inverse` variants
+- The `hover:shadow-royal` and color changes remain as sufficient hover feedback
 
-**2. `src/components/ui/textarea.tsx`**
-- Add `ring-inset` to the focus-visible ring classes
+**`src/components/ui/dialog.tsx`**
+- Update the close button's focus classes from `focus:ring-2 focus:ring-ring focus:ring-offset-2` to `focus:ring-2 focus:ring-inset focus:ring-ring focus:ring-offset-0`
 
-**3. `src/components/ui/button.tsx`**
-- Add `ring-inset` to the base cva focus-visible ring
-
-**4. `src/components/ui/currency-input.tsx`**
-- Add `ring-inset` to the `focus-within:ring-2` wrapper
-
-**5. `src/components/ui/select.tsx`**
-- Add `ring-inset` to SelectTrigger's focus ring if present
-
-### Why inset
-- `ring-2` uses `box-shadow` which renders outside the border-box by default
-- `ring-inset` flips it to an inward shadow — visually identical but contained within the element
-- Zero clipping possible regardless of parent overflow, rounded corners, or scroll containers
-- No layout shift, no padding changes needed
+**`src/components/ui/alert-dialog.tsx`**
+- Check if it has a close button with the same old ring pattern; if so, apply the same fix
 
 ### Files changed
-1. `src/components/ui/input.tsx`
-2. `src/components/ui/textarea.tsx`
-3. `src/components/ui/button.tsx`
-4. `src/components/ui/currency-input.tsx`
-5. `src/components/ui/select.tsx`
+1. `src/components/ui/button.tsx`
+2. `src/components/ui/dialog.tsx`
 

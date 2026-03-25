@@ -92,7 +92,7 @@ export default function Landing() {
     <>
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden">
           {/* Solid Gradient Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
             {/* Subtle decorative elements for visual depth */}

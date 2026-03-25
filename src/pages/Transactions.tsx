@@ -480,31 +480,34 @@ const [expenses] = useExpenses();
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-category">Category</Label>
-                      <Input id="transaction-category" value={newTransaction.category} onChange={e => setNewTransaction({
+                  <div className="space-y-2">
+                    <Label htmlFor="transaction-category">Category</Label>
+                    <Select value={newTransaction.category} onValueChange={value => setNewTransaction({
                       ...newTransaction,
-                      category: e.target.value
-                    })} placeholder="Category" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-budget-line">Budget Line (Optional)</Label>
-                      <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
-                      ...newTransaction,
-                      expenseId: value === "none" ? undefined : value
+                      category: value
                     })}>
-                        <SelectTrigger id="transaction-budget-line">
-                          <SelectValue placeholder="Select budget line" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
-                              {expense.name}
-                            </SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <SelectTrigger id="transaction-category">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {newTransaction.flow === 'in' ? (
+                          incomeCategories.map(cat => (
+                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                          ))
+                        ) : (
+                          groupedCategories.map(group => (
+                            <div key={group.id}>
+                              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                {group.name}
+                              </div>
+                              {group.categories.map(cat => (
+                                <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                              ))}
+                            </div>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   {/* Debt Selector - only show when category is Debt Payments */}

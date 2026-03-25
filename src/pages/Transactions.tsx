@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Calendar, Plus, Download, Upload, Search, Trash2, Edit, DollarSign, Shield, ClipboardPaste } from "lucide-react";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ import { ConnectorReviewModal } from "@/components/import/ConnectorReviewModal";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useLocalDebts } from "@/hooks/useLocalDebts";
-import { useExpenses } from "@/hooks/useLocalSettings";
+import { useExpenses } from "@/hooks/useLocalSettings"; // kept for CSV import mapping
 import { useTransactionCategorization } from "@/hooks/useTransactionCategorization";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";
@@ -112,6 +113,26 @@ const [expenses] = useExpenses();
   const getTotalActualSpending = (month: string) => {
     return getRawTotalActualSpending(month);
   };
+  const { enabledCategories, groups } = useCategories();
+
+  // Group enabled categories by their group for the dropdown
+  const groupedCategories = useMemo(() => {
+    return groups
+      .filter(g => !g.isIncome)
+      .map(group => ({
+        ...group,
+        categories: enabledCategories.filter(c => c.groupId === group.id),
+      }))
+      .filter(g => g.categories.length > 0);
+  }, [groups, enabledCategories]);
+
+  const incomeCategories = useMemo(() => {
+    return enabledCategories.filter(c => {
+      const group = groups.find(g => g.id === c.groupId);
+      return group?.isIncome;
+    });
+  }, [enabledCategories, groups]);
+
   const [newTransaction, setNewTransaction] = useState({
     date: formatDate(new Date()),
     description: "",
@@ -119,7 +140,6 @@ const [expenses] = useExpenses();
     category: "",
     accountId: activeAccounts[0]?.id || 'default-checking',
     flow: 'out' as 'in' | 'out',
-    expenseId: "",
     debtId: "",
     notes: ""
   });
@@ -201,7 +221,6 @@ const [expenses] = useExpenses();
     if (!newTransaction.description || newTransaction.amount <= 0) return;
     addTransaction({
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined,
       debtId: newTransaction.debtId || undefined
     });
 
@@ -227,7 +246,6 @@ const [expenses] = useExpenses();
       category: "",
       accountId: activeAccounts[0]?.id || 'default-checking',
       flow: 'out' as 'in' | 'out',
-      expenseId: "",
       debtId: "",
       notes: ""
     });
@@ -242,7 +260,6 @@ const [expenses] = useExpenses();
       category: transaction.category,
       accountId: transaction.accountId,
       flow: transaction.flow,
-      expenseId: transaction.expenseId || "",
       debtId: transaction.debtId || "",
       notes: transaction.notes || ""
     });
@@ -285,7 +302,6 @@ const [expenses] = useExpenses();
 
     updateTransaction(editingTransaction.id, {
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined,
       debtId: newDebtId
     });
 
@@ -303,7 +319,6 @@ const [expenses] = useExpenses();
       category: "",
       accountId: activeAccounts[0]?.id || 'default-checking',
       flow: 'out' as 'in' | 'out',
-      expenseId: "",
       debtId: "",
       notes: ""
     });
@@ -465,31 +480,34 @@ const [expenses] = useExpenses();
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-category">Category</Label>
-                      <Input id="transaction-category" value={newTransaction.category} onChange={e => setNewTransaction({
+                  <div className="space-y-2">
+                    <Label htmlFor="transaction-category">Category</Label>
+                    <Select value={newTransaction.category} onValueChange={value => setNewTransaction({
                       ...newTransaction,
-                      category: e.target.value
-                    })} placeholder="Category" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-budget-line">Budget Line (Optional)</Label>
-                      <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
-                      ...newTransaction,
-                      expenseId: value === "none" ? undefined : value
+                      category: value
                     })}>
-                        <SelectTrigger id="transaction-budget-line">
-                          <SelectValue placeholder="Select budget line" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
-                              {expense.name}
-                            </SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <SelectTrigger id="transaction-category">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {newTransaction.flow === 'in' ? (
+                          incomeCategories.map(cat => (
+                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                          ))
+                        ) : (
+                          groupedCategories.map(group => (
+                            <div key={group.id}>
+                              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                {group.name}
+                              </div>
+                              {group.categories.map(cat => (
+                                <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                              ))}
+                            </div>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   {/* Debt Selector - only show when category is Debt Payments */}
@@ -632,7 +650,7 @@ const [expenses] = useExpenses();
                     <th className="text-left p-3 font-semibold">Amount</th>
                     <th className="text-left p-3 font-semibold hidden sm:table-cell">Account</th>
                     <th className="text-left p-3 font-semibold">Category</th>
-                    <th className="text-left p-3 font-semibold hidden md:table-cell">Budget Line</th>
+                    
                     <th className="text-center p-3 font-semibold">Actions</th>
                   </tr>
                 </thead>
@@ -647,9 +665,6 @@ const [expenses] = useExpenses();
                       </td>
                       <td className="p-3 hidden sm:table-cell">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
                       <td className="p-3 break-anywhere">{transaction.category}</td>
-                      <td className="p-3 hidden md:table-cell">
-                        {transaction.expenseId ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown" : "-"}
-                      </td>
                       <td className="p-3 text-center">
                         <div className="flex justify-center gap-1">
                           <Dialog open={editingTransaction?.id === transaction.id} onOpenChange={open => {
@@ -662,7 +677,6 @@ const [expenses] = useExpenses();
                           category: "",
                           accountId: activeAccounts[0]?.id || 'default-checking',
                           flow: 'out' as 'in' | 'out',
-                          expenseId: "",
                           debtId: "",
                           notes: ""
                         });
@@ -737,31 +751,34 @@ const [expenses] = useExpenses();
                                   </div>
                                 </div>
                                 
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <Label>Category</Label>
-                                    <Input value={newTransaction.category} onChange={e => setNewTransaction({
-                                ...newTransaction,
-                                category: e.target.value
-                              })} placeholder="Category" />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Budget Line (Optional)</Label>
-                                    <Select value={newTransaction.expenseId} onValueChange={value => setNewTransaction({
-                                ...newTransaction,
-                                expenseId: value === "none" ? undefined : value
-                              })}>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select budget line" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="none">None</SelectItem>
-                                        {expenses.map(expense => <SelectItem key={expense.id} value={expense.id}>
-                                            {expense.name}
-                                          </SelectItem>)}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                                <div className="space-y-2">
+                                  <Label>Category</Label>
+                                  <Select value={newTransaction.category} onValueChange={value => setNewTransaction({
+                                    ...newTransaction,
+                                    category: value
+                                  })}>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {newTransaction.flow === 'in' ? (
+                                        incomeCategories.map(cat => (
+                                          <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                                        ))
+                                      ) : (
+                                        groupedCategories.map(group => (
+                                          <div key={group.id}>
+                                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                              {group.name}
+                                            </div>
+                                            {group.categories.map(cat => (
+                                              <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                                            ))}
+                                          </div>
+                                        ))
+                                      )}
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                                 
                                 {/* AI Category Suggestion */}

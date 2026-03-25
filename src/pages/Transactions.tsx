@@ -113,6 +113,26 @@ const [expenses] = useExpenses();
   const getTotalActualSpending = (month: string) => {
     return getRawTotalActualSpending(month);
   };
+  const { enabledCategories, groups } = useCategories();
+
+  // Group enabled categories by their group for the dropdown
+  const groupedCategories = useMemo(() => {
+    return groups
+      .filter(g => !g.isIncome)
+      .map(group => ({
+        ...group,
+        categories: enabledCategories.filter(c => c.groupId === group.id),
+      }))
+      .filter(g => g.categories.length > 0);
+  }, [groups, enabledCategories]);
+
+  const incomeCategories = useMemo(() => {
+    return enabledCategories.filter(c => {
+      const group = groups.find(g => g.id === c.groupId);
+      return group?.isIncome;
+    });
+  }, [enabledCategories, groups]);
+
   const [newTransaction, setNewTransaction] = useState({
     date: formatDate(new Date()),
     description: "",
@@ -120,7 +140,6 @@ const [expenses] = useExpenses();
     category: "",
     accountId: activeAccounts[0]?.id || 'default-checking',
     flow: 'out' as 'in' | 'out',
-    expenseId: "",
     debtId: "",
     notes: ""
   });

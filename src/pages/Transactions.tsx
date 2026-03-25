@@ -650,7 +650,7 @@ const [expenses] = useExpenses();
                     <th className="text-left p-3 font-semibold">Amount</th>
                     <th className="text-left p-3 font-semibold hidden sm:table-cell">Account</th>
                     <th className="text-left p-3 font-semibold">Category</th>
-                    <th className="text-left p-3 font-semibold hidden md:table-cell">Budget Line</th>
+                    
                     <th className="text-center p-3 font-semibold">Actions</th>
                   </tr>
                 </thead>

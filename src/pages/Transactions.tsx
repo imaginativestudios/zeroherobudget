@@ -302,7 +302,6 @@ const [expenses] = useExpenses();
 
     updateTransaction(editingTransaction.id, {
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined,
       debtId: newDebtId
     });
 

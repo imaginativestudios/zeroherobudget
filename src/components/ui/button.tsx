@@ -9,8 +9,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-dark hover:shadow-royal hover:scale-105",
-        royal: "bg-primary text-primary-foreground hover:bg-primary-dark hover:shadow-royal hover:scale-105 border border-primary-light",
+        default: "bg-primary text-primary-foreground hover:bg-primary-dark hover:shadow-royal",
+        royal: "bg-primary text-primary-foreground hover:bg-primary-dark hover:shadow-royal border border-primary-light",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         success: "bg-success text-success-foreground hover:bg-success/90",
         // Inverse variants for use on dark/primary backgrounds (WCAG AA compliant)
-        inverse: "bg-white text-primary hover:bg-white/90 hover:shadow-royal hover:scale-105",
+        inverse: "bg-white text-primary hover:bg-white/90 hover:shadow-royal",
         "inverse-outline": "border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary",
       },
       size: {

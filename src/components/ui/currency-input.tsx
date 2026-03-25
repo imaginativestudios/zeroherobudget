@@ -30,7 +30,7 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
       <div 
         className={cn(
           "flex items-center rounded-md border border-input bg-background ring-offset-background",
-          "focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-0",
+          "focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary/30 focus-within:ring-offset-0",
           variantClasses[variant],
           className
         )}

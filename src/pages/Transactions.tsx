@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CategoryCombobox } from "@/components/transactions/CategoryCombobox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -482,32 +483,13 @@ const [expenses] = useExpenses();
                   
                   <div className="space-y-2">
                     <Label htmlFor="transaction-category">Category</Label>
-                    <Select value={newTransaction.category} onValueChange={value => setNewTransaction({
-                      ...newTransaction,
-                      category: value
-                    })}>
-                      <SelectTrigger id="transaction-category">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {newTransaction.flow === 'in' ? (
-                          incomeCategories.map(cat => (
-                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                          ))
-                        ) : (
-                          groupedCategories.map(group => (
-                            <div key={group.id}>
-                              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                {group.name}
-                              </div>
-                              {group.categories.map(cat => (
-                                <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                              ))}
-                            </div>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <CategoryCombobox
+                      value={newTransaction.category}
+                      onChange={value => setNewTransaction({ ...newTransaction, category: value })}
+                      flow={newTransaction.flow}
+                      groupedCategories={groupedCategories}
+                      incomeCategories={incomeCategories}
+                    />
                   </div>
                   
                   {/* Debt Selector - only show when category is Debt Payments */}
@@ -753,32 +735,13 @@ const [expenses] = useExpenses();
                                 
                                 <div className="space-y-2">
                                   <Label>Category</Label>
-                                  <Select value={newTransaction.category} onValueChange={value => setNewTransaction({
-                                    ...newTransaction,
-                                    category: value
-                                  })}>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {newTransaction.flow === 'in' ? (
-                                        incomeCategories.map(cat => (
-                                          <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                                        ))
-                                      ) : (
-                                        groupedCategories.map(group => (
-                                          <div key={group.id}>
-                                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                              {group.name}
-                                            </div>
-                                            {group.categories.map(cat => (
-                                              <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                                            ))}
-                                          </div>
-                                        ))
-                                      )}
-                                    </SelectContent>
-                                  </Select>
+                                  <CategoryCombobox
+                                    value={newTransaction.category}
+                                    onChange={value => setNewTransaction({ ...newTransaction, category: value })}
+                                    flow={newTransaction.flow}
+                                    groupedCategories={groupedCategories}
+                                    incomeCategories={incomeCategories}
+                                  />
                                 </div>
                                 
                                 {/* AI Category Suggestion */}

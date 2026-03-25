@@ -1,30 +1,33 @@
 
 
-## Fix Legal/Privacy Page Issues
+## Remove Budget Line & Add Category Dropdown from Budget Categories
 
-### Problem
-1. **404 on /legal in preview**: The route is correctly defined in App.tsx. This is likely a preview environment caching issue — the code is correct.
-2. **Broken link in AccountSettings**: The "Privacy FAQ" quick link points to `/privacy-faq` (doesn't exist) instead of `/data-privacy`.
-3. **Live site shows old content**: The updated pages haven't been published yet. You need to click "Publish" > "Update" to deploy the frontend changes to the live site.
-4. **Terms of Service date**: Still says "March 23, 2026" — should be updated to March 25, 2026 to match the Privacy Policy.
+### What changes
 
-### Changes
+**1. Remove "Budget Line" from Transactions page (`src/pages/Transactions.tsx`)**
 
-**1. `src/pages/AccountSettings.tsx`** — Fix broken Privacy FAQ link
-- Line 178: Change `href: '/privacy-faq'` to `href: '/data-privacy'`
+Three places to clean up:
 
-**2. `src/pages/TermsOfService.tsx`** — Update date
-- Line 32: Change "March 23, 2026" to "March 25, 2026"
+- **Add Transaction dialog** (lines 476-492): Remove the "Budget Line (Optional)" select field entirely
+- **Edit Transaction dialog** (lines 748-764): Remove the "Budget Line (Optional)" select field entirely  
+- **Transaction table** (line 635): Remove the "Budget Line" column header
+- **Transaction table row** (lines 650-652): Remove the budget line cell that shows expense name
+- The category field in both dialogs currently uses a plain text `<Input>` — this will be replaced with a grouped `<Select>` dropdown
 
-**3. Publish reminder**
-- After these fixes, click Publish > Update to push all legal page changes to the live site. Backend changes deploy automatically but frontend (page content) requires manual publish.
+**2. Replace Category text input with grouped Select dropdown**
 
-### No routing changes needed
-All routes are correctly defined:
-- `/legal` → Legal.tsx
-- `/privacy` → PrivacyPolicy.tsx
-- `/terms` → TermsOfService.tsx
-- `/data-privacy` → DataPrivacyFAQ.tsx
+In both the Add and Edit transaction dialogs, replace the plain `<Input>` for category with a `<Select>` that:
+- Groups categories by their budget group (Housing, Utilities, Food, etc.) using the `useCategories()` hook
+- Shows only the user's **enabled** categories (respects their budget setup)
+- Uses group headers as visual separators (similar to how `CategoryBadgeSelect` already does this)
+- The category field will span the full width (since budget line is removed from its grid row)
 
-All footer/nav links across Landing, ComingSoon, Layout, and component files point to correct routes.
+**3. Clean up unused references**
+
+- Remove `expenseId` from `newTransaction` state initialization and reset calls (4 places)
+- Remove the `useExpenses` import from `useLocalSettings` (no longer needed for budget line matching)
+- Keep `expenses` import only if still used elsewhere (CSV import mapping) — if so, leave it
+
+### Files changed
+1. `src/pages/Transactions.tsx` — All changes above
 

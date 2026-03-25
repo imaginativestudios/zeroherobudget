@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Calendar, Plus, Download, Upload, Search, Trash2, Edit, DollarSign, Shield, ClipboardPaste } from "lucide-react";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

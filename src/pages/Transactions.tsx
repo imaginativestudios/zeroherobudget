@@ -665,9 +665,6 @@ const [expenses] = useExpenses();
                       </td>
                       <td className="p-3 hidden sm:table-cell">{accounts.find(a => a.id === transaction.accountId)?.name || 'Unknown'}</td>
                       <td className="p-3 break-anywhere">{transaction.category}</td>
-                      <td className="p-3 hidden md:table-cell">
-                        {transaction.expenseId ? expenses.find(e => e.id === transaction.expenseId)?.name || "Unknown" : "-"}
-                      </td>
                       <td className="p-3 text-center">
                         <div className="flex justify-center gap-1">
                           <Dialog open={editingTransaction?.id === transaction.id} onOpenChange={open => {

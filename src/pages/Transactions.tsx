@@ -246,7 +246,6 @@ const [expenses] = useExpenses();
       category: "",
       accountId: activeAccounts[0]?.id || 'default-checking',
       flow: 'out' as 'in' | 'out',
-      expenseId: "",
       debtId: "",
       notes: ""
     });

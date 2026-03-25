@@ -18,7 +18,7 @@ import { ConnectorReviewModal } from "@/components/import/ConnectorReviewModal";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
 import { useLocalDebts } from "@/hooks/useLocalDebts";
-import { useExpenses } from "@/hooks/useLocalSettings";
+import { useExpenses } from "@/hooks/useLocalSettings"; // kept for CSV import mapping
 import { useTransactionCategorization } from "@/hooks/useTransactionCategorization";
 import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
 import { getCurrentMonth, formatMonthDisplay, formatDate, formatDisplayDate } from "@/lib/dateUtils";

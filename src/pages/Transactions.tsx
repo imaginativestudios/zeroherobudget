@@ -417,72 +417,80 @@ const [expenses] = useExpenses();
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] p-0">
-                <DialogHeader className="p-6 pb-2">
+                <DialogHeader className="p-6 pb-3">
                   <DialogTitle>Log Transaction</DialogTitle>
+                  <DialogDescription>Record your income or expense</DialogDescription>
                 </DialogHeader>
-                <ScrollArea className="max-h-[calc(90vh-80px)] px-6 pb-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-date">Date</Label>
-                      <Input id="transaction-date" type="date" value={newTransaction.date} onChange={e => setNewTransaction({
-                      ...newTransaction,
-                      date: e.target.value
-                    })} />
+                <ScrollArea className="max-h-[calc(90vh-100px)] px-6 pb-6">
+                <div className="space-y-5">
+                  {/* Date & Amount section */}
+                  <div className="rounded-lg border bg-muted/30 p-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="transaction-date" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date</Label>
+                        <Input id="transaction-date" type="date" value={newTransaction.date} onChange={e => setNewTransaction({
+                        ...newTransaction,
+                        date: e.target.value
+                      })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="transaction-amount" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Amount</Label>
+                        <CurrencyInput id="transaction-amount" prefix="$" step={0.01} value={newTransaction.amount || ''} onChange={e => setNewTransaction({
+                        ...newTransaction,
+                        amount: parseFloat(e.target.value) || 0
+                      })} placeholder="0.00" />
+                      </div>
                     </div>
+                    
                     <div className="space-y-2">
-                      <Label htmlFor="transaction-amount">Amount</Label>
-                      <CurrencyInput id="transaction-amount" prefix="$" step={0.01} value={newTransaction.amount || ''} onChange={e => setNewTransaction({
+                      <Label htmlFor="transaction-description" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
+                      <Input id="transaction-description" value={newTransaction.description} onChange={e => setNewTransaction({
                       ...newTransaction,
-                      amount: parseFloat(e.target.value) || 0
-                    })} placeholder="0.00" />
+                      description: e.target.value
+                    })} placeholder="Transaction description" />
                     </div>
                   </div>
                   
+                  {/* Account & Type section */}
+                  <div className="rounded-lg border bg-muted/30 p-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="transaction-account" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Account</Label>
+                        <Select value={newTransaction.accountId} onValueChange={value => setNewTransaction({
+                        ...newTransaction,
+                        accountId: value
+                      })}>
+                          <SelectTrigger id="transaction-account">
+                            <SelectValue placeholder="Select account" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {activeAccounts.map(account => <SelectItem key={account.id} value={account.id}>
+                                {account.name}
+                              </SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="transaction-type" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Type</Label>
+                        <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({
+                        ...newTransaction,
+                        flow: value
+                      })}>
+                          <SelectTrigger id="transaction-type">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="out">💸 Expense</SelectItem>
+                            <SelectItem value="in">💰 Income</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Category section */}
                   <div className="space-y-2">
-                    <Label htmlFor="transaction-description">Description</Label>
-                    <Input id="transaction-description" value={newTransaction.description} onChange={e => setNewTransaction({
-                    ...newTransaction,
-                    description: e.target.value
-                  })} placeholder="Transaction description" />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-account">Account</Label>
-                      <Select value={newTransaction.accountId} onValueChange={value => setNewTransaction({
-                      ...newTransaction,
-                      accountId: value
-                    })}>
-                        <SelectTrigger id="transaction-account">
-                          <SelectValue placeholder="Select account" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activeAccounts.map(account => <SelectItem key={account.id} value={account.id}>
-                              {account.name}
-                            </SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction-type">Type</Label>
-                      <Select value={newTransaction.flow} onValueChange={(value: 'in' | 'out') => setNewTransaction({
-                      ...newTransaction,
-                      flow: value
-                    })}>
-                        <SelectTrigger id="transaction-type">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="out">💸 Expense</SelectItem>
-                          <SelectItem value="in">💰 Income</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="transaction-category">Category</Label>
+                    <Label htmlFor="transaction-category" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Category</Label>
                     <CategoryCombobox
                       value={newTransaction.category}
                       onChange={value => setNewTransaction({ ...newTransaction, category: value })}
@@ -537,15 +545,16 @@ const [expenses] = useExpenses();
                     onBuyAnyway={() => {}}
                   />
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="transaction-notes">Notes (Optional)</Label>
+                  {/* Notes section with subtle separator */}
+                  <div className="pt-1 border-t space-y-2">
+                    <Label htmlFor="transaction-notes" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes (Optional)</Label>
                     <Textarea id="transaction-notes" value={newTransaction.notes} onChange={e => setNewTransaction({
                     ...newTransaction,
                     notes: e.target.value
-                  })} placeholder="Additional notes" />
+                  })} placeholder="Additional notes" className="resize-none" rows={2} />
                   </div>
                   
-                  <Button onClick={handleAddTransaction} className="w-full">
+                  <Button onClick={handleAddTransaction} variant="royal" className="w-full">
                     Add Transaction
                   </Button>
                 </div>

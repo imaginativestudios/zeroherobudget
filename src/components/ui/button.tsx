@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         success: "bg-success text-success-foreground hover:bg-success/90",
         // Inverse variants for use on dark/primary backgrounds (WCAG AA compliant)
-        inverse: "bg-white text-primary hover:bg-white/90 hover:shadow-royal hover:scale-105",
+        inverse: "bg-white text-primary hover:bg-white/90 hover:shadow-royal",
         "inverse-outline": "border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary",
       },
       size: {

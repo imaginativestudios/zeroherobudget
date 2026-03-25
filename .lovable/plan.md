@@ -1,47 +1,30 @@
 
 
-## Update Legal & Privacy Pages for Plaid Integration
+## Fix Legal/Privacy Page Issues
 
 ### Problem
-Four pages still reference the old "Scout" browser extension / scraper approach and don't mention Plaid. The Privacy Policy also contradicts the local-first architecture by claiming data is stored on Supabase cloud. All pages need plain-language rewrites where appropriate.
+1. **404 on /legal in preview**: The route is correctly defined in App.tsx. This is likely a preview environment caching issue — the code is correct.
+2. **Broken link in AccountSettings**: The "Privacy FAQ" quick link points to `/privacy-faq` (doesn't exist) instead of `/data-privacy`.
+3. **Live site shows old content**: The updated pages haven't been published yet. You need to click "Publish" > "Update" to deploy the frontend changes to the live site.
+4. **Terms of Service date**: Still says "March 23, 2026" — should be updated to March 25, 2026 to match the Privacy Policy.
 
-### Pages to update
+### Changes
 
-**1. `src/pages/Legal.tsx` — The Code of the Fortress**
-- **Tab C "The Scout Protocol"**: Replace entirely with **"Bank Connections"** tab describing the Plaid Link integration:
-  - How it works: Plaid handles authentication directly with your bank; Zero Hero never sees your bank login credentials
-  - What we store: Only account name, last 4 digits, type, and balance — stored locally on your device
-  - What we don't store: No account numbers, routing numbers, or login credentials on our servers
-  - Disconnect anytime: Unlinking removes all locally stored data for that account
-- Update tab icon from `Compass` to `Link2` and label from "The Scout Protocol" / "Connector" to "Bank Connections"
-- **Tab A "Privacy"**: Add a bullet about Plaid as a third-party service provider (handles bank authentication securely; see their privacy policy)
-- Rewrite copy in plain language throughout (remove jargon like "sovereign territory", "IndexedDB via RxDB")
+**1. `src/pages/AccountSettings.tsx`** — Fix broken Privacy FAQ link
+- Line 178: Change `href: '/privacy-faq'` to `href: '/data-privacy'`
 
-**2. `src/pages/PrivacyPolicy.tsx` — Full Privacy Policy**
-- **Fix contradiction**: The "Data Storage" section claims data is stored on Supabase cloud with PostgreSQL. Rewrite to accurately reflect the hybrid model: financial data stored locally on device, only account/auth info on Supabase
-- **Add "Bank Account Linking" section**: Explain Plaid's role as a secure intermediary, what data flows where, and that Plaid has its own privacy policy
-- **Update "Third Parties" section**: Add Plaid alongside Supabase and Stripe as a named service provider
-- **Update date** to March 2026
-- Simplify language throughout
+**2. `src/pages/TermsOfService.tsx`** — Update date
+- Line 32: Change "March 23, 2026" to "March 25, 2026"
 
-**3. `src/pages/TermsOfService.tsx` — Terms of Service**
-- **Add "Bank Account Linking" section** under Service Description: Users may optionally link bank accounts via Plaid; Zero Hero is not responsible for bank data accuracy; users can disconnect anytime
-- **Remove** line 115 about scraping prohibition (contradicted the old connector feature; no longer relevant)
-- **Update date** to March 2026
+**3. Publish reminder**
+- After these fixes, click Publish > Update to push all legal page changes to the live site. Backend changes deploy automatically but frontend (page content) requires manual publish.
 
-**4. `src/pages/DataPrivacyFAQ.tsx` — Data Privacy FAQ**
-- **Add new FAQ section** "Bank Account Linking" with questions:
-  - "What happens when I link a bank account?" — Plaid securely connects; we only receive account name, mask, type, balance
-  - "Does Zero Hero see my bank login?" — No, Plaid handles authentication directly
-  - "Where is my linked account data stored?" — Locally on your device, encrypted
-  - "Can I disconnect my bank?" — Yes, all data for that account is permanently deleted from your device
+### No routing changes needed
+All routes are correctly defined:
+- `/legal` → Legal.tsx
+- `/privacy` → PrivacyPolicy.tsx
+- `/terms` → TermsOfService.tsx
+- `/data-privacy` → DataPrivacyFAQ.tsx
 
-**5. `supabase/functions/generate-store-images/index.ts`** — Update image generation prompts to remove "No Plaid" bullet and "Privacy-First Bank Scout" references (these are now inaccurate since we use Plaid)
-
-### Files changed
-1. `src/pages/Legal.tsx`
-2. `src/pages/PrivacyPolicy.tsx`
-3. `src/pages/TermsOfService.tsx`
-4. `src/pages/DataPrivacyFAQ.tsx`
-5. `supabase/functions/generate-store-images/index.ts`
+All footer/nav links across Landing, ComingSoon, Layout, and component files point to correct routes.
 

@@ -221,7 +221,6 @@ const [expenses] = useExpenses();
     if (!newTransaction.description || newTransaction.amount <= 0) return;
     addTransaction({
       ...newTransaction,
-      expenseId: newTransaction.expenseId || undefined,
       debtId: newTransaction.debtId || undefined
     });
 

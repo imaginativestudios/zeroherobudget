@@ -175,7 +175,7 @@ const AccountSettings = () => {
       title: 'Privacy FAQ',
       description: 'Learn how your data is protected',
       icon: Shield,
-      href: '/privacy-faq',
+      href: '/data-privacy',
     },
     {
       title: 'Help & Support',

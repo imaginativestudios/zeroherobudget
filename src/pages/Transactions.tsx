@@ -260,7 +260,6 @@ const [expenses] = useExpenses();
       category: transaction.category,
       accountId: transaction.accountId,
       flow: transaction.flow,
-      expenseId: transaction.expenseId || "",
       debtId: transaction.debtId || "",
       notes: transaction.notes || ""
     });

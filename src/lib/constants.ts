@@ -100,7 +100,7 @@ export const STRIPE_PRICES = {
   monthly: {
     priceId: 'price_1T8uXbLOOLpslU1kYziRovGh',
     productId: 'prod_U78pyZd39SBV1J',
-    amount: 12,
+    amount: 10,
     interval: 'month' as const,
     label: 'Monthly',
   },

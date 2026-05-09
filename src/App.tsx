@@ -36,6 +36,7 @@ import IconStyleGuide from "./pages/IconStyleGuide";
 import ColorPaletteGuide from "./pages/ColorPaletteGuide";
 import Pricing from "./pages/Pricing";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import SubscriptionStatus from "./pages/SubscriptionStatus";
 import { Household } from "./pages/Household";
 import { AcceptInvite } from "./pages/AcceptInvite";
 import { Subscriptions } from "./pages/Subscriptions";

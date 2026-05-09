@@ -85,6 +85,11 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
         setNewlyLinked(accounts);
         setStep('success');
 
+        // Fire-and-forget initial transaction sync
+        syncPlaidTransactions().catch((e) => {
+          console.error('initial plaid sync failed:', e);
+        });
+
         if (result.skipped > 0) {
           toast({
             title: 'Some accounts already linked',

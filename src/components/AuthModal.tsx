@@ -424,7 +424,7 @@ export function AuthModal({
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs defaultValue={defaultMode} className="w-full">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')} className="w-full">
               <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
                 <TabsTrigger 
                   value="login"

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { Building2, Plus, Loader2, AlertTriangle, Shield, Sparkles } from 'lucide-react';
+import { Building2, Plus, Loader2, AlertTriangle, Shield, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
+import { useAuth } from '@/hooks/useAuth';
+import { syncPlaidTransactions } from '@/lib/plaidProvider';
 import { LinkedAccountCard } from './LinkedAccountCard';
 import { DisconnectDialog } from './DisconnectDialog';
 import { ReconnectDialog } from './ReconnectDialog';
@@ -12,11 +14,33 @@ import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
 
 export function LinkedAccountsList() {
-  const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts } = useLinkedAccounts();
+  const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts, reload } = useLinkedAccounts();
+  const { user } = useAuth();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
   const [reconnecting, setReconnecting] = useState<LinkedAccountMeta | null>(null);
   const [isIncognito, setIsIncognito] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      const result = await syncPlaidTransactions();
+      await reload();
+      toast({
+        title: 'Sync complete',
+        description: `${result.added} new, ${result.modified} updated, ${result.removed} removed across ${result.items} bank${result.items === 1 ? '' : 's'}.`,
+      });
+    } catch (e: any) {
+      toast({
+        title: 'Sync failed',
+        description: e?.message || 'Could not refresh bank transactions.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -112,10 +136,28 @@ export function LinkedAccountsList() {
 
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Linked Bank Accounts</h3>
-        <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
-          <Plus className="h-4 w-4 mr-1.5" />
-          Link Account
-        </Button>
+        <div className="flex items-center gap-2">
+          {user && linkedAccounts.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="min-h-[36px]"
+            >
+              {isSyncing ? (
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-1.5" />
+              )}
+              Sync now
+            </Button>
+          )}
+          <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
+            <Plus className="h-4 w-4 mr-1.5" />
+            Link Account
+          </Button>
+        </div>
       </div>
 
       {linkedAccounts.length === 0 ? (
@@ -151,11 +193,15 @@ export function LinkedAccountsList() {
       {linkedAccounts.length > 0 && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
           <Shield className="h-3 w-3 shrink-0" />
-          <span>All bank data is encrypted and stored only on this device.</span>
+          <span>
+            {user
+              ? 'Bank data is stored securely in your account and synced across devices.'
+              : 'All bank data is encrypted and stored only on this device.'}
+          </span>
         </div>
       )}
 
-      {linkedAccounts.length > 0 && <DeviceLossWarning />}
+      {linkedAccounts.length > 0 && !user && <DeviceLossWarning />}
 
       <DisconnectDialog
         account={disconnecting}

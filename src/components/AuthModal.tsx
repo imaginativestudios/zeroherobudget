@@ -86,6 +86,14 @@ export function AuthModal({
     setLoading(true);
 
     try {
+      // Geo-gate: Zero Hero is currently US-only.
+      const geo = await checkGeoAccess();
+      if (!geo.allowed) {
+        onOpenChange(false);
+        navigate('/unavailable');
+        return;
+      }
+
       const { error } = await signUp(email, password, firstName, lastName);
       
       if (error) {

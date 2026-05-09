@@ -67,12 +67,22 @@ export const useRealAuth = () => {
       return { error };
     }
 
-    // Check if email confirmation is required
+    // Supabase obfuscates duplicate signups (privacy): when an email is already
+    // registered, it returns a user with an empty `identities` array and no session.
+    const identities = (data.user as any)?.identities;
+    if (data.user && !data.session && Array.isArray(identities) && identities.length === 0) {
+      return {
+        error: null,
+        alreadyRegistered: true as const,
+      };
+    }
+
+    // Genuine new signup awaiting email confirmation
     if (data.user && !data.session) {
-      return { 
-        error: { 
-          message: 'Please check your email to confirm your account before signing in.' 
-        } as AuthError 
+      return {
+        error: {
+          message: 'Please check your email to confirm your account before signing in.'
+        } as AuthError
       };
     }
 

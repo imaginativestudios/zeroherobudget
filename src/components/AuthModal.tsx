@@ -45,6 +45,7 @@ export function AuthModal({
   const [lastName, setLastName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [view, setView] = useState<AuthView>('auth');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultMode);
   const [confirmationEmail, setConfirmationEmail] = useState('');
   const { signIn, signUp, resetPassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();
@@ -94,8 +95,18 @@ export function AuthModal({
         return;
       }
 
-      const { error } = await signUp(email, password, firstName, lastName);
-      
+      const result = await signUp(email, password, firstName, lastName);
+      const { error } = result;
+
+      if ((result as any).alreadyRegistered) {
+        toast({
+          title: 'Email may already be registered',
+          description: 'Try signing in below, or reset your password if you forgot it.',
+        });
+        setActiveTab('login');
+        return;
+      }
+
       if (error) {
         // Check if this is a "check your email" message (email confirmation required)
         if (error.message.includes('check your email') || error.message.includes('confirm your account')) {
@@ -413,7 +424,7 @@ export function AuthModal({
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs defaultValue={defaultMode} className="w-full">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')} className="w-full">
               <TabsList className="flex border border-border rounded-lg overflow-hidden bg-transparent p-0 h-auto w-full">
                 <TabsTrigger 
                   value="login"

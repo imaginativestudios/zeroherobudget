@@ -48,6 +48,7 @@ import { OfflineBanner } from "./components/OfflineBanner";
 import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
+import Unavailable from "./pages/Unavailable";
 import Wealth from "./pages/Wealth";
 import { BetaTesterBadge } from "./components/BetaTesterBadge";
 
@@ -80,6 +81,7 @@ const App = () => (
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           <Route path="/install" element={<Install />} />
           <Route path="/sitemap" element={<SiteMap />} />
+          <Route path="/unavailable" element={<Unavailable />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0?dts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { checkCountry } from "../_shared/geo.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,6 +40,15 @@ serve(async (req) => {
     
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
+
+    // Geo-gate: Zero Hero is currently US-only.
+    const geo = await checkCountry(req);
+    if (!geo.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Zero Hero is currently only available in the United States.", code: "GEO_BLOCKED" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
+    }
 
     const { interval } = await req.json();
     

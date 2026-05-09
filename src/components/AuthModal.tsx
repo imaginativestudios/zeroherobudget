@@ -94,8 +94,18 @@ export function AuthModal({
         return;
       }
 
-      const { error } = await signUp(email, password, firstName, lastName);
-      
+      const result = await signUp(email, password, firstName, lastName);
+      const { error } = result;
+
+      if ((result as any).alreadyRegistered) {
+        toast({
+          title: 'Email may already be registered',
+          description: 'Try signing in below, or reset your password if you forgot it.',
+        });
+        setView('signin');
+        return;
+      }
+
       if (error) {
         // Check if this is a "check your email" message (email confirmation required)
         if (error.message.includes('check your email') || error.message.includes('confirm your account')) {

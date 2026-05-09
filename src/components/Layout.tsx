@@ -172,18 +172,31 @@ export const Layout = ({ children }: LayoutProps) => {
           <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
             <Logo className="h-6 sm:h-7 w-auto" variant="dark" />
           </Link>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleMobileMenu}
-            className="text-sidebar-foreground hover:bg-sidebar-accent"
-            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-navigation"
-            data-tour="mobile-menu-button"
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
-          </Button>
+          <div className="flex items-center gap-1">
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="text-sidebar-foreground hover:bg-sidebar-accent"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMobileMenu}
+              className="text-sidebar-foreground hover:bg-sidebar-accent"
+              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
+              data-tour="mobile-menu-button"
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+            </Button>
+          </div>
         </div>
       </header>
 

@@ -36,6 +36,7 @@ import IconStyleGuide from "./pages/IconStyleGuide";
 import ColorPaletteGuide from "./pages/ColorPaletteGuide";
 import Pricing from "./pages/Pricing";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import SubscriptionStatus from "./pages/SubscriptionStatus";
 import { Household } from "./pages/Household";
 import { AcceptInvite } from "./pages/AcceptInvite";
 import { Subscriptions } from "./pages/Subscriptions";
@@ -107,6 +108,7 @@ const App = () => (
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
+                <Route path="/subscription" element={<SubscriptionStatus />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

@@ -1,89 +1,110 @@
-# Launch Readiness Plan — Zero Hero Budget
+# Your Go-Live Walkthrough (Non-Technical)
 
-The product is feature-complete. What's left is mostly **environment switches, hardening, and go-live ops** — not new features. Here's what to ship.
-
----
-
-## 1. Plaid: move from Sandbox → Production
-
-Currently all three Plaid edge functions hardcode `https://sandbox.plaid.com`:
-- `create-link-token`
-- `exchange-plaid-token`
-- `sync-plaid-transactions`
-
-Steps:
-- Apply for Plaid Production access (requires their compliance review — can take days).
-- Replace `PLAID_BASE` with an env-driven value (`PLAID_ENV` → `sandbox` | `development` | `production`).
-- Add Production `PLAID_CLIENT_ID` / `PLAID_SECRET` (or swap the existing secrets).
-- Whitelist the production redirect URI in Plaid dashboard.
-- Re-test Link → exchange → sync end-to-end with a real bank.
-
-## 2. Stripe: confirm live mode
-
-- Verify Stripe account is fully activated (not test mode).
-- Confirm live `STRIPE_SECRET_KEY` and `VITE_STRIPE_PUBLISHABLE_KEY` are the live keys.
-- Verify `STRIPE_WEBHOOK_SECRET` is bound to the **live** webhook endpoint, with events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`.
-- Run one real $5/mo and one $50/yr purchase end-to-end, then cancel via Customer Portal.
-- Confirm `pay.zeroherobudget.com` resolves and serves Stripe Checkout.
-
-## 3. Remove the Coming Soon wall
-
-- `src/pages/ComingSoon.tsx` and the `?beta=true` bypass currently gate the public site.
-- Decide launch moment, then route `/` to the real app (or keep ComingSoon as `/waitlist`).
-- Remove or repurpose `subscribe-waitlist` flow if no longer needed.
-
-## 4. Security & data hardening
-
-- Run the Supabase linter; resolve any ERROR-level findings (the recent migration surfaced 40 warnings — most are GraphQL anon-exposure WARNs worth reviewing).
-- Run a fresh security scan and fix any HIGH findings.
-- Confirm `plaid_items.access_token` cannot be selected by `authenticated` (already revoked — verify in prod).
-- Confirm `CRON_SECRET` is set and the daily Plaid sync cron is firing (check `cron.job_run_details`).
-- Verify no `service_role` key reaches the browser bundle.
-
-## 5. Email deliverability
-
-- Confirm Resend domain DKIM/SPF/DMARC are green for the sender domain.
-- Send a real signup confirmation, password reset, invitation, deletion code, and trial reminder — confirm inbox delivery (not spam).
-
-## 6. Legal, billing, and trust
-
-- `/legal` Terms + Privacy reviewed and dated.
-- Disclaimers on AI tips visible and current.
-- Trial reminder cron job verified (memory: `automated-trial-reminders-cron`).
-- Refund/cancellation language matches Stripe Customer Portal behavior.
-
-## 7. Pre-launch QA pass
-
-A short scripted run-through on a clean account:
-1. Sign up → email confirm → onboarding.
-2. Connect a real bank via Plaid → see accounts + transactions populated.
-3. Set up budget + a debt → log a transaction → debt balance updates.
-4. Start trial → upgrade to paid → manage in Customer Portal → cancel.
-5. Invite a household member → accept → confirm shared data view.
-6. Install PWA on iOS + Android, test offline banner, pull-to-refresh.
-7. Mobile swipe nav across Dashboard → Budget → Debts → Transactions.
-
-## 8. Observability for day 1
-
-- Confirm edge function logs are accessible and you know where to look (Stripe webhook, Plaid sync, auth-email-hook).
-- Optional: hook a simple uptime monitor at `/` and at one edge function.
-- Optional: add Lovable Analytics review cadence (daily for week 1).
-
-## 9. Marketing & distribution (non-code)
-
-- Publish the project (Update in publish dialog) so latest frontend is live.
-- Confirm `zeroherobudget.com` + `www.` both resolve and primary is set.
-- Social/launch assets, App Store/Play Store listings if applicable, Chrome extension submission (ZIP release kit already exists — memory: `chrome-release-kit-system`).
+You have 5 things left. Do them in this order. Each one tells you exactly where to click.
 
 ---
 
-## Suggested order
+## ✅ Step 1 — Switch Plaid from "Test Mode" to "Real Mode"
 
-1. Plaid Production access (longest lead time — start now).
-2. Stripe live verification + live test purchase.
-3. Security + linter cleanup.
-4. Email deliverability check.
-5. QA pass on a fresh account.
-6. Remove Coming Soon → publish → announce.
+**Why:** Right now your app only works with fake bank logins. Real customers can't connect their real bank.
 
-If you want, pick any item above and I'll execute it next (e.g., "make Plaid env-driven", "run the security scan", or "remove the Coming Soon wall").
+### Part A — Apply to Plaid (do this first, it takes 2–5 days)
+
+1. Open https://dashboard.plaid.com/team/keys in your browser.
+2. Sign in with your Plaid account.
+3. Look for a button that says **"Request Production Access"** (top right).
+4. Fill out their form. Plaid asks:
+   - Your company name → **Zero Hero Budget**
+   - What you do → "Personal budgeting app that helps users track spending and pay off debt."
+   - Live URL → **https://zeroherobudget.com**
+   - Privacy policy → **https://zeroherobudget.com/legal**
+5. Submit. Wait for their approval email.
+
+### Part B — When Plaid approves you (come back to me)
+
+Just say **"Plaid approved me"** in chat. I'll handle the rest — I just need you to do these 2 clicks:
+
+1. In Lovable, click the **gear icon → Project Settings → Edge Function Secrets**.
+2. Update three secrets to the values Plaid gives you:
+   - `PLAID_CLIENT_ID` → your live client ID
+   - `PLAID_SECRET` → your live production secret
+   - Add a new one: `PLAID_ENV` = `production`
+
+That's it. No code touching needed.
+
+---
+
+## ✅ Step 2 — Confirm Stripe is Taking Real Money
+
+**Why:** Make sure when someone hits "Subscribe", real $5 actually moves.
+
+1. Open https://dashboard.stripe.com in your browser.
+2. **Top-left corner:** find the toggle that says "Test mode". Make sure it is **OFF** (the dot should be gray, not orange).
+3. Click **Developers → API keys**.
+4. Confirm the keys you see start with `sk_live_…` and `pk_live_…` (not `sk_test_…`).
+5. Now do a real test:
+   - Open your app at https://zeroherobudget.com
+   - Sign up with a fresh email
+   - Click upgrade → enter your real card → pay $5
+   - Go back to Stripe Dashboard → **Payments** → confirm $5 shows up
+   - Go to your app → Settings → click "Manage Subscription" → cancel it
+   - In Stripe, click **Refunds** to refund yourself
+
+If all 6 work — Stripe is good to go. ✅
+
+---
+
+## ✅ Step 3 — Make Sure Your Emails Land in the Inbox (not Spam)
+
+**Why:** If signup confirmation emails go to spam, users never log in.
+
+1. Open https://resend.com/domains in your browser.
+2. Find your sending domain (probably `zeroherobudget.com`).
+3. Look at the three columns: **SPF**, **DKIM**, **DMARC**.
+4. All three must show a green ✅ checkmark.
+   - If any is red ❌ → click it, copy the DNS record it shows you, and paste it into your domain provider (where you bought zeroherobudget.com).
+   - Wait 1 hour, then refresh. They should turn green.
+5. Send yourself a test:
+   - Sign up at your app with a personal Gmail address.
+   - Check your inbox **and your spam folder**.
+   - The confirmation email should arrive in the **inbox** within 1 minute.
+
+---
+
+## ✅ Step 4 — Final QA Walkthrough (30 minutes, do this on your phone)
+
+Pretend you're a brand-new customer. Do every step. If something feels off, tell me.
+
+| # | Do this | Should happen |
+|---|---------|---------------|
+| 1 | Open https://zeroherobudget.com on your phone | Landing page loads fast, looks clean |
+| 2 | Tap "Get Started" → sign up with a fresh email | You receive a confirmation email |
+| 3 | Click confirmation link | You land in the onboarding flow |
+| 4 | Finish onboarding → reach Dashboard | Dashboard renders with default categories |
+| 5 | Tap "Connect Bank" → pick a real bank → log in | Your real accounts appear in the list |
+| 6 | Wait 30 seconds, refresh | Real transactions show up under "Transactions" |
+| 7 | Add a debt → log a payment to it | The debt balance goes down |
+| 8 | Start the 7-day free trial → enter card | Stripe accepts it, no error |
+| 9 | Open Settings → Manage Subscription → cancel | Cancellation confirmed |
+| 10 | Add the app to your home screen (PWA install) | Icon appears, opens like a native app |
+
+---
+
+## ✅ Step 5 — Open the Doors (Launch Day)
+
+When Steps 1–4 all pass, message me **"ready to launch"**. I'll do two things in 30 seconds:
+
+1. Remove the "Coming Soon" wall so the public sees the real app.
+2. Confirm the published version is the latest one.
+
+Then you click **Publish → Update** in the top-right of Lovable to push it live.
+
+🎉 You're live.
+
+---
+
+## What to do right now
+
+**Just do Step 1 Part A today.** That's the only thing with a waiting period — everything else can happen in one afternoon once Plaid approves you.
+
+Come back and tell me **"Plaid approved me"** the moment it happens, and we'll knock out the rest together.

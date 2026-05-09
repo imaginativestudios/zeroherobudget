@@ -12,7 +12,7 @@ import {
   type MockInstitution,
   type LinkedAccountMeta,
 } from '@/lib/mockBankProvider';
-import { createLinkToken, exchangePublicToken } from '@/lib/plaidProvider';
+import { createLinkToken, exchangePublicToken, syncPlaidTransactions } from '@/lib/plaidProvider';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';

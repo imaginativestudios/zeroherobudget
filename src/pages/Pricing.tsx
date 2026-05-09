@@ -380,7 +380,7 @@ const Pricing = () => {
                       <span className="text-muted-foreground text-base">/yr</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-3">
-                      ${STRIPE_PRICES.annual.monthlyEquivalent}/mo • <span className="line-through opacity-60">$144</span>{' '}
+                      ${STRIPE_PRICES.annual.monthlyEquivalent}/mo • <span className="line-through opacity-60">$120</span>{' '}
                       <span className="text-primary font-semibold">Save ${STRIPE_PRICES.annual.savings}</span>
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">Best for committed budgeters</p>

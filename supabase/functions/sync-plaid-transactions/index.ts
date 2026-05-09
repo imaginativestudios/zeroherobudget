@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
         const flow = tx.amount < 0 ? "income" : "expense";
         const plaidCat = tx.personal_finance_category?.primary || tx.category?.[0];
         return {
-          user_id: userId,
+          user_id: item.user_id,
           household_id: item.household_id,
           account_id: accountId,
           plaid_transaction_id: tx.transaction_id,

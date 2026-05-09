@@ -369,52 +369,7 @@ const AccountSettings = () => {
         </div>
       </div>
 
-      {/* Dev Testing Section (only visible in development) */}
-      {import.meta.env.DEV && (
-        <Card className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
-              <Beaker className="h-5 w-5" aria-hidden="true" />
-              Development Testing
-            </CardTitle>
-            <CardDescription>Stripe Test Mode utilities (dev only)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Simulate subscription states without processing real payments. Changes are persisted to the database and will trigger realtime updates.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => handleTestSubscription('activate')}
-                disabled={isTestingSubscription}
-                className="border-green-500 text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950"
-              >
-                <Play className="h-4 w-4 mr-2" aria-hidden="true" />
-                {isTestingSubscription ? 'Processing...' : 'Simulate Active'}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleTestSubscription('trial')}
-                disabled={isTestingSubscription}
-                className="border-blue-500 text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950"
-              >
-                <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
-                Simulate Trial
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleTestSubscription('clear')}
-                disabled={isTestingSubscription}
-                className="border-destructive text-destructive hover:bg-destructive/10"
-              >
-                <Square className="h-4 w-4 mr-2" aria-hidden="true" />
-                Clear Subscription
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
 
       {/* Email Delivery Logs (Dev only) */}
       {import.meta.env.DEV && (

@@ -42,14 +42,12 @@ const AccountSettings = () => {
     trialEnd,
     loading: subscriptionLoading,
     openCustomerPortal,
-    checkSubscription
   } = useSubscriptionStatus();
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedFirstName, setEditedFirstName] = useState('');
   const [editedLastName, setEditedLastName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [isTestingSubscription, setIsTestingSubscription] = useState(false);
 
   const handleEditProfile = () => {
     setEditedFirstName(profile?.first_name || '');

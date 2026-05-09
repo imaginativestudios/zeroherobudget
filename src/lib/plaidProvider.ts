@@ -44,6 +44,16 @@ export async function exchangePublicToken(publicToken: string): Promise<LinkedAc
   return data.accounts;
 }
 
+/** Trigger a Plaid transaction sync for the current user */
+export async function syncPlaidTransactions(): Promise<{
+  items: number;
+  added: number;
+  modified: number;
+  removed: number;
+}> {
+  return callEdgeFunction('sync-plaid-transactions');
+}
+
 /** Check if Plaid is configured (link token creation succeeds) */
 export async function isPlaidConfigured(): Promise<boolean> {
   try {

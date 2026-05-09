@@ -41,6 +41,15 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
+    // Geo-gate: Zero Hero is currently US-only.
+    const geo = await checkCountry(req);
+    if (!geo.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Zero Hero is currently only available in the United States.", code: "GEO_BLOCKED" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
+    }
+
     const { interval } = await req.json();
     
     // Validate interval

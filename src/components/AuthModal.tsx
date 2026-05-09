@@ -17,6 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, ArrowLeft, Mail, CheckCircle2, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { checkGeoAccess } from '@/hooks/useGeoAccess';
 
 
 interface AuthModalProps {

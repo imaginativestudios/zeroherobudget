@@ -13,10 +13,6 @@ import {
   X,
   Calendar,
   AlertTriangle,
-  Beaker,
-  Play,
-  Square,
-  RotateCcw,
   Mail
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -96,36 +92,7 @@ const AccountSettings = () => {
     }
   };
 
-  // Dev-only test subscription handlers
-  const handleTestSubscription = async (action: 'activate' | 'trial' | 'clear') => {
-    if (!session) {
-      toast.error('You must be logged in');
-      return;
-    }
 
-    setIsTestingSubscription(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('test-subscription', {
-        body: { action, tier: 'Hero', amount: 1500 },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) throw error;
-      if (data.error) throw new Error(data.error);
-
-      toast.success(`Subscription ${action === 'clear' ? 'cleared' : action === 'trial' ? 'set to trial' : 'activated'}!`);
-      
-      // Refresh both profile and subscription status
-      await Promise.all([refetchProfile(), checkSubscription()]);
-    } catch (error) {
-      console.error('Test subscription error:', error);
-      toast.error('Failed to simulate subscription');
-    } finally {
-      setIsTestingSubscription(false);
-    }
-  };
 
   const getInitials = () => {
     if (profile?.first_name && profile?.last_name) {

@@ -43,11 +43,11 @@ serve(async (req) => {
     const { interval } = await req.json();
     
     // Validate interval
-    if (!interval || !PRICE_IDS[interval as PricingInterval]) {
+    if (!interval || !PRICING[interval as PricingInterval]) {
       throw new Error("Invalid subscription interval. Must be 'monthly' or 'annual'");
     }
 
-    const priceId = PRICE_IDS[interval as PricingInterval];
+    const plan = PRICING[interval as PricingInterval];
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -86,13 +86,18 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://ukpejgrghpewwdfztryg.lovableproject.com";
     
-    // Create checkout session with fixed pricing and 7-day free trial for new customers
+    // Create checkout session with inline price_data (no Stripe-side Price ID needed)
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: 'usd',
+            unit_amount: plan.amount,
+            recurring: { interval: plan.interval },
+            product_data: { name: plan.productName },
+          },
           quantity: 1,
         },
       ],

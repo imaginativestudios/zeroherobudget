@@ -6,7 +6,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PLAID_BASE = "https://sandbox.plaid.com";
+const PLAID_ENV = (Deno.env.get("PLAID_ENV") || "sandbox").toLowerCase();
+const PLAID_BASE =
+  PLAID_ENV === "production" ? "https://production.plaid.com"
+  : PLAID_ENV === "development" ? "https://development.plaid.com"
+  : "https://sandbox.plaid.com";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {

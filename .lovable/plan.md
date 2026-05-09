@@ -1,82 +1,89 @@
-## Current state (audit)
+# Launch Readiness Plan — Zero Hero Budget
 
-What works today:
-- `create-link-token` and `exchange-plaid-token` edge functions are deployed and authenticated
-- Plaid Link UI launches, user picks a bank, returns sanitized account list (name, mask, type, current balance)
-- `PLAID_CLIENT_ID` / `PLAID_SECRET` are configured
+The product is feature-complete. What's left is mostly **environment switches, hardening, and go-live ops** — not new features. Here's what to ship.
 
-What's broken / missing:
-1. **Accounts don't reach the database.** `addAccounts` writes to encrypted **localStorage only** (`useLinkedAccounts.ts`). The `accounts` Supabase table is never touched. Open the app on another device → accounts gone.
-2. **Plaid `access_token` is thrown away.** `exchange-plaid-token` stores `"plaid-item-${itemId}"` (an opaque label) instead of the real token. Without persisting the real token server-side, we can never sync transactions or refresh balances later.
-3. **No transaction sync.** There is no edge function calling `/transactions/sync`. Transactions in the app are only those the user enters manually or imports via CSV.
-4. **No balance refresh.** Balance is captured once at link time. Never updated.
-5. **Sandbox-only.** `PLAID_BASE = https://sandbox.plaid.com` is hardcoded. Real users hitting real banks will fail until we switch to `production.plaid.com` (and get Plaid production approval).
+---
 
-So: a user can complete the Link flow, see "Account Linked!", but no real transactions appear anywhere in Budget / Transactions / Dashboard.
+## 1. Plaid: move from Sandbox → Production
 
-## Plan to make it real
+Currently all three Plaid edge functions hardcode `https://sandbox.plaid.com`:
+- `create-link-token`
+- `exchange-plaid-token`
+- `sync-plaid-transactions`
 
-### 1. Persist Plaid items server-side (DB migration)
-New table `plaid_items`:
-- `id`, `user_id`, `household_id`, `item_id` (Plaid), `access_token` (encrypted), `institution_id`, `institution_name`, `cursor` (for transactions/sync), `created_at`, `last_synced_at`, `status`
-- RLS: user can SELECT/DELETE own; INSERT/UPDATE only via service role (edge functions)
-- Access token never returned to client
+Steps:
+- Apply for Plaid Production access (requires their compliance review — can take days).
+- Replace `PLAID_BASE` with an env-driven value (`PLAID_ENV` → `sandbox` | `development` | `production`).
+- Add Production `PLAID_CLIENT_ID` / `PLAID_SECRET` (or swap the existing secrets).
+- Whitelist the production redirect URI in Plaid dashboard.
+- Re-test Link → exchange → sync end-to-end with a real bank.
 
-Add `plaid_account_id` column to existing `accounts` table to link a row to a Plaid account.
+## 2. Stripe: confirm live mode
 
-### 2. Update `exchange-plaid-token`
-- Insert one row in `plaid_items` (with the real access_token) using service role
-- Insert/upsert one row per account into `accounts` (name, type, balance, plaid_account_id, user_id, household_id)
-- Return the saved account list (no tokens)
+- Verify Stripe account is fully activated (not test mode).
+- Confirm live `STRIPE_SECRET_KEY` and `VITE_STRIPE_PUBLISHABLE_KEY` are the live keys.
+- Verify `STRIPE_WEBHOOK_SECRET` is bound to the **live** webhook endpoint, with events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`.
+- Run one real $5/mo and one $50/yr purchase end-to-end, then cancel via Customer Portal.
+- Confirm `pay.zeroherobudget.com` resolves and serves Stripe Checkout.
 
-### 3. Replace localStorage with DB in `useLinkedAccounts`
-- Read from `accounts` table filtered by `plaid_account_id IS NOT NULL`
-- Remove encrypted-localStorage path for linked accounts (keep mock fallback gated by `usePlaid === false`)
-- Disconnect = delete `plaid_items` row (cascade) + DELETE `/item/remove` via new edge function
+## 3. Remove the Coming Soon wall
 
-### 4. New edge function `sync-plaid-transactions`
-- Loops over caller's `plaid_items`, calls `/transactions/sync` with stored cursor
-- Upserts into `transactions` (mapped to existing schema: date, amount, description, category, account_id, flow)
-- Updates `accounts.balance` from `/accounts/balance/get`
-- Saves new `cursor` and `last_synced_at`
-- Triggered: (a) on demand via "Sync now" button on `/data`, (b) scheduled daily via existing `pg_cron` pattern
+- `src/pages/ComingSoon.tsx` and the `?beta=true` bypass currently gate the public site.
+- Decide launch moment, then route `/` to the real app (or keep ComingSoon as `/waitlist`).
+- Remove or repurpose `subscribe-waitlist` flow if no longer needed.
 
-### 5. AI categorization on sync
-- Reuse existing `categorize-transaction` function for each new transaction (or batch) so they land in the correct budget category
+## 4. Security & data hardening
 
-### 6. UI surfacing
-- `/data` page: "Last synced X ago" + "Sync now" button
-- Transactions page: badge on Plaid-sourced rows, can't be deleted (only hidden) to keep cursor consistent
-- Dashboard balance widgets read from refreshed `accounts.balance`
+- Run the Supabase linter; resolve any ERROR-level findings (the recent migration surfaced 40 warnings — most are GraphQL anon-exposure WARNs worth reviewing).
+- Run a fresh security scan and fix any HIGH findings.
+- Confirm `plaid_items.access_token` cannot be selected by `authenticated` (already revoked — verify in prod).
+- Confirm `CRON_SECRET` is set and the daily Plaid sync cron is firing (check `cron.job_run_details`).
+- Verify no `service_role` key reaches the browser bundle.
 
-### 7. Production readiness (separate, ask before doing)
-- Switch `PLAID_BASE` to env-driven (`PLAID_ENV=sandbox|production`)
-- Apply for Plaid production access (Plaid review process, ~1–2 weeks)
-- Until approved, restrict bank linking to `?beta=true` or admins
+## 5. Email deliverability
 
-## Technical notes
+- Confirm Resend domain DKIM/SPF/DMARC are green for the sender domain.
+- Send a real signup confirmation, password reset, invitation, deletion code, and trial reminder — confirm inbox delivery (not spam).
 
-```text
-Frontend                Edge Function              Plaid                  Database
---------                -------------              -----                  --------
-PlaidLink ───public_token──▶ exchange-plaid-token
-                              │── /item/exchange ──▶
-                              │◀── access_token ────
-                              │── /accounts/get ────▶
-                              │◀── accounts ────────
-                              ├──────────────── INSERT plaid_items
-                              └──────────────── UPSERT accounts
+## 6. Legal, billing, and trust
 
-[Sync now]   ──────▶ sync-plaid-transactions
-                      │── /transactions/sync ─▶
-                      │◀── added/modified ────
-                      └──────────────── UPSERT transactions, UPDATE balance
-```
+- `/legal` Terms + Privacy reviewed and dated.
+- Disclaimers on AI tips visible and current.
+- Trial reminder cron job verified (memory: `automated-trial-reminders-cron`).
+- Refund/cancellation language matches Stripe Customer Portal behavior.
 
-Encryption of `access_token` at rest: use Supabase Vault or a `pgcrypto` symmetric key stored as a secret (not in DB). I'll confirm approach before writing the migration.
+## 7. Pre-launch QA pass
 
-## Out of scope (intentionally)
+A short scripted run-through on a clean account:
+1. Sign up → email confirm → onboarding.
+2. Connect a real bank via Plaid → see accounts + transactions populated.
+3. Set up budget + a debt → log a transaction → debt balance updates.
+4. Start trial → upgrade to paid → manage in Customer Portal → cancel.
+5. Invite a household member → accept → confirm shared data view.
+6. Install PWA on iOS + Android, test offline banner, pull-to-refresh.
+7. Mobile swipe nav across Dashboard → Budget → Debts → Transactions.
 
-- Webhook-driven sync (`TRANSACTIONS:DEFAULT_UPDATE`) — can add later, daily cron is fine for v1
-- Investments / liabilities products — depository + credit only first
-- Multi-currency — USD only for now (matches Plaid US-only setup)
+## 8. Observability for day 1
+
+- Confirm edge function logs are accessible and you know where to look (Stripe webhook, Plaid sync, auth-email-hook).
+- Optional: hook a simple uptime monitor at `/` and at one edge function.
+- Optional: add Lovable Analytics review cadence (daily for week 1).
+
+## 9. Marketing & distribution (non-code)
+
+- Publish the project (Update in publish dialog) so latest frontend is live.
+- Confirm `zeroherobudget.com` + `www.` both resolve and primary is set.
+- Social/launch assets, App Store/Play Store listings if applicable, Chrome extension submission (ZIP release kit already exists — memory: `chrome-release-kit-system`).
+
+---
+
+## Suggested order
+
+1. Plaid Production access (longest lead time — start now).
+2. Stripe live verification + live test purchase.
+3. Security + linter cleanup.
+4. Email deliverability check.
+5. QA pass on a fresh account.
+6. Remove Coming Soon → publish → announce.
+
+If you want, pick any item above and I'll execute it next (e.g., "make Plaid env-driven", "run the security scan", or "remove the Coming Soon wall").

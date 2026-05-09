@@ -110,7 +110,7 @@ export const STRIPE_PRICES = {
     amount: 99,
     interval: 'year' as const,
     label: 'Annual',
-    savings: 45, // $144 - $99 = $45 saved
+    savings: 21, // $120 - $99 = $21 saved
     monthlyEquivalent: 8.25,
   },
 } as const;

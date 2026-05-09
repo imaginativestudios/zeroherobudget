@@ -80,6 +80,7 @@ const App = () => (
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           <Route path="/install" element={<Install />} />
           <Route path="/sitemap" element={<SiteMap />} />
+          <Route path="/unavailable" element={<Unavailable />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

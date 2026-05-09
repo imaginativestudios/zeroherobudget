@@ -48,6 +48,7 @@ import { OfflineBanner } from "./components/OfflineBanner";
 import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/SiteMap";
+import Unavailable from "./pages/Unavailable";
 import Wealth from "./pages/Wealth";
 import { BetaTesterBadge } from "./components/BetaTesterBadge";
 

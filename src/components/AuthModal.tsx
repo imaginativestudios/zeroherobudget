@@ -45,6 +45,7 @@ export function AuthModal({
   const [lastName, setLastName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [view, setView] = useState<AuthView>('auth');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultMode);
   const [confirmationEmail, setConfirmationEmail] = useState('');
   const { signIn, signUp, resetPassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();

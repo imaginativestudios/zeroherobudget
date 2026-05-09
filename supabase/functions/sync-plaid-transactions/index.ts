@@ -37,17 +37,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) return jsonError(401, "Unauthorized");
-
-    const supabaseAuth = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
-    if (userErr || !userData?.user) return jsonError(401, "Unauthorized");
-    const userId = userData.user.id;
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    const cronHeader = req.headers.get("x-cron-secret");
+    const isCron = !!cronSecret && cronHeader === cronSecret;
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -55,16 +47,33 @@ Deno.serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
+    let userIdFilter: string | null = null;
+
+    if (!isCron) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) return jsonError(401, "Unauthorized");
+
+      const supabaseAuth = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+      if (userErr || !userData?.user) return jsonError(401, "Unauthorized");
+      userIdFilter = userData.user.id;
+    }
+
     const clientId = Deno.env.get("PLAID_CLIENT_ID");
     const secret = Deno.env.get("PLAID_SECRET");
     if (!clientId || !secret) return jsonError(500, "Plaid not configured");
 
-    // Fetch all of caller's plaid_items (service role bypasses column restriction so we can read access_token)
-    const { data: items, error: itemsErr } = await supabaseAdmin
+    // Fetch plaid_items: caller's items for user requests, all active items for cron
+    let itemsQuery = supabaseAdmin
       .from("plaid_items")
-      .select("id, item_id, access_token, cursor, household_id")
-      .eq("user_id", userId)
+      .select("id, item_id, access_token, cursor, household_id, user_id")
       .eq("status", "active");
+    if (userIdFilter) itemsQuery = itemsQuery.eq("user_id", userIdFilter);
+    const { data: items, error: itemsErr } = await itemsQuery;
     if (itemsErr) {
       console.error("plaid_items fetch error:", itemsErr);
       return jsonError(500, "Failed to load bank connections");
@@ -129,7 +138,7 @@ Deno.serve(async (req) => {
         const flow = tx.amount < 0 ? "income" : "expense";
         const plaidCat = tx.personal_finance_category?.primary || tx.category?.[0];
         return {
-          user_id: userId,
+          user_id: item.user_id,
           household_id: item.household_id,
           account_id: accountId,
           plaid_transaction_id: tx.transaction_id,

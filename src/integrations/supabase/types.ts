@@ -22,6 +22,8 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          plaid_account_id: string | null
+          plaid_item_id: string | null
           type: string
           updated_at: string
           user_id: string
@@ -33,6 +35,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          plaid_account_id?: string | null
+          plaid_item_id?: string | null
           type: string
           updated_at?: string
           user_id?: string
@@ -44,6 +48,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          plaid_account_id?: string | null
+          plaid_item_id?: string | null
           type?: string
           updated_at?: string
           user_id?: string
@@ -54,6 +60,13 @@ export type Database = {
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_plaid_item_id_fkey"
+            columns: ["plaid_item_id"]
+            isOneToOne: false
+            referencedRelation: "plaid_items"
             referencedColumns: ["id"]
           },
         ]
@@ -314,6 +327,51 @@ export type Database = {
         }
         Relationships: []
       }
+      plaid_items: {
+        Row: {
+          access_token: string
+          created_at: string
+          cursor: string | null
+          household_id: string | null
+          id: string
+          institution_id: string | null
+          institution_name: string | null
+          item_id: string
+          last_synced_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          cursor?: string | null
+          household_id?: string | null
+          id?: string
+          institution_id?: string | null
+          institution_name?: string | null
+          item_id: string
+          last_synced_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          cursor?: string | null
+          household_id?: string | null
+          id?: string
+          institution_id?: string | null
+          institution_name?: string | null
+          item_id?: string
+          last_synced_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -511,6 +569,7 @@ export type Database = {
           household_id: string | null
           id: string
           notes: string | null
+          plaid_transaction_id: string | null
           updated_at: string
           user_id: string
         }
@@ -527,6 +586,7 @@ export type Database = {
           household_id?: string | null
           id?: string
           notes?: string | null
+          plaid_transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -543,6 +603,7 @@ export type Database = {
           household_id?: string | null
           id?: string
           notes?: string | null
+          plaid_transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }

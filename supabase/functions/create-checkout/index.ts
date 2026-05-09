@@ -7,13 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Fixed price IDs for monthly and annual plans
-const PRICE_IDS = {
-  monthly: 'price_1T8uXbLOOLpslU1kYziRovGh',
-  annual: 'price_1T8uY7LOOLpslU1kOaOq6kVT',
+// Inline pricing — defined here so we don't depend on Stripe-side Price IDs.
+// Amounts are in cents (USD).
+const PRICING = {
+  monthly: { amount: 1000, interval: 'month' as const, productName: 'Zero Hero Monthly' },
+  annual:  { amount: 9900, interval: 'year'  as const, productName: 'Zero Hero Annual'  },
 } as const;
 
-type PricingInterval = keyof typeof PRICE_IDS;
+type PricingInterval = keyof typeof PRICING;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

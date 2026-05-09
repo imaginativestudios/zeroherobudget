@@ -136,10 +136,28 @@ export function LinkedAccountsList() {
 
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Linked Bank Accounts</h3>
-        <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
-          <Plus className="h-4 w-4 mr-1.5" />
-          Link Account
-        </Button>
+        <div className="flex items-center gap-2">
+          {user && linkedAccounts.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="min-h-[36px]"
+            >
+              {isSyncing ? (
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-1.5" />
+              )}
+              Sync now
+            </Button>
+          )}
+          <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
+            <Plus className="h-4 w-4 mr-1.5" />
+            Link Account
+          </Button>
+        </div>
       </div>
 
       {linkedAccounts.length === 0 ? (
@@ -175,11 +193,15 @@ export function LinkedAccountsList() {
       {linkedAccounts.length > 0 && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
           <Shield className="h-3 w-3 shrink-0" />
-          <span>All bank data is encrypted and stored only on this device.</span>
+          <span>
+            {user
+              ? 'Bank data is stored securely in your account and synced across devices.'
+              : 'All bank data is encrypted and stored only on this device.'}
+          </span>
         </div>
       )}
 
-      {linkedAccounts.length > 0 && <DeviceLossWarning />}
+      {linkedAccounts.length > 0 && !user && <DeviceLossWarning />}
 
       <DisconnectDialog
         account={disconnecting}

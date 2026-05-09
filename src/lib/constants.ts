@@ -98,14 +98,14 @@ export const DEMO_USER_ID = 'demo-hero-00000000';
 // Stripe Pricing Configuration
 export const STRIPE_PRICES = {
   monthly: {
-    priceId: 'price_1TVD2zLOOLpslU1kVCB5Y204',
+    priceId: 'price_1T8uXbLOOLpslU1kYziRovGh',
     productId: 'prod_U78pyZd39SBV1J',
     amount: 12,
     interval: 'month' as const,
     label: 'Monthly',
   },
   annual: {
-    priceId: 'price_1TVD3cLOOLpslU1kVx0lRi1n',
+    priceId: 'price_1T8uY7LOOLpslU1kOaOq6kVT',
     productId: 'prod_U78pT2HaHyVVq9',
     amount: 99,
     interval: 'year' as const,

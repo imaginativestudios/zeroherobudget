@@ -103,7 +103,7 @@ export function AuthModal({
           title: 'Email may already be registered',
           description: 'Try signing in below, or reset your password if you forgot it.',
         });
-        setView('signin');
+        setActiveTab('login');
         return;
       }
 

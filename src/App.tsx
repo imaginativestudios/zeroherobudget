@@ -108,6 +108,7 @@ const App = () => (
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/account" element={<AccountSettings />} />
+                <Route path="/subscription" element={<SubscriptionStatus />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

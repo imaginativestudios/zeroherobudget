@@ -279,6 +279,40 @@ serve(async (req) => {
       );
     }
 
+    // Enforce input size limits to prevent AI credit abuse
+    const MAX_MESSAGES = 20;
+    const MAX_CONTENT_LENGTH = 2000;
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(
+        JSON.stringify({ error: `Conversation too long. Limit is ${MAX_MESSAGES} messages.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const sanitizedMessages = [];
+    for (const m of messages) {
+      if (!m || typeof m !== "object") {
+        return new Response(
+          JSON.stringify({ error: "Invalid message format" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const role = m.role;
+      const content = m.content;
+      if (!["user", "assistant", "system"].includes(role) || typeof content !== "string") {
+        return new Response(
+          JSON.stringify({ error: "Invalid message structure" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (content.length > MAX_CONTENT_LENGTH) {
+        return new Response(
+          JSON.stringify({ error: `Message too long. Limit is ${MAX_CONTENT_LENGTH} characters.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      sanitizedMessages.push({ role, content });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY is not configured");

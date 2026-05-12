@@ -135,12 +135,12 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Delete the code after successful verification
+    // Delete the code and reset attempts after successful verification
     await supabaseAdmin
       .from("user_settings")
       .delete()
       .eq("user_id", user.id)
-      .eq("setting_key", "deletion_code");
+      .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
 
     return new Response(
       JSON.stringify({ verified: true }),

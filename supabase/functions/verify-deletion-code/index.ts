@@ -54,6 +54,32 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    const MAX_ATTEMPTS = 5;
+
+    // Check existing failed attempts
+    const { data: attemptsRow } = await supabaseAdmin
+      .from("user_settings")
+      .select("setting_value")
+      .eq("user_id", user.id)
+      .eq("setting_key", "deletion_code_attempts")
+      .maybeSingle();
+
+    const currentAttempts = (attemptsRow?.setting_value as { count?: number } | null)?.count ?? 0;
+
+    if (currentAttempts >= MAX_ATTEMPTS) {
+      // Burn the code so user must request a new one
+      await supabaseAdmin
+        .from("user_settings")
+        .delete()
+        .eq("user_id", user.id)
+        .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
+
+      return new Response(
+        JSON.stringify({ error: "Too many failed attempts. Please request a new code." }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { data: setting, error: fetchError } = await supabaseAdmin
       .from("user_settings")
       .select("setting_value")
@@ -69,15 +95,14 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const storedData = setting.setting_value as { code: string; expires_at: string };
-    
+
     // Check expiration
     if (new Date(storedData.expires_at) < new Date()) {
-      // Delete the expired code
       await supabaseAdmin
         .from("user_settings")
         .delete()
         .eq("user_id", user.id)
-        .eq("setting_key", "deletion_code");
+        .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
 
       return new Response(
         JSON.stringify({ error: "Code has expired. Please request a new one." }),
@@ -87,18 +112,35 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Verify the code
     if (storedData.code !== code) {
+      const newCount = currentAttempts + 1;
+      await supabaseAdmin
+        .from("user_settings")
+        .upsert({
+          user_id: user.id,
+          setting_key: "deletion_code_attempts",
+          setting_value: { count: newCount },
+        }, { onConflict: "user_id,setting_key" });
+
+      if (newCount >= MAX_ATTEMPTS) {
+        await supabaseAdmin
+          .from("user_settings")
+          .delete()
+          .eq("user_id", user.id)
+          .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
+      }
+
       return new Response(
         JSON.stringify({ error: "Invalid code" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Delete the code after successful verification
+    // Delete the code and reset attempts after successful verification
     await supabaseAdmin
       .from("user_settings")
       .delete()
       .eq("user_id", user.id)
-      .eq("setting_key", "deletion_code");
+      .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
 
     return new Response(
       JSON.stringify({ verified: true }),

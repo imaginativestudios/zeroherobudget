@@ -123,9 +123,13 @@ export default function JoinBeta() {
                       aria-describedby={error ? "invite-code-error" : undefined}
                     />
                   </div>
-                  {error && (
+                  {error ? (
                     <p id="invite-code-error" className="text-sm text-destructive">
                       {error}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Example format: ZH-XXXX-XXXX · 3–64 characters, letters, numbers, dashes, underscores.
                     </p>
                   )}
                 </div>

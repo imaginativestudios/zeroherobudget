@@ -13,8 +13,11 @@ import {
   X,
   Calendar,
   AlertTriangle,
-  Mail
+  Mail,
+  FlaskConical
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { useBetaAccess } from '@/hooks/useBetaAccess';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +46,7 @@ const AccountSettings = () => {
     loading: subscriptionLoading,
     openCustomerPortal,
   } = useSubscriptionStatus();
+  const { eligible: betaEligible, enabledOnDevice: betaEnabled, enable: enableBeta, disable: disableBeta } = useBetaAccess();
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedFirstName, setEditedFirstName] = useState('');
@@ -368,6 +372,36 @@ const AccountSettings = () => {
       </div>
 
 
+
+      {/* Beta Features Toggle (eligible users only) */}
+      {betaEligible && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FlaskConical className="h-5 w-5" aria-hidden="true" />
+              Beta Features
+            </CardTitle>
+            <CardDescription>
+              You're enrolled in the Zero Hero beta program. Toggle beta UI on this device.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <p className="font-medium">Show beta features on this device</p>
+                <p className="text-sm text-muted-foreground">
+                  Hiding beta UI on this device won't affect your eligibility or other devices.
+                </p>
+              </div>
+              <Switch
+                checked={betaEnabled}
+                onCheckedChange={(checked) => (checked ? enableBeta() : disableBeta())}
+                aria-label="Toggle beta features"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Email Delivery Logs (Dev only) */}
       {import.meta.env.DEV && (

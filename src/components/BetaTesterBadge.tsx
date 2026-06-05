@@ -4,13 +4,14 @@ import { FlaskConical, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useBetaAccess } from "@/hooks/useBetaAccess";
 
 export function BetaTesterBadge() {
   const [isOpen, setIsOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
   const location = useLocation();
+  const { isBeta } = useBetaAccess();
 
-  const isBeta = localStorage.getItem("beta_access") === "true";
   if (!isBeta) return null;
 
   const handleSubmit = () => {

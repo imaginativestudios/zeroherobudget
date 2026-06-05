@@ -17,6 +17,7 @@ export interface Profile {
   subscription_tier?: string | null;
   subscription_amount?: number | null;
   subscription_end?: string | null;
+  beta_access?: boolean;
 }
 
 export interface Household {

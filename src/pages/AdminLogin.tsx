@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,13 +17,15 @@ const AdminLogin = () => {
   
   const { signIn, isAdmin, loading, user } = useAdminAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from;
 
   // Redirect if already logged in as admin
   useEffect(() => {
     if (!loading && isAdmin && user) {
-      navigate('/admin/waitlist');
+      navigate(from ?? '/admin', { replace: true });
     }
-  }, [isAdmin, loading, user, navigate]);
+  }, [isAdmin, loading, user, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

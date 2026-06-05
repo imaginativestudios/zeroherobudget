@@ -51,6 +51,7 @@ import SiteMap from "./pages/SiteMap";
 import Unavailable from "./pages/Unavailable";
 import Wealth from "./pages/Wealth";
 import { BetaTesterBadge } from "./components/BetaTesterBadge";
+import JoinBeta from "./pages/JoinBeta";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
           <Route path="/install" element={<Install />} />
           <Route path="/sitemap" element={<SiteMap />} />
           <Route path="/unavailable" element={<Unavailable />} />
+          <Route path="/join" element={<JoinBeta />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

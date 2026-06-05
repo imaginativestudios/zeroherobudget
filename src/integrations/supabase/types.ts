@@ -71,6 +71,45 @@ export type Database = {
           },
         ]
       }
+      beta_invite_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          notes: string | null
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          notes?: string | null
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          notes?: string | null
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
       debts: {
         Row: {
           balance: number

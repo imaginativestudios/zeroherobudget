@@ -89,6 +89,7 @@ const App = () => (
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/waitlist" element={<AdminWaitlist />} />
+          <Route path="/admin/beta-codes" element={<AdminBetaCodes />} />
           
           {/* Protected routes with layout */}
           <Route path="/*" element={

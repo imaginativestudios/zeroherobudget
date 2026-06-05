@@ -26,6 +26,7 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import AdminLogin from "./pages/AdminLogin";
 import AdminWaitlist from "./pages/AdminWaitlist";
+import AdminBetaCodes from "./pages/AdminBetaCodes";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -88,6 +89,7 @@ const App = () => (
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/waitlist" element={<AdminWaitlist />} />
+          <Route path="/admin/beta-codes" element={<AdminBetaCodes />} />
           
           {/* Protected routes with layout */}
           <Route path="/*" element={

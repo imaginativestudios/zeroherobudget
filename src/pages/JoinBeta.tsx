@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, FlaskConical, KeyRound, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,10 +20,16 @@ const codeSchema = z
 
 export default function JoinBeta() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { enable, isBeta } = useBetaAccess();
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(() => (searchParams.get("code") ?? "").trim().toUpperCase());
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fromUrl = (searchParams.get("code") ?? "").trim().toUpperCase();
+    if (fromUrl) setCode(fromUrl);
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,9 +123,13 @@ export default function JoinBeta() {
                       aria-describedby={error ? "invite-code-error" : undefined}
                     />
                   </div>
-                  {error && (
+                  {error ? (
                     <p id="invite-code-error" className="text-sm text-destructive">
                       {error}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Example format: ZH-XXXX-XXXX · 3–64 characters, letters, numbers, dashes, underscores.
                     </p>
                   )}
                 </div>

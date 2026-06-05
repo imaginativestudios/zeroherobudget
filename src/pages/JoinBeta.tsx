@@ -20,10 +20,16 @@ const codeSchema = z
 
 export default function JoinBeta() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { enable, isBeta } = useBetaAccess();
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(() => (searchParams.get("code") ?? "").trim().toUpperCase());
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fromUrl = (searchParams.get("code") ?? "").trim().toUpperCase();
+    if (fromUrl) setCode(fromUrl);
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -13,8 +13,11 @@ import {
   X,
   Calendar,
   AlertTriangle,
-  Mail
+  Mail,
+  FlaskConical
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { useBetaAccess } from '@/hooks/useBetaAccess';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +46,7 @@ const AccountSettings = () => {
     loading: subscriptionLoading,
     openCustomerPortal,
   } = useSubscriptionStatus();
+  const { eligible: betaEligible, enabledOnDevice: betaEnabled, enable: enableBeta, disable: disableBeta } = useBetaAccess();
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedFirstName, setEditedFirstName] = useState('');

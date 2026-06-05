@@ -133,7 +133,7 @@ const AdminBetaCodes = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/admin/login');
+    navigate('/admin/login', { replace: true });
   };
 
   if (loading || isLoadingData) {

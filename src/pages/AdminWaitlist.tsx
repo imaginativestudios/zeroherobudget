@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ interface WaitlistSignup {
 const AdminWaitlist = () => {
   const { isAdmin, loading, signOut } = useAdminAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [signups, setSignups] = useState<WaitlistSignup[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -36,9 +37,9 @@ const AdminWaitlist = () => {
   useEffect(() => {
     // Redirect if not admin
     if (!loading && !isAdmin) {
-      navigate('/admin/login');
+      navigate('/admin/login', { replace: true, state: { from: location.pathname } });
     }
-  }, [isAdmin, loading, navigate]);
+  }, [isAdmin, loading, navigate, location.pathname]);
 
   useEffect(() => {
     if (isAdmin) {

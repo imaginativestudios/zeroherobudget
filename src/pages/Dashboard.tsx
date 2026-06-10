@@ -103,7 +103,12 @@ export const Dashboard = () => {
   const { toast } = useToast();
 
   // Secondary data (transactions for charts) loads after
-  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
+  const { transactions, isLoading: isLoadingTransactions, reload: reloadTransactions } = useLocalTransactions('secondary');
+  const { reload: reloadAccounts } = useLocalAccounts();
+  useAutoPlaidSync(() => {
+    reloadTransactions();
+    reloadAccounts();
+  });
   const { profile: userProfile } = useProfile();
   
   // Hero Profile for moat calculations

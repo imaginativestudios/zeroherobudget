@@ -39,6 +39,7 @@ import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
+import { useAutoPlaidSync } from "@/hooks/useAutoPlaidSync";
 import { useProfile } from "@/hooks/useProfile";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";

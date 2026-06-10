@@ -88,7 +88,7 @@ export const Dashboard = () => {
   const { expenses: localExpenses, updateExpense, addExpense } = useLocalExpenses('critical');
   
   // Accounts for checklist
-  const { accounts } = useLocalAccounts();
+  const { accounts, reload: reloadAccounts } = useLocalAccounts();
   
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
@@ -104,7 +104,6 @@ export const Dashboard = () => {
 
   // Secondary data (transactions for charts) loads after
   const { transactions, isLoading: isLoadingTransactions, reload: reloadTransactions } = useLocalTransactions('secondary');
-  const { reload: reloadAccounts } = useLocalAccounts();
   useAutoPlaidSync(() => {
     reloadTransactions();
     reloadAccounts();

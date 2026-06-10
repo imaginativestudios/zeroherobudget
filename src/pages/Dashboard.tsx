@@ -39,6 +39,7 @@ import { useLocalDebts } from "@/hooks/useLocalDebts";
 import { useLocalSubscriptions } from "@/hooks/useLocalSubscriptions";
 import { useLocalTransactions } from "@/hooks/useLocalTransactions";
 import { useLocalAccounts } from "@/hooks/useLocalAccounts";
+import { useAutoPlaidSync } from "@/hooks/useAutoPlaidSync";
 import { useProfile } from "@/hooks/useProfile";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
@@ -87,7 +88,7 @@ export const Dashboard = () => {
   const { expenses: localExpenses, updateExpense, addExpense } = useLocalExpenses('critical');
   
   // Accounts for checklist
-  const { accounts } = useLocalAccounts();
+  const { accounts, reload: reloadAccounts } = useLocalAccounts();
   
   const [strategy, setStrategy] = useStrategy();
   const [assets] = useAssets();
@@ -102,7 +103,11 @@ export const Dashboard = () => {
   const { toast } = useToast();
 
   // Secondary data (transactions for charts) loads after
-  const { transactions, isLoading: isLoadingTransactions } = useLocalTransactions('secondary');
+  const { transactions, isLoading: isLoadingTransactions, reload: reloadTransactions } = useLocalTransactions('secondary');
+  useAutoPlaidSync(() => {
+    reloadTransactions();
+    reloadAccounts();
+  });
   const { profile: userProfile } = useProfile();
   
   // Hero Profile for moat calculations

@@ -116,7 +116,15 @@ export function useHouseholdData() {
         if (expensesRes.data) setHouseholdExpenses(expensesRes.data);
         if (debtsRes.data) setHouseholdDebts(debtsRes.data);
         if (subscriptionsRes.data) setHouseholdSubscriptions(subscriptionsRes.data);
-        if (transactionsRes.data) setHouseholdTransactions(transactionsRes.data);
+        if (transactionsRes.data) {
+          // Normalize DB flow ('income'/'expense') to app flow ('in'/'out')
+          setHouseholdTransactions(
+            transactionsRes.data.map((t: any) => ({
+              ...t,
+              flow: t.flow === 'in' || t.flow === 'income' ? 'in' : 'out',
+            }))
+          );
+        }
       } catch (error) {
         console.error('Error fetching household data:', error);
       } finally {

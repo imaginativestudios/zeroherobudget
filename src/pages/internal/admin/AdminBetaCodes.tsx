@@ -122,7 +122,7 @@ const AdminBetaCodes = () => {
   };
 
   const copyJoinLink = async (code: string) => {
-    const url = `${window.location.origin}/join?code=${encodeURIComponent(code)}`;
+    const url = `${window.location.origin}/internal/join-beta?code=${encodeURIComponent(code)}`;
     try {
       await navigator.clipboard.writeText(url);
       toast.success('Invite link copied');

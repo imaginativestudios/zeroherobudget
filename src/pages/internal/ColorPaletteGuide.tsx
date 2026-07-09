@@ -252,7 +252,7 @@ const ColorPaletteGuide = () => {
             <Logo className="h-8" variant="dark" />
           </Link>
           <div className="flex items-center gap-2">
-            <Link to="/style-guide/icons">
+            <Link to="/internal/style-guide/icons">
               <Button variant="ghost" size="sm">
                 Icon Guide
               </Button>

@@ -32,6 +32,49 @@ import {
 export default function DataPrivacyFAQ() {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Data Privacy FAQ — Zero Hero"
+        description="Learn how Zero Hero keeps your financial data private with local-first storage. Answers on backups, browser storage, and data safety."
+        path="/data-privacy"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Where is my data stored?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your data is stored in your web browser's localStorage — a secure, permanent storage area built into every modern browser. It never leaves your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my data sent to any servers?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Your financial data never leaves your device. It's stored only in your browser's local storage — we can't see it, and neither can anyone else."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Will my data still be there if I close the browser?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Your data is saved in your browser's permanent storage (localStorage). It persists across browser restarts and computer shutdowns."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I back up my data?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Go to the Data Management page, find the Backup & Restore section, and click Download Backup. The file contains all your transactions, budgets, debts, and subscriptions."
+              }
+            }
+          ]
+        }}
+      />
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">

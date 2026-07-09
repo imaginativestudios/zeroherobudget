@@ -303,6 +303,7 @@ const Pricing = () => {
         ) : (
           /* New Subscriber View */
           <div className="space-y-10">
+            <h2 className="text-center text-2xl md:text-3xl font-bold text-foreground">Choose Your Strategy</h2>
             {/* Interval Toggle */}
             <motion.div
               className="flex justify-center"

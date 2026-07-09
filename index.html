@@ -63,7 +63,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Structured data: Organization + WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "Zero Hero",
+          "url": "https://zeroherobudget.com",
+          "logo": "https://zeroherobudget.com/favicon.svg"
+        },
+        {
+          "@type": "WebSite",
+          "name": "Zero Hero",
+          "url": "https://zeroherobudget.com"
+        }
+      ]
+    }
+    </script>
   </head>
+
 
   <body>
     <div id="root"></div>

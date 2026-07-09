@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
+import { SEO } from "@/components/SEO";
 import {
   HardDrive,
   Shield,

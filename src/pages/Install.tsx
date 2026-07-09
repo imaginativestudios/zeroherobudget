@@ -4,6 +4,7 @@ import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Download, Smartphone, Share, Plus, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
+import { SEO } from "@/components/SEO";
 const Install = () => {
   const {
     isInstallable,
@@ -16,6 +17,11 @@ const Install = () => {
     await promptInstall();
   };
   return <div className="min-h-screen bg-gradient-to-br from-primary via-primary/95 to-primary-dark">
+      <SEO
+        title="Install Zero Hero — Add to Home Screen"
+        description="Install Zero Hero on your iPhone, Android, or desktop. Works offline, loads instantly, and lives on your home screen."
+        path="/install"
+      />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -39,6 +45,8 @@ const Install = () => {
               Get the full app experience on your device. Works offline and loads instantly!
             </p>
           </div>
+
+          <h2 className="text-2xl font-bold text-white text-center">Select Your Device</h2>
 
           {/* Already Installed */}
           {isInstalled && <Card className="border-green-200 bg-green-50">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
+import { SEO } from '@/components/SEO';
 import { DeviceMockups } from '@/components/DeviceMockups';
 import { ArrowRight, Shield, TrendingDown, Target, Heart, Zap, Sprout, ChevronRight } from 'lucide-react';
 import { ScrollCue } from '@/components/ScrollCue';
@@ -90,6 +91,11 @@ export default function Landing() {
 
   return (
     <>
+      <SEO
+        title="Zero Hero — From Balances Due to a More Balanced You"
+        description="Track budgets and eliminate debt with proven strategies. Zero Hero helps you build a safety net, pay off debts, and reclaim your time."
+        path="/"
+      />
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden">

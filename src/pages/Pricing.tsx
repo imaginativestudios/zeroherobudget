@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { toast } from '@/hooks/use-toast';
 import { Logo } from '@/components/Logo';
+import { SEO } from '@/components/SEO';
 import { STRIPE_PRICES, type PricingInterval } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import SparklesIcon from '@/components/icons/SparklesIcon';
@@ -125,6 +126,34 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO
+        title="Pricing — Zero Hero"
+        description="Simple, transparent pricing for Zero Hero. Choose monthly at $5/mo or annual at $50/yr. 7-day free trial, cancel anytime."
+        path="/pricing"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Zero Hero Subscription",
+          "description": "Budget tracking and debt payoff app with AI insights, household sharing, and bank-level security.",
+          "brand": { "@type": "Brand", "name": "Zero Hero" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Monthly",
+              "price": STRIPE_PRICES.monthly.amount,
+              "priceCurrency": "USD",
+              "url": "https://zeroherobudget.com/pricing"
+            },
+            {
+              "@type": "Offer",
+              "name": "Annual",
+              "price": STRIPE_PRICES.annual.amount,
+              "priceCurrency": "USD",
+              "url": "https://zeroherobudget.com/pricing"
+            }
+          ]
+        }}
+      />
       {/* Decorative background orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
@@ -234,10 +263,10 @@ const Pricing = () => {
                 </div>
 
                 <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                  <h4 className="font-medium text-foreground text-sm flex items-center gap-2">
+                  <h3 className="font-medium text-foreground text-sm flex items-center gap-2">
                     <Shield className="h-4 w-4 text-primary" />
                     Your Subscription Rights
-                  </h4>
+                  </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -274,6 +303,7 @@ const Pricing = () => {
         ) : (
           /* New Subscriber View */
           <div className="space-y-10">
+            <h2 className="text-center text-2xl md:text-3xl font-bold text-foreground">Choose Your Strategy</h2>
             {/* Interval Toggle */}
             <motion.div
               className="flex justify-center"

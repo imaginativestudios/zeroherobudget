@@ -22,31 +22,37 @@ function escapeHtml(unsafe: string): string {
 const handler = async (req: Request): Promise<Response> => {
   try {
     const url = new URL(req.url);
-    const encodedEmail = url.searchParams.get("email");
+    const token = url.searchParams.get("token");
 
-    if (!encodedEmail) {
-      return new Response(renderErrorPage("Missing email parameter"), {
+    // UUID v4 sanity check (defense in depth against malformed lookups)
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!token || !uuidRe.test(token)) {
+      return new Response(renderErrorPage("Invalid or missing unsubscribe token"), {
         status: 400,
         headers: { "Content-Type": "text/html" },
       });
     }
 
-    // Decode the base64 email
-    let email: string;
-    try {
-      email = atob(encodedEmail);
-    } catch {
-      return new Response(renderErrorPage("Invalid email format"), {
-        status: 400,
+    // Look up row by token, then mark unsubscribed. Never trust the query string as identity.
+    const { data: row, error: lookupError } = await supabase
+      .from("waitlist_signups")
+      .select("email")
+      .eq("unsubscribe_token", token)
+      .maybeSingle();
+
+    if (lookupError || !row?.email) {
+      return new Response(renderErrorPage("This unsubscribe link is no longer valid."), {
+        status: 404,
         headers: { "Content-Type": "text/html" },
       });
     }
 
-    // Update database to mark as unsubscribed
+    const email = row.email;
+
     const { error: dbError } = await supabase
       .from("waitlist_signups")
       .update({ unsubscribed_at: new Date().toISOString() })
-      .eq("email", email);
+      .eq("unsubscribe_token", token);
 
     if (dbError) {
       console.error("Database error:", dbError);

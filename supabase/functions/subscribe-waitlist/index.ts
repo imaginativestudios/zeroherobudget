@@ -49,29 +49,32 @@ const handler = async (req: Request): Promise<Response> => {
     const ipAddress = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     const userAgent = req.headers.get("user-agent") || "unknown";
 
-    // Insert into database (upsert to handle duplicates gracefully)
-    const { data: signupData, error: dbError } = await supabase
+    // Insert into database (upsert to handle duplicates gracefully).
+    // We need the row back (specifically unsubscribe_token) whether new or existing.
+    await supabase
       .from("waitlist_signups")
       .upsert(
-        { 
-          email, 
+        {
+          email,
           source: "coming_soon",
           ip_address: ipAddress,
-          user_agent: userAgent
+          user_agent: userAgent,
         },
-        { 
-          onConflict: "email",
-          ignoreDuplicates: true 
-        }
-      )
-      .select()
-      .single();
+        { onConflict: "email", ignoreDuplicates: true }
+      );
 
-    if (dbError && dbError.code !== "23505") { // Ignore duplicate key errors
-      console.error("Database error:", dbError);
-      // Continue even if DB insert fails - still send email
-    } else {
-      console.log("Signup saved to database:", signupData);
+    const { data: signupData, error: dbError } = await supabase
+      .from("waitlist_signups")
+      .select("id, unsubscribe_token")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (dbError || !signupData?.unsubscribe_token) {
+      console.error("Failed to load signup row:", dbError);
+      return new Response(
+        JSON.stringify({ error: "Unable to process your request. Please try again later." }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
     // Log email attempt as pending
@@ -82,9 +85,8 @@ const handler = async (req: Request): Promise<Response> => {
       metadata: { source: 'coming_soon', ip_address: ipAddress },
     });
 
-    // Generate unsubscribe URL with base64-encoded email
-    const encodedEmail = btoa(email);
-    const unsubscribeUrl = `${supabaseUrl}/functions/v1/unsubscribe-waitlist?email=${encodedEmail}`;
+    // Per-signup unguessable unsubscribe URL (token, not email)
+    const unsubscribeUrl = `${supabaseUrl}/functions/v1/unsubscribe-waitlist?token=${signupData.unsubscribe_token}`;
 
     // Render React Email template
     const emailHtml = await renderAsync(

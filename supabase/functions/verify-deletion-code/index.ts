@@ -135,12 +135,21 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Delete the code and reset attempts after successful verification
+    // Delete the code and reset attempts after successful verification,
+    // then set a short-lived deletion_verified flag the delete-account function checks.
     await supabaseAdmin
       .from("user_settings")
       .delete()
       .eq("user_id", user.id)
       .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
+
+    await supabaseAdmin
+      .from("user_settings")
+      .upsert({
+        user_id: user.id,
+        setting_key: "deletion_verified",
+        setting_value: "true",
+      }, { onConflict: "user_id,setting_key" });
 
     return new Response(
       JSON.stringify({ verified: true }),

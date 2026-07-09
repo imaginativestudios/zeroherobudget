@@ -91,7 +91,7 @@ export function AuthModal({
       const geo = await checkGeoAccess();
       if (!geo.allowed) {
         onOpenChange(false);
-        navigate('/unavailable');
+        navigate('/internal/unavailable');
         return;
       }
 

@@ -1,6 +1,6 @@
 import { useBetaAccess } from "@/hooks/useBetaAccess";
 import Landing from "./Landing";
-import ComingSoon from "./ComingSoon";
+import ComingSoon from "./internal/ComingSoon";
 
 const RootPage = () => {
   const { isBeta } = useBetaAccess();

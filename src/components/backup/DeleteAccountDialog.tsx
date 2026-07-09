@@ -114,18 +114,18 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
 
       // Proceed with deletion
       setIsDeleting(true);
-      
+
       // Clear all local data
       clearAllUserData(user.id);
 
-      // Delete user's profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user.id);
+      // Server-side hard delete: purges rows across all user-owned tables,
+      // revokes linked bank items, and deletes the auth user.
+      const { error: deleteError } = await supabase.functions.invoke('delete-account', {
+        body: {},
+      });
 
-      if (profileError) {
-        console.error('Error deleting profile:', profileError);
+      if (deleteError) {
+        throw new Error(deleteError.message || 'Failed to delete account.');
       }
 
       // Sign out the user

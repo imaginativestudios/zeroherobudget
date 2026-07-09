@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
 import { Logo } from '@/components/Logo';
+import { SEO } from '@/components/SEO';
 import { DeviceMockups } from '@/components/DeviceMockups';
 import { ArrowRight, Shield, TrendingDown, Target, Heart, Zap, Sprout, ChevronRight } from 'lucide-react';
 import { ScrollCue } from '@/components/ScrollCue';

@@ -46,6 +46,8 @@ const Install = () => {
             </p>
           </div>
 
+          <h2 className="text-2xl font-bold text-white text-center">Select Your Device</h2>
+
           {/* Already Installed */}
           {isInstalled && <Card className="border-green-200 bg-green-50">
               <CardContent className="flex items-center gap-4 p-6">

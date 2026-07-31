@@ -5,14 +5,9 @@ import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { HouseholdInviteEmail } from "./_templates/household-invite.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
+import { buildCors } from "../_shared/cors.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
 
 interface SendInvitationRequest {
   inviteeEmail: string;
@@ -21,6 +16,7 @@ interface SendInvitationRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  const corsHeaders = buildCors(req);
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

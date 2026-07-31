@@ -1,23 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { buildCors } from "../_shared/cors.ts";
 
 const PLAID_ENV = (Deno.env.get("PLAID_ENV") || "sandbox").toLowerCase();
 const PLAID_BASE =
   PLAID_ENV === "production" ? "https://production.plaid.com"
   : PLAID_ENV === "development" ? "https://development.plaid.com"
   : "https://sandbox.plaid.com";
-
-function jsonError(status: number, error: string) {
-  return new Response(JSON.stringify({ error }), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
 
 // Map Plaid PFC primary -> internal budget category buckets used in the app
 function mapCategory(plaidCategory: string | null | undefined, amount: number): string {
@@ -36,6 +24,14 @@ function mapCategory(plaidCategory: string | null | undefined, amount: number): 
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCors(req);
+
+  function jsonError(status: number, error: string) {
+    return new Response(JSON.stringify({ error }), {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

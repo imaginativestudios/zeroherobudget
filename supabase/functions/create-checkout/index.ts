@@ -2,11 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0?dts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { checkCountry } from "../_shared/geo.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { buildCors } from "../_shared/cors.ts";
 
 // Inline pricing — defined here so we don't depend on Stripe-side Price IDs.
 // Amounts are in cents (USD).
@@ -18,6 +14,7 @@ const PRICING = {
 type PricingInterval = keyof typeof PRICING;
 
 serve(async (req) => {
+  const corsHeaders = buildCors(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

@@ -5,6 +5,7 @@ import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { WaitlistWelcomeEmail } from "./_templates/waitlist-welcome.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
+import { buildCors } from "../_shared/cors.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const audienceId = Deno.env.get("RESEND_AUDIENCE_ID");
@@ -14,16 +15,12 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
 interface WaitlistRequest {
   email: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  const corsHeaders = buildCors(req);
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

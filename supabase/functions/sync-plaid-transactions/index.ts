@@ -148,7 +148,10 @@ Deno.serve(async (req) => {
           category: mapCategory(plaidCat, tx.amount),
           flow,
         };
-      }).filter(Boolean);
+        // Type predicate rather than plain .filter(Boolean): the runtime
+        // behaviour is identical, but Boolean does not narrow the element type,
+        // so .upsert() saw `T | null` and failed to typecheck.
+      }).filter((t): t is NonNullable<typeof t> => t !== null);
 
       if (upserts.length > 0) {
         const { error: txErr } = await supabaseAdmin

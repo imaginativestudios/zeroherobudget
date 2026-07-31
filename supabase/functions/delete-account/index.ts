@@ -104,8 +104,18 @@ serve(async (req) => {
         console.error(`delete ${t} failed`, error.message);
       }
     }
-    // household_invitations may key on invited_by instead
-    await admin.from("household_invitations").delete().eq("invited_by", userId).catch(() => {});
+    // household_invitations may key on invited_by instead.
+    // Do NOT chain .catch() here -- PostgrestFilterBuilder is a thenable, not a
+    // Promise. It implements then() only, so .catch is undefined and calling it
+    // throws a TypeError before the request is ever sent. Check the returned
+    // error the same way the loop above does.
+    const { error: invErr } = await admin
+      .from("household_invitations")
+      .delete()
+      .eq("invited_by", userId);
+    if (invErr) {
+      console.error("delete household_invitations by invited_by failed", invErr.message);
+    }
     // Delete profile (also cascades to any FK-linked rows)
     await admin.from("profiles").delete().eq("id", userId);
 

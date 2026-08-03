@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { seedDemoData } from './fixtures/demo.fixture';
 
 // Sample connector data that mimics browser extension output
 const MOCK_CONNECTOR_DATA = [
@@ -10,9 +11,11 @@ const MOCK_CONNECTOR_DATA = [
 
 test.describe('Zero Hero Connector Import Flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage and navigate to transactions page
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    // Seed demo data, then navigate. The previous `localStorage.clear()`
+    // removed the key Layout.tsx uses to decide demo mode is active, so
+    // /transactions redirected to /auth and all 16 tests below timed out
+    // waiting for a page they never reached.
+    await seedDemoData(page);
     await page.goto('/transactions');
   });
 

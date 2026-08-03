@@ -26,7 +26,12 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        # chromium AND webkit: the config defines four projects, and two of them
+        # resolve to webkit (Tablet -> iPad Mini, Small Mobile -> Galaxy S III).
+        # Installing chromium alone meant those projects could never launch, so
+        # half the viewport matrix was silently unexercised -- invisible until
+        # the summary gate below was fixed to actually report results.
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Run Playwright tests with coverage
         id: playwright
@@ -70,29 +75,47 @@ jobs:
         id: summary
         if: always()
         run: |
-          if [ -f test-results.json ]; then
-            PASSED=$(jq '[.suites[].specs[].tests[] | select(.status == "expected")] | length' test-results.json 2>/dev/null || echo "0")
-            FAILED=$(jq '[.suites[].specs[].tests[] | select(.status == "unexpected")] | length' test-results.json 2>/dev/null || echo "0")
-            SKIPPED=$(jq '[.suites[].specs[].tests[] | select(.status == "skipped")] | length' test-results.json 2>/dev/null || echo "0")
-            TOTAL=$((PASSED + FAILED + SKIPPED))
-            
+          # Counts come from Playwright's own top-level .stats block.
+          # The previous path -- .suites[].specs[].tests[] -- matched nothing,
+          # because any file using test.describe nests its specs one suite
+          # deeper. It silently returned 0 passed / 0 failed for every run,
+          # which made the "Fail if tests failed" gate below unreachable and
+          # every green check meaningless. .stats is flat and reporter-stable.
+          #
+          # Fails closed: a missing or unparseable report sets results_ok=false,
+          # which the gate treats as failure. Absence of evidence must not read
+          # as evidence of success.
+          if [ -f test-results.json ] && jq -e '.stats' test-results.json >/dev/null 2>&1; then
+            PASSED=$(jq -r '.stats.expected // 0' test-results.json)
+            FAILED=$(jq -r '.stats.unexpected // 0' test-results.json)
+            SKIPPED=$(jq -r '.stats.skipped // 0' test-results.json)
+            FLAKY=$(jq -r '.stats.flaky // 0' test-results.json)
+            TOTAL=$((PASSED + FAILED + SKIPPED + FLAKY))
+
             if [ "$FAILED" -gt 0 ]; then
               STATUS="❌ Failed"
+            elif [ "$TOTAL" -eq 0 ]; then
+              # A run that executed nothing is not a pass.
+              STATUS="⚠️ No tests executed"
             else
               STATUS="✅ Passed"
             fi
-            
+
             echo "status=$STATUS" >> $GITHUB_OUTPUT
             echo "passed=$PASSED" >> $GITHUB_OUTPUT
             echo "failed=$FAILED" >> $GITHUB_OUTPUT
             echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
+            echo "flaky=$FLAKY" >> $GITHUB_OUTPUT
             echo "total=$TOTAL" >> $GITHUB_OUTPUT
+            echo "results_ok=true" >> $GITHUB_OUTPUT
           else
-            echo "status=⚠️ No results" >> $GITHUB_OUTPUT
+            echo "status=⚠️ No results -- test run produced no parseable report" >> $GITHUB_OUTPUT
             echo "passed=0" >> $GITHUB_OUTPUT
             echo "failed=0" >> $GITHUB_OUTPUT
             echo "skipped=0" >> $GITHUB_OUTPUT
+            echo "flaky=0" >> $GITHUB_OUTPUT
             echo "total=0" >> $GITHUB_OUTPUT
+            echo "results_ok=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Post PR comment
@@ -201,6 +224,39 @@ jobs:
             test-results/**/*-actual.png
           retention-days: 14
       
-      - name: Fail if tests failed
-        if: steps.summary.outputs.failed != '0'
-        run: exit 1
+      # Fails on three distinct conditions, all of which previously passed:
+      #   1. tests failed
+      #   2. the report was missing or unparseable (results_ok=false)
+      #   3. the run executed zero tests
+      # (3) matters because a config or browser-install error can produce a
+      # valid, empty report -- which is not a passing build.
+      - name: Fail if tests failed or did not run
+        if: >-
+          steps.summary.outputs.failed != '0' ||
+          steps.summary.outputs.results_ok != 'true' ||
+          steps.summary.outputs.total == '0'
+        run: |
+          echo "status:     ${{ steps.summary.outputs.status }}"
+          echo "passed:     ${{ steps.summary.outputs.passed }}"
+          echo "failed:     ${{ steps.summary.outputs.failed }}"
+          echo "skipped:    ${{ steps.summary.outputs.skipped }}"
+          echo "flaky:      ${{ steps.summary.outputs.flaky }}"
+          echo "total:      ${{ steps.summary.outputs.total }}"
+          echo "results_ok: ${{ steps.summary.outputs.results_ok }}"
+
+          # A run that collected nothing reports its reason in the JSON
+          # reporter's top-level .errors[], not on stderr -- so without this the
+          # failure is silent and undiagnosable from the log alone.
+          if [ -f test-results.json ]; then
+            echo ""
+            echo "--- reporter errors ---"
+            jq -r '.errors[]? | .message // .value // tostring' test-results.json 2>/dev/null | head -40 \
+              || echo "(none parseable)"
+            echo ""
+            echo "--- report shape ---"
+            jq -r '{suites: (.suites|length), errors: (.errors|length), stats: .stats}' test-results.json 2>/dev/null \
+              || echo "(unparseable)"
+          else
+            echo "test-results.json was never written"
+          fi
+          exit 1

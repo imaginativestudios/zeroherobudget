@@ -37,8 +37,17 @@ export async function logoutUser(page: any) {
   }
 }
 
-// Helper to clear test data
+// Helper to clear test data.
+//
+// Navigates first: localStorage belongs to an origin, and a fresh page starts
+// on about:blank, which has none. Calling evaluate() before any goto() throws
+// `SecurityError: Failed to read the 'localStorage' property from 'Window':
+// Access is denied for this document` -- which is what failed all five tests in
+// authenticated-user.spec.ts, since its beforeEach called this helper first.
 export async function clearLocalStorage(page: any) {
+  if (new URL(page.url()).protocol === 'about:') {
+    await page.goto('/');
+  }
   await page.evaluate(() => localStorage.clear());
 }
 

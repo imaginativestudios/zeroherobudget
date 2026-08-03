@@ -8,7 +8,17 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  // TEMPORARY: 0 retries in CI while the suite is being triaged.
+  //
+  // Retries exist to absorb flakiness, but 82 of 143 tests currently fail
+  // deterministically (missing snapshot baselines, no CI test account, broken
+  // demo mode). Retrying a deterministic failure three times just triples the
+  // wall-clock -- it is what pushed the job past its 60-minute timeout twice
+  // without ever producing a complete failure list.
+  //
+  // Restore to 2 once the suite is green and retries are absorbing real
+  // flakiness rather than masking a broken baseline.
+  retries: 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   

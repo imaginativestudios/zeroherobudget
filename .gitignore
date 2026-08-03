@@ -31,4 +31,7 @@ dist-ssr
 playwright-report/
 coverage/
 test-results/
-*-snapshots/
+# Playwright baselines: commit the Linux ones CI compares against; ignore
+# locally-generated macOS/Windows baselines, which CI can never match.
+*-darwin.png
+*-win32.png

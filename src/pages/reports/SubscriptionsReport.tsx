@@ -65,6 +65,12 @@ export function SubscriptionsReport() {
       totalSpent: s.billing_cycle === 'yearly' ? s.amount / 12 : s.amount,
     }));
   
+  // Declared here because pieData below reads it. It previously sat ~45 lines
+  // further down, so pieData hit the temporal dead zone and the component threw
+  // "Cannot access 'totalCurrentMonth' before initialization" on every render,
+  // blanking /reports/subscriptions for all users.
+  const totalCurrentMonth = currentMonthSpend.reduce((sum, s) => sum + s.totalSpent, 0);
+
   const pieData = currentMonthSpend.map((spend, index) => ({
     name: spend.subscriptionName,
     value: spend.totalSpent,
@@ -112,7 +118,6 @@ export function SubscriptionsReport() {
     }
   };
 
-  const totalCurrentMonth = currentMonthSpend.reduce((sum, s) => sum + s.totalSpent, 0);
   const totalMonthlyCommitment = subscriptionTable
     .filter(s => s.is_active)
     .reduce((sum, s) => sum + s.monthlyEquivalent, 0);

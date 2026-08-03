@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { seedDemoData } from './fixtures/demo.fixture';
 
 test.describe('Household Features (Authenticated)', () => {
+  test.beforeEach(async ({ page }) => {
+    // These pages render inside Layout, which redirects to /auth unless demo
+    // mode is active. The first test asserts an either/or (login prompt OR
+    // household content), so it remains valid with demo mode on.
+    await seedDemoData(page);
+  });
+
   test('household page requires authentication', async ({ page }) => {
     await page.goto('/household');
     
@@ -56,6 +64,12 @@ test.describe('Household Features (Authenticated)', () => {
 });
 
 test.describe('Data Management', () => {
+  test.beforeEach(async ({ page }) => {
+    // Renders inside Layout, which redirects to /auth unless demo mode is on.
+    await seedDemoData(page);
+  });
+
+
   test('data management page is accessible', async ({ page }) => {
     await page.goto('/data-management');
     
@@ -104,6 +118,12 @@ test.describe('Data Management', () => {
 });
 
 test.describe('Reports & Analytics', () => {
+  test.beforeEach(async ({ page }) => {
+    // Renders inside Layout, which redirects to /auth unless demo mode is on.
+    await seedDemoData(page);
+  });
+
+
   test('reports page shows available reports', async ({ page }) => {
     await page.goto('/reports');
     

@@ -243,4 +243,20 @@ jobs:
           echo "flaky:      ${{ steps.summary.outputs.flaky }}"
           echo "total:      ${{ steps.summary.outputs.total }}"
           echo "results_ok: ${{ steps.summary.outputs.results_ok }}"
+
+          # A run that collected nothing reports its reason in the JSON
+          # reporter's top-level .errors[], not on stderr -- so without this the
+          # failure is silent and undiagnosable from the log alone.
+          if [ -f test-results.json ]; then
+            echo ""
+            echo "--- reporter errors ---"
+            jq -r '.errors[]? | .message // .value // tostring' test-results.json 2>/dev/null | head -40 \
+              || echo "(none parseable)"
+            echo ""
+            echo "--- report shape ---"
+            jq -r '{suites: (.suites|length), errors: (.errors|length), stats: .stats}' test-results.json 2>/dev/null \
+              || echo "(unparseable)"
+          else
+            echo "test-results.json was never written"
+          fi
           exit 1

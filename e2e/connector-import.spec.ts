@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { seedDemoData } from './fixtures/demo.fixture';
+import { seedDemoData, readDemoTransactions, writeDemoTransactions } from './fixtures/demo.fixture';
 
 // Sample connector data that mimics browser extension output
 const MOCK_CONNECTOR_DATA = [
@@ -72,10 +72,10 @@ test.describe('Zero Hero Connector Import Flow', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
     
     // Check that transaction descriptions are visible
-    await expect(page.getByText(/TRADER JOES/i)).toBeVisible();
-    await expect(page.getByText(/AMAZON PRIME/i)).toBeVisible();
-    await expect(page.getByText(/PAYROLL DEPOSIT/i)).toBeVisible();
-    await expect(page.getByText(/STARBUCKS/i)).toBeVisible();
+    await expect(page.getByText(/TRADER JOES/i).first()).toBeVisible();
+    await expect(page.getByText(/AMAZON PRIME/i).first()).toBeVisible();
+    await expect(page.getByText(/PAYROLL DEPOSIT/i).first()).toBeVisible();
+    await expect(page.getByText(/STARBUCKS/i).first()).toBeVisible();
   });
 
   test('can select and deselect transactions', async ({ page, context }) => {
@@ -101,20 +101,26 @@ test.describe('Zero Hero Connector Import Flow', () => {
 
   test('detects and skips duplicate transactions', async ({ page, context }) => {
     // Pre-populate with existing transaction
-    await page.evaluate(() => {
-      const existing = [{
-        id: 'existing-1',
-        date: '2026-01-15',
-        description: 'TRADER JOES #321 GROCERY',
-        amount: 45.20,
-        category: 'Food',
-        account_id: 'default-checking',
-        flow: 'out'
-      }];
-      localStorage.setItem('zero-hero-local-transactions', JSON.stringify(existing));
-    });
+    // Seed the duplicate under the key the app actually reads.
+    await writeDemoTransactions(page, [{
+      id: 'existing-1',
+      date: '2026-01-15',
+      // Must match what the app STORES, not the raw bank text. Incoming rows
+      // are keyed on extractDescription(), which strips '#321', giving
+      // 'traderjoesgrocery'. Seeding the raw text yields 'traderjoes321grocery'
+      // and the duplicate is never recognised.
+      description: 'TRADER JOES GROCERY',
+      amount: 45.20,
+      category: 'Food',
+      account_id: 'default-checking',
+      flow: 'out'
+    }]);
     await page.reload();
-    
+    // Wait for the reloaded page to be interactive. Without this the clipboard
+    // write and click race the reload, the modal never opens, and the failure
+    // surfaces confusingly as "'3 New' not found".
+    await expect(page.getByRole('button', { name: /paste from connector/i })).toBeVisible();
+
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await page.evaluate((data) => {
       navigator.clipboard.writeText(JSON.stringify(data));
@@ -125,7 +131,9 @@ test.describe('Zero Hero Connector Import Flow', () => {
     
     // Should show 3 new (1 duplicate skipped)
     await expect(page.getByText('3 New')).toBeVisible();
-    await expect(page.getByText(/1 Duplicate.*skipped/i)).toBeVisible();
+    // .first(): the modal shows the duplicate count in both a badge and an
+    // expandable summary row, so the bare match resolves to 2 elements.
+    await expect(page.getByText(/1 Duplicate.*skipped/i).first()).toBeVisible();
   });
 
   test('can confirm import of selected transactions', async ({ page, context }) => {
@@ -140,19 +148,21 @@ test.describe('Zero Hero Connector Import Flow', () => {
     // Click Confirm Import
     await page.getByRole('button', { name: /confirm import/i }).click();
     
-    // Should show progress bar
-    await expect(page.getByText(/uploading intel/i)).toBeVisible({ timeout: 2000 });
-    
+    // NOTE: no assertion on the "uploading intel" progress bar. It is a
+    // transient state that can complete before Playwright samples for it, which
+    // made this test flaky (observed failing 1 run in 2). Asserting on the
+    // outcome below is deterministic; asserting on a spinner is a race.
+
     // Modal should close after import
     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 5000 });
     
     // Success toast should appear
     await expect(page.getByText(/successfully imported 4 transactions/i)).toBeVisible();
     
-    // Verify transactions are in localStorage
-    const stored = await page.evaluate(() => 
-      localStorage.getItem('zero-hero-local-transactions')
-    );
+    // Verify transactions are in localStorage. The app keys by user id
+    // (`${DEMO_USER_ID}_transactions` in demo mode); the literal previously
+    // used here is a key nothing ever writes, so this always read null.
+    const stored = JSON.stringify(await readDemoTransactions(page));
     expect(stored).toContain('TRADER JOES');
     expect(stored).toContain('AMAZON PRIME');
   });
@@ -172,18 +182,20 @@ test.describe('Zero Hero Connector Import Flow', () => {
     // Modal should close
     await expect(page.getByRole('dialog')).not.toBeVisible();
     
-    // No transactions should be saved
-    const stored = await page.evaluate(() => 
-      localStorage.getItem('zero-hero-local-transactions')
-    );
-    expect(stored).toBeNull();
+    // Nothing from the clipboard should have been imported. Demo mode seeds a
+    // transaction list, so assert the imported merchants are absent rather
+    // than that storage is empty.
+    const stored = JSON.stringify(await readDemoTransactions(page));
+    expect(stored).not.toContain('TRADER JOES');
+    expect(stored).not.toContain('STARBUCKS COFFEE');
   });
 });
 
 test.describe('AI Categorization in Connector Import', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    // Same fix as the block above: localStorage.clear() removed the demo-mode
+    // key, so /transactions redirected to /auth and every test here timed out.
+    await seedDemoData(page);
     await page.goto('/transactions');
   });
 
@@ -223,9 +235,12 @@ test.describe('AI Categorization in Connector Import', () => {
     await page.getByRole('button', { name: /paste from connector/i }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     
-    // Income should show as Income category and have + sign
-    await expect(page.getByText('Income')).toBeVisible();
-    await expect(page.getByText(/\+/)).toBeVisible();
+    // Scope to the dialog: 'Income' and '+' also appear in the transactions
+    // table behind the modal, so an unscoped match resolved to 3 elements and
+    // tripped strict mode rather than finding a real problem.
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByText('Income').first()).toBeVisible();
+    await expect(dialog.getByText(/\+/).first()).toBeVisible();
   });
 
   test('can change category using dropdown', async ({ page, context }) => {
@@ -237,65 +252,39 @@ test.describe('AI Categorization in Connector Import', () => {
     await page.getByRole('button', { name: /paste from connector/i }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     
-    // Click on category badge to open dropdown
-    const categoryBadge = page.getByText('Uncategorized').first();
-    await categoryBadge.click();
-    
-    // Select "Food" category
-    await page.getByText('Food').click();
-    
-    // Category should update
-    await expect(page.getByText('Food')).toBeVisible();
+    // Scope to the dialog. 'Food' is a category name that also appears
+    // throughout the transactions table behind the modal -- an unscoped match
+    // resolved to 11 elements and tripped strict mode.
+    const dialog = page.getByRole('dialog');
+    await dialog.getByText('Uncategorized').first().click();
+
+    // 'Groceries', not 'Food'. Food is a GROUP heading in categoryRegistry, not
+    // a selectable category -- the popover offers Groceries, Restaurants /
+    // Takeout, Coffee / Snacks under it. The old assertion named a category
+    // that has never been selectable.
+    //
+    // Options are <Button>s inside a Popover (no 'option'/'menuitem' roles),
+    // portalled outside the dialog, so this is page-scoped with an exact match.
+    // Wait for the popover to actually render before clicking. Without this the
+    // click races the Popover open animation and times out intermittently.
+    const groceries = page.getByRole('button', { name: 'Groceries', exact: true }).first();
+    await expect(groceries).toBeVisible();
+    await groceries.click();
+
+    await expect(dialog.getByText('Groceries').first()).toBeVisible();
   });
 });
 
-test.describe('Connector Setup Page Access', () => {
-  test('Bank Connector link is visible in sidebar', async ({ page }) => {
-    await page.goto('/dashboard');
-    
-    // Look for Tools section in sidebar
-    await expect(page.getByText('Tools')).toBeVisible();
-    
-    // Bank Connector link should be present
-    const connectorLink = page.getByRole('link', { name: /bank connector/i });
-    await expect(connectorLink).toBeVisible();
-  });
-
-  test('can navigate to Connector setup page', async ({ page }) => {
-    await page.goto('/dashboard');
-    
-    // Click Bank Connector link
-    await page.getByRole('link', { name: /bank connector/i }).click();
-    
-    // Should navigate to connector setup page
-    await expect(page).toHaveURL('/settings/connector');
-    await expect(page.getByText('Build Your Connector')).toBeVisible();
-  });
-
-  test('Connector setup page displays instructions', async ({ page }) => {
-    await page.goto('/settings/connector');
-    
-    // Check key content is visible
-    await expect(page.getByText("Hero's Privacy Oath")).toBeVisible();
-    await expect(page.getByText('Setup Instructions')).toBeVisible();
-    await expect(page.getByText('manifest.json')).toBeVisible();
-    await expect(page.getByText('content.js')).toBeVisible();
-    await expect(page.getByText('popup.html')).toBeVisible();
-  });
-
-  test('can copy code blocks from setup page', async ({ page, context }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-    await page.goto('/settings/connector');
-    
-    // Find the first Copy button
-    const copyButton = page.getByRole('button', { name: /copy/i }).first();
-    await copyButton.click();
-    
-    // Should show success state
-    await expect(page.getByText(/copied/i)).toBeVisible();
-    
-    // Verify clipboard contains JSON
-    const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboardContent).toContain('manifest_version');
-  });
-});
+// The 'Connector Setup Page Access' describe block was removed here.
+//
+// It covered src/pages/ConnectorSetup.tsx, the sidebar "Tools" section and the
+// "Bank Connector" link -- all deleted deliberately in 53bb014 "Remove Bank
+// Connector page" (2026-03-09), which dropped 635 lines including
+// ConnectorSetup.tsx and lib/extensionCode.ts. Nothing named "Bank Connector",
+// "Tools" or "connector" remains in src/ or the router.
+//
+// The tests outlived the feature by five months and could never pass again.
+// They were invisible because the CI gate reported zero failures regardless.
+//
+// The import flow itself is alive and still covered above: the "Paste from
+// Connector" button exists at src/pages/Transactions.tsx:396.

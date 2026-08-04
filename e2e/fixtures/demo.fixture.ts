@@ -62,6 +62,33 @@ export async function seedDemoData(page: Page): Promise<void> {
 }
 
 /**
+ * Read the transactions the app has stored, in demo mode.
+ *
+ * The app keys local data by user id — `${DEMO_USER_ID}_transactions` while in
+ * demo mode — not by a fixed literal. Specs that hardcoded
+ * 'zero-hero-local-transactions' were reading a key nothing ever writes, so
+ * they got null back and their assertions were meaningless.
+ *
+ * Resolves DEMO_USER_ID from the app module rather than repeating the literal,
+ * so this cannot drift if the constant changes.
+ */
+export async function readDemoTransactions(page: Page): Promise<unknown[]> {
+  return page.evaluate(async () => {
+    const mod = await import('/src/lib/demoDataLoader.ts');
+    const raw = localStorage.getItem(`${mod.DEMO_USER_ID}_transactions`);
+    return raw ? JSON.parse(raw) : [];
+  });
+}
+
+/** Overwrite the demo-mode transaction list. Counterpart to readDemoTransactions. */
+export async function writeDemoTransactions(page: Page, transactions: unknown[]): Promise<void> {
+  await page.evaluate(async (txs) => {
+    const mod = await import('/src/lib/demoDataLoader.ts');
+    localStorage.setItem(`${mod.DEMO_USER_ID}_transactions`, JSON.stringify(txs));
+  }, transactions);
+}
+
+/**
  * Clear demo data without touching the rest of localStorage.
  *
  * Use when a test needs the unauthenticated, no-demo state — the one that

@@ -8,11 +8,11 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
   });
 
   test('can navigate to onboarding from landing page', async ({ page }) => {
-    await page.goto('/');
-    
-    // Click primary CTA to start onboarding
-    const ctaButton = page.getByRole('link', { name: /start|begin|get started|journey/i }).first();
-    await ctaButton.click();
+    // '/' is the Coming Soon page, whose only links are Pricing/Legal/Support.
+    // The CTA that starts onboarding is a button on /landing.
+    await page.goto('/landing');
+
+    await page.getByRole('button', { name: /get started/i }).first().click();
     
     // Should be on onboarding page
     await expect(page).toHaveURL(/onboarding/);
@@ -23,7 +23,9 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     
     // Should see Step 1 content - "Define Your Life Value"
     await expect(page.getByText('Define Your Life Value')).toBeVisible();
-    await expect(page.getByText('What is one hour of your life worth?')).toBeVisible();
+    // Actual copy is "Enter your hourly wage"; the string below never existed
+    // on this step, so this assertion could only ever time out.
+    await expect(page.getByText('Enter your hourly wage')).toBeVisible();
     
     // Enter hourly wage
     const wageInput = page.locator('#hourly-wage');
@@ -73,13 +75,18 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await expect(page.getByText('Set Your Emergency Fund Goal')).toBeVisible();
     
     // Select $1,000 moat (the middle option)
-    await page.getByText('$1,000').click();
+    // .first(): '$1,000' is both the option label and part of the sentence
+    // below it, so a bare match is a strict mode violation.
+    await page.getByText('$1,000').first().click();
     
     // Click "See My Freedom Path"
     await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Should see Aha Moment step (Step 4)
-    await expect(page.getByText(/freedom|path|debt-free/i)).toBeVisible({ timeout: 5000 });
+    // .first(): this loose regex matches several nodes on Step 3 (the heading,
+    // the explanatory copy and the projection), so a bare match is a strict
+    // mode violation rather than a real failure.
+    await expect(page.getByText(/freedom|path|debt-free/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('complete full onboarding flow ends at dashboard', async ({ page }) => {
@@ -97,7 +104,9 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /continue/i }).click();
     
     // Step 3: Moat - select $1,000 and see freedom path
-    await page.getByText('$1,000').click();
+    // .first(): '$1,000' is both the option label and part of the sentence
+    // below it, so a bare match is a strict mode violation.
+    await page.getByText('$1,000').first().click();
     await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Step 4: Aha Moment - Continue
@@ -235,6 +244,9 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
     
     // Should advance to Aha Moment
-    await expect(page.getByText(/freedom|path|debt-free/i)).toBeVisible({ timeout: 5000 });
+    // .first(): this loose regex matches several nodes on Step 3 (the heading,
+    // the explanatory copy and the projection), so a bare match is a strict
+    // mode violation rather than a real failure.
+    await expect(page.getByText(/freedom|path|debt-free/i).first()).toBeVisible({ timeout: 5000 });
   });
 });

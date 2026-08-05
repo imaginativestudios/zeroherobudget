@@ -60,6 +60,79 @@ jobs:
           echo ""
           git status --porcelain -- 'e2e/**/*.png' | head -50
 
+      # A baseline is only worth committing if it shows the page it is named
+      # after. When a spec navigates somewhere gated and the app redirects, the
+      # screenshot still succeeds -- it just captures the sign-in modal, and
+      # --update-snapshots writes that in as the approved appearance of the
+      # page. Nothing in Playwright objects, because a modal photographs as
+      # well as a dashboard does.
+      #
+      # The tell is duplication. Two differently-named pages that render
+      # byte-identical images are not two pages; they are the same wrong screen
+      # captured twice. The first batch of Linux baselines contained 69 such
+      # files across four groups -- dashboard, transactions, budget, reports,
+      # subscriptions and twelve others were all the same picture of the login
+      # modal. It was caught by hand, after the PR had sat for two days.
+      #
+      # This runs that check automatically and fails the workflow, so a batch
+      # like that can never reach a PR again.
+      - name: Reject duplicate baselines
+        run: |
+          # Pages that legitimately render identically. Keep this list short and
+          # justify every entry -- each one is a hole in the check.
+          #   auth-login / auth-modal: the same sign-in modal, reached by
+          #   navigating to /auth and by clicking Sign In on /landing.
+          ALLOWED="auth-login auth-modal"
+
+          find e2e -name '*-linux.png' -print0 | xargs -0 md5sum | sort > /tmp/baseline-hashes.txt
+
+          violations=0
+          for hash in $(cut -d' ' -f1 /tmp/baseline-hashes.txt | sort | uniq -d); do
+            names=$(grep "^$hash " /tmp/baseline-hashes.txt | sed 's|.*/||')
+
+            # Skip the group only if every file in it is on the allowlist.
+            unlisted=0
+            while IFS= read -r n; do
+              [ -z "$n" ] && continue
+              ok=0
+              for prefix in $ALLOWED; do
+                case "$n" in "$prefix"-*) ok=1 ;; esac
+              done
+              [ "$ok" -eq 0 ] && unlisted=1
+            done <<< "$names"
+
+            [ "$unlisted" -eq 0 ] && continue
+
+            violations=$((violations + 1))
+            {
+              echo "### Identical baselines: \`$hash\`"
+              echo ""
+              echo "$names" | sed 's/^/- /'
+              echo ""
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "DUPLICATE $hash"
+            echo "$names" | sed 's/^/    /'
+          done
+
+          total=$(find e2e -name '*-linux.png' | wc -l | tr -d ' ')
+          unique=$(cut -d' ' -f1 /tmp/baseline-hashes.txt | sort -u | wc -l | tr -d ' ')
+
+          if [ "$violations" -gt 0 ]; then
+            {
+              echo "**$violations group(s) of differently-named pages produced byte-identical images.**"
+              echo ""
+              echo "That means the suite captured the same screen more than once — usually the"
+              echo "sign-in modal, after the app redirected a gated route to \`/auth\`. Baselines"
+              echo "were NOT committed. Fix the specs so each page renders itself, then re-run."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo ""
+            echo "FAILED: $violations duplicate group(s). $total files, only $unique unique images."
+            exit 1
+          fi
+
+          echo "OK: $total baselines, $unique unique images, no unexpected duplicates."
+          echo "$total baselines, $unique unique images, no unexpected duplicates." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit and open PR
         env:
           GH_TOKEN: ${{ github.token }}

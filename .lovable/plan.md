@@ -1,55 +1,24 @@
-## Goal
+# Fix: Legal & Privacy footer hidden behind the mobile bottom nav
 
-Make it obvious at a glance which pages real users see vs. which are for you (dev, admin, pre-launch). Nothing gets deleted — anything stale is moved to `src/pages/_archive/` and de-routed; anything internal-but-live is moved to `src/pages/internal/` under a `/internal/*` route prefix.
+## What's happening
 
-## Page audit
+On phone and small-tablet widths the app footer ("Local-first" badge, the **Legal & Privacy** link, and the copyright line) sits underneath the fixed bottom navigation bar, so the link is partly or fully unreachable.
 
-**Live user pages (stay put — no changes)**
-Dashboard, Journey, Budget, DebtSnowball, Transactions, Accounts, Wealth, DataManagement, Achievements, FinancialTips, Reports (+ reports/*), Household, Subscriptions, AccountSettings, SubscriptionStatus, Auth, ResetPassword, Onboarding, Landing, Pricing, CheckoutSuccess, AcceptInvite, PrivacyPolicy, TermsOfService, Legal, HelpSupport, DataPrivacyFAQ, Install, NotFound.
+Two causes, confirmed in the layout code:
 
-**Move to `src/pages/internal/` — routes become `/internal/*`**
-- `IconStyleGuide.tsx` → `/internal/style-guide/icons` (was `/style-guide/icons`)
-- `ColorPaletteGuide.tsx` → `/internal/style-guide/colors` (was `/style-guide/colors`)
-- `SiteMap.tsx` → `/internal/sitemap` (was `/sitemap`)
-- `ComingSoon.tsx` → `/internal/coming-soon` (was rendered by `/` via RootPage; kept reachable for preview)
-- `JoinBeta.tsx` → `/internal/join-beta` (was `/join`; add redirect from `/join` so any existing invite links still land)
-- `Unavailable.tsx` → `/internal/unavailable` (was `/unavailable`; geo-check redirect target updated)
-- `AdminHub.tsx`, `AdminLogin.tsx`, `AdminWaitlist.tsx`, `AdminBetaCodes.tsx` → keep `/admin/*` routes (admin URLs are already clearly namespaced), but move the files into `src/pages/internal/admin/` so the file tree matches.
+1. The main content area sets padding with a shorthand (`p-2 sm:p-4`) *and* a separate bottom-spacer class. At 640px and wider the responsive shorthand re-sets the bottom padding to 16px, wiping out the 64px reserved for the nav bar. That is why it looks correct on a narrow phone but breaks on larger phones and small tablets.
+2. Even when the spacer does apply, it reserves exactly the nav bar's height (64px) with zero breathing room, so the footer text ends up flush against the bar.
 
-**Move to `src/pages/_archive/` — remove from router**
-- `Index.tsx` — not imported anywhere in `App.tsx`, only re-exports `ComingSoon`. Dead file.
+## The fix
 
-Anything else that turns up as unused during the move (checked via `rg` for imports) gets archived the same way with a note in the PR.
+- Change the main content area to use explicit horizontal and top padding instead of the all-sides shorthand, so nothing can override the reserved bottom space.
+- Keep the bottom spacer active for all widths below the desktop breakpoint, and restore normal padding on desktop where there is no bottom nav.
+- Give the bottom spacer a comfortable gap (nav height + 24px + device safe area) so the footer clears the bar rather than touching it.
 
-## Router changes (`src/App.tsx`)
+Result: the Legal & Privacy link, badge, and copyright are fully visible and tappable above the bottom nav on every mobile and tablet width, and desktop is unchanged.
 
-- Update imports to new paths (`@/pages/internal/...`, `@/pages/internal/admin/...`).
-- Rename public routes to `/internal/*` per list above.
-- Add redirects so nothing 404s for existing links/bookmarks:
-  - `/style-guide/icons` → `/internal/style-guide/icons`
-  - `/style-guide/colors` → `/internal/style-guide/colors`
-  - `/sitemap` → `/internal/sitemap`
-  - `/join` → `/internal/join-beta`
-  - `/unavailable` → `/internal/unavailable`
-- `RootPage.tsx` keeps rendering `ComingSoon` inline for the `/` gate — the `/internal/coming-soon` route is just so you can preview it directly.
-- Update `useGeoAccess` (or wherever `/unavailable` is navigated to) to point at `/internal/unavailable`.
+## Technical details
 
-## Naming convention
-
-- **Folder** `src/pages/internal/` = "not part of the normal end-user flow" (dev tools, admin, pre-launch gates).
-- **Route prefix** `/internal/*` = same signal in the URL bar so you can tell instantly during QA.
-- **Folder** `src/pages/_archive/` = kept for reference, not routed, not imported. Underscore prefix sorts it to the top of the file tree.
-
-## Verification
-
-- `rg "from \"@/pages/"` to confirm no stale imports.
-- Click through `/dashboard`, `/budgets`, `/debts`, `/transactions`, `/accounts`, `/reports`, `/pricing`, `/auth` → all still load.
-- Visit `/internal/style-guide/icons`, `/internal/sitemap`, `/internal/coming-soon`, `/admin` → all load.
-- Visit old paths (`/sitemap`, `/join`, `/style-guide/icons`) → redirect cleanly to new paths.
-- `tsgo` passes.
-
-## Out of scope
-
-- No changes to page contents, styles, or business logic.
-- No changes to how demo mode (localStorage) works inside real user pages like Dashboard — that's a mode, not a separate page.
-- No SEO/metadata changes for the moved routes (they're internal; robots already excludes admin).
+- `src/components/Layout.tsx` — `<main>` className: replace `"p-2 sm:p-4 lg:p-8 lg:pt-10"` with directional equivalents (`px-2 pt-2 sm:px-4 sm:pt-4 lg:px-8 lg:pt-10`) and keep `pb-bottom-nav lg:pb-8`.
+- `src/index.css` — bump `.pb-bottom-nav` / `.mb-bottom-nav` from `calc(64px + safe-area)` to `calc(64px + 24px + safe-area)`.
+- No changes to navigation, routing, or any business logic.

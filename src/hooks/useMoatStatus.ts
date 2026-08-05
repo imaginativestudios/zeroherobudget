@@ -194,6 +194,7 @@ export function useMoatStatus(): MoatStatusResult {
       // Reset banner dismissal for next potential breach
       sessionStorage.removeItem(BANNER_DISMISSED_KEY);
       setBannerDismissed(false);
+      window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
     }
   }, [isSecure, repairModeActive, deactivateRepairMode, triggerRecoveryCelebration]);
   

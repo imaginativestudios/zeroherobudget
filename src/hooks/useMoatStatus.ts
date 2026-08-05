@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 
 const BANNER_DISMISSED_KEY = 'moat_banner_dismissed_session';
 const REPAIR_MODE_KEY = 'moat_repair_mode_active';
+const BANNER_SYNC_EVENT = 'moat-banner-dismissed-sync';
 
 export interface MoatStatusResult {
   // Status

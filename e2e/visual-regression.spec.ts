@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/visual.fixture';
+import { seedDemoData, emptyDemoData } from './fixtures/demo.fixture';
 
 test.describe('Visual Regression - Public Pages', () => {
   test('Landing page', async ({ visualPage }) => {
@@ -60,14 +61,16 @@ test.describe('Visual Regression - Public Pages', () => {
 
 test.describe('Visual Regression - App Pages (Demo Mode)', () => {
   test.beforeEach(async ({ visualPage }) => {
-    // Load demo data by visiting explore-demo
-    await visualPage.goto('/explore-demo');
-    await visualPage.waitForLoadState('networkidle');
-    await visualPage.waitForTimeout(1000); // Wait for demo data to load
+    // Was: goto('/explore-demo') + a 1s sleep. No such route exists in
+    // App.tsx, so this landed on NotFound inside the gated layout, redirected
+    // to /auth, and every screenshot below photographed the login modal.
+    // seedDemoData() calls the app's own loadDemoData() and throws if it did
+    // not take, so the failure can no longer be silent.
+    await seedDemoData(visualPage);
   });
 
   test('Dashboard page', async ({ visualPage }) => {
-    await visualPage.goto('/dashboard');
+    await visualPage.gotoApp('/dashboard');
     await visualPage.compareScreenshot('dashboard', {
       maskSelectors: [
         '[data-testid="current-date"]',
@@ -77,104 +80,107 @@ test.describe('Visual Regression - App Pages (Demo Mode)', () => {
   });
 
   test('Budget page', async ({ visualPage }) => {
-    await visualPage.goto('/budget');
+    await visualPage.gotoApp('/budgets');
     await visualPage.compareScreenshot('budget-page');
   });
 
   test('Transactions page', async ({ visualPage }) => {
-    await visualPage.goto('/transactions');
+    await visualPage.gotoApp('/transactions');
     await visualPage.compareScreenshot('transactions-page', {
       maskSelectors: ['[data-testid="transaction-date"]'],
     });
   });
 
   test('Debt Snowball page', async ({ visualPage }) => {
-    await visualPage.goto('/debt');
+    await visualPage.gotoApp('/debts');
     await visualPage.compareScreenshot('debt-snowball');
   });
 
   test('Reports page', async ({ visualPage }) => {
-    await visualPage.goto('/reports');
+    await visualPage.gotoApp('/reports');
     await visualPage.compareScreenshot('reports-page');
   });
 
   test('Subscriptions page', async ({ visualPage }) => {
-    await visualPage.goto('/subscriptions');
+    await visualPage.gotoApp('/subscriptions');
     await visualPage.compareScreenshot('subscriptions-page');
   });
 
   test('Achievements page', async ({ visualPage }) => {
-    await visualPage.goto('/achievements');
+    await visualPage.gotoApp('/achievements');
     await visualPage.compareScreenshot('achievements-page');
   });
 
   test('Financial Tips page', async ({ visualPage }) => {
-    await visualPage.goto('/tips');
+    await visualPage.gotoApp('/learn');
     await visualPage.compareScreenshot('financial-tips');
   });
 
   test('Account Settings page', async ({ visualPage }) => {
-    await visualPage.goto('/account');
+    await visualPage.gotoApp('/account');
     await visualPage.compareScreenshot('account-settings');
   });
 
   test('Data Management page', async ({ visualPage }) => {
-    await visualPage.goto('/data');
+    await visualPage.gotoApp('/data');
     await visualPage.compareScreenshot('data-management');
   });
 
-  test('Connector Setup page', async ({ visualPage }) => {
-    await visualPage.goto('/settings/connector');
-    await visualPage.compareScreenshot('connector-setup');
-  });
+  // 'Connector Setup page' (was /settings/connector) is deleted, not fixed.
+  // There is no connector route in App.tsx -- connector import is a modal
+  // inside /transactions (ConnectorReviewModal), and its behaviour is already
+  // covered by connector-import.spec.ts at 12/12. The old test could only ever
+  // have produced a baseline of a 404 or a login modal.
 });
 
 test.describe('Visual Regression - Empty States', () => {
+  // Each of these was `localStorage.clear()` then navigate, which deletes the
+  // key Layout.tsx uses to admit demo visitors -- so all three photographed the
+  // login modal rather than an empty page. Seed first, then blank the data:
+  // in demo mode "empty" means the keys exist and hold [], not that they are
+  // gone.
+  test.beforeEach(async ({ visualPage }) => {
+    await seedDemoData(visualPage);
+    await emptyDemoData(visualPage);
+  });
+
   test('Empty Dashboard', async ({ visualPage }) => {
-    // Clear localStorage to show empty state
-    await visualPage.goto('/');
-    await visualPage.evaluate(() => localStorage.clear());
-    await visualPage.goto('/dashboard');
+    await visualPage.gotoApp('/dashboard');
     await visualPage.compareScreenshot('dashboard-empty');
   });
 
   test('Empty Transactions', async ({ visualPage }) => {
-    await visualPage.goto('/');
-    await visualPage.evaluate(() => localStorage.clear());
-    await visualPage.goto('/transactions');
+    await visualPage.gotoApp('/transactions');
     await visualPage.compareScreenshot('transactions-empty');
   });
 
   test('Empty Budget', async ({ visualPage }) => {
-    await visualPage.goto('/');
-    await visualPage.evaluate(() => localStorage.clear());
-    await visualPage.goto('/budget');
+    await visualPage.gotoApp('/budgets');
     await visualPage.compareScreenshot('budget-empty');
   });
 });
 
 test.describe('Visual Regression - Modal & Dialog States', () => {
   test('Auth modal from landing', async ({ visualPage }) => {
-    await visualPage.goto('/');
-    // Look for sign in button and click it
-    const signInButton = visualPage.getByRole('button', { name: /sign in|login|get started/i }).first();
-    if (await signInButton.isVisible()) {
-      await signInButton.click();
-      await visualPage.waitForPageReady();
-      await visualPage.compareScreenshot('auth-modal');
-    }
+    // Was: goto('/') and screenshot only `if (await signInButton.isVisible())`.
+    // '/' is the Coming Soon page, whose buttons are Explore Demo and Notify
+    // Me, so the condition was always false and the test passed for months
+    // without ever taking a screenshot. /landing is the page that has Sign In,
+    // and the guard is gone so a missing button fails the test.
+    await visualPage.goto('/landing');
+    await visualPage.getByRole('button', { name: /sign in/i }).first().click();
+    await visualPage.waitForPageReady();
+    await visualPage.compareScreenshot('auth-modal');
   });
 });
 
 test.describe('Visual Regression - Responsive Tables', () => {
   test.beforeEach(async ({ visualPage }) => {
-    await visualPage.goto('/explore-demo');
-    await visualPage.waitForLoadState('networkidle');
-    await visualPage.waitForTimeout(1000);
+    await seedDemoData(visualPage);
   });
 
   test('Transactions table horizontal scroll', async ({ visualPage }) => {
-    await visualPage.goto('/transactions');
+    await visualPage.gotoApp('/transactions');
     // Verify table doesn't overflow viewport
     const hasHorizontalOverflow = await visualPage.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
@@ -184,14 +190,14 @@ test.describe('Visual Regression - Responsive Tables', () => {
   });
 
   test('Debt page Payment Schedule tab', async ({ visualPage }) => {
-    await visualPage.goto('/debt');
+    await visualPage.gotoApp('/debts');
     await visualPage.getByRole('tab', { name: /payment schedule/i }).click();
     await visualPage.waitForPageReady();
     await visualPage.compareScreenshot('debt-payment-schedule');
   });
 
   test('Debt page Compare Strategies tab', async ({ visualPage }) => {
-    await visualPage.goto('/debt');
+    await visualPage.gotoApp('/debts');
     await visualPage.getByRole('tab', { name: /compare/i }).click();
     await visualPage.waitForPageReady();
     await visualPage.compareScreenshot('debt-compare-strategies');
@@ -208,31 +214,30 @@ test.describe('Visual Regression - Form States', () => {
 });
 
 test.describe('Visual Regression - Navigation', () => {
+  test.beforeEach(async ({ visualPage }) => {
+    await seedDemoData(visualPage);
+  });
+
   test('Mobile navigation menu', async ({ visualPage }) => {
-    // Only test on mobile viewport
+    // The viewport guard is legitimate -- there is no mobile menu on desktop.
+    // The inner `if (await menuButton.isVisible())` was not: without demo data
+    // this page was the login modal, the button was never there, and the test
+    // reported success having captured nothing. Skip explicitly by viewport,
+    // then assert.
     const viewport = visualPage.viewportSize();
-    if (viewport && viewport.width < 768) {
-      await visualPage.goto('/dashboard');
-      await visualPage.waitForLoadState('networkidle');
-      
-      // Open mobile menu
-      const menuButton = visualPage.getByRole('button', { name: /menu|toggle/i }).first();
-      if (await menuButton.isVisible()) {
-        await menuButton.click();
-        await visualPage.waitForPageReady();
-        await visualPage.compareScreenshot('mobile-nav-open');
-      }
-    }
+    test.skip(!viewport || viewport.width >= 768, 'Mobile viewports only');
+
+    await visualPage.gotoApp('/dashboard');
+    await visualPage.getByRole('button', { name: /menu|toggle/i }).first().click();
+    await visualPage.waitForPageReady();
+    await visualPage.compareScreenshot('mobile-nav-open');
   });
 
   test('Sidebar expanded state', async ({ visualPage }) => {
-    // Only test on desktop viewport
     const viewport = visualPage.viewportSize();
-    if (viewport && viewport.width >= 1024) {
-      await visualPage.goto('/explore-demo');
-      await visualPage.waitForLoadState('networkidle');
-      await visualPage.goto('/dashboard');
-      await visualPage.compareScreenshot('sidebar-expanded');
-    }
+    test.skip(!viewport || viewport.width < 1024, 'Desktop viewports only');
+
+    await visualPage.gotoApp('/dashboard');
+    await visualPage.compareScreenshot('sidebar-expanded');
   });
 });

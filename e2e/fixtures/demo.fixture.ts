@@ -89,6 +89,41 @@ export async function writeDemoTransactions(page: Page, transactions: unknown[])
 }
 
 /**
+ * Empty the demo data while staying in demo mode.
+ *
+ * Needed because "empty state" and "locked out" are the same localStorage
+ * state as far as Layout.tsx is concerned: the gate is
+ * `localStorage.getItem(`${DEMO_USER_ID}_expenses`) !== null`, so a spec that
+ * clears storage to photograph an empty dashboard gets redirected to /auth and
+ * photographs a login modal instead. That is exactly how 69 of the first batch
+ * of Linux visual baselines came to be pixel-identical pictures of the sign-in
+ * form.
+ *
+ * Sets every array-valued demo key to `[]` — present, therefore still admitted
+ * by the gate, but with nothing in it. Scalar and object keys (income,
+ * strategy, hero profile, behavioural engine) are left alone: they are app
+ * configuration rather than user data, and blanking them would test a state a
+ * real user is never in.
+ */
+export async function emptyDemoData(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const mod = await import('/src/lib/demoDataLoader.ts');
+    const prefix = `${mod.DEMO_USER_ID}_`;
+
+    for (const key of Object.keys(localStorage)) {
+      if (!key.startsWith(prefix)) continue;
+      const raw = localStorage.getItem(key);
+      if (raw === null) continue;
+      try {
+        if (Array.isArray(JSON.parse(raw))) localStorage.setItem(key, '[]');
+      } catch {
+        // Not JSON — leave it exactly as the app wrote it.
+      }
+    }
+  });
+}
+
+/**
  * Clear demo data without touching the rest of localStorage.
  *
  * Use when a test needs the unauthenticated, no-demo state — the one that

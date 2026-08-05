@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 
 const BANNER_DISMISSED_KEY = 'moat_banner_dismissed_session';
 const REPAIR_MODE_KEY = 'moat_repair_mode_active';
+const BANNER_SYNC_EVENT = 'moat-banner-dismissed-sync';
 
 export interface MoatStatusResult {
   // Status
@@ -111,10 +112,20 @@ export function useMoatStatus(): MoatStatusResult {
     }
   }, [isRegrouping, isVulnerable, isSecure, breachAlertPlayed, savingsVault.was_secure]);
   
+  // Keep every hook instance in sync (the banner and its parent each call this hook)
+  useEffect(() => {
+    const sync = () => {
+      setBannerDismissed(sessionStorage.getItem(BANNER_DISMISSED_KEY) === 'true');
+    };
+    window.addEventListener(BANNER_SYNC_EVENT, sync);
+    return () => window.removeEventListener(BANNER_SYNC_EVENT, sync);
+  }, []);
+
   // Actions
   const dismissBanner = useCallback(() => {
     setBannerDismissed(true);
     sessionStorage.setItem(BANNER_DISMISSED_KEY, 'true');
+    window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
   }, []);
   
   const activateRepairMode = useCallback(() => {
@@ -183,6 +194,7 @@ export function useMoatStatus(): MoatStatusResult {
       // Reset banner dismissal for next potential breach
       sessionStorage.removeItem(BANNER_DISMISSED_KEY);
       setBannerDismissed(false);
+      window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
     }
   }, [isSecure, repairModeActive, deactivateRepairMode, triggerRecoveryCelebration]);
   

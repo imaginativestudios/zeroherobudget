@@ -594,13 +594,13 @@ All colors MUST be HSL.
     padding-right: env(safe-area-inset-right, 0px);
   }
   
-  /* Bottom navigation spacer for content */
+  /* Bottom navigation spacer for content (nav height + breathing room) */
   .mb-bottom-nav {
-    margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(64px + 24px + env(safe-area-inset-bottom, 0px));
   }
   
   .pb-bottom-nav {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(64px + 24px + env(safe-area-inset-bottom, 0px));
   }
 
   /* FAB shine sweep animation */

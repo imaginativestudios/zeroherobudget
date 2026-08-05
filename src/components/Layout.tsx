@@ -342,7 +342,7 @@ export const Layout = ({ children }: LayoutProps) => {
           "transition-all duration-300 ease-in-out flex flex-col min-h-screen",
           "safe-header-pt", // ensures content is below fixed header on mobile/tablet
           "lg:ml-64", // Desktop left margin for sidebar
-          "p-2 sm:p-4 lg:p-8 lg:pt-10",
+          "px-2 pt-2 sm:px-4 sm:pt-4 lg:px-8 lg:pt-10",
           "pb-bottom-nav lg:pb-8", // Space for mobile bottom nav
           "bg-secondary" // Standard background
         )}

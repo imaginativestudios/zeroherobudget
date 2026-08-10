@@ -10,6 +10,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { format, subDays, subMonths, startOfMonth, addDays } from 'date-fns';
 import { DEMO_EXPENSES, DEMO_DEBTS, DEMO_ASSETS } from './constants';
+import type { Transaction } from '@/types/transactions';
 
 // Fixed demo user ID - completely isolated from real authenticated users
 export const DEMO_USER_ID = 'demo-hero-00000000';
@@ -153,8 +154,31 @@ export const DEMO_SAVINGS_VAULT = {
 };
 
 // Generate realistic transactions for the demo
-function generateDemoTransactions() {
-  const transactions: any[] = [];
+/**
+ * Shape the generator actually produces: the canonical Transaction fields in
+ * snake_case, as the localStorage hooks expect them.
+ *
+ * `flow` borrows the union from Transaction on purpose. This array was
+ * `any[]`, which is why `flow: 'inflow'` type-checked happily while every one
+ * of the ~40 readers compared against 'in' / 'out' and matched nothing --
+ * income rendered as a negative expense and spend totals read $0 for a month.
+ * Typing it is the part that stops this recurring; renaming the literals only
+ * fixes today.
+ */
+type DemoTransactionRow = {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  category: string;
+  flow: Transaction['flow'];
+  expense_id: string | null;
+  debt_id?: string | null;
+  notes?: string;
+};
+
+function generateDemoTransactions(): DemoTransactionRow[] {
+  const transactions: DemoTransactionRow[] = [];
   const now = new Date();
   
   // Generate 3 months of transactions
@@ -169,7 +193,7 @@ function generateDemoTransactions() {
       description: 'Payroll Deposit - ABC Corp',
       amount: 2900,
       category: 'Income',
-      flow: 'inflow',
+      flow: 'in',
       expense_id: null,
       notes: 'Biweekly paycheck',
     });
@@ -179,7 +203,7 @@ function generateDemoTransactions() {
       description: 'Payroll Deposit - ABC Corp',
       amount: 2900,
       category: 'Income',
-      flow: 'inflow',
+      flow: 'in',
       expense_id: null,
       notes: 'Biweekly paycheck',
     });
@@ -191,7 +215,7 @@ function generateDemoTransactions() {
       description: 'Landlord - Monthly Rent',
       amount: 1800,
       category: 'Housing',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e1',
       notes: '',
     });
@@ -203,7 +227,7 @@ function generateDemoTransactions() {
       description: 'City Electric Co.',
       amount: 142 + Math.floor(Math.random() * 30) - 15,
       category: 'Utilities',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e6',
       notes: '',
     });
@@ -213,7 +237,7 @@ function generateDemoTransactions() {
       description: 'Natural Gas Utility',
       amount: 78 + Math.floor(Math.random() * 20) - 10,
       category: 'Utilities',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e7',
       notes: '',
     });
@@ -223,7 +247,7 @@ function generateDemoTransactions() {
       description: 'Water & Sewer Dept',
       amount: 62,
       category: 'Utilities',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e8',
       notes: '',
     });
@@ -233,7 +257,7 @@ function generateDemoTransactions() {
       description: 'Xfinity Internet',
       amount: 75,
       category: 'Utilities',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e10',
       notes: '',
     });
@@ -243,7 +267,7 @@ function generateDemoTransactions() {
       description: 'Verizon Wireless',
       amount: 120,
       category: 'Utilities',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e11',
       notes: '',
     });
@@ -255,7 +279,7 @@ function generateDemoTransactions() {
       description: 'Kia Finance - Auto Loan',
       amount: 450,
       category: 'Transportation',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e12',
       notes: '',
     });
@@ -269,7 +293,7 @@ function generateDemoTransactions() {
         description: `${gasStations[i]} Gas Station`,
         amount: 45 + Math.floor(Math.random() * 15),
         category: 'Transportation',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: 'e13',
         notes: '',
       });
@@ -284,7 +308,7 @@ function generateDemoTransactions() {
         description: groceryStores[i],
         amount: 150 + Math.floor(Math.random() * 80),
         category: 'Food',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: 'e17',
         notes: '',
       });
@@ -299,7 +323,7 @@ function generateDemoTransactions() {
         description: restaurants[i],
         amount: 15 + Math.floor(Math.random() * 45),
         category: 'Food',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: 'e18',
         notes: '',
       });
@@ -312,7 +336,7 @@ function generateDemoTransactions() {
       description: 'Blue Cross Health Insurance',
       amount: 400,
       category: 'Insurance & Healthcare',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e20',
       notes: 'Monthly premium',
     });
@@ -322,7 +346,7 @@ function generateDemoTransactions() {
       description: 'State Farm Auto Insurance',
       amount: 150,
       category: 'Transportation',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e14',
       notes: '',
     });
@@ -334,7 +358,7 @@ function generateDemoTransactions() {
       description: 'Netflix',
       amount: 15.99,
       category: 'Entertainment',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e28',
       notes: '',
     });
@@ -344,7 +368,7 @@ function generateDemoTransactions() {
       description: 'Spotify Premium',
       amount: 10.99,
       category: 'Entertainment',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e28',
       notes: '',
     });
@@ -354,7 +378,7 @@ function generateDemoTransactions() {
       description: 'Amazon Prime',
       amount: 14.99,
       category: 'Miscellaneous',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e38',
       notes: '',
     });
@@ -366,7 +390,7 @@ function generateDemoTransactions() {
       description: 'Best Egg Loan Payment',
       amount: 808,
       category: 'Debt Payments',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e34',
       debt_id: 'd1', // Links to Best Egg Loan
       notes: 'Auto-pay - Balance auto-updated',
@@ -377,7 +401,7 @@ function generateDemoTransactions() {
       description: 'Amex Payment',
       amount: 150,
       category: 'Debt Payments',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e35',
       debt_id: 'c1', // Links to Amex Card
       notes: 'Minimum payment',
@@ -388,7 +412,7 @@ function generateDemoTransactions() {
       description: '401k Loan Repayment',
       amount: 469,
       category: 'Debt Payments',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e34',
       debt_id: 'r1', // Links to 401k Loan
       notes: 'Payroll deduction',
@@ -401,7 +425,7 @@ function generateDemoTransactions() {
       description: 'Transfer to Emergency Fund',
       amount: 100,
       category: 'Savings & Investments',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e31',
       notes: 'Building the Moat!',
     });
@@ -413,7 +437,7 @@ function generateDemoTransactions() {
       description: 'AMC Theaters',
       amount: 32,
       category: 'Entertainment',
-      flow: 'outflow',
+      flow: 'out',
       expense_id: 'e30',
       notes: '',
     });
@@ -426,7 +450,7 @@ function generateDemoTransactions() {
         description: 'Amazon Purchase - Electronics',
         amount: 89.99,
         category: 'Miscellaneous',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: null,
         notes: 'New headphones',
       });
@@ -436,7 +460,7 @@ function generateDemoTransactions() {
         description: 'Target',
         amount: 67.50,
         category: 'Miscellaneous',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: null,
         notes: 'Home goods',
       });
@@ -448,7 +472,7 @@ function generateDemoTransactions() {
         description: 'Extra Payment - Amex Card',
         amount: 200,
         category: 'Debt Payments',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: null,
         debt_id: 'c1', // Links to Amex Card
         notes: 'Strike payment: Saved $45 in interest',
@@ -459,7 +483,7 @@ function generateDemoTransactions() {
         description: 'Extra Payment - Best Egg Loan',
         amount: 150,
         category: 'Debt Payments',
-        flow: 'outflow',
+        flow: 'out',
         expense_id: null,
         debt_id: 'd1', // Links to Best Egg Loan
         notes: 'Strike payment: Tax refund applied!',

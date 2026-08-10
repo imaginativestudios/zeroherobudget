@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, KeyRound, CheckCircle2 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -110,7 +110,7 @@ const ResetPassword = () => {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <Logo variant="dark" className="h-8 mx-auto mb-4" />
-            <CardTitle>Invalid Reset Link</CardTitle>
+            <h1 className="text-xl sm:text-2xl font-semibold leading-none tracking-tight min-w-0 truncate text-balance">Invalid Reset Link</h1>
             <CardDescription>
               This password reset link is invalid or has expired.
             </CardDescription>
@@ -137,7 +137,7 @@ const ResetPassword = () => {
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="h-8 w-8 text-primary" />
             </div>
-            <CardTitle>Password Updated!</CardTitle>
+            <h1 className="text-xl sm:text-2xl font-semibold leading-none tracking-tight min-w-0 truncate text-balance">Password Updated!</h1>
             <CardDescription>
               Your password has been successfully changed. You can now sign in with your new password.
             </CardDescription>
@@ -164,7 +164,7 @@ const ResetPassword = () => {
             <KeyRound className="h-8 w-8 text-primary" />
           </div>
           <Logo variant="dark" className="h-8 mx-auto mb-4" />
-          <CardTitle>Set New Password</CardTitle>
+          <h1 className="text-xl sm:text-2xl font-semibold leading-none tracking-tight min-w-0 truncate text-balance">Set New Password</h1>
           <CardDescription>
             Enter your new password below.
           </CardDescription>

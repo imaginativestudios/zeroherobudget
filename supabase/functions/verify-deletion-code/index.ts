@@ -109,13 +109,46 @@ const handler = async (req: Request): Promise<Response> => {
     // Verify the code
     if (storedData.code !== code) {
       const newCount = currentAttempts + 1;
-      await supabaseAdmin
+
+      // Delete-then-insert, not upsert. The only unique constraint on
+      // user_settings is (user_id, household_id, setting_key); household_id is
+      // NULL for these rows, so `onConflict: "user_id,setting_key"` matched no
+      // index and raised 42P10 on every call. The result was discarded, so the
+      // counter never incremented, currentAttempts read 0 forever, and the
+      // MAX_ATTEMPTS cap on a 6-digit code never engaged. Confirmed against
+      // production 2026-08-10.
+      //
+      // Naming all three columns does not fix it: household_id is NULL and
+      // Postgres treats NULLs as distinct, so rows would accumulate until the
+      // .maybeSingle()/.single() reads above start erroring. This is the
+      // pattern send-deletion-code already uses on the same keys.
+      const { error: attemptsDeleteError } = await supabaseAdmin
         .from("user_settings")
-        .upsert({
+        .delete()
+        .eq("user_id", user.id)
+        .eq("setting_key", "deletion_code_attempts");
+
+      const { error: attemptsInsertError } = await supabaseAdmin
+        .from("user_settings")
+        .insert({
           user_id: user.id,
           setting_key: "deletion_code_attempts",
           setting_value: { count: newCount },
-        }, { onConflict: "user_id,setting_key" });
+        });
+
+      // Fail closed. This counter is the only brute-force control on this
+      // endpoint; if it cannot be recorded, the attempt must not be treated as
+      // a normal wrong guess, or the code becomes freely guessable.
+      if (attemptsDeleteError || attemptsInsertError) {
+        console.error(
+          "verify-deletion-code: could not record failed attempt; refusing to continue",
+          attemptsDeleteError ?? attemptsInsertError
+        );
+        return new Response(
+          JSON.stringify({ error: "Verification failed" }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
 
       if (newCount >= MAX_ATTEMPTS) {
         await supabaseAdmin
@@ -139,13 +172,44 @@ const handler = async (req: Request): Promise<Response> => {
       .eq("user_id", user.id)
       .in("setting_key", ["deletion_code", "deletion_code_attempts"]);
 
-    await supabaseAdmin
+    // The security-critical half of the same defect. This upsert raised 42P10
+    // exactly like the one above, its error was discarded, and the function
+    // still returned { verified: true } -- while delete-account:58 kept
+    // returning 403 because the flag it reads was never written. Account
+    // deletion had not completed for any user since 2026-07-09, and
+    // DeleteAccountDialog.tsx clears local data *before* calling
+    // delete-account, so every attempt destroyed the user's local financial
+    // data and left the account standing.
+    //
+    // Deleting first also gives the inserted row a fresh updated_at, which is
+    // what delete-account's 10-minute freshness window is measured against.
+    const { error: flagDeleteError } = await supabaseAdmin
       .from("user_settings")
-      .upsert({
+      .delete()
+      .eq("user_id", user.id)
+      .eq("setting_key", "deletion_verified");
+
+    const { error: flagInsertError } = await supabaseAdmin
+      .from("user_settings")
+      .insert({
         user_id: user.id,
         setting_key: "deletion_verified",
         setting_value: "true",
-      }, { onConflict: "user_id,setting_key" });
+      });
+
+    // Never report success for a flag that was not written. Returning
+    // { verified: true } here while the write failed is precisely what hid this
+    // defect for a month.
+    if (flagDeleteError || flagInsertError) {
+      console.error(
+        "verify-deletion-code: could not set deletion_verified",
+        flagDeleteError ?? flagInsertError
+      );
+      return new Response(
+        JSON.stringify({ error: "Could not confirm deletion. Please request a new code and try again." }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     return new Response(
       JSON.stringify({ verified: true }),

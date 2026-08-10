@@ -115,9 +115,6 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
       // Proceed with deletion
       setIsDeleting(true);
 
-      // Clear all local data
-      clearAllUserData(user.id);
-
       // Server-side hard delete: purges rows across all user-owned tables,
       // revokes linked bank items, and deletes the auth user.
       const { error: deleteError } = await supabase.functions.invoke('delete-account', {
@@ -127,6 +124,14 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
       if (deleteError) {
         throw new Error(deleteError.message || 'Failed to delete account.');
       }
+
+      // Local data is cleared only after the server confirms the account is
+      // gone. It used to be cleared first, which made every failure
+      // destructive: while verify-deletion-code could not write its
+      // deletion_verified flag, delete-account returned 403 on every request,
+      // so each attempt wiped the user's local financial data and left the
+      // account standing. Server-first means a failure now costs nothing.
+      clearAllUserData(user.id);
 
       // Sign out the user
       await supabase.auth.signOut();

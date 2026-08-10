@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Playwright Browsers
         # chromium AND webkit: the config defines four projects, and two of them
-        # resolve to webkit (Tablet -> iPad Mini, Small Mobile -> Galaxy S III).
+        # resolve to webkit (Tablet WebKit -> iPad Mini, Small Mobile WebKit -> Galaxy S III).
         # Installing chromium alone meant those projects could never launch, so
         # half the viewport matrix was silently unexercised -- invisible until
         # the summary gate below was fixed to actually report results.

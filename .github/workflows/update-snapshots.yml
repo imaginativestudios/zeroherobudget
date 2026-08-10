@@ -34,7 +34,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       # chromium AND webkit: two of the four projects resolve to webkit
-      # (Tablet -> iPad Mini, Small Mobile -> Galaxy S III). Installing only
+      # (Tablet WebKit -> iPad Mini, Small Mobile WebKit -> Galaxy S III). Installing only
       # chromium would silently produce baselines for half the matrix.
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium webkit

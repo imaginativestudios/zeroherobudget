@@ -418,7 +418,13 @@ export function AuthModal({
           <>
             <DialogHeader className="flex flex-col items-center space-y-2">
               <Logo variant="dark" className="h-6 sm:h-8 mb-2 sm:mb-4" />
-              <DialogTitle className="text-xl sm:text-2xl font-bold text-center">Welcome to Zero Hero</DialogTitle>
+              {/* asChild so this is a real <h1>: /auth renders nothing but this
+                  modal, so it is the page's only heading and there was no
+                  document outline on the first screen many users meet.
+                  DialogTitle still supplies the dialog's accessible name. */}
+              <DialogTitle asChild>
+                <h1 className="text-xl sm:text-2xl font-bold text-center">Welcome to Zero Hero</h1>
+              </DialogTitle>
               <DialogDescription className="text-center text-sm sm:text-base">
                 Start your journey to financial freedom
               </DialogDescription>

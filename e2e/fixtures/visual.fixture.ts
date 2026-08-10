@@ -4,6 +4,15 @@ type VisualTestOptions = {
   waitForFonts?: boolean;
   hideSelectors?: string[];
   maskSelectors?: string[];
+  /**
+   * Capture the whole scrollable page rather than just the viewport.
+   *
+   * Needed wherever the thing under test lives below the fold. At 320px the
+   * viewport-only captures of transactions-page, transactions-table and
+   * transactions-empty were byte-identical -- all three photographed the same
+   * header, so the table and the empty state were not being tested at all.
+   */
+  fullPage?: boolean;
 };
 
 type VisualPage = Page & {
@@ -84,7 +93,7 @@ export const test = base.extend<{
       const projectName = base.info().project.name.toLowerCase().replace(/\s+/g, '-');
       
       await expect(page).toHaveScreenshot(`${name}-${projectName}.png`, {
-        fullPage: false,
+        fullPage: options.fullPage ?? false,
         mask: options.maskSelectors?.map((s) => page.locator(s)) || [],
       });
     };

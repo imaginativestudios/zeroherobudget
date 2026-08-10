@@ -38,10 +38,11 @@ test.describe('Visual Regression - Public Pages', () => {
     await visualPage.compareScreenshot('legal-terms');
   });
 
-  test('404 Not Found page', async ({ visualPage }) => {
-    await visualPage.goto('/this-page-does-not-exist');
-    await visualPage.compareScreenshot('404-page');
-  });
+  // '404 Not Found page' moved to the demo-mode block below. An unknown URL
+  // matches the catch-all route *inside* Layout.tsx, so an unauthenticated
+  // visitor is redirected to /auth and never sees NotFound at all. Captured
+  // from here, the baseline named 404-page was byte-identical to auth-login --
+  // and to the login-modal image from the first Linux batch.
 
   test('Help & Support page', async ({ visualPage }) => {
     await visualPage.goto('/help');
@@ -126,6 +127,11 @@ test.describe('Visual Regression - App Pages (Demo Mode)', () => {
     await visualPage.compareScreenshot('data-management');
   });
 
+  test('404 Not Found page', async ({ visualPage }) => {
+    await visualPage.gotoApp('/this-page-does-not-exist');
+    await visualPage.compareScreenshot('404-page');
+  });
+
   // 'Connector Setup page' (was /settings/connector) is deleted, not fixed.
   // There is no connector route in App.tsx -- connector import is a modal
   // inside /transactions (ConnectorReviewModal), and its behaviour is already
@@ -144,19 +150,23 @@ test.describe('Visual Regression - Empty States', () => {
     await emptyDemoData(visualPage);
   });
 
+  // fullPage on all three: at 320px the viewport-only capture is the header,
+  // which looks the same whether or not there is data behind it. Empty
+  // Transactions came back byte-identical to the seeded Transactions page.
+
   test('Empty Dashboard', async ({ visualPage }) => {
     await visualPage.gotoApp('/dashboard');
-    await visualPage.compareScreenshot('dashboard-empty');
+    await visualPage.compareScreenshot('dashboard-empty', { fullPage: true });
   });
 
   test('Empty Transactions', async ({ visualPage }) => {
     await visualPage.gotoApp('/transactions');
-    await visualPage.compareScreenshot('transactions-empty');
+    await visualPage.compareScreenshot('transactions-empty', { fullPage: true });
   });
 
   test('Empty Budget', async ({ visualPage }) => {
     await visualPage.gotoApp('/budgets');
-    await visualPage.compareScreenshot('budget-empty');
+    await visualPage.compareScreenshot('budget-empty', { fullPage: true });
   });
 });
 
@@ -186,22 +196,31 @@ test.describe('Visual Regression - Responsive Tables', () => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
     expect(hasHorizontalOverflow).toBe(false);
-    await visualPage.compareScreenshot('transactions-table');
+    // fullPage: the table is the subject and it sits below the fold on narrow
+    // viewports, where this baseline was otherwise identical to the plain
+    // transactions-page capture.
+    await visualPage.compareScreenshot('transactions-table', { fullPage: true });
   });
 
-  test('Debt page Payment Schedule tab', async ({ visualPage }) => {
+  // Both of these clicked `getByRole('tab')` on /debts. That page has no tabs
+  // and never has -- neither test has ever produced a baseline, and
+  // continue-on-error in the snapshot workflow hid that they were failing.
+
+  test('Debt page Payment Schedule', async ({ visualPage }) => {
     await visualPage.gotoApp('/debts');
-    await visualPage.getByRole('tab', { name: /payment schedule/i }).click();
+    // A CollapsibleTrigger, collapsed by default -- a button, not a tab.
+    await visualPage.getByRole('button', { name: /payment schedule/i }).click();
     await visualPage.waitForPageReady();
-    await visualPage.compareScreenshot('debt-payment-schedule');
+    await visualPage.compareScreenshot('debt-payment-schedule', { fullPage: true });
   });
 
-  test('Debt page Compare Strategies tab', async ({ visualPage }) => {
-    await visualPage.gotoApp('/debts');
-    await visualPage.getByRole('tab', { name: /compare/i }).click();
-    await visualPage.waitForPageReady();
-    await visualPage.compareScreenshot('debt-compare-strategies');
-  });
+  // 'Debt page Compare Strategies tab' is deleted. There is no compare-strategies
+  // control on /debts: StrategyComparison renders inline and only when
+  // `activeDebts.length > 0 && comparison.interestSaved > 0 && strategy !== 'Avalanche'`
+  // (DebtSnowball.tsx:316). A baseline gated on that combination would be
+  // flaky by construction. Coverage gap worth a deliberate decision rather
+  // than a test that clicks something that does not exist.
+
 });
 
 test.describe('Visual Regression - Form States', () => {
@@ -233,11 +252,10 @@ test.describe('Visual Regression - Navigation', () => {
     await visualPage.compareScreenshot('mobile-nav-open');
   });
 
-  test('Sidebar expanded state', async ({ visualPage }) => {
-    const viewport = visualPage.viewportSize();
-    test.skip(!viewport || viewport.width < 1024, 'Desktop viewports only');
-
-    await visualPage.gotoApp('/dashboard');
-    await visualPage.compareScreenshot('sidebar-expanded');
-  });
+  // 'Sidebar expanded state' is deleted. It navigated to /dashboard and
+  // screenshotted without expanding anything, so its baseline was byte-identical
+  // to the dashboard baseline -- two names for one image. The desktop sidebar is
+  // expanded by default and the dashboard capture already covers it. If a
+  // collapsed/expanded distinction is worth testing, it needs a test that
+  // actually toggles the control.
 });

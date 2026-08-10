@@ -4,11 +4,21 @@ type VisualTestOptions = {
   waitForFonts?: boolean;
   hideSelectors?: string[];
   maskSelectors?: string[];
+  /**
+   * Capture the whole scrollable page rather than just the viewport.
+   *
+   * Needed wherever the thing under test lives below the fold. At 320px the
+   * viewport-only captures of transactions-page, transactions-table and
+   * transactions-empty were byte-identical -- all three photographed the same
+   * header, so the table and the empty state were not being tested at all.
+   */
+  fullPage?: boolean;
 };
 
 type VisualPage = Page & {
   compareScreenshot: (name: string, options?: VisualTestOptions) => Promise<void>;
   waitForPageReady: () => Promise<void>;
+  gotoApp: (path: string) => Promise<void>;
 };
 
 export const test = base.extend<{
@@ -40,6 +50,32 @@ export const test = base.extend<{
       });
     };
 
+    // Navigate to a route that lives behind Layout.tsx's demo/auth gate, and
+    // refuse to continue if the app bounced us to /auth.
+    //
+    // Without this check a gated route silently renders the sign-in modal, the
+    // screenshot succeeds, and --update-snapshots writes that modal in as the
+    // approved appearance of the page. That is not hypothetical: the first
+    // batch of Linux baselines contained 69 files that were the same four
+    // pictures of this modal, because the spec navigated to /explore-demo --
+    // a route that does not exist -- and never noticed.
+    //
+    // Fail loudly here so the mistake can never reach a baseline again.
+    visualPage.gotoApp = async (path: string) => {
+      await page.goto(path);
+      await page.waitForLoadState('networkidle');
+
+      const { pathname, search } = new URL(page.url());
+      if (pathname.startsWith('/auth')) {
+        throw new Error(
+          `gotoApp("${path}") ended up at ${pathname}${search}. The app redirected to auth, ` +
+            `which means demo mode was not active for this test. Call seedDemoData(page) in a ` +
+            `beforeEach before navigating to gated routes. Screenshotting from here would bake ` +
+            `a login modal into the baseline for "${path}".`
+        );
+      }
+    };
+
     // Take and compare screenshot
     visualPage.compareScreenshot = async (name: string, options: VisualTestOptions = {}) => {
       await visualPage.waitForPageReady();
@@ -57,7 +93,7 @@ export const test = base.extend<{
       const projectName = base.info().project.name.toLowerCase().replace(/\s+/g, '-');
       
       await expect(page).toHaveScreenshot(`${name}-${projectName}.png`, {
-        fullPage: false,
+        fullPage: options.fullPage ?? false,
         mask: options.maskSelectors?.map((s) => page.locator(s)) || [],
       });
     };

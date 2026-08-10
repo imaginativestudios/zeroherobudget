@@ -54,8 +54,25 @@ export default defineConfig({
     //
     // Total runs: 572 -> 263. Add a spec here only if its result can differ by
     // viewport; visual-regression snapshots remain per-project either way.
+    // ENGINE, NOT JUST WIDTH: these two projects run **WebKit**, not Chromium.
+    // devices['iPad Mini'] and devices['Galaxy S III'] both carry
+    // defaultBrowserType: 'webkit'. The names used to be 'Tablet' and 'Small
+    // Mobile', which said nothing about the engine, so results and baselines
+    // from them were being read as though they came from mobile Chrome. The
+    // engine is in the name now, and therefore in every baseline filename.
+    // Two consequences worth knowing before reading any result from them:
+    //
+    //   - Their visual baselines are WebKit renders. A pixel difference against
+    //     Desktop/Mobile Chrome may be an engine difference, not a regression.
+    //   - Keyboard behaviour differs. Safari does not Tab to every control by
+    //     default, so a keyboard sweep here reports far fewer stops than
+    //     Chromium and looks like a catastrophic a11y failure. It is not.
+    //     Confirmed 2026-08-05 by running the same sweep in five configurations,
+    //     including iPad Mini emulation forced into Chromium.
+    //
+    // The snapshot workflow installs both chromium and webkit for this reason.
     {
-      name: 'Tablet',
+      name: 'Tablet WebKit',
       testMatch: VIEWPORT_SENSITIVE_SPECS,
       use: {
         ...devices['iPad Mini'],
@@ -68,9 +85,9 @@ export default defineConfig({
       testMatch: VIEWPORT_SENSITIVE_SPECS,
       use: { ...devices['Pixel 5'] },
     },
-    // Small Mobile (320px - Galaxy Fold)
+    // Small Mobile WebKit (320px - Galaxy Fold, webkit engine)
     {
-      name: 'Small Mobile',
+      name: 'Small Mobile WebKit',
       testMatch: VIEWPORT_SENSITIVE_SPECS,
       use: {
         ...devices['Galaxy S III'],

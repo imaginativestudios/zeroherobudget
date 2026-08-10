@@ -207,7 +207,15 @@ const ComingSoon = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="flex-1 relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                    {/* A placeholder is not an accessible name, and it
+                        disappears the moment the user types. This is the
+                        site's primary conversion action and it was an
+                        unlabelled edit field to a screen reader. */}
+                    <label htmlFor="waitlist-email" className="sr-only">
+                      Email address
+                    </label>
                     <Input
+                      id="waitlist-email"
                       type="email"
                       placeholder="Enter your email"
                       value={email}

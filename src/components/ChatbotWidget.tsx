@@ -222,8 +222,15 @@ export const ChatbotWidget = () => {
         className={cn(
           "absolute bottom-16 right-0 w-[90vw] max-w-[380px] transition-all duration-300 ease-in-out origin-bottom-right",
           isOpen
-            ? "scale-100 opacity-100 pointer-events-auto"
-            : "scale-95 opacity-0 pointer-events-none"
+            ? "visible scale-100 opacity-100 pointer-events-auto"
+            // `invisible` (visibility: hidden) is what removes the panel's
+            // seven controls from the tab order and the accessibility tree.
+            // opacity-0 hides it visually and pointer-events-none blocks the
+            // mouse, but neither affects the keyboard -- so focus verifiably
+            // landed on the chat input of an aria-hidden dialog, on every
+            // route in the app. visibility also transitions discretely at the
+            // end of the 300ms fade, so the animation is unchanged.
+            : "invisible scale-95 opacity-0 pointer-events-none"
         )}
       >
         <div className="bg-card border border-border rounded-lg shadow-2xl flex flex-col h-[450px] max-h-[80vh] relative">

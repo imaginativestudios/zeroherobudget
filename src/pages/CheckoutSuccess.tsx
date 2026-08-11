@@ -133,7 +133,7 @@ const CheckoutSuccess = () => {
                   subscription was found. Visually hidden: a display-size
                   heading over a spinner would be wrong, but the outline has to
                   exist in every state, not just the happy one. */}
-              <h1 className="sr-only">Confirming your subscription</h1>
+              <h1 className="sr-only">Checkout status</h1>
               <Loader2 className="h-12 w-12 animate-spin text-white mx-auto mb-4" />
               <p className="text-white/80">Confirming your subscription...</p>
             </div>
@@ -263,7 +263,7 @@ const CheckoutSuccess = () => {
               animate={{ opacity: 1 }}
               className="text-center"
             >
-              <h1 className="sr-only">No active subscription found</h1>
+              <h1 className="sr-only">Checkout status</h1>
               <p className="text-white/80 mb-4">No active subscription found.</p>
               <Button 
                 variant="secondary"

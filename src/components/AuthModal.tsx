@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { STRIPE_PRICES } from '@/lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -418,13 +419,27 @@ export function AuthModal({
           <>
             <DialogHeader className="flex flex-col items-center space-y-2">
               <Logo variant="dark" className="h-6 sm:h-8 mb-2 sm:mb-4" />
-              {/* asChild so this is a real <h1>: /auth renders nothing but this
-                  modal, so it is the page's only heading and there was no
-                  document outline on the first screen many users meet.
-                  DialogTitle still supplies the dialog's accessible name. */}
-              <DialogTitle asChild>
-                <h1 className="text-xl sm:text-2xl font-bold text-center">Welcome to Zero Hero</h1>
-              </DialogTitle>
+              {/* A real <h1>: /auth renders nothing but this modal, so it is
+                  the page's only heading and there was no document outline on
+                  the first screen many users meet.
+
+                  DialogPrimitive.Title rather than our styled DialogTitle, and
+                  the classes spelled out in full. DialogTitle injects
+                  "text-lg font-semibold leading-none tracking-tight" through
+                  cn(), which runs tailwind-merge and drops the losers. Radix's
+                  Slot does not merge, it concatenates -- so with
+                  <DialogTitle asChild> both font-semibold and font-bold
+                  survived, font-semibold won in the stylesheet, and the title
+                  silently rendered at weight 600 instead of 700. The visual
+                  baseline caught it: 115 pixels, one line of text.
+
+                  Going through the primitive means no classes are injected and
+                  what is written here is what renders. */}
+              <DialogPrimitive.Title asChild>
+                <h1 className="tracking-tight text-xl sm:text-2xl font-bold text-center">
+                  Welcome to Zero Hero
+                </h1>
+              </DialogPrimitive.Title>
               <DialogDescription className="text-center text-sm sm:text-base">
                 Start your journey to financial freedom
               </DialogDescription>

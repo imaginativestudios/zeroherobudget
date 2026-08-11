@@ -35,8 +35,18 @@ jobs:
 
       - name: Run Playwright tests with coverage
         id: playwright
-        run: npx playwright test --reporter=json > test-results.json || true
+        # The json reporter writes to a FILE via PLAYWRIGHT_JSON_OUTPUT_NAME
+        # instead of stdout, which frees stdout for `list` (progress in the log)
+        # and lets `html` build a browsable report. Both are then uploaded.
+        #
+        # Verified locally before this was changed: the file parses, carries the
+        # `stats` block the gate step below reads, and contains every test title
+        # with its pass/fail state. A gate that silently stops parsing is a
+        # failure this repo has already had once.
+        run: npx playwright test --reporter=list,json,html || true
         env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results.json
+          PLAYWRIGHT_HTML_OPEN: never
           COVERAGE: 'true'
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -193,6 +203,18 @@ jobs:
               });
             }
 
+      # WHICH tests failed, not just how many. Without this the names live only
+      # in a file inside a container that is then destroyed, and reconstructing
+      # a regression means checking out both sides of a merge and re-running the
+      # suite locally -- which is exactly what a 13-test regression on main cost
+      # before this step existed.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-json
+          path: test-results.json
+          retention-days: 30
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -208,14 +230,14 @@ jobs:
           retention-days: 30
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()   # was failure(): never fired, the job is still green at this point
         with:
           name: test-results
           path: test-results/
           retention-days: 7
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()   # was failure(): never fired, the job is still green at this point
         with:
           name: visual-regression-diffs
           path: |

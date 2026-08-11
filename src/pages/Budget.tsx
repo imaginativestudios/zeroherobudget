@@ -46,7 +46,7 @@ export const Budget = () => {
   // Secondary: Load transactions for actuals comparison
   const {
     transactions,
-    getMonthlyActualsByCategory,
+    getMonthlyActualsBreakdown,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
   const [budgetSeeded, setBudgetSeeded] = useUserLocalStorage('budget_seeded', false);
@@ -75,7 +75,12 @@ export const Budget = () => {
 
   const isCriticalLoading = isLoadingExpenses;
   const isSecondaryLoading = isLoadingTransactions;
-  const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
+  // Both from one pass, so the count under "Spent" can never disagree with the
+  // figure above it. transactionCount was previously never passed at all: the
+  // prop defaults to 0, so the card read "No transactions yet" permanently --
+  // beside a real spend total once the demo flow literals were fixed.
+  const { actuals: monthlyActuals, transactionCount } =
+    getMonthlyActualsBreakdown(selectedMonth, expenses);
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
@@ -270,6 +275,7 @@ export const Budget = () => {
         income={income}
         selectedMonth={selectedMonth}
         budgetItemCount={expenses.length}
+        transactionCount={transactionCount}
         onScrollToBudget={scrollToBudget}
       />
 

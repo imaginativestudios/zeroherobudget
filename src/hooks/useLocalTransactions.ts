@@ -240,12 +240,24 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
     return actuals;
   };
 
-  const getMonthlyActualsByCategory = (
+  /**
+   * The actuals, and the number of transactions behind them, from one pass.
+   *
+   * One traversal on purpose. BudgetOverviewCard prints the count directly
+   * under the Spent figure, so a count derived by a second, separately-written
+   * filter would eventually disagree with the number above it -- and a label
+   * that contradicts its own figure is worse than no label at all. The
+   * qualifying set is narrower than "transactions this month": an outflow only
+   * counts if it maps to a budget category, which is the same condition that
+   * lets it contribute to the total.
+   */
+  const getMonthlyActualsBreakdown = (
     month: Date | string,
     categoryMap: Record<string, string> | any[]
-  ): MonthlyActuals => {
+  ): { actuals: MonthlyActuals; transactionCount: number } => {
     const monthTransactions = getTransactionsByMonth(month);
     const actuals: MonthlyActuals = {};
+    let transactionCount = 0;
 
     const expenseMap: Record<string, string> = Array.isArray(categoryMap)
       ? categoryMap.reduce((acc, exp) => ({ ...acc, [exp.category]: exp.id }), {})
@@ -256,12 +268,18 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
         const expenseId = t.expense_id || expenseMap[t.category];
         if (expenseId) {
           actuals[expenseId] = (actuals[expenseId] || 0) + t.amount;
+          transactionCount += 1;
         }
       }
     });
 
-    return actuals;
+    return { actuals, transactionCount };
   };
+
+  const getMonthlyActualsByCategory = (
+    month: Date | string,
+    categoryMap: Record<string, string> | any[]
+  ): MonthlyActuals => getMonthlyActualsBreakdown(month, categoryMap).actuals;
 
   const getTotalActualSpending = (month: Date | string): number => {
     const monthTransactions = getTransactionsByMonth(month);
@@ -281,6 +299,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
     getTransactionsByMonth,
     getMonthlyActuals,
     getMonthlyActualsByCategory,
+    getMonthlyActualsBreakdown,
     getTotalActualSpending,
   };
 }

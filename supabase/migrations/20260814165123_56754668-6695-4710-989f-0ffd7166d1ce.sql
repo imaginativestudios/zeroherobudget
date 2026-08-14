@@ -1,0 +1,2 @@
+UPDATE auth.users SET email_confirmed_at = now() WHERE email = 'test@zeroherobudget.com' AND email_confirmed_at IS NULL;
+UPDATE public.profiles SET beta_access = true WHERE id = '1548d60d-2b89-46b0-92f2-94b0d26da336';

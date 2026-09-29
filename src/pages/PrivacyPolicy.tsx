@@ -68,9 +68,9 @@ const PrivacyPolicy = () => {
               <li>Your password (encrypted — we can never see it)</li>
             </ul>
 
-            <h3 className="text-xl font-semibold mt-6 mb-3">Financial Data (Stored Locally)</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-3">Financial Data</h3>
             <p className="text-foreground/80 leading-relaxed mb-2">
-              Your financial information is stored on your device, not on our servers. This includes:
+              When you use Zero Hero, you enter or import the following financial information:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>Budget categories and expense amounts</li>
@@ -122,8 +122,8 @@ const PrivacyPolicy = () => {
               Zero Hero uses a <strong>hybrid storage model</strong>:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4 mb-4">
-              <li><strong>On your device:</strong> All financial data (budgets, debts, transactions, linked account info) is stored locally in your browser's storage. Our servers cannot access this data.</li>
-              <li><strong>On our servers (Supabase):</strong> Only your account profile (email, name), authentication tokens, subscription status, and household membership info. This is necessary to let you log in and manage your subscription.</li>
+              <li><strong>On your device:</strong> The app keeps a working copy of your data in your browser's storage so it loads fast and works offline. This copy is cleared when you sign out. In demo mode (no account), everything stays only on your device and never reaches our servers.</li>
+              <li><strong>On our servers (Supabase):</strong> When you're signed in, your budgets, debts, transactions, subscription tracking, and linked account summaries are stored in our database so they're available across your devices and can be shared with household members you invite. We also store your account profile (email, name), subscription status, and household membership info.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Security Measures</h3>
@@ -233,9 +233,10 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Data Retention</h2>
             <p className="text-foreground/80 leading-relaxed">
-              We keep your server-side account data only as long as you have an active account. When you delete your account, 
-              we remove your data within 30 days, except where we're legally required to retain it. Your locally stored 
-              financial data is deleted immediately when you clear it or uninstall.
+              We keep your account and financial data on our servers as long as your account exists. When you delete your account,
+              your data is removed from our systems, except where we're legally required to retain it. The local copy on your
+              device is cleared when you sign out, and you can also clear it yourself through your browser's site-data settings.
+              Demo-mode data stays on your device until you clear it.
             </p>
           </section>
 

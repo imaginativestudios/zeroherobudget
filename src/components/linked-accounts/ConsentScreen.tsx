@@ -25,7 +25,7 @@ export function ConsentScreen({ onConsent, onCancel }: ConsentScreenProps) {
           <CardContent className="flex gap-3 py-4">
             <Smartphone className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm text-foreground">Stored based on how you use Zero Hero</p>
+              <p className="font-medium text-sm text-foreground">Stored with your account</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 When signed in, basic linked-account details are stored in your account and synced. In demo mode, they stay on this device.
               </p>

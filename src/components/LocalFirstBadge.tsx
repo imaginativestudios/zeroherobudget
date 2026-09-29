@@ -31,7 +31,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
           Never sold
         </span>
         <span className="px-2 py-1 rounded-full bg-success/10 text-success">
-          Account controls
+          Delete anytime
         </span>
         <span className="px-2 py-1 rounded-full bg-success/10 text-success">
           Works offline

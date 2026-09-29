@@ -3,6 +3,7 @@ import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { clearDemoData, isDemoDataLoaded } from '@/lib/demoDataLoader';
+import { clearAllUserData } from '@/lib/dataClear';
 
 export interface AuthState {
   user: User | null;
@@ -99,7 +100,18 @@ export const useRealAuth = () => {
   };
 
   const signOut = async () => {
+    // Capture before any await — user becomes null once the session ends.
+    const uid = state.user?.id;
+    if (uid) {
+      try {
+        clearAllUserData(uid);
+      } catch (err) {
+        console.error('Local data clear failed on sign-out', err);
+      }
+    }
+
     const { error } = await supabase.auth.signOut();
+    
     
     if (!error) {
       toast({

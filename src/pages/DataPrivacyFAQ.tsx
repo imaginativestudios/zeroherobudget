@@ -135,7 +135,7 @@ export default function DataPrivacyFAQ() {
                 <div className="rounded-full bg-background p-4 shadow-lg">
                   <Lock className="h-10 w-10 text-primary" />
                 </div>
-                <p className="mt-2 font-medium text-sm">Only you</p>
+                <p className="mt-2 font-medium text-sm">Your control</p>
                 <p className="mt-1 max-w-40 text-xs text-muted-foreground">Shared only with the services you use, never sold</p>
               </div>
             </div>

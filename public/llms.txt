@@ -65,7 +65,7 @@ Zero Hero is a progressive web app (PWA) for personal finance management. It use
 - Financial tips and educational content
 
 ### Data Management
-- Local-first data storage (works offline)
+- Browser working copy for offline use; signed-in data syncs through Supabase, while demo-mode data stays on the device
 - JSON backup export/import
 - Account deletion with email verification
 - Demo mode with sample data

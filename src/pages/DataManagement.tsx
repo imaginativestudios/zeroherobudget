@@ -178,20 +178,20 @@ export default function DataManagement() {
               <Shield className="h-8 w-8 text-primary" aria-hidden="true" />
             </div>
             <div className="flex-1 space-y-2">
-              <h3 className="text-lg font-semibold">Privacy-First by Design</h3>
+              <h3 className="text-lg font-semibold">Your data, under your control</h3>
               <p className="text-muted-foreground">
-                Your financial data never leaves your device. We don't have servers storing your information, 
-                and we can't see your transactions, debts, or budget. This means you're in complete control.
+                Signed-in data is stored in your account and synced across devices, with a local working copy
+                for offline use. Demo-mode data stays on this device.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Badge variant="secondary" className="gap-1">
-                  <Shield className="h-3 w-3" /> No cloud storage
-                </Badge>
-                <Badge variant="secondary" className="gap-1">
-                  <Shield className="h-3 w-3" /> No tracking
-                </Badge>
-                <Badge variant="secondary" className="gap-1">
                   <Shield className="h-3 w-3" /> Works offline
+                </Badge>
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" /> Never sold
+                </Badge>
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" /> Delete your data
                 </Badge>
               </div>
               <a 

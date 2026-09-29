@@ -32,14 +32,14 @@ const PrivacyPolicy = () => {
           </div>
           <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
           <p className="text-muted-foreground">
-            Last Updated: March 25, 2026
+            Last Updated: September 29, 2026
           </p>
         </div>
 
         {/* Privacy Content */}
         <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
           {/* Introduction */}
-          <section className="bg-card border border-border rounded-lg p-6">
+          <section id="data-sharing" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <Eye className="h-6 w-6 text-primary" />
               Introduction
@@ -52,7 +52,7 @@ const PrivacyPolicy = () => {
           </section>
 
           {/* Information We Collect */}
-          <section className="bg-card border border-border rounded-lg p-6">
+          <section id="data-retention" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <Database className="h-6 w-6 text-primary" />
               Information We Collect

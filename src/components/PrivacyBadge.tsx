@@ -18,7 +18,7 @@ export function PrivacyBadge({ className, variant = "default" }: PrivacyBadgePro
         )}
       >
         <Shield className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>Your data stays local</span>
+        <span>Privacy &amp; your data</span>
       </Link>
     );
   }
@@ -26,7 +26,7 @@ export function PrivacyBadge({ className, variant = "default" }: PrivacyBadgePro
   return (
     <div className={cn("flex items-center gap-2 text-sm text-muted-foreground", className)}>
       <Shield className="h-4 w-4 text-primary" aria-hidden="true" />
-      <span>Data stored locally on your device</span>
+      <span>Your account data syncs across devices</span>
       <Link 
         to="/data-privacy" 
         className="text-primary hover:underline text-xs"

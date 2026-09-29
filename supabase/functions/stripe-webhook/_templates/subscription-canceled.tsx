@@ -65,7 +65,7 @@ export const SubscriptionCanceledEmail: React.FC<SubscriptionCanceledEmailProps>
                 ✓ You'll have full access until <strong>{formattedEndDate}</strong>
               </Text>
               <Text style={infoBoxItem}>
-                ✓ Your data remains safely stored and secure
+                ✓ Your account data remains available if you resubscribe
               </Text>
               <Text style={infoBoxItem}>
                 ✓ You can resubscribe anytime to pick up where you left off

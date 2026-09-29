@@ -262,7 +262,7 @@ const ComingSoon = () => {
           >
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
-              <span>Local-First Privacy</span>
+              <span>Privacy &amp; data controls</span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
@@ -386,8 +386,8 @@ const ComingSoon = () => {
                 icon: Zap,
               },
               {
-                title: 'Local-First Privacy',
-                description: 'Your data stays on your device, always',
+                title: 'Privacy & data controls',
+                description: 'Works offline and syncs when you sign in',
                 icon: Shield,
               },
             ].map((feature, idx) => (

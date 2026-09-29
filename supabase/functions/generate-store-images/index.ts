@@ -12,7 +12,7 @@ CENTER COMPOSITION:
 - Below logo: A minimalist white shield icon with a teal lock symbol inside.
 - Below shield: "CONNECTOR" in smaller white sans-serif tracking.
 
-Bottom area: Tagline "Privacy-First Budgeting" in gold/amber (#F4A259) text.
+Bottom area: Tagline "Clear, Controlled Budgeting" in gold/amber (#F4A259) text.
 
 Style: Premium, sophisticated adventure aesthetic. Clean and professional.
 No busy backgrounds, no people. Ultra high resolution.`,
@@ -28,9 +28,9 @@ LEFT SIDE (40%):
 RIGHT SIDE (60%):
 - TOP: "ZERO HERO" as the main brand logo in elegant white serif font (like Cinzel or Playfair Display). The zero should be a slashed "Ø" character for distinctive branding.
 - BELOW LOGO: "CONNECTOR" in smaller white uppercase letters with wide tracking.
-- TAGLINE: "Privacy-First Budgeting" in gold/amber (#F4A259) italic text.
-- BULLET POINTS in white: "• Local-first data • Bank-grade security • You control everything"
-- FOOTER TEXT: "100% local. You control your data." in gray text.
+- TAGLINE: "Clear, Controlled Budgeting" in gold/amber (#F4A259) italic text.
+- BULLET POINTS in white: "• Works offline • Syncs when signed in • You control your data"
+- FOOTER TEXT: "Your budget. Your account. Your control." in gray text.
 
 Style: Sophisticated adventure aesthetic, premium feel, trust-inspiring.
 Clean edges with ample padding (no text near borders).

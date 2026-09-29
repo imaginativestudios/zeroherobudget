@@ -24,10 +24,10 @@ export function DisconnectDialog({ account, onClose, onConfirm }: DisconnectDial
           <AlertDialogTitle>Disconnect {account?.institutionName}?</AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <span className="block">
-              This will remove <strong>{account?.maskedAccountName}</strong> from your device.
+              This will disconnect <strong>{account?.maskedAccountName}</strong>.
             </span>
             <span className="block">
-              All locally stored data for this connection will be permanently deleted. No data was ever stored on our servers.
+              Data for this connection will be permanently removed from your account and this device.
             </span>
             <span className="block">
               You can always re-link this account later.

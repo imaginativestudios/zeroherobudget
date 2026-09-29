@@ -25,9 +25,9 @@ export function PrivacyNotice() {
     <InlineAlert variant="info" className="relative pr-12">
       <div className="flex flex-col sm:flex-row sm:items-center gap-2">
         <div className="flex-1">
-          <span className="font-medium">Your financial data stays on your device.</span>
+          <span className="font-medium">Signed-in data syncs securely with your account.</span>
           <span className="text-muted-foreground ml-1">
-            We never see or store your information.
+            Demo-mode data stays on this device.
           </span>
         </div>
         <Link 

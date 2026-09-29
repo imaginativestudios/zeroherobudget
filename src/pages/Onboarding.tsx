@@ -332,7 +332,7 @@ export default function Onboarding() {
                       </div>
 
                       <HeroTip>
-                        Don't worry, this stays on your device. We use this to calculate how many hours of work you're 'buying back' from the banks.
+                        We use this to calculate how many hours of work you're 'buying back' from the banks.
                       </HeroTip>
                     </div>
                   )}
@@ -647,7 +647,7 @@ export default function Onboarding() {
           </button>
         )}
         <p className="text-xs text-muted-foreground">
-          Your data stays on your device.{' '}
+          Learn how your data is stored and protected.{' '}
           <Link to="/privacy" className="underline hover:text-foreground">
             Learn more
           </Link>

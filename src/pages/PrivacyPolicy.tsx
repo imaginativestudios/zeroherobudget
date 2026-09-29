@@ -152,9 +152,9 @@ const PrivacyPolicy = () => {
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4 mb-4">
               <li><strong>Your bank credentials stay with Plaid.</strong> When you link an account, you log in through Plaid's secure interface. Zero Hero never sees or stores your bank username or password.</li>
-              <li><strong>We only receive basic account info.</strong> After you connect, Plaid sends us the account name, type, last 4 digits, and balance. This data is stored locally on your device.</li>
+              <li><strong>We only receive basic account info.</strong> After you connect, Plaid sends us the account name, type, last 4 digits, balance, and transactions. When you are signed in, this account and transaction data is stored in our database (hosted by Supabase) so it is available across your devices. In demo mode, data stays only on your device.</li>
               <li><strong>No full account numbers.</strong> We do not receive or store full account numbers, routing numbers, or any credentials.</li>
-              <li><strong>Disconnect anytime.</strong> You can unlink any account at any time, which permanently removes all data for that account from your device.</li>
+              <li><strong>Disconnect anytime.</strong> You can unlink any account at any time, which removes that account's data.</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed">
               Plaid has its own privacy policy that governs how they handle your bank data. You can review it at{" "}
@@ -166,17 +166,31 @@ const PrivacyPolicy = () => {
           <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Data Sharing and Third Parties</h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              We do not sell, trade, or rent your personal information. We only share data with these trusted service providers:
+              We do not sell, trade, or rent your personal information. We share data only with the service providers below, and only what each needs to do its job:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
-              <li><strong>Supabase:</strong> Hosts your account profile and authentication data</li>
-              <li><strong>Stripe:</strong> Processes subscription payments securely</li>
-              <li><strong>Plaid:</strong> Handles bank account connections (only if you choose to link an account)</li>
-              <li><strong>Household members:</strong> Data you explicitly choose to share within a household</li>
+              <li><strong>Stripe:</strong> Processes subscription payments. Stripe receives your email address and payment details so it can bill you; we never see your full card number.</li>
+              <li><strong>Plaid:</strong> Connects your bank account, only if you choose to link one. Plaid receives your bank login directly and sends us account and transaction information so the app can show your real spending.</li>
+              <li><strong>Supabase:</strong> Hosts our database and sign-in system. When you are signed in, it stores your account profile and your account, transaction, budget, debt, and subscription records so your data is available on any device.</li>
+              <li><strong>Google (Gemini, via the Lovable AI Gateway):</strong> Powers our AI features. It receives a pseudonymous financial snapshot — monthly income, budget categories and amounts, debts with balance and APR, 3-month spending averages, upcoming bill names and amounts, transaction descriptions for categorization, and questions you ask the chat assistant. It never receives your name, email address, or account numbers. This lets us suggest budgets and categories tailored to your numbers.</li>
+              <li><strong>Resend:</strong> Sends our transactional emails, such as waitlist confirmations, account deletion codes, and household invitations. Resend receives your email address so the message can reach you.</li>
+              <li><strong>ipwho.is:</strong> Looks up the country of your IP address each time you start checkout. It receives your IP address so we can confirm the service is available in your region (currently the US).</li>
+              <li><strong>Household members:</strong> Data you explicitly choose to share within a household.</li>
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
               We may also share information when required by law, court order, or to protect the rights and safety of our users.
             </p>
+          </section>
+
+          {/* How We Use AI */}
+          <section className="bg-card border border-border rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">How We Use AI</h2>
+            <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+              <li><strong>Which features use AI:</strong> Budget drafting, transaction categorization, and the Zora chat assistant.</li>
+              <li><strong>What is sent:</strong> Financial figures and category names only, in pseudonymous form.</li>
+              <li><strong>What is not sent:</strong> Your name, email address, account numbers, or Plaid credentials. Free-text fields are length-capped and escaped before sending.</li>
+              <li><strong>It's a suggestion:</strong> AI output is a suggestion you can edit or ignore. It is not financial advice.</li>
+            </ul>
           </section>
 
           {/* Your Rights */}

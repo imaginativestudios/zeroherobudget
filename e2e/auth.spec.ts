@@ -59,3 +59,31 @@ test.describe('Authentication Flow', () => {
     await expect(page.getByText(/check.*email|confirmation|verify/i)).toBeVisible({ timeout: 10000 });
   });
 });
+
+test.describe('Sign-out clears local data', () => {
+  test.skip(!process.env.TEST_USER_EMAIL, 'TEST_USER_EMAIL not set');
+
+  test('no user-prefixed localStorage keys remain after sign-out', async ({ page }) => {
+    await page.goto('/auth');
+    await page.getByLabel(/email/i).fill(process.env.TEST_USER_EMAIL!);
+    await page.getByLabel(/password/i).fill(process.env.TEST_USER_PASSWORD || '');
+    await page.getByRole('button', { name: /sign in/i }).click();
+    await page.waitForURL(/dashboard|onboarding/);
+
+    const uid = await page.evaluate(() => {
+      const key = Object.keys(localStorage).find(k => /^sb-.*-auth-token$/.test(k));
+      return key ? JSON.parse(localStorage.getItem(key)!).user?.id : null;
+    });
+    expect(uid).toBeTruthy();
+
+    await page.getByRole('button', { name: /sign out|log out/i }).first().click();
+    await expect.poll(() => page.evaluate(() =>
+      Object.keys(localStorage).some(k => /^sb-.*-auth-token$/.test(k)))).toBe(false);
+
+    const remaining = await page.evaluate(
+      (id) => Object.keys(localStorage).filter(k => k.startsWith(id)),
+      uid,
+    );
+    expect(remaining).toHaveLength(0);
+  });
+});

@@ -352,7 +352,7 @@ export const Layout = ({ children }: LayoutProps) => {
           {children}
         </div>
         
-        {/* Footer with Local-First Badge */}
+        {/* Footer with privacy badge */}
         <footer className="mt-auto pt-8 pb-4 text-center border-t border-border/50">
           <div className="flex flex-col items-center gap-3">
             <LocalFirstBadge variant="footer" />

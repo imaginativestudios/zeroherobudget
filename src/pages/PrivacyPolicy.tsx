@@ -39,7 +39,7 @@ const PrivacyPolicy = () => {
         {/* Privacy Content */}
         <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
           {/* Introduction */}
-          <section id="data-sharing" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
+          <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <Eye className="h-6 w-6 text-primary" />
               Introduction
@@ -52,7 +52,7 @@ const PrivacyPolicy = () => {
           </section>
 
           {/* Information We Collect */}
-          <section id="data-retention" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
+          <section className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <Database className="h-6 w-6 text-primary" />
               Information We Collect
@@ -163,7 +163,7 @@ const PrivacyPolicy = () => {
           </section>
 
           {/* Data Sharing and Third Parties */}
-          <section className="bg-card border border-border rounded-lg p-6">
+          <section id="data-sharing" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
             <h2 className="text-2xl font-semibold mb-4">Data Sharing and Third Parties</h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
               We do not sell, trade, or rent your personal information. We share data only with the service providers below, and only what each needs to do its job:
@@ -230,7 +230,7 @@ const PrivacyPolicy = () => {
           </section>
 
           {/* Data Retention */}
-          <section className="bg-card border border-border rounded-lg p-6">
+          <section id="data-retention" className="bg-card border border-border rounded-lg p-6 scroll-mt-24">
             <h2 className="text-2xl font-semibold mb-4">Data Retention</h2>
             <p className="text-foreground/80 leading-relaxed">
               We keep your account and financial data on our servers as long as your account exists. When you delete your account,

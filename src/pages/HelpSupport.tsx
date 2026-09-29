@@ -352,14 +352,14 @@ const HelpSupport = () => {
                 <AccordionItem value="privacy-1">
                   <AccordionTrigger>Is my financial data secure?</AccordionTrigger>
                   <AccordionContent>
-                    Yes! We take security seriously. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We use industry-standard security practices including regular security audits, secure authentication, and data isolation. We never store bank account credentials.
+                    Signed-in data is stored in our Supabase-hosted database and protected through authenticated access and row-level access rules. We do not receive your bank login credentials.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="privacy-2">
                   <AccordionTrigger>Do you sell my data to third parties?</AccordionTrigger>
                   <AccordionContent>
-                    Never. We do not sell, rent, or share your personal or financial data with third parties for marketing purposes. Your data is yours. We only share data when required by law or with service providers essential to operating Zero Hero (and only under strict confidentiality agreements).
+                    We do not sell or rent your data. We share only what is needed with the service providers listed in our Privacy Policy, or when required by law.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -373,7 +373,7 @@ const HelpSupport = () => {
                 <AccordionItem value="privacy-4">
                   <AccordionTrigger>What happens to my data if I delete my account?</AccordionTrigger>
                   <AccordionContent>
-                    When you delete your account, all your personal data is permanently removed from our active systems within 30 days. Some data may be retained in encrypted backups for up to 90 days for disaster recovery purposes, after which it is permanently deleted. Aggregated, anonymized data may be retained for analytics.
+                    Deleting your account removes your account data from our systems, except where we are legally required to retain it. See our Privacy Policy for details.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

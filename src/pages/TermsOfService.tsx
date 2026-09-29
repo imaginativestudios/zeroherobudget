@@ -146,7 +146,7 @@ const TermsOfService = () => {
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>You authorize Plaid to access your bank account information on your behalf</li>
               <li>You acknowledge that Zero Hero is not responsible for the accuracy of data provided by your bank through Plaid</li>
-              <li>You can disconnect linked accounts at any time, which permanently removes all related data from your device</li>
+              <li>You can disconnect linked accounts at any time, which permanently removes related data from your account and device</li>
               <li>You agree to Plaid's own terms of service and privacy policy</li>
             </ul>
 

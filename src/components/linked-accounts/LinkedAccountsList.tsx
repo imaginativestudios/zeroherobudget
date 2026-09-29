@@ -213,7 +213,7 @@ export function LinkedAccountsList() {
             setDisconnecting(null);
             toast({
               title: 'Account disconnected',
-              description: `${name} has been removed from this device.`,
+              description: `${name} has been disconnected and its data removed.`,
             });
           }
         }}

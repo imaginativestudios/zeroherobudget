@@ -1,4 +1,4 @@
-import { Shield, Smartphone, ServerOff, Unlink } from 'lucide-react';
+import { Shield, Smartphone, Landmark, Unlink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -25,9 +25,9 @@ export function ConsentScreen({ onConsent, onCancel }: ConsentScreenProps) {
           <CardContent className="flex gap-3 py-4">
             <Smartphone className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm text-foreground">Stored only on your device</p>
+              <p className="font-medium text-sm text-foreground">Stored based on how you use Zero Hero</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Institution name, account nickname (masked), and account type are saved locally with encryption. Only you can access them.
+                When signed in, basic linked-account details are stored in your account and synced. In demo mode, they stay on this device.
               </p>
             </div>
           </CardContent>
@@ -35,11 +35,11 @@ export function ConsentScreen({ onConsent, onCancel }: ConsentScreenProps) {
 
         <Card className="border-border/60">
           <CardContent className="flex gap-3 py-4">
-            <ServerOff className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <Landmark className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm text-foreground">Never stored on our servers</p>
+              <p className="font-medium text-sm text-foreground">Sensitive numbers stay with Plaid</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Account numbers, routing numbers, balances, and transaction history are never sent to or stored on our servers.
+                We do not receive full account or routing numbers. Signed-in balances and transactions are stored in your account; demo-mode data stays on this device.
               </p>
             </div>
           </CardContent>
@@ -51,7 +51,7 @@ export function ConsentScreen({ onConsent, onCancel }: ConsentScreenProps) {
             <div>
               <p className="font-medium text-sm text-foreground">Disconnect anytime</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                You can unlink any account at any time. All locally stored data for that account is permanently deleted.
+                You can unlink any account at any time. Data for that connection is removed from your account and device.
               </p>
             </div>
           </CardContent>
@@ -60,7 +60,7 @@ export function ConsentScreen({ onConsent, onCancel }: ConsentScreenProps) {
 
       <div className="rounded-lg bg-muted/50 border border-border/40 p-3">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          <strong>Device loss:</strong> If you clear browser data or uninstall the app, linked account information will be permanently deleted. You can always re-link your accounts.
+          <strong>Device changes:</strong> Signed-in account data remains available through your account. Demo-mode data is deleted if you clear browser data or uninstall the app.
         </p>
       </div>
 

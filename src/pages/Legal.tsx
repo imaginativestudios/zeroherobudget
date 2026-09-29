@@ -87,7 +87,7 @@ const Legal = () => {
               </p>
 
               <div className="space-y-6">
-                {/* Local-First Architecture */}
+                {/* Data storage model */}
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -95,9 +95,9 @@ const Legal = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground mb-2">Your Data Stays on Your Device</h3>
+                    <h3 className="font-semibold text-card-foreground mb-2">How Your Data Is Stored</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Your financial information — transactions, debts, budgets — is stored locally in your browser's storage. Our servers don't have access to your personal financial records.
+                      Signed-in financial data is stored in our Supabase-hosted database and synced across devices. The browser keeps a working copy for offline use. Demo-mode data stays on this device.
                     </p>
                   </div>
                 </div>
@@ -271,7 +271,7 @@ const Legal = () => {
                   <div>
                     <h3 className="font-semibold text-card-foreground mb-2">What We Store</h3>
                     <p className="text-muted-foreground text-sm sm:text-base mb-2">
-                      After you connect, we only receive and store locally on your device:
+                      After you connect, we receive the following account information. Signed-in data is stored in your account; demo-mode data stays on this device:
                     </p>
                     <ul className="list-disc list-inside text-muted-foreground text-sm sm:text-base space-y-1 ml-1">
                       <li>Account name and type (e.g., "Checking")</li>
@@ -309,7 +309,7 @@ const Legal = () => {
                   <div>
                     <h3 className="font-semibold text-card-foreground mb-2">Disconnect Anytime</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      You can unlink any bank account at any time. When you do, all data for that account is permanently removed from your device.
+                      You can unlink any bank account at any time. When you do, its data is removed from your account and device.
                     </p>
                   </div>
                 </div>

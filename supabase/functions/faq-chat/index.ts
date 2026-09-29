@@ -45,16 +45,16 @@ A: Zero Hero accepts credit cards through our secure Stripe integration for subs
 ## Data & Privacy
 
 **Q: Is my financial data secure?**
-A: Yes! Your data is stored securely using Supabase's enterprise-grade infrastructure with encryption at rest and in transit. We follow industry best practices for financial data protection.
+A: When you're signed in, your data is stored in our Supabase-hosted database and synced across devices. Your browser keeps a working copy for offline use. In demo mode, data stays on your device. See our Privacy Policy for details.
 
 **Q: Do you sell my data to third parties?**
-A: Never. We never sell, rent, or share your personal financial data with third parties. Your privacy is paramount.
+A: We do not sell or rent your data. We share only what is needed with the service providers listed in our Privacy Policy, or when required by law.
 
 **Q: Can I export my data?**
 A: Yes! You can export your budget data, transactions, debts, and reports in CSV or PDF format from the respective pages.
 
 **Q: What happens to my data if I delete my account?**
-A: All your data is permanently deleted from our servers within 30 days of account deletion. We retain no copies. Make sure to export any data you need before deleting your account.
+A: Deleting your account removes your account data from our systems, except where we are legally required to retain it. Export anything you need before deleting your account.
 
 ## Features Overview
 

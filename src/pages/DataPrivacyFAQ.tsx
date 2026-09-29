@@ -16,8 +16,6 @@ import {
   ArrowRight,
   Database,
   Lock,
-  Eye,
-  CloudOff,
   Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +32,7 @@ export default function DataPrivacyFAQ() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Data Privacy FAQ — Zero Hero"
-        description="Learn how Zero Hero keeps your financial data private with local-first storage. Answers on backups, browser storage, and data safety."
+        description="Learn how Zero Hero stores and protects your financial data, what syncs with your account, what stays in your browser, and how deletion works."
         path="/data-privacy"
         jsonLd={{
           "@context": "https://schema.org",
@@ -100,10 +98,10 @@ export default function DataPrivacyFAQ() {
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-            Your Data, Your Device
+            Your data, your control
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Understanding how Zero Hero keeps your financial data private and secure
+            How Zero Hero stores, protects, and lets you delete your financial data
           </p>
         </div>
 
@@ -115,7 +113,8 @@ export default function DataPrivacyFAQ() {
                 <div className="rounded-full bg-background p-4 shadow-lg">
                   <Smartphone className="h-10 w-10 text-primary" />
                 </div>
-                <p className="mt-2 font-medium text-sm">Your Device</p>
+                <p className="mt-2 font-medium text-sm">Your device</p>
+                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Works offline, cleared on sign-out</p>
               </div>
               
               <ArrowRight className="h-6 w-6 text-primary hidden md:block" />
@@ -123,9 +122,10 @@ export default function DataPrivacyFAQ() {
               
               <div className="flex flex-col items-center text-center">
                 <div className="rounded-full bg-background p-4 shadow-lg">
-                  <HardDrive className="h-10 w-10 text-primary" />
+                  <Database className="h-10 w-10 text-primary" />
                 </div>
-                <p className="mt-2 font-medium text-sm">Browser Storage</p>
+                <p className="mt-2 font-medium text-sm">Your account</p>
+                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Stored securely, synced across devices</p>
               </div>
               
               <ArrowRight className="h-6 w-6 text-primary hidden md:block" />
@@ -135,19 +135,20 @@ export default function DataPrivacyFAQ() {
                 <div className="rounded-full bg-background p-4 shadow-lg">
                   <Lock className="h-10 w-10 text-primary" />
                 </div>
-                <p className="mt-2 font-medium text-sm">Your Data (Private)</p>
+                <p className="mt-2 font-medium text-sm">Only you</p>
+                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Shared only with the services you use, never sold</p>
               </div>
             </div>
 
-            <div className="mt-8 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CloudOff className="h-5 w-5 text-destructive" />
-                <span>No external servers</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-destructive" />
-                <span className="line-through">We can't see your data</span>
-              </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm">
+              <Link to="/privacy#data-sharing" className="flex items-center gap-2 text-primary hover:underline">
+                <Shield className="h-5 w-5" />
+                <span>Never sold or used for ads</span>
+              </Link>
+              <Link to="/privacy#data-retention" className="flex items-center gap-2 text-primary hover:underline">
+                <Trash2 className="h-5 w-5" />
+                <span>Delete your account and data</span>
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -187,12 +188,12 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Where is my data stored?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    Your data is stored in your web browser's <strong>localStorage</strong> — a secure, permanent 
-                    storage area built into every modern browser (Chrome, Firefox, Safari, Edge, etc.).
+                    When you're signed in, your data is stored in your account on our Supabase-hosted database,
+                    and a working copy is kept in this browser for fast, offline use. In demo mode, it is stored
+                    only in this browser.
                   </p>
                   <p className="text-muted-foreground">
-                    Think of it like a private notebook that only your browser can read. Each website gets its 
-                    own notebook, so Zero Hero's data is completely separate from other sites you visit.
+                    Your browser keeps Zero Hero's working copy separate from other sites you visit.
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -216,11 +217,11 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>What is "localStorage" in simple terms?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    LocalStorage is like a small, private filing cabinet that lives inside your browser. 
-                    Every browser has one, and websites can use it to remember information between your visits.
+                    In demo mode, localStorage holds your data. When you're signed in, it holds the working copy
+                    that helps Zero Hero load quickly and work offline. Every browser has its own storage area.
                   </p>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>It stays on your computer (never sent over the internet)</li>
+                    <li>The browser stores it on this device; signed-in data also syncs with your account</li>
                     <li>It survives browser restarts and computer shutdowns</li>
                     <li>Each website gets its own separate space</li>
                     <li>Only the website that saved the data can read it back</li>
@@ -343,12 +344,12 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Can I access my data on another device?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    <strong>Not automatically.</strong> Since your data lives only in your browser's local storage, 
-                    it doesn't sync between devices or browsers.
+                    When you're signed in, your data syncs across devices through your account. In demo mode,
+                    it stays in this browser and does not sync automatically.
                   </p>
                   <p className="text-muted-foreground">
-                    However, you can manually transfer your data by creating a backup on one device and restoring 
-                    it on another. This is done through the <Link to="/data" className="text-primary hover:underline">Data Management</Link> page.
+                    In demo mode, you can move it manually by creating a backup on one device and restoring it on
+                    another through the <Link to="/data" className="text-primary hover:underline">Data Management</Link> page.
                   </p>
                 </AccordionContent>
               </AccordionItem>

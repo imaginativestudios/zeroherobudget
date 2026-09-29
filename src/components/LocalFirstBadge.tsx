@@ -1,5 +1,5 @@
 /**
- * Local-First Badge
+ * Privacy Badge
  * 
  * Interactive badge that emphasizes data privacy with a glowing shield icon.
  * Clicking opens a popover with privacy explanation.
@@ -20,21 +20,21 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
     <div className="space-y-3 max-w-xs">
       <div className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-success" />
-        <span className="font-semibold text-foreground">Local-First Privacy</span>
+        <span className="font-semibold text-foreground">Privacy &amp; your data</span>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        Your financial data is encrypted and lives only on this device. 
-        No servers, no selling, no prying eyes.
+        Signed-in data is stored in your account and synced across devices, with a browser copy for offline use.
+        Demo-mode data stays on this device.
       </p>
       <div className="flex flex-wrap gap-2 text-xs">
         <span className="px-2 py-1 rounded-full bg-success/10 text-success">
-          🔒 Encrypted
+          Never sold
         </span>
         <span className="px-2 py-1 rounded-full bg-success/10 text-success">
-          📱 Device Only
+          Account controls
         </span>
         <span className="px-2 py-1 rounded-full bg-success/10 text-success">
-          🌐 Works Offline
+          Works offline
         </span>
       </div>
       <Link 
@@ -55,7 +55,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
               "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors group",
               className
             )}
-            aria-label="Learn about local-first privacy"
+            aria-label="Learn about privacy and your data"
           >
             <Shield 
               className={cn(
@@ -64,7 +64,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
               )} 
               aria-hidden="true" 
             />
-            <span>Local-First</span>
+            <span>Privacy &amp; your data</span>
           </button>
         </PopoverTrigger>
         <PopoverContent 
@@ -88,7 +88,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
               "bg-success/10 hover:bg-success/20 transition-colors group",
               className
             )}
-            aria-label="Learn about local-first privacy"
+            aria-label="Learn about privacy and your data"
           >
             <Shield 
               className="h-4 w-4 text-success group-hover:scale-110 transition-transform" 
@@ -114,7 +114,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
             "border border-success/20 hover:border-success/40",
             className
           )}
-          aria-label="Learn about local-first privacy"
+          aria-label="Learn about privacy and your data"
         >
           <Shield 
             className={cn(
@@ -123,7 +123,7 @@ export function LocalFirstBadge({ className, variant = 'default' }: LocalFirstBa
             )} 
             aria-hidden="true" 
           />
-          <span className="text-sm font-medium text-success">Local-First</span>
+          <span className="text-sm font-medium text-success">Privacy &amp; your data</span>
         </button>
       </PopoverTrigger>
       <PopoverContent side="top" className="w-80">

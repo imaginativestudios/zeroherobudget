@@ -45,7 +45,7 @@ export default function DataPrivacyFAQ() {
               "name": "Where is my data stored?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Your data is stored in your web browser's localStorage — a secure, permanent storage area built into every modern browser. It never leaves your device."
+                "text": "When you're signed in, your data is stored in your account on our servers (hosted by Supabase) so it syncs across your devices, with a working copy in your browser for offline use. In demo mode, everything stays only in your browser's localStorage on your device."
               }
             },
             {
@@ -53,7 +53,7 @@ export default function DataPrivacyFAQ() {
               "name": "Is my data sent to any servers?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "No. Your financial data never leaves your device. It's stored only in your browser's local storage — we can't see it, and neither can anyone else."
+                "text": "Yes, when you're signed in. Your financial data is stored in our database (hosted by Supabase) so it syncs across your devices. In demo mode, nothing is sent to our servers — it stays in your browser."
               }
             },
             {
@@ -61,7 +61,7 @@ export default function DataPrivacyFAQ() {
               "name": "Will my data still be there if I close the browser?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Your data is saved in your browser's permanent storage (localStorage). It persists across browser restarts and computer shutdowns."
+                "text": "Yes. Signed-in data is saved to your account on our servers, so it's there when you come back on any device. Demo-mode data is saved in your browser's permanent storage (localStorage) and persists across browser restarts and computer shutdowns."
               }
             },
             {
@@ -201,12 +201,13 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Is my data sent to any servers?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    <strong>No.</strong> Your financial data never leaves your device. It's stored only in your 
-                    browser's local storage — we can't see it, and neither can anyone else.
+                    <strong>Yes, when you're signed in.</strong> Your financial data is stored in our database
+                    (hosted by Supabase) so it syncs across your devices and can be shared with household
+                    members you invite.
                   </p>
                   <p className="text-muted-foreground">
-                    This "local-first" approach means maximum privacy for you. There's no cloud database 
-                    holding your sensitive financial information.
+                    In demo mode, nothing is sent to our servers — everything stays in your browser's storage
+                    on your device.
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -471,7 +472,7 @@ export default function DataPrivacyFAQ() {
                 <AccordionContent>
                   <p className="mb-3">
                     <strong>Yes, anytime.</strong> Go to the Accounts page and click "Disconnect" on any linked account. 
-                    All data for that account will be permanently removed from your device immediately.
+                    All data for that account will be permanently removed from your account and your device.
                   </p>
                   <p className="text-muted-foreground">
                     You can also revoke Plaid's access to your bank directly through{" "}
@@ -510,7 +511,7 @@ export default function DataPrivacyFAQ() {
                   <span className="text-xl font-bold text-primary">2</span>
                 </div>
                 <p className="mt-2 font-medium text-sm">Saved Instantly</p>
-                <p className="text-xs text-muted-foreground">Stored in browser localStorage</p>
+                <p className="text-xs text-muted-foreground">Saved to your account</p>
               </div>
               
               <ArrowRight className="h-6 w-6 text-muted-foreground hidden md:block" />

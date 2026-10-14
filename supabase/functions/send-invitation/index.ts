@@ -5,7 +5,7 @@ import React from "npm:react@18.3.1";
 import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { HouseholdInviteEmail } from "./_templates/household-invite.tsx";
 import { logEmail, updateEmailStatus } from "../_shared/emailLogger.ts";
-import { buildCors } from "../_shared/cors.ts";
+import { buildCors, isAllowedOrigin } from "../_shared/cors.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -60,7 +60,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     const userId = claimsData.user.id;
 
-    const { inviteeEmail, inviteUrl, invitationId }: SendInvitationRequest = await req.json();
+    const { inviteeEmail, inviteUrl: rawInviteUrl, invitationId }: SendInvitationRequest = await req.json();
+
+    // Only allow invitation links that point at our own accept-invite page.
+    // The link is rebuilt from a trusted origin plus the token, never echoed.
+    let inviteUrl = "";
+    try {
+      const parsed = new URL(String(rawInviteUrl ?? ""));
+      const m = parsed.pathname.match(/^\/accept-invite\/([A-Za-z0-9_-]{16,256})$/);
+      if (m) {
+        const base = isAllowedOrigin(parsed.origin) ? parsed.origin : "https://zeroherobudget.com";
+        inviteUrl = `${base}/accept-invite/${m[1]}`;
+      }
+    } catch { /* invalid URL */ }
+    if (rawInviteUrl && !inviteUrl) {
+      return new Response(
+        JSON.stringify({ error: "Invalid invitation link" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Validate required fields
     if (!inviteeEmail || !inviteUrl || !invitationId) {

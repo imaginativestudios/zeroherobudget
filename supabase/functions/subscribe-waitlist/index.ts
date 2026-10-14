@@ -29,7 +29,6 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { email }: WaitlistRequest = await req.json();
 
-    console.log("Subscribing email to waitlist:", email);
 
     // Validate email format
     if (!email || !email.includes("@")) {

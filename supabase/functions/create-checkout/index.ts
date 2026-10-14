@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0?dts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { checkCountry } from "../_shared/geo.ts";
-import { buildCors } from "../_shared/cors.ts";
+import { buildCors, isAllowedOrigin } from "../_shared/cors.ts";
 
 // Inline pricing — defined here so we don't depend on Stripe-side Price IDs.
 // Amounts are in cents (USD).
@@ -91,7 +91,8 @@ serve(async (req) => {
       hasHadSubscription = allSubscriptions.data.length > 0;
     }
 
-    const origin = req.headers.get("origin") || "https://ukpejgrghpewwdfztryg.lovableproject.com";
+    const reqOrigin = req.headers.get("origin");
+    const origin = isAllowedOrigin(reqOrigin) ? reqOrigin! : "https://zeroherobudget.com";
     
     // Create checkout session with inline price_data (no Stripe-side Price ID needed)
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {

@@ -295,7 +295,7 @@ serve(async (req) => {
       }
       const role = m.role;
       const content = m.content;
-      if (!["user", "assistant", "system"].includes(role) || typeof content !== "string") {
+      if (!["user", "assistant"].includes(role) || typeof content !== "string") {
         return new Response(
           JSON.stringify({ error: "Invalid message structure" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }

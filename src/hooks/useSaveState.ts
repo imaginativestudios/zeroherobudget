@@ -25,7 +25,7 @@ interface UseSaveStateReturn {
 export function useSaveState(options: UseSaveStateOptions = {}): UseSaveStateReturn {
   const { successDuration = 2000, errorDuration = 3000 } = options;
   const [state, setState] = useState<SaveState>('idle');
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearExistingTimeout = useCallback(() => {
     if (timeoutRef.current) {

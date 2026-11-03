@@ -100,15 +100,11 @@ export const useRealAuth = () => {
   };
 
   const signOut = async () => {
-    // Capture before any await — user becomes null once the session ends.
-    const uid = state.user?.id;
-    if (uid) {
-      try {
-        clearAllUserData(uid);
-      } catch (err) {
-        console.error('Local data clear failed on sign-out', err);
-      }
-    }
+    // Do NOT clear user-prefixed localStorage here: budgets, debts,
+    // subscriptions and settings currently live only in this browser, so
+    // wiping them on sign-out would permanently destroy unsynced data.
+    // Keys are scoped by user ID, so other accounts never read them.
+
 
     const { error } = await supabase.auth.signOut();
     

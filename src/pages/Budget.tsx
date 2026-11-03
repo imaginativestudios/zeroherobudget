@@ -455,9 +455,8 @@ export const Budget = () => {
                   <ResponsiveContainer width="100%" height={400}>
                     <PieChart>
                       <Pie data={categoryData} dataKey="planned" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={120} paddingAngle={2} label={({
-                        name,
-                        percentage
-                      }) => `${percentage.toFixed(1)}%`} labelLine={{
+                        percent
+                      }) => `${((percent ?? 0) * 100).toFixed(1)}%`} labelLine={{
                         stroke: 'hsl(var(--muted-foreground))',
                         strokeWidth: 1
                       }}>

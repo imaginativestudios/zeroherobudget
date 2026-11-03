@@ -169,7 +169,7 @@ These templates are defined in code and rendered using React Email.
 |----------|-------|
 | Subject | `You're on the Zero Hero waitlist` |
 | Preview | `You're on the Zero Hero waitlist` |
-| From | `Zero Hero <hello@zeroherobudget.com>` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
 
 **Headers (set in edge function):**
 ```typescript
@@ -196,7 +196,7 @@ headers: {
 |----------|-------|
 | Subject | `{inviterName} invited you to join {householdName} on Zero Hero` |
 | Preview | Dynamic based on inviter/household |
-| From | `Zero Hero <hello@zeroherobudget.com>` |
+| From | `Zero Hero <noreply@notifications.zeroherobudget.com>` |
 
 **Props:**
 ```typescript

@@ -334,8 +334,8 @@ const TermsOfService = () => {
             <p className="text-foreground/80 leading-relaxed mb-4">
               If you have any dispute with us, you agree to first contact us and attempt to resolve the 
               dispute informally by contacting us at{" "}
-              <a href="mailto:legal@zerohero.app" className="text-primary hover:underline">
-                legal@zerohero.app
+              <a href="mailto:legal@zeroherobudget.com" className="text-primary hover:underline">
+                legal@zeroherobudget.com
               </a>
             </p>
 
@@ -405,7 +405,7 @@ const TermsOfService = () => {
               </p>
               <p className="text-foreground/80">
                 <strong>Support:</strong>{" "}
-                <a href="mailto:support@zerohero.app" className="text-primary hover:underline">
+                <a href="mailto:support@zeroherobudget.com" className="text-primary hover:underline">
                   support@zeroherobudget.com
                 </a>
               </p>

@@ -28,10 +28,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       # chromium AND webkit: two of the four projects resolve to webkit
       # (Tablet WebKit -> iPad Mini, Small Mobile WebKit -> Galaxy S III). Installing only

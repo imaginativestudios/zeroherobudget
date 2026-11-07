@@ -4,7 +4,7 @@ import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
-import { loadDemoData } from '@/lib/demoDataLoader';
+import { loadDemoData, DEMO_USER_ID } from '@/lib/demoDataLoader';
 
 export interface DebtEntry {
   name: string;
@@ -188,12 +188,13 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [data, saveProgress, isDemoMode]);
 
   const saveOnboardingData = useCallback(() => {
-    // Store hourly wage in localStorage
+    // Store hourly wage in the per-account profile (same key useHeroProfile reads)
     if (data.hourlyWage !== null) {
-      const existingProfile = localStorage.getItem('bdt_hero_profile');
+      const profileKey = `${user?.id ?? DEMO_USER_ID}_bdt_hero_profile`;
+      const existingProfile = localStorage.getItem(profileKey);
       const profileData = existingProfile ? JSON.parse(existingProfile) : {};
       profileData.hourly_wage = data.hourlyWage;
-      localStorage.setItem('bdt_hero_profile', JSON.stringify(profileData));
+      localStorage.setItem(profileKey, JSON.stringify(profileData));
     }
 
     // Create debt entry if provided

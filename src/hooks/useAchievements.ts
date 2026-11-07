@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useRef } from 'react';
-import { useLocalStorage } from './useLocalStorage';
+import { useUserLocalStorage } from './useUserLocalStorage';
+import { useAuth } from './useAuth';
 import confetti from 'canvas-confetti';
 import { playAchievementUnlockSound } from '@/lib/soundEffects';
 
@@ -21,10 +22,53 @@ interface DebtStats {
 }
 
 export function useAchievements(currentStats: DebtStats) {
-  const [initialDebt, setInitialDebt] = useLocalStorage<number>('initial-debt-total', 0);
-  const [unlockedIds, setUnlockedIds] = useLocalStorage<string[]>('unlocked-achievements', []);
-  const [unlockTimestamps, setUnlockTimestamps] = useLocalStorage<Record<string, string>>('achievement-timestamps', {});
+  const [initialDebt, setInitialDebt] = useUserLocalStorage<number>('initial-debt-total', 0);
+  const [unlockedIds, setUnlockedIds] = useUserLocalStorage<string[]>('unlocked-achievements', []);
+  const [unlockTimestamps, setUnlockTimestamps] = useUserLocalStorage<Record<string, string>>('achievement-timestamps', {});
   const previousUnlockedRef = useRef<string[]>(unlockedIds);
+  const { user } = useAuth();
+  const migratedRef = useRef(false);
+
+  // One-time migration: copy legacy unprefixed keys into the signed-in
+  // account's prefixed keys, then remove the unprefixed ones. Only migrates
+  // into an account that has no prefixed value yet.
+  useEffect(() => {
+    if (!user?.id || migratedRef.current) return;
+    migratedRef.current = true;
+    try {
+      const prefix = `${user.id}_`;
+      const migrateKey = (key: string): string | null => {
+        if (localStorage.getItem(`${prefix}${key}`) !== null) return null;
+        const oldValue = localStorage.getItem(key);
+        if (oldValue === null) return null;
+        localStorage.setItem(`${prefix}${key}`, oldValue);
+        localStorage.removeItem(key);
+        return oldValue;
+      };
+
+      const oldInitialDebt = migrateKey('initial-debt-total');
+      if (oldInitialDebt !== null) setInitialDebt(JSON.parse(oldInitialDebt));
+      const oldUnlocked = migrateKey('unlocked-achievements');
+      if (oldUnlocked !== null) setUnlockedIds(JSON.parse(oldUnlocked));
+      const oldTimestamps = migrateKey('achievement-timestamps');
+      if (oldTimestamps !== null) setUnlockTimestamps(JSON.parse(oldTimestamps));
+
+      // Migrate hourly wage from the legacy unprefixed hero profile
+      const oldProfileRaw = localStorage.getItem('bdt_hero_profile');
+      if (oldProfileRaw !== null) {
+        const oldProfile = JSON.parse(oldProfileRaw);
+        const prefixedProfileRaw = localStorage.getItem(`${prefix}bdt_hero_profile`);
+        const prefixedProfile = prefixedProfileRaw ? JSON.parse(prefixedProfileRaw) : {};
+        if (prefixedProfile.hourly_wage === undefined && typeof oldProfile?.hourly_wage === 'number') {
+          prefixedProfile.hourly_wage = oldProfile.hourly_wage;
+          localStorage.setItem(`${prefix}bdt_hero_profile`, JSON.stringify(prefixedProfile));
+        }
+        localStorage.removeItem('bdt_hero_profile');
+      }
+    } catch (error) {
+      console.error('Error migrating local data to account:', error);
+    }
+  }, [user?.id, setInitialDebt, setUnlockedIds, setUnlockTimestamps]);
   
   // Set initial debt if not set and there are debts
   useEffect(() => {

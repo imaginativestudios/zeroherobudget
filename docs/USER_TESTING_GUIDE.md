@@ -495,7 +495,7 @@ Zero Hero uses a "Sophisticated Adventure" theme. Here's a quick reference:
 ## Contact
 
 For questions during testing, reach out to:
-- **Email:** support@zeroherobudget.com
+- **Email:** info@zeroherobudget.com
 - **GitHub Issues:** [Project Repository]
 
 Thank you for helping make Zero Hero better! 🎯

@@ -19,7 +19,7 @@ export function BetaTesterBadge() {
     const body = encodeURIComponent(
       `Page: ${window.location.origin}${location.pathname}\nBrowser: ${navigator.userAgent}\n\nFeedback:\n${feedback}`
     );
-    window.open(`mailto:feedback@zeroherobudget.com?subject=${subject}&body=${body}`, "_self");
+    window.open(`mailto:info@zeroherobudget.com?subject=${subject}&body=${body}`, "_self");
     setFeedback("");
     setIsOpen(false);
   };

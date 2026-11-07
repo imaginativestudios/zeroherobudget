@@ -479,8 +479,8 @@ const HelpSupport = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Email Support</h3>
                   <p className="text-muted-foreground">
-                    <a href="mailto:support@zeroherobudget.com" className="text-primary hover:underline">
-                      support@zeroherobudget.com
+                    <a href="mailto:info@zeroherobudget.com" className="text-primary hover:underline">
+                      info@zeroherobudget.com
                     </a>
                   </p>
                 </div>

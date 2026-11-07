@@ -208,8 +208,8 @@ const PrivacyPolicy = () => {
             </ul>
             <p className="text-foreground/80 leading-relaxed mt-4">
               To exercise any of these rights, contact us at{" "}
-              <a href="mailto:privacy@zeroherobudget.com" className="text-primary hover:underline">
-                privacy@zeroherobudget.com
+              <a href="mailto:info@zeroherobudget.com" className="text-primary hover:underline">
+                info@zeroherobudget.com
               </a>
             </p>
           </section>
@@ -270,8 +270,8 @@ const PrivacyPolicy = () => {
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <p className="text-foreground/80">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:privacy@zeroherobudget.com" className="text-primary hover:underline">
-                  privacy@zeroherobudget.com
+                <a href="mailto:info@zeroherobudget.com" className="text-primary hover:underline">
+                  info@zeroherobudget.com
                 </a>
               </p>
             </div>

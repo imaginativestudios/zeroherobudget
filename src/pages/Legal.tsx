@@ -97,7 +97,7 @@ const Legal = () => {
                   <div>
                     <h3 className="font-semibold text-card-foreground mb-2">How Your Data Is Stored</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Signed-in financial data is stored in our Supabase-hosted database and synced across devices. The browser keeps a working copy for offline use. Demo-mode data stays on this device.
+                      When you're signed in, your transactions and linked accounts are stored in our Supabase-hosted database and available on any device. Budgets, debts, subscriptions, and settings are saved only in this browser. Signing out doesn't delete anything. Demo-mode data stays on this device.
                     </p>
                   </div>
                 </div>

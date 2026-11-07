@@ -164,7 +164,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send the email via Resend
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
-      replyTo: "support@zeroherobudget.com",
+      replyTo: "info@zeroherobudget.com",
       to: [inviteeEmail],
       subject: `You've been invited to join ${householdName} on Zero Hero`,
       html,

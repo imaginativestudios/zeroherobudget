@@ -92,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send welcome email with List-Unsubscribe headers for Gmail/Yahoo compliance
     const emailResponse = await resend.emails.send({
       from: "Zero Hero <noreply@notifications.zeroherobudget.com>",
-      replyTo: "support@zeroherobudget.com",
+      replyTo: "info@zeroherobudget.com",
       to: [email],
       subject: "Zero Hero - You're on the waitlist",
       headers: {

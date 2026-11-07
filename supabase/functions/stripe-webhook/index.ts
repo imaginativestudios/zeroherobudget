@@ -231,7 +231,7 @@ serve(async (req) => {
           try {
             const resend = new Resend(resendKey);
             const pricingUrl = "https://zeroherobudget.lovable.app/pricing";
-            const supportEmail = "support@zeroherobudget.com";
+            const supportEmail = "info@zeroherobudget.com";
 
             // Log email attempt
             const logId = await logEmail(supabase, {
@@ -323,7 +323,7 @@ serve(async (req) => {
           try {
             const resend = new Resend(resendKey);
             const portalUrl = "https://zeroherobudget.lovable.app/account-settings";
-            const supportEmail = "support@zeroherobudget.com";
+            const supportEmail = "info@zeroherobudget.com";
 
             // Log email attempt
             const logId = await logEmail(supabase, {

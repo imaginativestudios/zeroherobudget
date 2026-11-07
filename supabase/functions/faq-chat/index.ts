@@ -101,7 +101,7 @@ Select "Cached images and files" and clear for the time range you prefer.
 ## Contact & Support
 
 For additional help or questions not covered here:
-- Email: support@zeroherobudget.com
+- Email: info@zeroherobudget.com
 - Response time: Within 24-48 hours
 - Visit our Help & Support page: /help
 `;

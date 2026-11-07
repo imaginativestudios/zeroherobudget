@@ -413,7 +413,9 @@ const HelpSupport = () => {
                   My data isn't syncing across devices
                 </h3>
                 <p className="text-muted-foreground ml-7 mb-2">
-                  If your data isn't appearing on another device:
+                  Only transactions and linked accounts sync across devices. Budgets, debts, subscriptions,
+                  and settings stay in the browser where you entered them. If transactions or accounts aren't
+                  appearing on another device:
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-7 space-y-1">
                   <li>Make sure you're logged into the same account on both devices</li>

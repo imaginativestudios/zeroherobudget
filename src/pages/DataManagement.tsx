@@ -180,8 +180,9 @@ export default function DataManagement() {
             <div className="flex-1 space-y-2">
               <h3 className="text-lg font-semibold">Your data, under your control</h3>
               <p className="text-muted-foreground">
-                Signed-in data is stored in your account and synced across devices, with a local working copy
-                for offline use. Demo-mode data stays on this device.
+                When you're signed in, transactions and linked accounts are stored in your account and available
+                on any device. Budgets, debts, subscriptions, and settings stay in this browser. Demo-mode data
+                stays on this device.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Badge variant="secondary" className="gap-1">

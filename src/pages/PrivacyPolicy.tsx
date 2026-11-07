@@ -122,8 +122,8 @@ const PrivacyPolicy = () => {
               Zero Hero uses a <strong>hybrid storage model</strong>:
             </p>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4 mb-4">
-              <li><strong>On your device:</strong> The app keeps a working copy of your data in your browser's storage so it loads fast and works offline. This copy is cleared when you sign out. In demo mode (no account), everything stays only on your device and never reaches our servers.</li>
-              <li><strong>On our servers (Supabase):</strong> When you're signed in, your budgets, debts, transactions, subscription tracking, and linked account summaries are stored in our database so they're available across your devices and can be shared with household members you invite. We also store your account profile (email, name), subscription status, and household membership info.</li>
+              <li><strong>On your device:</strong> Your budgets, debts, subscriptions, and settings are saved only in this browser's storage, even when you're signed in. They don't sync to other devices and aren't shared with household members. Browser data is kept separately for each account, so another person signing in on the same browser can't see it. Signing out doesn't delete anything — it's all still there when you sign back in on the same browser. In demo mode (no account), everything stays only on your device and never reaches our servers.</li>
+              <li><strong>On our servers (Supabase):</strong> When you're signed in, your transactions and linked account summaries are stored in our database so they're available across your devices. We also store your account profile (email, name), subscription status, and household membership info.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Security Measures</h3>
@@ -234,8 +234,8 @@ const PrivacyPolicy = () => {
             <h2 className="text-2xl font-semibold mb-4">Data Retention</h2>
             <p className="text-foreground/80 leading-relaxed">
               We keep your account and financial data on our servers as long as your account exists. When you delete your account,
-              your data is removed from our systems, except where we're legally required to retain it. The local copy on your
-              device is cleared when you sign out, and you can also clear it yourself through your browser's site-data settings.
+              your data is removed from our systems, except where we're legally required to retain it. The data saved in your
+              browser stays until you clear your browser's site data, use Clear Data, or delete your account.
               Demo-mode data stays on your device until you clear it.
             </p>
           </section>

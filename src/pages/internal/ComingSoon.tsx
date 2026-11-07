@@ -387,7 +387,7 @@ const ComingSoon = () => {
               },
               {
                 title: 'Privacy & data controls',
-                description: 'Works offline and syncs when you sign in',
+                description: 'Works offline, and your data stays under your control',
                 icon: Shield,
               },
             ].map((feature, idx) => (

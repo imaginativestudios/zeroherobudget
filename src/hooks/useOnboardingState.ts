@@ -210,7 +210,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
 
     // Set moat target
     setProfileMoatTarget(data.moatTarget);
-  }, [data, addDebt, setProfileMoatTarget]);
+  }, [data, addDebt, setProfileMoatTarget, user?.id]);
 
   const showCeremony = useCallback(() => {
     setIsCompleting(true);

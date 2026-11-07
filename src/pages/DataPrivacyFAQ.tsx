@@ -43,7 +43,7 @@ export default function DataPrivacyFAQ() {
               "name": "Where is my data stored?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "When you're signed in, your data is stored in your account on our servers (hosted by Supabase) so it syncs across your devices, with a working copy in your browser for offline use. In demo mode, everything stays only in your browser's localStorage on your device."
+                "text": "When you're signed in, your transactions and linked accounts are stored in your account on our servers (hosted by Supabase) so they're available on any device. Budgets, debts, subscriptions, and settings are saved only in this browser. In demo mode, everything stays only in your browser's localStorage on your device."
               }
             },
             {
@@ -51,7 +51,7 @@ export default function DataPrivacyFAQ() {
               "name": "Is my data sent to any servers?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes, when you're signed in. Your financial data is stored in our database (hosted by Supabase) so it syncs across your devices. In demo mode, nothing is sent to our servers — it stays in your browser."
+                "text": "Only some of it. When you're signed in, your transactions and linked accounts are stored in our database (hosted by Supabase) so they're available on any device. Budgets, debts, subscriptions, and settings stay in this browser. In demo mode, nothing is sent to our servers — it stays in your browser."
               }
             },
             {
@@ -59,7 +59,7 @@ export default function DataPrivacyFAQ() {
               "name": "Will my data still be there if I close the browser?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Signed-in data is saved to your account on our servers, so it's there when you come back on any device. Demo-mode data is saved in your browser's permanent storage (localStorage) and persists across browser restarts and computer shutdowns."
+                "text": "Yes. Your data is saved in your browser's permanent storage (localStorage) and persists across browser restarts and computer shutdowns. Transactions and linked accounts are also saved to your account on our servers, so they're there on any device."
               }
             },
             {
@@ -114,7 +114,7 @@ export default function DataPrivacyFAQ() {
                   <Smartphone className="h-10 w-10 text-primary" />
                 </div>
                 <p className="mt-2 font-medium text-sm">Your device</p>
-                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Works offline, cleared on sign-out</p>
+                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Works offline, kept when you sign out</p>
               </div>
               
               <ArrowRight className="h-6 w-6 text-primary hidden md:block" />
@@ -125,7 +125,7 @@ export default function DataPrivacyFAQ() {
                   <Database className="h-10 w-10 text-primary" />
                 </div>
                 <p className="mt-2 font-medium text-sm">Your account</p>
-                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Stored securely, synced across devices</p>
+                <p className="mt-1 max-w-40 text-xs text-muted-foreground">Transactions and accounts, stored securely</p>
               </div>
               
               <ArrowRight className="h-6 w-6 text-primary hidden md:block" />
@@ -167,10 +167,10 @@ export default function DataPrivacyFAQ() {
               Here's why:
             </p>
             <p className="text-muted-foreground">
-              When you're signed in, your budgets, debts, and transactions are saved to your account on our
-              servers, so they're there when you come back — on any device. The app also keeps a copy in your
-              browser's storage so it loads fast and works offline. In demo mode (no account), everything is
-              saved only in your browser's storage on that device.
+              When you're signed in, your transactions and linked accounts are saved to your account on our
+              servers, so they're there when you come back — on any device. Your budgets, debts, subscriptions,
+              and settings are saved in this browser's storage, and signing out doesn't delete them. In demo
+              mode (no account), everything is saved only in your browser's storage on that device.
             </p>
           </CardContent>
         </Card>
@@ -188,9 +188,9 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Where is my data stored?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    When you're signed in, your data is stored in your account on our Supabase-hosted database,
-                    and a working copy is kept in this browser for fast, offline use. In demo mode, it is stored
-                    only in this browser.
+                    When you're signed in, your transactions and linked accounts are stored in your account on
+                    our Supabase-hosted database. Your budgets, debts, subscriptions, and settings are saved
+                    only in this browser. In demo mode, everything is stored only in this browser.
                   </p>
                   <p className="text-muted-foreground">
                     Your browser keeps Zero Hero's working copy separate from other sites you visit.
@@ -202,9 +202,9 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Is my data sent to any servers?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    <strong>Yes, when you're signed in.</strong> Your financial data is stored in our database
-                    (hosted by Supabase) so it syncs across your devices and can be shared with household
-                    members you invite.
+                    <strong>Only some of it, when you're signed in.</strong> Your transactions and linked
+                    accounts are stored in our database (hosted by Supabase) so they're available on any
+                    device. Budgets, debts, subscriptions, and settings stay in this browser.
                   </p>
                   <p className="text-muted-foreground">
                     In demo mode, nothing is sent to our servers — everything stays in your browser's storage
@@ -217,11 +217,12 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>What is "localStorage" in simple terms?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    In demo mode, localStorage holds your data. When you're signed in, it holds the working copy
-                    that helps Zero Hero load quickly and work offline. Every browser has its own storage area.
+                    In demo mode, localStorage holds your data. When you're signed in, it holds your budgets,
+                    debts, subscriptions, and settings, plus a working copy that helps Zero Hero load quickly
+                    and work offline. Every browser has its own storage area.
                   </p>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>The browser stores it on this device; signed-in data also syncs with your account</li>
+                    <li>The browser stores it on this device, kept separately for each account</li>
                     <li>It survives browser restarts and computer shutdowns</li>
                     <li>Each website gets its own separate space</li>
                     <li>Only the website that saved the data can read it back</li>
@@ -344,8 +345,9 @@ export default function DataPrivacyFAQ() {
                 <AccordionTrigger>Can I access my data on another device?</AccordionTrigger>
                 <AccordionContent>
                   <p className="mb-3">
-                    When you're signed in, your data syncs across devices through your account. In demo mode,
-                    it stays in this browser and does not sync automatically.
+                    When you're signed in, your transactions and linked accounts are available on any device
+                    through your account. Budgets, debts, subscriptions, and settings stay in the browser where
+                    you entered them. In demo mode, everything stays in this browser.
                   </p>
                   <p className="text-muted-foreground">
                     In demo mode, you can move it manually by creating a backup on one device and restoring it on

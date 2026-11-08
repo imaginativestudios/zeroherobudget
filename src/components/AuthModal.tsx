@@ -279,8 +279,9 @@ export function AuthModal({
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
-                    minLength={6}
+                    minLength={12}
                   />
+                  <p className="text-xs text-muted-foreground">At least 12 characters</p>
                 </div>
                 <Button 
                   type="submit" 
@@ -593,8 +594,9 @@ export function AuthModal({
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       disabled={loading}
-                      minLength={6}
+                      minLength={12}
                     />
+                    <p className="text-xs text-muted-foreground">At least 12 characters</p>
                   </div>
                   <Button 
                     type="submit" 

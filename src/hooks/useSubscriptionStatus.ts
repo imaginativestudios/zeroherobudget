@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import type { RealtimeChannel } from '@supabase/supabase-js';
 import type { PricingInterval } from '@/lib/constants';
 
 interface SubscriptionStatus {
@@ -73,9 +72,6 @@ export const useSubscriptionStatus = () => {
     }
   }, [user, session]);
 
-  // Realtime subscription channel ref
-  const channelRef = useRef<RealtimeChannel | null>(null);
-
   useEffect(() => {
     checkSubscription();
 
@@ -87,17 +83,14 @@ export const useSubscriptionStatus = () => {
   // Realtime listener for profile subscription status changes
   useEffect(() => {
     if (!user) {
-      // Cleanup if user logs out
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
       return;
     }
 
     // Subscribe to profile changes for this user
     const channel = supabase
-      .channel(`profile-subscription-${user.id}`)
+      // Each effect owns a fresh channel, including overlapping hook instances
+      // and remounts while an older channel is still being removed.
+      .channel(`profile-subscription-${user.id}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
@@ -113,13 +106,8 @@ export const useSubscriptionStatus = () => {
       )
       .subscribe();
 
-    channelRef.current = channel;
-
     return () => {
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
+      void supabase.removeChannel(channel);
     };
   }, [user, checkSubscription]);
 

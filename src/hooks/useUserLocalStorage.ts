@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type SetStateAction } from 'react';
 import { useAuth } from './useAuth';
 import { DEMO_USER_ID } from '@/lib/demoDataLoader';
 
-export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void, boolean] {
+export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value: SetStateAction<T>) => void, boolean] {
   const { user } = useAuth();
   const initialValueRef = useRef(initialValue);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,12 +40,17 @@ export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value
     }
   }, [user, key]); // Removed initialValue from dependencies
 
-  const setValue = (value: T) => {
+  const setValue = (value: SetStateAction<T>) => {
     try {
       const effectiveUserId = getEffectiveUserId();
-      setStoredValue(value);
       const userKey = `${effectiveUserId}_${key}`;
-      window.localStorage.setItem(userKey, JSON.stringify(value));
+      const item = window.localStorage.getItem(userKey);
+      const currentValue: T = item ? JSON.parse(item) : initialValueRef.current;
+      const nextValue = typeof value === 'function'
+        ? (value as (previous: T) => T)(currentValue)
+        : value;
+      window.localStorage.setItem(userKey, JSON.stringify(nextValue));
+      setStoredValue(nextValue);
     } catch (error) {
       console.error(`Error setting localStorage key "${key}":`, error);
     }

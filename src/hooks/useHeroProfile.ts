@@ -95,6 +95,7 @@ export interface UseHeroProfileResult {
   recordDailyActivity: () => void;
   
   // Onboarding
+  setHourlyWage: (wage: number) => void;
   completeOnboarding: () => void;
   
   // Onboarding persistence
@@ -139,10 +140,10 @@ export function useHeroProfile(): UseHeroProfileResult {
     // Skip if already recorded today
     if (profile.activity_log.includes(todayStr)) {
       if (profile.last_active_date !== todayStr) {
-        setProfile({
-          ...profile,
+        setProfile(previous => ({
+          ...previous,
           last_active_date: todayStr,
-        });
+        }));
       }
       return;
     }
@@ -150,11 +151,11 @@ export function useHeroProfile(): UseHeroProfileResult {
     // Add today and prune old entries
     const updatedLog = pruneActivityLog([...profile.activity_log, todayStr]);
     
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       activity_log: updatedLog,
       last_active_date: todayStr,
-    });
+    }));
   }, [profile, setProfile, pruneActivityLog]);
 
   // Moat calculations - use savingsVault for mental separation
@@ -205,10 +206,10 @@ export function useHeroProfile(): UseHeroProfileResult {
     });
     
     // Sync to hero profile for backward compatibility
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       moat_current: newBalance,
-    });
+    }));
     
     return newlyAchieved;
   }, [profile, setProfile, savingsVault, setSavingsVault]);
@@ -221,10 +222,10 @@ export function useHeroProfile(): UseHeroProfileResult {
       moat_balance: newAmount,
     });
     
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       moat_current: newAmount,
-    });
+    }));
   }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   const setMoatTarget = useCallback((amount: number) => {
@@ -235,44 +236,48 @@ export function useHeroProfile(): UseHeroProfileResult {
       moat_target: newTarget,
     });
     
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       moat_target: newTarget,
-    });
+    }));
   }, [profile, setProfile, savingsVault, setSavingsVault]);
 
   // Onboarding
+  const setHourlyWage = useCallback((wage: number) => {
+    setProfile(previous => ({ ...previous, hourly_wage: wage }));
+  }, [setProfile]);
+
   const completeOnboarding = useCallback(() => {
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       onboarding_completed: true,
       onboarding_step: undefined,
       onboarding_data: undefined,
-    });
+    }));
   }, [profile, setProfile]);
 
   // Onboarding persistence
   const saveOnboardingProgress = useCallback((step: 1 | 2 | 3 | 4 | 5 | 6, data?: OnboardingData) => {
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       onboarding_step: step,
-      onboarding_data: data ? { ...profile.onboarding_data, ...data } : profile.onboarding_data,
-    });
+      onboarding_data: data ? { ...previous.onboarding_data, ...data } : previous.onboarding_data,
+    }));
   }, [profile, setProfile]);
 
   const clearOnboardingProgress = useCallback(() => {
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       onboarding_step: undefined,
       onboarding_data: undefined,
-    });
+    }));
   }, [profile, setProfile]);
 
   const setTrialStarted = useCallback((started: boolean) => {
-    setProfile({
-      ...profile,
+    setProfile(previous => ({
+      ...previous,
       trial_started: started,
-    });
+    }));
   }, [profile, setProfile]);
 
   // Update savings vault with partial updates
@@ -299,6 +304,7 @@ export function useHeroProfile(): UseHeroProfileResult {
     updateSavingsVault,
     activityLog: profile.activity_log,
     recordDailyActivity,
+    setHourlyWage,
     completeOnboarding,
     saveOnboardingProgress,
     clearOnboardingProgress,

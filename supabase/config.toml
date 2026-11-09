@@ -50,3 +50,9 @@ verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = false
+
+[functions.remove-plaid-item]
+verify_jwt = false
+
+[functions.mark-plaid-item-active]
+verify_jwt = false

@@ -50,7 +50,7 @@ import { SubscriptionsReport } from "./pages/reports/SubscriptionsReport";
 import Install from "./pages/Install";
 import InstallPromptBanner from "./components/InstallPromptBanner";
 import { OfflineBanner } from "./components/OfflineBanner";
-import { UpdateAvailableBanner } from "./components/UpdateAvailableBanner";
+import { useServiceWorkerUpdate } from "./hooks/useServiceWorkerUpdate";
 import Journey from "./pages/Journey";
 import SiteMap from "./pages/internal/SiteMap";
 import Unavailable from "./pages/internal/Unavailable";
@@ -60,6 +60,12 @@ import JoinBeta from "./pages/internal/JoinBeta";
 import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
+
+// Keeps the installed app and the website on the newest publish; renders nothing itself.
+function ServiceWorkerUpdate() {
+  useServiceWorkerUpdate();
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -141,7 +147,7 @@ const App = () => (
           </Routes>
             <PublicPageFooter />
             <OfflineBanner />
-            <UpdateAvailableBanner />
+            <ServiceWorkerUpdate />
             <InstallPromptBanner />
             <BetaTesterBadge />
             <ChatbotWidget />

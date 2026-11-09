@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { PLAID_LINK_TOKEN_KEY } from '@/lib/plaidProvider';
+import { PLAID_LINK_TOKEN_KEY, PLAID_UPDATE_ITEM_KEY } from '@/lib/plaidProvider';
 
 interface PlaidLinkStepProps {
   linkToken: string;
@@ -37,6 +37,7 @@ export function PlaidLinkStep({ linkToken, onSuccess, onExit }: PlaidLinkStepPro
       // Save the token so /plaid-oauth can resume Link after an OAuth bank redirect
       try {
         sessionStorage.setItem(PLAID_LINK_TOKEN_KEY, linkToken);
+        sessionStorage.removeItem(PLAID_UPDATE_ITEM_KEY);
       } catch {
         /* sessionStorage unavailable */
       }

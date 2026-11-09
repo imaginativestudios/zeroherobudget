@@ -49,6 +49,8 @@ export async function exchangePublicToken(publicToken: string): Promise<LinkedAc
 
 /** Session key holding the link token so /plaid-oauth can resume Link after a bank redirect */
 export const PLAID_LINK_TOKEN_KEY = 'plaid_link_token';
+/** Session key set only during update mode (reconnect), so /plaid-oauth marks the item active instead of exchanging */
+export const PLAID_UPDATE_ITEM_KEY = 'plaid_update_item_id';
 
 /** Remove a bank connection at Plaid and delete it from the account */
 export async function removePlaidItem(itemId: string): Promise<void> {

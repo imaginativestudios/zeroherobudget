@@ -19,6 +19,7 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, ArrowLeft, Mail, CheckCircle2, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { checkGeoAccess } from '@/hooks/useGeoAccess';
+import { supabase } from '@/integrations/supabase/client';
 
 
 interface AuthModalProps {
@@ -27,6 +28,7 @@ interface AuthModalProps {
   defaultMode?: 'login' | 'signup';
   signupFirst?: boolean;
   contextTitle?: string;
+  onAuthenticated?: () => void;
 }
 
 type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'confirmation-sent';
@@ -36,7 +38,8 @@ export function AuthModal({
   onOpenChange, 
   defaultMode = 'login',
   signupFirst = false,
-  contextTitle
+  contextTitle,
+  onAuthenticated
 }: AuthModalProps) {
   const [showLoginInSignupFirst, setShowLoginInSignupFirst] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -70,7 +73,11 @@ export function AuthModal({
           description: 'Successfully signed in.',
         });
         onOpenChange(false);
-        navigate('/dashboard');
+        if (onAuthenticated) {
+          onAuthenticated();
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       toast({
@@ -126,7 +133,21 @@ export function AuthModal({
           description: 'Account created successfully.',
         });
         onOpenChange(false);
-        navigate('/dashboard');
+        if (onAuthenticated) {
+          onAuthenticated();
+        } else {
+          const { data: { user: newUser } } = await supabase.auth.getUser();
+          let onboardingDone = false;
+          if (newUser) {
+            try {
+              const raw = localStorage.getItem(`${newUser.id}_bdt_hero_profile`);
+              onboardingDone = Boolean(raw && JSON.parse(raw)?.onboarding_completed);
+            } catch {
+              onboardingDone = false;
+            }
+          }
+          navigate(onboardingDone ? '/dashboard' : '/onboarding');
+        }
       }
     } catch (error) {
       toast({

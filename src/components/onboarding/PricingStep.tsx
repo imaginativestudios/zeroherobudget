@@ -16,11 +16,8 @@ interface PricingStepProps {
 }
 
 const features = [
-  'Unlimited budget tracking',
-  'AI-powered insights',
-  'Debt snowball calculator',
-  'Emergency fund builder',
-  'All future features included',
+  'Bank linking with automatic transaction sync',
+  'Budgeting, debt payoff and reports stay free for everyone',
 ];
 
 export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
@@ -53,7 +50,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
       // Save that we're in checkout flow
       localStorage.setItem('bdt_checkout_in_progress', 'true');
       
-      window.open(checkoutUrl, '_blank');
+      window.location.assign(checkoutUrl);
     } catch (error) {
       console.error('Checkout error:', error);
       const message = error instanceof Error ? error.message : 'Failed to start checkout. Please try again.';
@@ -319,6 +316,12 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
         onOpenChange={setShowAuthModal}
         signupFirst={true}
         contextTitle="Start Your Free Trial"
+        onAuthenticated={() => {
+          if (pendingCheckoutRef.current) {
+            pendingCheckoutRef.current = false;
+            handleCheckout();
+          }
+        }}
       />
     </>
   );

@@ -14,12 +14,8 @@ import { cn } from '@/lib/utils';
 import SparklesIcon from '@/components/icons/SparklesIcon';
 
 const features = [
-  { icon: ChartBar, text: 'Unlimited budget tracking' },
-  { icon: Zap, text: 'AI-powered insights' },
-  { icon: Users, text: 'Household sharing' },
-  { icon: Shield, text: 'Bank-level security' },
-  { icon: CreditCard, text: 'Debt snowball calculator' },
-  { icon: Heart, text: 'Support our mission' },
+  { icon: Zap, text: 'Bank linking with automatic transaction sync' },
+  { icon: ChartBar, text: 'Budgeting, debt payoff and reports are free for everyone' },
 ];
 
 const trustBadges = [

@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from '@/components/LegalFooterNotice';
 import { Rocket, Home, DollarSign, Target, TrendingDown, Receipt, CreditCard, Users, Menu, X, LogOut, Trophy, Compass, Lightbulb, Keyboard, Database, Shield, Loader2, Settings, Cloud, Scroll, BarChart3, Heart, Wallet } from "lucide-react";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -366,6 +367,7 @@ export const Layout = ({ children }: LayoutProps) => {
               © 2026 Zero Hero. From balances due to a more balanced you.
             </p>
           </div>
+          <LegalFooterNotice className="px-4" />
         </footer>
       </main>
       

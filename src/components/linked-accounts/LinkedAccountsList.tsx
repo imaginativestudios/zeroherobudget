@@ -8,16 +8,13 @@ import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { useBetaAccess } from '@/hooks/useBetaAccess';
-import { syncPlaidTransactions } from '@/lib/plaidProvider';
+import { syncPlaidTransactions, BANK_LINKING_SUBSCRIPTION_MESSAGE } from '@/lib/plaidProvider';
 import { LinkedAccountCard } from './LinkedAccountCard';
 import { DisconnectDialog } from './DisconnectDialog';
 import { ReconnectDialog } from './ReconnectDialog';
 import { DeviceLossWarning } from './DeviceLossWarning';
 import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
-
-export const BANK_LINKING_SUBSCRIPTION_MESSAGE =
-  'Linking your bank comes with a Zero Hero subscription. Start your 7-day free trial, then $10/month or $99/year.';
 
 export function LinkedAccountsList() {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts, reload } = useLinkedAccounts();

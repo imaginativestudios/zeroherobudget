@@ -8,8 +8,8 @@ test('concurrent subscription hooks own separate realtime listeners', async ({ p
   await page.goto('/');
   const result = await page.evaluate(async () => {
     const load = (path: string) => import(/* @vite-ignore */ path);
-    const React = await load('/node_modules/.vite/deps/react.js');
-    const { createRoot } = await load('/node_modules/.vite/deps/react-dom_client.js');
+    const { default: React } = await load('/node_modules/.vite/deps/react.js');
+    const { default: ReactDOM } = await load('/node_modules/.vite/deps/react-dom_client.js');
     const { supabase } = await load('/src/integrations/supabase/client.ts');
     const { useSubscriptionStatus } = await load('/src/hooks/useSubscriptionStatus.ts');
     const originalChannel = supabase.channel.bind(supabase);
@@ -28,7 +28,7 @@ test('concurrent subscription hooks own separate realtime listeners', async ({ p
     function Consumer() { useSubscriptionStatus(); return null; }
     const node = document.createElement('div');
     document.body.append(node);
-    const root = createRoot(node);
+    const root = ReactDOM.createRoot(node);
     root.render(React.createElement(React.StrictMode, null,
       React.createElement(Consumer), React.createElement(Consumer)));
     await new Promise(resolve => setTimeout(resolve, 100));

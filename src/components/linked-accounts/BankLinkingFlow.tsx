@@ -12,7 +12,7 @@ import {
   type MockInstitution,
   type LinkedAccountMeta,
 } from '@/lib/mockBankProvider';
-import { createLinkToken, exchangePublicToken, syncPlaidTransactions } from '@/lib/plaidProvider';
+import { createLinkToken, exchangePublicToken, syncPlaidTransactions, BANK_LINKING_SUBSCRIPTION_MESSAGE } from '@/lib/plaidProvider';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -68,12 +68,20 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
       setLinkToken(token);
       setUsePlaid(true);
       setStep('plaid');
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.message === 'subscription_required') {
+        toast({
+          title: 'Subscription required',
+          description: BANK_LINKING_SUBSCRIPTION_MESSAGE,
+        });
+        onCancel();
+        return;
+      }
       // Plaid not configured — fall back to mock
       setUsePlaid(false);
       setStep('search');
     }
-  }, [user]);
+  }, [user, onCancel]);
 
   // Plaid Link success
   const handlePlaidSuccess = useCallback(

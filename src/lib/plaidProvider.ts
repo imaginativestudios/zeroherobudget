@@ -30,6 +30,10 @@ async function callEdgeFunction<T>(name: string, body?: Record<string, unknown>)
   return res.json();
 }
 
+/** Shown when bank linking needs a subscription (server returns subscription_required). */
+export const BANK_LINKING_SUBSCRIPTION_MESSAGE =
+  'Linking your bank comes with a Zero Hero subscription. Start your 7-day free trial, then $10/month or $99/year.';
+
 /** Create a Plaid Link token via the edge function */
 export async function createLinkToken(itemId?: string): Promise<string> {
   const data = await callEdgeFunction<{ link_token: string }>(

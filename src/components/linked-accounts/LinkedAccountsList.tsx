@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { Building2, Plus, Loader2, AlertTriangle, Shield, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
 import { useAuth } from '@/hooks/useAuth';
-import { syncPlaidTransactions } from '@/lib/plaidProvider';
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { useBetaAccess } from '@/hooks/useBetaAccess';
+import { syncPlaidTransactions, BANK_LINKING_SUBSCRIPTION_MESSAGE } from '@/lib/plaidProvider';
 import { LinkedAccountCard } from './LinkedAccountCard';
 import { DisconnectDialog } from './DisconnectDialog';
 import { ReconnectDialog } from './ReconnectDialog';
@@ -21,6 +24,28 @@ export function LinkedAccountsList() {
   const [isIncognito, setIsIncognito] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const navigate = useNavigate();
+  const { subscribed, isTrialing, loading: subLoading } = useSubscriptionStatus();
+  const { eligible: betaEligible, loading: betaLoading } = useBetaAccess();
+  // Demo mode (no user) keeps the existing linking flow.
+  const needsSubscription =
+    !!user && !subLoading && !betaLoading && !subscribed && !isTrialing && !betaEligible;
+
+  const subscriptionCard = (
+    <Card className="border-primary/20 bg-primary/5">
+      <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-start gap-3 flex-1">
+          <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+            <Sparkles className="h-4 w-4 text-primary" />
+          </div>
+          <p className="text-sm text-foreground leading-relaxed">{BANK_LINKING_SUBSCRIPTION_MESSAGE}</p>
+        </div>
+        <Button onClick={() => navigate('/pricing')} className="min-h-[44px] shrink-0">
+          See plans
+        </Button>
+      </CardContent>
+    </Card>
+  );
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -153,14 +178,19 @@ export function LinkedAccountsList() {
               Sync now
             </Button>
           )}
-          <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Link Account
-          </Button>
+          {!needsSubscription && (
+            <Button size="sm" onClick={() => setIsLinking(true)} className="min-h-[36px]">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Link Account
+            </Button>
+          )}
         </div>
       </div>
 
+      {needsSubscription && subscriptionCard}
+
       {linkedAccounts.length === 0 ? (
+        needsSubscription ? null : (
         <Card className="py-10">
           <CardContent className="flex flex-col items-center text-center">
             <div className="p-3 rounded-full bg-muted mb-3">
@@ -176,6 +206,7 @@ export function LinkedAccountsList() {
             </Button>
           </CardContent>
         </Card>
+        )
       ) : (
         <div className="space-y-2">
           {linkedAccounts.map((account) => (

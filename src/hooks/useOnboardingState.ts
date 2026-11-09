@@ -2,9 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
-import { useAuth } from './useAuth';
 import { toast } from 'sonner';
-import { loadDemoData, DEMO_USER_ID } from '@/lib/demoDataLoader';
+import { loadDemoData } from '@/lib/demoDataLoader';
 
 export interface DebtEntry {
   name: string;
@@ -41,10 +40,10 @@ export interface UseOnboardingStateResult {
 export function useOnboardingState(): UseOnboardingStateResult {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user } = useAuth();
   const isDemoMode = searchParams.get('demo') === 'true';
   const { 
     setMoatTarget: setProfileMoatTarget, 
+    setHourlyWage: setProfileHourlyWage,
     completeOnboarding: markComplete,
     profile,
     saveOnboardingProgress,
@@ -188,13 +187,9 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [data, saveProgress, isDemoMode]);
 
   const saveOnboardingData = useCallback(() => {
-    // Store hourly wage in the per-account profile (same key useHeroProfile reads)
+    // Update the per-account profile state as well as its browser storage.
     if (data.hourlyWage !== null) {
-      const profileKey = `${user?.id ?? DEMO_USER_ID}_bdt_hero_profile`;
-      const existingProfile = localStorage.getItem(profileKey);
-      const profileData = existingProfile ? JSON.parse(existingProfile) : {};
-      profileData.hourly_wage = data.hourlyWage;
-      localStorage.setItem(profileKey, JSON.stringify(profileData));
+      setProfileHourlyWage(data.hourlyWage);
     }
 
     // Create debt entry if provided
@@ -210,7 +205,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
 
     // Set moat target
     setProfileMoatTarget(data.moatTarget);
-  }, [data, addDebt, setProfileMoatTarget, user?.id]);
+  }, [data, addDebt, setProfileMoatTarget, setProfileHourlyWage]);
 
   const showCeremony = useCallback(() => {
     setIsCompleting(true);

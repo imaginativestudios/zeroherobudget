@@ -17,7 +17,8 @@ test('onboarding wage survives ceremony, completion, and reload', async ({ page 
   });
   await expect.poll(async () => (await readProfile())?.hourly_wage).toBe(37);
   await page.getByRole('button', { name: 'Go to Dashboard', exact: true }).click();
-  await expect(page).toHaveURL(/dashboard/);
+  // This public flow has no session; the protected dashboard redirects to sign-in.
+  await expect(page).toHaveURL(/\/auth\?returnTo=%2Fdashboard/);
   expect((await readProfile())?.hourly_wage).toBe(37);
   expect((await readProfile())?.onboarding_completed).toBe(true);
   await page.reload();

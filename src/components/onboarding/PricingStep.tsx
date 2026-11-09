@@ -317,10 +317,9 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
         signupFirst={true}
         contextTitle="Start Your Free Trial"
         onAuthenticated={() => {
-          if (pendingCheckoutRef.current) {
-            pendingCheckoutRef.current = false;
-            handleCheckout();
-          }
+          // Stay on this step: the effect above starts the pending checkout
+          // as soon as the signed-in user is available.
+          setShowAuthModal(false);
         }}
       />
     </>

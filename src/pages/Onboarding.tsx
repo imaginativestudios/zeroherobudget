@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -652,6 +653,7 @@ export default function Onboarding() {
             Learn more
           </Link>
         </p>
+        <LegalFooterNotice />
       </footer>
     </div>
   );

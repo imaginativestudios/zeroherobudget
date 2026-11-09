@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -176,7 +177,7 @@ const CheckoutSuccess = () => {
                   Your Quest Begins!
                 </h1>
                 <p className="text-xl text-white/80">
-                  Welcome to Zero Hero, brave adventurer.
+                  Welcome to Zero Hero™, brave adventurer.
                   {isTrialing && ' Your 7-day trial has been activated.'}
                 </p>
               </motion.div>
@@ -277,10 +278,8 @@ const CheckoutSuccess = () => {
         </div>
 
         {/* Footer */}
-        <footer className="text-center py-6">
-          <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} Zero Hero. From balances due to a more balanced you.
-          </p>
+        <footer className="text-center py-6 px-4 bg-background border-t border-border">
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </footer>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
+import { PublicPageFooter } from "@/components/PublicPageFooter";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { HouseholdViewProvider } from "@/contexts/HouseholdViewContext";
 import { BehavioralTriggerProvider } from "@/contexts/BehavioralTriggerContext";
@@ -138,6 +139,7 @@ const App = () => (
             </Layout>
           } />
           </Routes>
+            <PublicPageFooter />
             <OfflineBanner />
             <UpdateAvailableBanner />
             <InstallPromptBanner />

@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -337,7 +338,7 @@ const Legal = () => {
         {/* CTA Button */}
         <div className="mt-12 text-center">
           <Button variant="royal" size="lg" asChild>
-            <Link to="/">Return to Zero Hero</Link>
+            <Link to="/">Return to Zero Hero™</Link>
           </Button>
         </div>
       </main>
@@ -345,9 +346,7 @@ const Legal = () => {
       {/* Footer */}
       <footer className="py-8 bg-background border-t border-border">
         <div className="container mx-auto px-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            © 2026 Zero Hero. From balances due to a more balanced you.
-          </p>
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </div>
       </footer>
     </div>

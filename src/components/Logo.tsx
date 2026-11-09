@@ -10,10 +10,10 @@ interface LogoProps {
 const LogoLight = ({ className }: { className?: string }) => (
   <svg
     className={cn("block h-auto w-auto", className)}
-    viewBox="0 0 774 111"
+    viewBox="0 0 810 111"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
-    aria-label="Zero Hero logo"
+    aria-label="Zero Hero™ logo"
   >
     <g>
       <path fill="#fff" d="M70.84,30.32h-37.84c-.67-1.02-1.24-2.26-1.71-3.7-.48-1.44-.71-3.09-.71-4.96,0-3.26.71-5.63,2.14-7.12,1.43-1.49,3.43-2.23,6-2.23h53.84c3.71,3.07,5.57,7.03,5.57,11.87,0,2.14-.48,4.24-1.43,6.28-.95,2.05-2.24,4-3.86,5.86l-35.7,43.01h39.56c.57,1.03,1.12,2.28,1.64,3.77s.79,3.17.79,5.03c0,3.26-.71,5.61-2.14,7.05s-3.38,2.16-5.85,2.16h-56.84c-1.43-1.21-2.62-2.79-3.57-4.75-.95-1.95-1.43-4.23-1.43-6.84,0-2.14.55-4.28,1.64-6.42s2.45-4.14,4.07-6l35.84-43.01h-.01Z"/>
@@ -28,6 +28,7 @@ const LogoLight = ({ className }: { className?: string }) => (
     </g>
     {/* Orange slash through O */}
     <line stroke="#F4A259" strokeMiterlimit="10" strokeWidth="7" x1="294.37" y1="82.51" x2="341.63" y2="24.42"/>
+    <text x="755" y="30" fontSize="28" fontFamily="Arial, sans-serif" fill="currentColor" className="text-primary-foreground">™</text>
   </svg>
 );
 
@@ -35,10 +36,10 @@ const LogoLight = ({ className }: { className?: string }) => (
 const LogoDark = ({ className }: { className?: string }) => (
   <svg
     className={cn("block h-auto w-auto", className)}
-    viewBox="0 0 774 111"
+    viewBox="0 0 810 111"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
-    aria-label="Zero Hero logo"
+    aria-label="Zero Hero™ logo"
   >
     <g>
       <path fill="#1a1a1a" d="M70.84,30.32h-37.84c-.67-1.02-1.24-2.26-1.71-3.7-.48-1.44-.71-3.09-.71-4.96,0-3.26.71-5.63,2.14-7.12,1.43-1.49,3.43-2.23,6-2.23h53.84c3.71,3.07,5.57,7.03,5.57,11.87,0,2.14-.48,4.24-1.43,6.28-.95,2.05-2.24,4-3.86,5.86l-35.7,43.01h39.56c.57,1.03,1.12,2.28,1.64,3.77s.79,3.17.79,5.03c0,3.26-.71,5.61-2.14,7.05s-3.38,2.16-5.85,2.16h-56.84c-1.43-1.21-2.62-2.79-3.57-4.75-.95-1.95-1.43-4.23-1.43-6.84,0-2.14.55-4.28,1.64-6.42s2.45-4.14,4.07-6l35.84-43.01h-.01Z"/>
@@ -53,6 +54,7 @@ const LogoDark = ({ className }: { className?: string }) => (
     </g>
     {/* Orange slash through O */}
     <line stroke="#F4A259" strokeMiterlimit="10" strokeWidth="7" x1="294.37" y1="82.51" x2="341.63" y2="24.42"/>
+    <text x="755" y="30" fontSize="28" fontFamily="Arial, sans-serif" fill="currentColor" className="text-foreground">™</text>
   </svg>
 );
 

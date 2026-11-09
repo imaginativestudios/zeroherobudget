@@ -39,7 +39,7 @@ const Install = () => {
               <Smartphone className="h-10 w-10" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold">
-              Install Zero Hero
+              Install Zero Hero™
             </h1>
             <p className="text-lg text-white/80 max-w-md mx-auto">
               Get the full app experience on your device. Works offline and loads instantly!
@@ -77,7 +77,7 @@ const Install = () => {
               <CardContent className="flex justify-center">
                 <Button size="lg" onClick={handleInstall} className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8">
                   <Download className="mr-2 h-5 w-5" />
-                  Install Zero Hero
+                  Install Zero Hero™
                 </Button>
               </CardContent>
             </Card>}

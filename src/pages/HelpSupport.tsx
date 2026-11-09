@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import {
@@ -518,7 +519,7 @@ const HelpSupport = () => {
 
         {/* Footer */}
         <footer className="text-center text-sm text-muted-foreground border-t border-border pt-8">
-          <p>© 2026 Zero Hero. From balances due to a more balanced you.</p>
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </footer>
       </main>
     </div>

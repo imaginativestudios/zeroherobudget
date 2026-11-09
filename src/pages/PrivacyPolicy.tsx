@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -284,7 +285,7 @@ const PrivacyPolicy = () => {
         {/* Footer CTA */}
         <div className="mt-12 text-center">
           <Button size="lg" variant="royal" asChild>
-            <Link to="/">Return to Zero Hero</Link>
+            <Link to="/">Return to Zero Hero™</Link>
           </Button>
         </div>
       </main>
@@ -292,9 +293,7 @@ const PrivacyPolicy = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-16 py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            © 2026 Zero Hero. From balances due to a more balanced you.
-          </p>
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </div>
       </footer>
     </div>

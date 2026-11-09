@@ -38,7 +38,7 @@ export default function Unavailable() {
           <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
             <Globe className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Zero Hero is US-only for now</CardTitle>
+          <CardTitle className="text-2xl">Zero Hero™ is US-only for now</CardTitle>
           <CardDescription className="text-base">
             We're currently available only to users in the United States while we
             navigate financial regulations in other regions. We'd love to let you

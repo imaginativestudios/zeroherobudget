@@ -363,9 +363,6 @@ export const Layout = ({ children }: LayoutProps) => {
             >
               Legal & Privacy
             </Link>
-            <p className="text-xs text-muted-foreground">
-              © 2026 Zero Hero. From balances due to a more balanced you.
-            </p>
           </div>
           <LegalFooterNotice className="px-4" />
         </footer>

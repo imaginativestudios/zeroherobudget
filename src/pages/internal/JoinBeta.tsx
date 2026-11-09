@@ -93,7 +93,7 @@ export default function JoinBeta() {
                   You already have beta access on this device.
                 </p>
                 <Button onClick={() => navigate("/")} className="w-full">
-                  Continue to Zero Hero
+                  Continue to Zero Hero™
                   <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>

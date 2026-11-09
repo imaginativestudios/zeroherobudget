@@ -66,7 +66,7 @@ export function DashboardEmptyState({ greetingName }: DashboardEmptyStateProps) 
         <div className="relative">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-5 w-5" />
-            <span className="text-sm font-medium opacity-90">Welcome to Zero Hero</span>
+            <span className="text-sm font-medium opacity-90">Welcome to Zero Hero™</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold mb-2">
             Hi {greetingName}, let's start your journey!

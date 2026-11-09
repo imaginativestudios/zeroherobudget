@@ -29,7 +29,7 @@ const TermsOfService = () => {
             <FileText className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
-          <p className="text-muted-foreground">Last Updated: March 25, 2026</p>
+          <p className="text-muted-foreground">Last Updated: November 9, 2026</p>
         </div>
 
         {/* Terms Content */}
@@ -135,7 +135,7 @@ const TermsOfService = () => {
               <li>Financial reporting and insights</li>
               <li>Household collaboration features</li>
               <li>Transaction management and account tracking</li>
-              <li>Optional bank account linking via Plaid for importing account balances</li>
+              <li>Optional bank account linking via Plaid for importing balances and transactions (part of a paid subscription)</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Bank Account Linking</h3>
@@ -212,14 +212,23 @@ const TermsOfService = () => {
             
             <h3 className="text-xl font-semibold mt-6 mb-3">Subscription Plans</h3>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Zero Hero may offer both free and paid subscription plans. Paid plans may include additional 
-              features, storage, or capabilities not available in free plans.
+              Budgeting, debt payoff and reports are free for everyone. Linking a bank account through Plaid, 
+              with automatic transaction sync, requires a paid Zero Hero subscription or an active free trial. 
+              Paid plans are $10 per month or $99 per year.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Free Trial</h3>
+            <p className="text-foreground/80 leading-relaxed mb-4">
+              First-time subscribers get a 7-day free trial. You add a payment card when you start the trial. 
+              Unless you cancel before the trial ends, your subscription starts automatically and your card is 
+              charged for the plan you chose, $10 per month or $99 per year. If you cancel during the trial, 
+              you won't be charged.
             </p>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Billing and Renewal</h3>
             <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
               <li>Subscription fees are billed in advance on a recurring basis (monthly or annually)</li>
-              <li>Your subscription will automatically renew unless cancelled before the renewal date</li>
+              <li>Your subscription renews automatically, and your card on file is charged at the start of each billing period until you cancel.</li>
               <li>We reserve the right to change our pricing with 30 days' notice</li>
               <li>All fees are non-refundable except as required by law</li>
               <li>You are responsible for all taxes associated with your subscription</li>
@@ -227,9 +236,9 @@ const TermsOfService = () => {
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Cancellation</h3>
             <p className="text-foreground/80 leading-relaxed">
-              You may cancel your subscription at any time through your account settings. Cancellation will 
-              take effect at the end of your current billing period. No refunds will be provided for partial 
-              subscription periods.
+              You can cancel anytime in your account settings, which opens our billing portal, run by Stripe. 
+              Cancellation takes effect at the end of your current billing period, and you keep bank linking 
+              until then. We don't give refunds for partial billing periods.
             </p>
           </section>
 
@@ -341,8 +350,9 @@ const TermsOfService = () => {
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Governing Law</h3>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction 
-              in which Zero Hero is incorporated, without regard to its conflict of law provisions.
+              These Terms are governed by the laws of the State of Connecticut, without regard to its conflict 
+              of law rules. Any dispute that isn't resolved informally will be brought only in the state or 
+              federal courts located in Connecticut, and you agree to their jurisdiction.
             </p>
 
             <h3 className="text-xl font-semibold mt-6 mb-3">Class Action Waiver</h3>

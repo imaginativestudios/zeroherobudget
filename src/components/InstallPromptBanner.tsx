@@ -52,7 +52,7 @@ const InstallPromptBanner = () => {
             <Download className="h-5 w-5 text-white" />
           </div>
           <div className="min-w-0">
-            <p className="font-semibold text-white text-sm truncate">Install Zero Hero</p>
+            <p className="font-semibold text-white text-sm truncate">Install Zero Hero™</p>
             <p className="text-xs text-white/80 truncate">Get the full app experience</p>
           </div>
         </div>

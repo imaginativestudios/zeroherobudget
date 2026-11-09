@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Logo } from "@/components/Logo";
@@ -466,9 +467,7 @@ const ComingSoon = () => {
       <footer className="py-8 bg-background border-t border-border">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-muted-foreground text-sm">
-              © 2026 Zero Hero. From balances due to a more balanced you.
-            </p>
+            <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
             <div className="flex gap-6 text-sm text-muted-foreground">
               <Link to="/pricing" className="hover:text-foreground transition-colors">
                 Pricing

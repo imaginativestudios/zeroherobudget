@@ -88,11 +88,6 @@ const NotFound = () => {
             Debt Payoff
           </Link>
         </div>
-
-        {/* Footer message */}
-        <p className="mt-12 text-sm text-white/60">
-          © 2026 Zero Hero. From balances due to a more balanced you.
-        </p>
       </div>
     </div>
   );

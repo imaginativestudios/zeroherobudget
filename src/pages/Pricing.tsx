@@ -1,3 +1,4 @@
+import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, TrendingUp, Clock, DollarSign } from 'lucide-react';
@@ -511,7 +512,7 @@ const Pricing = () => {
       {/* Footer */}
       <footer className="relative z-10 border-t border-border/40 py-8 mt-16">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Zero Hero. All rights reserved.</p>
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </div>
       </footer>
     </div>

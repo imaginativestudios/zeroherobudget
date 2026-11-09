@@ -459,7 +459,7 @@ export function AuthModal({
                   what is written here is what renders. */}
               <DialogPrimitive.Title asChild>
                 <h1 className="tracking-tight text-xl sm:text-2xl font-bold text-center">
-                  Welcome to Zero Hero
+                  Welcome to Zero Hero™
                 </h1>
               </DialogPrimitive.Title>
               <DialogDescription className="text-center text-sm sm:text-base">

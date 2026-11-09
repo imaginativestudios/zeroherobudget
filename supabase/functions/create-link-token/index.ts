@@ -49,18 +49,73 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Optional body: { item_id } switches to Plaid update mode (reconnect)
+    let itemId: string | null = null;
+    try {
+      const raw = await req.text();
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.item_id != null) {
+          if (typeof parsed.item_id !== "string" || parsed.item_id.length > 100) {
+            return new Response(JSON.stringify({ error: "Invalid item_id" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          itemId = parsed.item_id;
+        }
+      }
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const linkBody: Record<string, unknown> = {
+      client_id: clientId,
+      secret,
+      user: { client_user_id: userId },
+      client_name: "Zero Hero Budget",
+      country_codes: ["US"],
+      language: "en",
+    };
+
+    if (itemId) {
+      const supabaseAdmin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false } }
+      );
+      const { data: item, error: itemErr } = await supabaseAdmin
+        .from("plaid_items")
+        .select("user_id, access_token")
+        .eq("id", itemId)
+        .maybeSingle();
+      if (itemErr || !item) {
+        return new Response(JSON.stringify({ error: "Not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (item.user_id !== userId) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      linkBody.access_token = item.access_token;
+    } else {
+      linkBody.products = ["transactions"];
+    }
+
+    const redirectUri = Deno.env.get("PLAID_REDIRECT_URI");
+    if (redirectUri) linkBody.redirect_uri = redirectUri;
+
     const plaidRes = await fetch(`${PLAID_BASE}/link/token/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        client_id: clientId,
-        secret,
-        user: { client_user_id: userId },
-        client_name: "Zero Hero Budget",
-        products: ["auth"],
-        country_codes: ["US"],
-        language: "en",
-      }),
+      body: JSON.stringify(linkBody),
     });
 
     const plaidData = await plaidRes.json();

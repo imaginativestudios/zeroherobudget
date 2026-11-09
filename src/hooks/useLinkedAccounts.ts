@@ -8,6 +8,7 @@ import {
 } from '@/lib/encryptedStorage';
 import { supabase } from '@/integrations/supabase/client';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
+import { removePlaidItem } from '@/lib/plaidProvider';
 
 const STORAGE_KEY = 'linked_bank_accounts';
 
@@ -41,16 +42,16 @@ export function useLinkedAccounts() {
       } else {
         // Fetch institution names for each item
         const itemIds = Array.from(new Set((data || []).map((a: any) => a.plaid_item_id).filter(Boolean)));
-        let instMap = new Map<string, { name: string; id: string | null; lastSync: string | null }>();
+        let instMap = new Map<string, { name: string; id: string | null; lastSync: string | null; status: string | null }>();
         if (itemIds.length > 0) {
           const { data: items } = await supabase
             .from('plaid_items')
-            .select('id, institution_id, institution_name, last_synced_at')
+            .select('id, institution_id, institution_name, last_synced_at, status')
             .in('id', itemIds);
           instMap = new Map(
             (items || []).map((i: any) => [
               i.id,
-              { name: i.institution_name || 'Bank', id: i.institution_id, lastSync: i.last_synced_at },
+              { name: i.institution_name || 'Bank', id: i.institution_id, lastSync: i.last_synced_at, status: i.status },
             ])
           );
         }
@@ -64,7 +65,7 @@ export function useLinkedAccounts() {
             maskedAccountName: a.name,
             accountType: a.type,
             accessToken: `plaid-item-${a.plaid_item_id}`,
-            status: 'active',
+            status: inst?.status === 'login_required' ? 'expired' : 'active',
             linkedAt: inst?.lastSync || a.updated_at,
             balance: a.balance,
           };
@@ -125,12 +126,15 @@ export function useLinkedAccounts() {
   const removeAccount = useCallback(
     async (accountId: string) => {
       if (isAuthenticated) {
-        // Find the plaid_item_id for this account, then delete the item (cascades to accounts)
+        // Remove the Item at Plaid and delete the plaid_items row server-side (cascades to accounts)
         const acc = accounts.find((a) => a.id === accountId);
         if (acc?.accessToken?.startsWith('plaid-item-')) {
           const itemUuid = acc.accessToken.replace('plaid-item-', '');
-          const { error } = await supabase.from('plaid_items').delete().eq('id', itemUuid);
-          if (error) console.error('disconnect plaid item error:', error);
+          try {
+            await removePlaidItem(itemUuid);
+          } catch (error) {
+            console.error('disconnect plaid item error:', error);
+          }
         } else {
           await supabase.from('accounts').delete().eq('plaid_account_id', accountId);
         }
@@ -148,7 +152,12 @@ export function useLinkedAccounts() {
 
   const updateAccountToken = useCallback(
     async (accountId: string, newToken: string) => {
-      if (isAuthenticated) return; // Reconnection is handled by Plaid Link update mode + edge fn
+      // Signed-in users: ReconnectDialog runs Plaid Link update mode and the
+      // mark-plaid-item-active edge function; here we only refresh the list.
+      if (isAuthenticated) {
+        await reload();
+        return;
+      }
       setAccounts((prev) => {
         const next = prev.map((a) =>
           a.id === accountId
@@ -159,7 +168,7 @@ export function useLinkedAccounts() {
         return next;
       });
     },
-    [isAuthenticated, userId]
+    [isAuthenticated, userId, reload]
   );
 
   const markExpired = useCallback(

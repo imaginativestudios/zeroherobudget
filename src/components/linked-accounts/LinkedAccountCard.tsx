@@ -45,19 +45,14 @@ export function LinkedAccountCard({ account, onReconnect, onDisconnect }: Linked
 
         <div className="flex items-center gap-2 shrink-0">
           <Badge variant={isExpired ? 'destructive' : 'secondary'} className="text-xs">
-            {isExpired ? 'Needs Attention' : 'Active'}
+            {isExpired ? 'Needs reconnecting' : 'Active'}
           </Badge>
 
           {isExpired && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onReconnect(account)}>
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span className="sr-only">Reconnect</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Reconnect</TooltipContent>
-            </Tooltip>
+            <Button variant="outline" size="sm" className="h-8" onClick={() => onReconnect(account)}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+              Reconnect
+            </Button>
           )}
 
           <Tooltip>

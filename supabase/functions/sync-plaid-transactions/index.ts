@@ -104,6 +104,7 @@ Deno.serve(async (req) => {
       const added: any[] = [];
       const modified: any[] = [];
       const removed: any[] = [];
+      let loginRequired = false;
 
       while (hasMore) {
         const syncRes = await fetch(`${PLAID_BASE}/transactions/sync`, {
@@ -119,7 +120,14 @@ Deno.serve(async (req) => {
         });
         const syncData = await syncRes.json();
         if (!syncRes.ok) {
-          console.error("Plaid sync error:", syncData);
+          console.error("Plaid sync error:", syncData?.error_code);
+          if (["ITEM_LOGIN_REQUIRED", "PENDING_EXPIRATION", "PENDING_DISCONNECT"].includes(syncData?.error_code)) {
+            loginRequired = true;
+            await supabaseAdmin
+              .from("plaid_items")
+              .update({ status: "login_required" })
+              .eq("id", item.id);
+          }
           break;
         }
         added.push(...(syncData.added || []));
@@ -128,6 +136,8 @@ Deno.serve(async (req) => {
         cursor = syncData.next_cursor;
         hasMore = !!syncData.has_more;
       }
+
+      if (loginRequired) continue;
 
       // Upsert added + modified
       const upserts = [...added, ...modified].map((tx: any) => {

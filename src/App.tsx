@@ -20,6 +20,7 @@ import { IncomeReport } from "@/pages/reports/IncomeReport";
 import { AvailableForDebtReport } from "@/pages/reports/AvailableForDebtReport";
 import { NetWorthReport } from "@/pages/reports/NetWorthReport";
 import RootPage from "./pages/RootPage";
+import PlaidOAuth from "./pages/PlaidOAuth";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
@@ -83,6 +84,7 @@ const App = () => (
           <Route path="/checkout-success" element={<CheckoutSuccess />} />
           <Route path="/accept-invite/:token" element={<AcceptInvite />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/plaid-oauth" element={<PlaidOAuth />} />
 
           {/* Internal / dev / pre-launch pages (not part of the normal user flow) */}
           <Route path="/internal/style-guide/icons" element={<IconStyleGuide />} />

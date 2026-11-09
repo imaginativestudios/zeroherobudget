@@ -397,7 +397,7 @@ const [expenses] = useExpenses();
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Import transactions from Zero Hero Connector</p>
+                <p>Import transactions from Zero Hero™ Connector</p>
               </TooltipContent>
             </Tooltip>
             <Button variant="outline" size="sm" onClick={exportTransactions} aria-label="Export transactions to CSV">

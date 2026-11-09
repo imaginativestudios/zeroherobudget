@@ -278,8 +278,8 @@ const CheckoutSuccess = () => {
         </div>
 
         {/* Footer */}
-        <footer className="text-center py-6">
-          <LegalFooterNotice className="mt-0 border-t-0 pt-0" inverse />
+        <footer className="text-center py-6 px-4 bg-background border-t border-border">
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
         </footer>
       </div>
     </div>

@@ -31,8 +31,11 @@ async function callEdgeFunction<T>(name: string, body?: Record<string, unknown>)
 }
 
 /** Create a Plaid Link token via the edge function */
-export async function createLinkToken(): Promise<string> {
-  const data = await callEdgeFunction<{ link_token: string }>('create-link-token');
+export async function createLinkToken(itemId?: string): Promise<string> {
+  const data = await callEdgeFunction<{ link_token: string }>(
+    'create-link-token',
+    itemId ? { item_id: itemId } : undefined
+  );
   return data.link_token;
 }
 
@@ -42,6 +45,19 @@ export async function exchangePublicToken(publicToken: string): Promise<LinkedAc
     public_token: publicToken,
   });
   return data.accounts;
+}
+
+/** Session key holding the link token so /plaid-oauth can resume Link after a bank redirect */
+export const PLAID_LINK_TOKEN_KEY = 'plaid_link_token';
+
+/** Remove a bank connection at Plaid and delete it from the account */
+export async function removePlaidItem(itemId: string): Promise<void> {
+  await callEdgeFunction('remove-plaid-item', { item_id: itemId });
+}
+
+/** Mark a reconnected (update-mode) bank connection active again */
+export async function markPlaidItemActive(itemId: string): Promise<void> {
+  await callEdgeFunction('mark-plaid-item-active', { item_id: itemId });
 }
 
 /** Trigger a Plaid transaction sync for the current user */

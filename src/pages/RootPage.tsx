@@ -1,10 +1,10 @@
 import { useBetaAccess } from "@/hooks/useBetaAccess";
 import Landing from "./Landing";
-import ComingSoon from "./internal/ComingSoon";
 
 const RootPage = () => {
-  const { isBeta } = useBetaAccess();
-  return isBeta ? <Landing /> : <ComingSoon />;
+  // Beta access state is still tracked; the public landing is shown to everyone.
+  useBetaAccess();
+  return <Landing />;
 };
 
 export default RootPage;

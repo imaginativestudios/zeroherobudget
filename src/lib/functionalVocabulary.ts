@@ -107,11 +107,11 @@ export const FUNCTIONAL_COPY = {
  * Heroic subtexts to add flavor without confusing primary labels
  */
 export const HEROIC_SUBTEXTS = {
-  budget: 'Your Financial Atlas',
-  debts: 'Conquer the Shadow',
-  emergencyFund: 'Your Financial Sanctuary',
-  debtStrategy: 'Chart Your Freedom',
-  strategy: 'Chart Your Freedom',
+  budget: 'Monthly cash flow',
+  debts: 'Active balances',
+  emergencyFund: 'Emergency reserve',
+  debtStrategy: 'Debt elimination plan',
+  strategy: 'Debt elimination plan',
   transactions: 'Your Journey Log',
   achievements: 'Your Milestones',
   reports: 'Your Discoveries',

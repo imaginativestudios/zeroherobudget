@@ -429,23 +429,23 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-card border shadow-royal"
+        className="p-6 sm:p-8 rounded-xl bg-white dark:bg-card border border-border/60 shadow-sm"
       >
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Welcome + Consistency */}
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
               Welcome, {greetingName}
             </h1>
             <p className="text-muted-foreground">
-              Your financial journey continues. Stay focused on the path ahead.
+              Here's where your money stands this month.
             </p>
           </div>
           
           {/* Right: Next Target */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="text-left sm:text-right">
-              <p className="text-sm text-muted-foreground uppercase tracking-wide">Next Target</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Next priority</p>
               <p className="text-lg font-semibold text-primary">
                 {dashboardState.currentBoss 
                   ? `Pay off ${dashboardState.currentBoss.name}` 
@@ -691,7 +691,7 @@ export const Dashboard = () => {
               </TabsTrigger>
               <TabsTrigger value="achievements" className="gap-2" disabled={!dashboardState.canShowAchievements}>
                 <Trophy className="h-4 w-4" />
-                Victories
+                Milestones
               </TabsTrigger>
             </TabsList>
 

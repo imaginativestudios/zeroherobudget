@@ -7,7 +7,6 @@
 
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { SurplusPowerCard } from '@/components/behavioral/SurplusPowerCard';
 import { ShadowBudgetSummary } from '@/components/behavioral/ShadowBudgetSummary';
 import { FreedomTimelineWidget } from '@/components/behavioral/FreedomTimelineWidget';
@@ -49,16 +48,13 @@ export function IntelFeed({
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-2">
         <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
-        <h2 className="text-xl font-semibold text-foreground">Financial Insights</h2>
-        <Badge variant="outline" className="text-xs ml-2">
-          {visibleCardCount + (canShowFreedom && debts.length > 0 ? 1 : 0)}/{3} unlocked
-        </Badge>
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">Payoff Outlook</h2>
       </div>
       
       <p className="text-sm text-muted-foreground mb-6" role="status" aria-live="polite">
-        Insights earned through financial discipline
+        Your surplus, spending guardrails and projected debt-free date.
       </p>
 
       {/* Cards Grid */}

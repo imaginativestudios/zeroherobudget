@@ -375,13 +375,13 @@ export function calculateSurplusPower(
 
   let heroMessage: string;
   if (surplusPower <= 0) {
-    heroMessage = "🔴 Alert: Your survival costs exceed your income. Let's find areas to cut or ways to boost income.";
+    heroMessage = "Your essential costs exceed your income. Let's find areas to cut or ways to boost income.";
   } else if (surplusPercentage < 10) {
-    heroMessage = "🟡 Tight margins! Every dollar of surplus counts. Consider the Shadow Budget before discretionary spending.";
+    heroMessage = "Margins are tight. Every dollar of surplus counts, so review essentials before discretionary spending.";
   } else if (surplusPercentage < 25) {
-    heroMessage = `🟢 You have $${surplusPower.toFixed(0)} in Surplus Power! This could accelerate your debt payoff significantly.`;
+    heroMessage = `You have $${surplusPower.toFixed(0)} in monthly surplus. Directing it to debt can shorten your payoff significantly.`;
   } else {
-    heroMessage = `🦸 Hero Status! Your $${surplusPower.toFixed(0)} surplus is ${surplusPercentage.toFixed(0)}% of income. You're positioned for rapid debt elimination!`;
+    heroMessage = `Your $${surplusPower.toFixed(0)} surplus is ${surplusPercentage.toFixed(0)}% of income. You're well positioned to pay down debt quickly.`;
   }
 
   return { totalIncome, survivalExpenses, debtMinimums, surplusPower, surplusPercentage, isPositive, heroMessage };

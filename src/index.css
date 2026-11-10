@@ -514,14 +514,6 @@ All colors MUST be HSL.
     box-shadow: 0 0 0 2px hsl(280 30% 50% / 0.15);
   }
   
-  /* Debt card styling */
-  .card-debt {
-    border-left: 3px solid hsl(280 30% 50% / 0.5);
-  }
-  
-  .card-debt:hover {
-    border-left-color: hsl(280 30% 50%);
-  }
   
   /* Expense inputs - Blue/Slate accent */
   .input-expense {
@@ -534,14 +526,6 @@ All colors MUST be HSL.
     box-shadow: 0 0 0 2px hsl(220 40% 55% / 0.15);
   }
   
-  /* Expense card styling */
-  .card-expense {
-    border-left: 3px solid hsl(220 40% 55% / 0.5);
-  }
-  
-  .card-expense:hover {
-    border-left-color: hsl(220 40% 55%);
-  }
 
   /* ====================================== */
   /* Save Button Animation                  */

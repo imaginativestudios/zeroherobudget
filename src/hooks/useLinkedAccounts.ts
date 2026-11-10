@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './useAuth';
 import { DEMO_USER_ID } from '@/lib/constants';
 import {
@@ -26,6 +26,12 @@ export function useLinkedAccounts() {
   const [accounts, setAccounts] = useState<LinkedAccountMeta[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [encryptionAvailable] = useState(() => isEncryptedStorageAvailable());
+  // Latest accounts list, so counts never rely on a stale closure.
+  const accountsRef = useRef<LinkedAccountMeta[]>([]);
+  accountsRef.current = accounts;
+  // Number of add/remove operations in flight; focus reloads wait for these.
+  const mutationsInFlight = useRef(0);
+  const lastFocusReload = useRef(0);
 
   const reload = useCallback(async () => {
     setIsLoading(true);
@@ -90,14 +96,40 @@ export function useLinkedAccounts() {
     reload();
   }, [reload]);
 
+  // Signed-in: refresh when the window regains focus or becomes visible, so a
+  // bank link finished in another tab (Plaid OAuth) shows up here. Throttled.
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const maybeReload = () => {
+      if (document.visibilityState !== 'visible') return;
+      if (mutationsInFlight.current > 0) return;
+      const now = Date.now();
+      if (now - lastFocusReload.current < 10_000) return;
+      lastFocusReload.current = now;
+      reload();
+    };
+    window.addEventListener('focus', maybeReload);
+    document.addEventListener('visibilitychange', maybeReload);
+    return () => {
+      window.removeEventListener('focus', maybeReload);
+      document.removeEventListener('visibilitychange', maybeReload);
+    };
+  }, [isAuthenticated, reload]);
+
   const addAccounts = useCallback(
     async (newAccounts: LinkedAccountMeta[]) => {
       // For authenticated users, the edge function already wrote to the DB —
       // we just refresh the list.
       if (isAuthenticated) {
-        await reload();
-        // Compute a simple added/skipped count by intersecting ids with current state
-        const existingIds = new Set(accounts.map((a) => a.id));
+        // Snapshot the latest known ids before refreshing, then count incoming
+        // ids that were not already present.
+        const existingIds = new Set(accountsRef.current.map((a) => a.id));
+        mutationsInFlight.current++;
+        try {
+          await reload();
+        } finally {
+          mutationsInFlight.current--;
+        }
         const added = newAccounts.filter((a) => !existingIds.has(a.id)).length;
         return { added, skipped: newAccounts.length - added };
       }
@@ -120,12 +152,14 @@ export function useLinkedAccounts() {
         });
       });
     },
-    [isAuthenticated, reload, accounts, userId]
+    [isAuthenticated, reload, userId]
   );
 
   const removeAccount = useCallback(
     async (accountId: string) => {
       if (isAuthenticated) {
+        mutationsInFlight.current++;
+        try {
         // Remove the Item at Plaid and delete the plaid_items row server-side (cascades to accounts)
         const acc = accounts.find((a) => a.id === accountId);
         if (acc?.accessToken?.startsWith('plaid-item-')) {
@@ -139,6 +173,9 @@ export function useLinkedAccounts() {
           await supabase.from('accounts').delete().eq('plaid_account_id', accountId);
         }
         await reload();
+        } finally {
+          mutationsInFlight.current--;
+        }
         return;
       }
       setAccounts((prev) => {

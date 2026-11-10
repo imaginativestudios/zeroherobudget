@@ -45,6 +45,35 @@ Deno.serve(async (req) => {
     const secret = Deno.env.get("PLAID_SECRET");
     if (!clientId || !secret) return jsonError(500, "Plaid not configured");
 
+    const logDatabaseError = (operation: string, error: { message: string; code: string }) => {
+      // Database messages can contain row details; redact any Plaid token first.
+      console.error(operation, {
+        message: error.message.replace(/access-[^\s,)'"\]}]+/gi, "[redacted]"),
+        code: error.code,
+      });
+    };
+    const removePlaidItem = async (token: string): Promise<boolean> => {
+      try {
+        const response = await fetch(`${PLAID_BASE}/item/remove`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ client_id: clientId, secret, access_token: token }),
+        });
+        if (response.ok) return true;
+        const result = await response.json().catch(() => ({}));
+        if (result?.error_code === "ITEM_NOT_FOUND") return true;
+        console.error("Plaid item/remove failed", { status: response.status });
+      } catch {
+        console.error("Plaid item/remove request failed");
+      }
+      return false;
+    };
+    const deleteItemRow = async (id: string) => {
+      const { error } = await supabaseAdmin.from("plaid_items").delete()
+        .eq("id", id).eq("user_id", userId);
+      if (error) logDatabaseError("plaid_items cleanup error", error);
+    };
+
     const body = await req.json();
     const publicToken = body?.public_token;
     if (!publicToken || typeof publicToken !== "string") {
@@ -59,11 +88,37 @@ Deno.serve(async (req) => {
     });
     const exchangeData = await exchangeRes.json();
     if (!exchangeRes.ok) {
-      console.error("Plaid exchange error:", exchangeData);
+      console.error("Plaid exchange failed", { status: exchangeRes.status });
       return jsonError(502, "Token exchange failed");
     }
     const accessToken: string = exchangeData.access_token;
     const itemId: string = exchangeData.item_id;
+
+    // Remove old, account-less connections left behind by failed saves.
+    // Page candidates so cleanup is not limited to PostgREST's default row cap.
+    try {
+      const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const staleItems: { id: string; access_token: string }[] = [];
+      for (let offset = 0; ; offset += 100) {
+        const { data: candidates, error } = await supabaseAdmin.from("plaid_items")
+          .select("id, access_token, accounts(id)")
+          .eq("user_id", userId).lt("created_at", cutoff)
+          .order("id").range(offset, offset + 99);
+        if (error) {
+          logDatabaseError("plaid_items cleanup lookup error", error);
+          break;
+        }
+        for (const item of candidates || []) {
+          if (item.accounts.length === 0) staleItems.push(item);
+        }
+        if (!candidates || candidates.length < 100) break;
+      }
+      for (const item of staleItems) {
+        if (await removePlaidItem(item.access_token)) await deleteItemRow(item.id);
+      }
+    } catch {
+      console.error("Stale Plaid connection cleanup failed");
+    }
 
     // Get accounts (and item.institution_id)
     const accountsRes = await fetch(`${PLAID_BASE}/accounts/get`, {
@@ -73,7 +128,7 @@ Deno.serve(async (req) => {
     });
     const accountsData = await accountsRes.json();
     if (!accountsRes.ok) {
-      console.error("Plaid accounts error:", accountsData);
+      console.error("Plaid accounts failed", { status: accountsRes.status });
       return jsonError(502, "Failed to retrieve accounts");
     }
 
@@ -121,28 +176,33 @@ Deno.serve(async (req) => {
       .select("id")
       .single();
     if (itemErr || !itemRow) {
-      console.error("plaid_items upsert error:", itemErr);
+      if (itemErr) logDatabaseError("plaid_items upsert error", itemErr);
       return jsonError(500, "Failed to save bank connection");
     }
 
     // Map Plaid type -> our account type
-    const typeMap: Record<string, string> = {
-      depository: "checking",
-      checking: "checking",
-      savings: "savings",
-      credit: "credit",
-      "credit card": "credit",
-      loan: "loan",
-      mortgage: "loan",
-      investment: "investment",
-      brokerage: "investment",
-    };
-
     const plaidAccounts = accountsData.accounts || [];
-    const accountRows = plaidAccounts.map((acc: any) => {
-      const subtype = (acc.subtype || acc.type || "depository").toString().toLowerCase();
-      const accountType = typeMap[subtype] || "checking";
-      return {
+    const accountRows = plaidAccounts.flatMap((acc: any) => {
+      const type = String(acc.type || "").toLowerCase();
+      const subtype = String(acc.subtype || "").toLowerCase();
+      if (type === "loan" || ["mortgage", "student", "auto"].includes(subtype)) return [];
+      let accountType = "checking";
+      if (type === "depository") {
+        accountType = ["savings", "money market", "cd", "hsa"].includes(subtype) ? "savings" : "checking";
+      } else if (type === "credit") {
+        accountType = "credit";
+      } else if (type === "investment" || type === "brokerage") {
+        accountType = "investment";
+      } else if (["savings", "money market", "cd", "hsa"].includes(subtype) || type === "savings") {
+        accountType = "savings";
+      } else if (subtype === "credit card") {
+        accountType = "credit";
+      } else if (subtype === "brokerage" || subtype === "investment") {
+        accountType = "investment";
+      } else if (type === "cash") {
+        accountType = "cash";
+      }
+      return [{
         user_id: userId,
         household_id: householdId,
         name: `${acc.name || institutionName} ••${acc.mask || "0000"}`,
@@ -151,7 +211,7 @@ Deno.serve(async (req) => {
         is_active: true,
         plaid_account_id: acc.account_id,
         plaid_item_id: itemRow.id,
-      };
+      }];
     });
 
     // Upsert accounts on plaid_account_id
@@ -160,7 +220,9 @@ Deno.serve(async (req) => {
         .from("accounts")
         .upsert(accountRows, { onConflict: "plaid_account_id" });
       if (accErr) {
-        console.error("accounts upsert error:", accErr);
+        logDatabaseError("accounts upsert error", accErr);
+        await removePlaidItem(accessToken);
+        await deleteItemRow(itemRow.id);
         return jsonError(500, "Failed to save accounts");
       }
     }
@@ -186,8 +248,8 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ accounts: sanitized }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err) {
-    console.error("exchange-plaid-token error:", err);
+  } catch {
+    console.error("exchange-plaid-token request failed");
     return jsonError(500, "Internal server error");
   }
 });

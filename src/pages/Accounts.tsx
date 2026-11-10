@@ -50,17 +50,6 @@ export function Accounts() {
   const handleDeleteAccount = () => {
     if (!deleteConfirm) return;
     
-    const activeAccounts = accounts.filter((acc) => acc.is_active);
-    if (activeAccounts.length === 1 && deleteConfirm.is_active) {
-      toast({
-        title: "Cannot delete",
-        description: "You must have at least one active account.",
-        variant: "destructive",
-      });
-      setDeleteConfirm(null);
-      return;
-    }
-    
     removeAccount(deleteConfirm.id);
     toast({ title: "Account deleted", description: `${deleteConfirm.name} has been removed.` });
     setDeleteConfirm(null);
@@ -68,18 +57,6 @@ export function Accounts() {
 
   const handleToggleActive = (account: Account) => {
     const newActiveState = !account.is_active;
-    
-    if (!newActiveState) {
-      const activeAccounts = accounts.filter((acc) => acc.is_active);
-      if (activeAccounts.length === 1) {
-        toast({
-          title: "Cannot deactivate",
-          description: "You must have at least one active account.",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
     
     updateAccount(account.id, { is_active: newActiveState });
     toast({

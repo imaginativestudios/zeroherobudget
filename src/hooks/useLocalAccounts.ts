@@ -39,6 +39,8 @@ export function useLocalAccounts() {
 
   // Demo path
   const [localAccounts, setLocalAccounts] = useUserLocalStorage<Account[]>('accounts', []);
+  // Remember the demo default was seeded so deleting the last account sticks.
+  const [defaultSeeded, setDefaultSeeded] = useUserLocalStorage<boolean>('accounts_default_seeded', false);
 
   // Authed path
   const [remoteAccounts, setRemoteAccounts] = useState<Account[]>([]);
@@ -66,7 +68,12 @@ export function useLocalAccounts() {
 
   // Default account fallback (demo only — Supabase path may have 0 accounts before linking)
   useEffect(() => {
-    if (!isAuthed && localAccounts.length === 0) {
+    if (isAuthed || defaultSeeded) return;
+    if (localAccounts.length > 0) {
+      setDefaultSeeded(true);
+      return;
+    }
+    {
       const defaultAccount: Account = {
         id: 'default-checking',
         name: 'Main Checking',
@@ -78,8 +85,9 @@ export function useLocalAccounts() {
         updated_at: new Date().toISOString(),
       };
       setLocalAccounts([defaultAccount]);
+      setDefaultSeeded(true);
     }
-  }, [isAuthed, localAccounts.length, setLocalAccounts]);
+  }, [isAuthed, defaultSeeded, localAccounts.length, setLocalAccounts, setDefaultSeeded]);
 
   const accounts = isAuthed ? remoteAccounts : localAccounts;
   const isLoading = isAuthed ? isRemoteLoading : false;

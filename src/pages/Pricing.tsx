@@ -194,7 +194,7 @@ const Pricing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
           >
-            <p className="text-lg md:text-xl italic">
+            <p className="text-lg md:text-xl">
               Don't think of it as a cost. Think of it as a strategy.
             </p>
             <p className="text-sm md:text-base">

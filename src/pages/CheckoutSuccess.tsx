@@ -2,7 +2,7 @@ import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trophy, CheckCircle2, Sparkles, CreditCard, Loader2 } from 'lucide-react';
+import { Trophy, Check, Sparkles, CreditCard, Loader2, Building2, Shield, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { format, addDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,16 @@ import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { useAuth } from '@/hooks/useAuth';
 
 const features = [
-  'Full access to all features',
-  'Unlimited budget tracking',
+  'Bank sync, automatic transactions',
   'Debt payoff strategies',
-  'Financial insights & reports',
-  'Achievement system',
-  'Household sharing',
+  'Budgets, insights and reports',
+  'Achievements and household sharing',
+];
+
+const trustBadges = [
+  { icon: Shield, text: '256-bit encryption' },
+  { icon: Lock, text: 'Stripe secured' },
+  { icon: CreditCard, text: 'Cancel anytime' },
 ];
 
 const CheckoutSuccess = () => {
@@ -105,183 +109,140 @@ const CheckoutSuccess = () => {
   const formattedTrialEnd = trialEnd 
     ? format(new Date(trialEnd), 'MMMM d, yyyy')
     : format(addDays(new Date(), 7), 'MMMM d, yyyy');
+  const shortChargeDate = trialEnd
+    ? format(new Date(trialEnd), 'MMM d')
+    : format(addDays(new Date(), 7), 'MMM d');
+  const planLabel = interval === 'annual' ? 'Annual' : 'Monthly';
+  const unit = interval === 'annual' ? 'yr' : 'mo';
+  const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-primary/95 to-primary-foreground/90 relative overflow-hidden">
-      {/* Decorative blur elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-chart-3/20 rounded-full blur-3xl" aria-hidden="true" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl" aria-hidden="true" />
-      
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-8 min-h-screen flex flex-col">
-        {/* Logo */}
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="container mx-auto px-4 py-8 flex-1 flex flex-col">
         <div className="flex justify-center mb-8">
-          <button 
-            onClick={() => navigate('/')} 
-            className="transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg"
+          <button
+            onClick={() => navigate('/')}
+            className={`rounded-lg transition-transform duration-150 hover:scale-105 ${focusRing}`}
             aria-label="Go to home page"
           >
-            <Logo className="h-10" variant="light" />
+            <Logo className="h-8" variant="dark" />
           </button>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 flex items-center justify-center">
           {loading ? (
             <div className="text-center">
-              {/* Only the `subscribed` branch below rendered an h1, so this
-                  route had no document outline while loading or when no
-                  subscription was found. Visually hidden: a display-size
-                  heading over a spinner would be wrong, but the outline has to
-                  exist in every state, not just the happy one. */}
+              {/* Visually hidden h1 keeps a document outline in every state. */}
               <h1 className="sr-only">Checkout status</h1>
-              <Loader2 className="h-12 w-12 animate-spin text-white mx-auto mb-4" />
-              <p className="text-white/80">Confirming your subscription...</p>
+              <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" aria-hidden="true" />
+              <p className="text-foreground">Confirming your subscription...</p>
             </div>
           ) : subscribed ? (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.2 }}
               className="w-full max-w-lg"
             >
-              {/* Celebration Icon */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="flex justify-center mb-6"
-              >
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
-                    <Trophy className="w-12 h-12 text-amber-400" aria-hidden="true" />
+              <Card className="bg-white dark:bg-card border-2 border-primary/50 shadow-sm">
+                <CardContent className="p-6 sm:p-8 space-y-6">
+                  <div className="text-center space-y-3">
+                    <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Trophy className="w-8 h-8 text-primary" aria-hidden="true" />
+                    </div>
+                    <h1 className="text-3xl font-bold text-foreground">Your Quest Begins!</h1>
+                    <p className="inline-flex items-center gap-2 text-primary font-medium">
+                      <Sparkles className="h-4 w-4" aria-hidden="true" />
+                      {isTrialing ? 'Your 7-day free trial is active' : 'Your subscription is active'}
+                    </p>
                   </div>
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute -top-2 -right-2"
-                  >
-                    <Sparkles className="w-8 h-8 text-amber-400" aria-hidden="true" />
-                  </motion.div>
-                </div>
-              </motion.div>
 
-              {/* Title */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-center mb-8"
-              >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
-                  Your Quest Begins!
-                </h1>
-                <p className="text-xl text-white/80">
-                  Welcome to Zero Hero™, brave adventurer.
-                  {isTrialing && ' Your 7-day trial has been activated.'}
-                </p>
-              </motion.div>
-
-              {/* Tier Badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex justify-center mb-6"
-              >
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
-                  <span className="text-2xl">🏰</span>
-                  <span className="text-lg font-medium text-white">{interval === 'annual' ? 'Annual' : 'Monthly'} Plan</span>
-                  {amount && <span className="text-white/60">• ${amount}/{interval === 'annual' ? 'yr' : 'mo'}</span>}
-                </div>
-              </motion.div>
-
-              {/* Features Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Card className="bg-white/10 backdrop-blur-md border-white/20">
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                      {features.map((feature, index) => (
-                        <div 
-                          key={index} 
-                          className="flex items-center gap-2 text-white"
-                        >
-                          <CheckCircle2 className="h-5 w-5 text-chart-3 shrink-0" aria-hidden="true" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Trial Info */}
+                  <div className="bg-chart-3/10 border border-chart-3/20 rounded-lg p-4 text-center">
+                    <p className="text-sm text-foreground">
+                      {planLabel} plan{amount ? `, $${amount}/${unit}` : ''}
+                      {isTrialing && (
+                        <>. Trial ends on <span className="font-semibold">{formattedTrialEnd}</span></>
+                      )}
+                    </p>
                     {isTrialing && (
-                      <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center mb-6">
-                        <p className="text-sm text-white/90">
-                          Trial ends <span className="font-semibold text-amber-400">{formattedTrialEnd}</span>
-                        </p>
-                        <p className="text-xs text-white/60 mt-1">
-                          First charge: ${amount}/mo • Cancel anytime
-                        </p>
-                      </div>
+                      <p className="text-xs text-foreground/80 mt-1">
+                        First charge ${amount} on {shortChargeDate}. Cancel anytime.
+                      </p>
                     )}
+                  </div>
 
-                    {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button 
-                        size="lg"
-                        variant="secondary"
-                        className="flex-1 bg-white text-primary hover:bg-white/90 font-semibold"
-                        onClick={() => navigate('/dashboard')}
-                      >
-                        Go to Dashboard
-                      </Button>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="flex-1 border-white/30 text-white hover:bg-white/10"
-                        onClick={handleManageSubscription}
-                        disabled={isPortalLoading}
-                      >
-                        {isPortalLoading ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <CreditCard className="h-4 w-4 mr-2" />
-                        )}
-                        Manage Subscription
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  <ul className="space-y-3">
+                    {features.map((feature, index) => (
+                      <li key={feature} className="flex items-center gap-3 text-sm text-foreground">
+                        <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                        <span className={index === 0 ? 'font-semibold' : undefined}>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className={`flex-1 ${focusRing}`}
+                      onClick={() => navigate('/dashboard')}
+                    >
+                      Go to dashboard
+                    </Button>
+                    <Button
+                      size="lg"
+                      className={`flex-1 ${focusRing}`}
+                      onClick={() => navigate('/accounts')}
+                    >
+                      <Building2 className="h-4 w-4 mr-2" aria-hidden="true" />
+                      Link your bank
+                    </Button>
+                  </div>
+
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={handleManageSubscription}
+                      disabled={isPortalLoading}
+                      className={`inline-flex items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 rounded-sm hover:text-primary/80 disabled:opacity-60 ${focusRing}`}
+                    >
+                      {isPortalLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                      ) : (
+                        <CreditCard className="h-4 w-4" aria-hidden="true" />
+                      )}
+                      Manage subscription
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex flex-wrap justify-center gap-3 mt-8">
+                {trustBadges.map((badge) => (
+                  <div key={badge.text} className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2.5 rounded-full border border-border/30">
+                    <badge.icon className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <span>{badge.text}</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           ) : (
-            /* No subscription - redirect to pricing */
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
               <h1 className="sr-only">Checkout status</h1>
-              <p className="text-white/80 mb-4">No active subscription found.</p>
-              <Button 
-                variant="secondary"
-                className="bg-white text-primary hover:bg-white/90"
-                onClick={() => navigate('/pricing')}
-              >
+              <p className="text-foreground mb-4">No active subscription found.</p>
+              <Button className={focusRing} onClick={() => navigate('/pricing')}>
                 View Pricing
               </Button>
             </motion.div>
           )}
         </div>
-
-        {/* Footer */}
-        <footer className="text-center py-6 px-4 bg-background border-t border-border">
-          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
-        </footer>
       </div>
+
+      <footer className="border-t border-border/40 py-8 mt-16">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <LegalFooterNotice className="mt-0 border-t-0 pt-0" />
+        </div>
+      </footer>
     </div>
   );
 };

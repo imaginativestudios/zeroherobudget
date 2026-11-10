@@ -1,8 +1,8 @@
 import { LegalFooterNotice } from "@/components/LegalFooterNotice";
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, TrendingUp, Clock, DollarSign } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Check, Heart, Shield, Zap, Users, ChartBar, CreditCard, Loader2, Lock, Trophy, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { motion, MotionConfig } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,28 +14,11 @@ import { STRIPE_PRICES, type PricingInterval } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import SparklesIcon from '@/components/icons/SparklesIcon';
 
-const features = [
-  { icon: Zap, text: 'Bank linking with automatic transaction sync' },
-  { icon: ChartBar, text: 'Budgeting, debt payoff and reports are free for everyone' },
-];
-
 const trustBadges = [
   { icon: Shield, text: '256-bit encryption' },
   { icon: Lock, text: 'Stripe secured' },
   { icon: CreditCard, text: 'Cancel anytime' },
 ];
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
-};
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -122,6 +105,7 @@ const Pricing = () => {
   const selectedPrice = STRIPE_PRICES[selectedInterval];
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-background relative overflow-hidden">
       <SEO
         title="Pricing — Zero Hero"
@@ -151,15 +135,8 @@ const Pricing = () => {
           ]
         }}
       />
-      {/* Decorative background orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute top-1/3 -left-48 h-80 w-80 rounded-full bg-accent/5 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-primary/3 blur-3xl" />
-      </div>
-
       {/* Header */}
-      <header className="relative z-10 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="relative z-10 border-b border-border/40 bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <button onClick={() => navigate('/')} className="flex items-center">
             <Logo className="h-8" variant="dark" />
@@ -183,7 +160,6 @@ const Pricing = () => {
           transition={{ duration: 0.5, ease: 'easeOut' }}
         >
           <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 -m-8 rounded-full bg-primary/8 blur-2xl" />
             <h1 className="relative text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
               Invest in the version of you that's debt-free.
             </h1>
@@ -198,10 +174,7 @@ const Pricing = () => {
               Don't think of it as a cost. Think of it as a strategy.
             </p>
             <p className="text-sm md:text-base">
-              Typical Pro User Savings: <span className="font-semibold text-foreground">$140+/month</span> in found "lazy cash" and interest reduction.
-            </p>
-            <p className="text-sm md:text-base">
-              The Goal: We aim for Zero Hero to pay for its annual subscription within your <span className="font-semibold text-foreground">first 30 days</span>.
+              Bank sync spots fees, subscriptions and interest you can cut, so <span className="font-semibold text-foreground">Zero Hero can pay for itself</span>.
             </p>
           </motion.div>
         </motion.div>
@@ -213,9 +186,11 @@ const Pricing = () => {
         ) : subscribed ? (
           /* Current Subscriber View */
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
-            <Card className={`border-2 ${isTrialing ? 'border-chart-3/50 bg-gradient-to-br from-chart-3/5 to-background' : 'border-primary/50 bg-gradient-to-br from-primary/5 to-background'}`}>
+            <Card className="border-2 border-primary/50 bg-white dark:bg-card">
               <CardHeader className="text-center">
-                <div className="text-5xl mb-2">🏰</div>
+                <div className="mx-auto mb-2 w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Trophy className="w-8 h-8 text-primary" aria-hidden="true" />
+                </div>
                 <CardTitle className="text-2xl">You're subscribed!</CardTitle>
                 {isTrialing ? (
                   <CardDescription className="text-lg">
@@ -250,14 +225,16 @@ const Pricing = () => {
                   </div>
                 )}
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary shrink-0" />
-                      <span className="text-muted-foreground">{feature.text}</span>
-                    </div>
-                  ))}
-                </div>
+                <ul className="grid sm:grid-cols-2 gap-4">
+                  <li className="flex items-center gap-2 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                    <span className="font-semibold">Bank sync, automatic transactions</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                    <span>Budgeting, debt payoff and reports</span>
+                  </li>
+                </ul>
 
                 <div className="bg-muted/50 rounded-lg p-4 space-y-3">
                   <h3 className="font-medium text-foreground text-sm flex items-center gap-2">
@@ -343,134 +320,99 @@ const Pricing = () => {
               </div>
             </motion.div>
 
-            {/* Pricing Cards */}
+            {/* Plan Cards */}
             <motion.div
-              className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto"
+              className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
             >
-              {/* Monthly Card */}
-              <motion.div
-                whileHover={{ y: -4 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <Card
-                  className={cn(
-                    "border-2 cursor-pointer transition-all duration-300 h-full",
-                    selectedInterval === 'monthly'
-                      ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
-                      : "border-border/50 hover:border-border"
-                  )}
-                  onClick={() => setSelectedInterval('monthly')}
-                >
-                  <CardHeader className="text-center pb-2 pt-8">
-                    <CardTitle className="text-lg font-semibold">Monthly</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center pb-8">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-5xl font-bold text-foreground tracking-tight">${STRIPE_PRICES.monthly.amount}</span>
-                      <span className="text-muted-foreground text-base">/mo</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-3">Billed monthly</p>
-                    <p className="text-xs text-muted-foreground mt-1">Flexible, cancel anytime</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Annual Card */}
-              <motion.div
-                whileHover={{ y: -4 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="relative"
-              >
-                <Card
-                  className={cn(
-                    "border-2 cursor-pointer transition-all duration-300 h-full overflow-hidden",
-                    selectedInterval === 'annual'
-                      ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
-                      : "border-border/50 hover:border-border"
-                  )}
-                  onClick={() => setSelectedInterval('annual')}
-                >
-                  <div className="flex justify-center pt-5 pb-0">
-                    <span className="bg-accent text-accent-foreground text-xs px-4 py-1.5 rounded-full font-bold shadow-sm animate-pulse">
-                      BEST VALUE
-                    </span>
+              {/* Free */}
+              <Card className="bg-white dark:bg-card border border-border h-full flex flex-col">
+                <CardHeader className="pb-2 pt-8">
+                  <CardTitle className="text-lg font-semibold">Free</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col flex-1 gap-6 pb-8">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl font-bold text-foreground tracking-tight">$0</span>
+                    <span className="text-sm text-muted-foreground">Forever</span>
                   </div>
-                  <CardHeader className="text-center pb-2 pt-3">
-                    <CardTitle className="text-lg font-semibold">Annual</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center pb-8">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-5xl font-bold text-foreground tracking-tight">${STRIPE_PRICES.annual.amount}</span>
-                      <span className="text-muted-foreground text-base">/yr</span>
+                  <ul className="space-y-3 flex-1">
+                    {['Budgets and spending', 'Debt payoff strategies', 'Reports and achievements'].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-sm text-foreground">
+                        <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => navigate(user ? '/dashboard' : '/auth')}
+                  >
+                    Start free
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Premium */}
+              <Card className="bg-white dark:bg-card border-2 border-primary/50 h-full flex flex-col">
+                <CardHeader className="pb-2 pt-8">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="text-lg font-semibold">Premium</CardTitle>
+                    {selectedInterval === 'annual' && (
+                      <span className="bg-chart-3/10 text-foreground border border-chart-3/20 text-xs px-3 py-1 rounded-full font-semibold">
+                        Best value
+                      </span>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent className="flex flex-col flex-1 gap-6 pb-8">
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-5xl font-bold text-foreground tracking-tight">${selectedPrice.amount}</span>
+                      <span className="text-muted-foreground text-base">/{selectedInterval === 'annual' ? 'yr' : 'mo'}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-3">
-                      ${STRIPE_PRICES.annual.monthlyEquivalent}/mo • <span className="line-through opacity-60">$120</span>{' '}
-                      <span className="text-primary font-semibold">Save ${STRIPE_PRICES.annual.savings}</span>
+                    {selectedInterval === 'annual' && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        ${STRIPE_PRICES.annual.monthlyEquivalent}/mo, <span className="line-through">$120</span>{' '}
+                        <span className="text-primary font-semibold">Save ${STRIPE_PRICES.annual.savings}</span>
+                      </p>
+                    )}
+                  </div>
+                  <ul className="space-y-3 flex-1">
+                    <li className="flex items-center gap-2 text-sm text-foreground">
+                      <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                      <span>Everything in Free</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-foreground">
+                      <Check className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                      <span className="font-semibold">Bank sync, automatic transactions</span>
+                    </li>
+                  </ul>
+                  <div className="space-y-2">
+                    <Button size="lg" className="w-full" onClick={handleSubscribe} disabled={isProcessing}>
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" />
+                          Processing...
+                        </>
+                      ) : (
+                        'Start 7-day free trial'
+                      )}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      Free for 7 days, then ${selectedPrice.amount}/{selectedInterval === 'annual' ? 'year' : 'month'}. Cancel anytime.
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">Best for committed budgeters</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.div>
-
-            {/* Features */}
-            <motion.div
-              className="grid grid-cols-2 md:grid-cols-3 gap-5 max-w-2xl mx-auto py-4"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {features.map((feature, index) => (
-                <motion.div key={index} variants={itemVariants} className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-sm">
-                    <feature.icon className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-sm font-medium text-foreground">{feature.text}</span>
-                </motion.div>
-              ))}
+                </CardContent>
+              </Card>
             </motion.div>
 
-            {/* Subscribe Button */}
-            <motion.div
-              className="max-w-md mx-auto space-y-6"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 -m-2 rounded-2xl bg-primary/10 blur-xl" />
-                <Button
-                  size="lg"
-                  className="relative w-full text-lg py-6 shadow-lg shadow-primary/20"
-                  onClick={handleSubscribe}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <SparklesIcon size={20} className="mr-2" />
-                      Start 7-Day Free Trial
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              <div className="text-center text-sm text-muted-foreground space-y-2">
-                <p>
-                  ✨ Try free for 7 days, then ${selectedPrice.amount}/{selectedInterval === 'annual' ? 'year' : 'month'}
-                </p>
-                <p className="text-xs">
-                  Cancel anytime • No hidden fees • Secure payment via Stripe
-                </p>
-              </div>
-            </motion.div>
+            <p className="text-center text-xs text-muted-foreground">
+              Cancel anytime • No hidden fees • Secure payment via Stripe
+            </p>
           </div>
         )}
 
@@ -500,7 +442,7 @@ const Pricing = () => {
           <div className="max-w-2xl mx-auto space-y-4 text-muted-foreground">
             <p>
               No hidden fees, no surprise charges. Choose monthly for flexibility or annual for savings.
-              All features included with every plan.
+              Budgeting is free for everyone. Premium adds bank sync.
             </p>
             <p>
               Start your 7-day free trial today and cancel anytime if it's not right for you.
@@ -516,6 +458,7 @@ const Pricing = () => {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 };
 

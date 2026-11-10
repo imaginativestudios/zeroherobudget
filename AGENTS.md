@@ -5,5 +5,9 @@
 ## Realtime listeners
 - Give each subscription-status effect a unique channel name and clean up its own channel; Supabase reuses identical topics, so concurrent hooks must not attach callbacks to an already subscribed channel.
 
+## Celebrations and offline updates
+- Evaluate achievements only after account storage and debts load; persist monotonic celebration receipts before effects to prevent remount and concurrent-hook replays.
+- Register the app-shell worker only through the guarded update hook; fetch navigation HTML network-first and exclude OAuth callbacks from caching.
+
 ## Legal footers
 - Reuse LegalFooterNotice for page and Layout footers; PublicPageFooter covers standalone routes without an existing footer so each page has one copyright notice.

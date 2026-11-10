@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { STRIPE_PRICES } from '@/lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -56,6 +56,12 @@ export function AuthModal({
   const [view, setView] = useState<AuthView>('auth');
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultMode);
   const [confirmationEmail, setConfirmationEmail] = useState('');
+  useEffect(() => {
+    if (open) {
+      setActiveTab(defaultMode);
+      setShowLoginInSignupFirst(false);
+    }
+  }, [open, defaultMode]);
   const { signIn, signUp, resetPassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();
 

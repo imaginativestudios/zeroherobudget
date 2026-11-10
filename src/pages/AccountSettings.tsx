@@ -26,6 +26,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { useRealProfile } from '@/hooks/useRealProfile';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,6 +36,7 @@ import { EmailLogsTable } from '@/components/admin/EmailLogsTable';
 
 const AccountSettings = () => {
   const { user, session } = useAuth();
+  const [celebrationSounds, setCelebrationSounds] = useUserLocalStorage('celebration-sounds', false);
   const { profile, loading: profileLoading, updateProfile, refetch: refetchProfile } = useRealProfile();
   const { 
     subscribed, 
@@ -374,6 +376,18 @@ const AccountSettings = () => {
 
 
       {/* Beta Features Toggle (eligible users only) */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="celebration-sounds" className="font-medium">Celebration sounds</Label>
+              <p className="text-sm text-muted-foreground">Play a sound when you reach a milestone.</p>
+            </div>
+            <Switch id="celebration-sounds" checked={celebrationSounds} onCheckedChange={setCelebrationSounds} />
+          </div>
+        </CardContent>
+      </Card>
+
       {betaEligible && (
         <Card>
           <CardHeader>

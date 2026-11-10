@@ -272,7 +272,7 @@ export const Dashboard = () => {
     totalDebt,
     debtsPaidOff,
     totalDebts: debts.length,
-  });
+  }, !isLoadingDebts);
 
   // Get greeting name
   const greetingName = userProfile?.first_name || userProfile?.display_name || 'hero';

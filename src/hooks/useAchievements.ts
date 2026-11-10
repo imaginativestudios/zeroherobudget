@@ -1,6 +1,7 @@
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef, useState } from 'react';
 import { useUserLocalStorage } from './useUserLocalStorage';
 import { useAuth } from './useAuth';
+import { DEMO_USER_ID } from '@/lib/demoDataLoader';
 import confetti from 'canvas-confetti';
 import { playAchievementUnlockSound } from '@/lib/soundEffects';
 
@@ -21,20 +22,24 @@ interface DebtStats {
   totalDebts: number;
 }
 
-export function useAchievements(currentStats: DebtStats) {
-  const [initialDebt, setInitialDebt] = useUserLocalStorage<number>('initial-debt-total', 0);
-  const [unlockedIds, setUnlockedIds] = useUserLocalStorage<string[]>('unlocked-achievements', []);
-  const [unlockTimestamps, setUnlockTimestamps] = useUserLocalStorage<Record<string, string>>('achievement-timestamps', {});
-  const previousUnlockedRef = useRef<string[]>(unlockedIds);
+export function useAchievements(currentStats: DebtStats, isReady: boolean) {
+  const [initialDebt, setInitialDebt, initialLoading] = useUserLocalStorage<number>('initial-debt-total', 0);
+  const [unlockedIds, setUnlockedIds, unlockedLoading] = useUserLocalStorage<string[]>('unlocked-achievements', []);
+  const [unlockTimestamps, setUnlockTimestamps, timestampsLoading] = useUserLocalStorage<Record<string, string>>('achievement-timestamps', {});
+  const [celebratedIds, setCelebratedIds, celebratedLoading] = useUserLocalStorage<string[] | null>('celebrated-achievements', null);
   const { user } = useAuth();
-  const migratedRef = useRef(false);
+  const migratedRef = useRef<string | null>(null);
+  const accountId = user?.id ?? DEMO_USER_ID;
+  const [loadedAccount, setLoadedAccount] = useState<string | null>(null);
+  useEffect(() => { setLoadedAccount(accountId); }, [accountId]);
+  const ready = isReady && loadedAccount === accountId && !initialLoading && !unlockedLoading && !timestampsLoading && !celebratedLoading;
 
   // One-time migration: copy legacy unprefixed keys into the signed-in
   // account's prefixed keys, then remove the unprefixed ones. Only migrates
   // into an account that has no prefixed value yet.
   useEffect(() => {
-    if (!user?.id || migratedRef.current) return;
-    migratedRef.current = true;
+    if (!ready || !user?.id || migratedRef.current === user.id) return;
+    migratedRef.current = user.id;
     try {
       const prefix = `${user.id}_`;
       const migrateKey = (key: string): string | null => {
@@ -68,16 +73,19 @@ export function useAchievements(currentStats: DebtStats) {
     } catch (error) {
       console.error('Error migrating local data to account:', error);
     }
-  }, [user?.id, setInitialDebt, setUnlockedIds, setUnlockTimestamps]);
+  }, [ready, user?.id, setInitialDebt, setUnlockedIds, setUnlockTimestamps]);
   
   // Set initial debt if not set and there are debts
   useEffect(() => {
-    if (initialDebt === 0 && currentStats.totalDebt > 0) {
+    const storedInitial = localStorage.getItem(`${accountId}_initial-debt-total`);
+    if (storedInitial !== null && JSON.parse(storedInitial) !== initialDebt) return;
+    if (ready && initialDebt === 0 && currentStats.totalDebt > 0) {
       setInitialDebt(currentStats.totalDebt);
     }
-  }, [initialDebt, currentStats.totalDebt, setInitialDebt]);
+  }, [ready, accountId, initialDebt, currentStats.totalDebt, setInitialDebt]);
 
   const achievements = useMemo<Achievement[]>(() => {
+    if (!ready) return [];
     const debtReduction = initialDebt > 0 ? ((initialDebt - currentStats.totalDebt) / initialDebt) * 100 : 0;
     
     return [
@@ -138,15 +146,26 @@ export function useAchievements(currentStats: DebtStats) {
         unlockedAt: unlockTimestamps['freedom'],
       },
     ];
-  }, [currentStats, initialDebt, unlockTimestamps]);
+  }, [ready, currentStats, initialDebt, unlockTimestamps]);
 
   const unlockedCount = achievements.filter(a => a.unlocked).length;
-  const totalCount = achievements.length;
+  const totalCount = 6;
 
   // Detect newly unlocked achievements and trigger confetti
   useEffect(() => {
+    if (!ready) return;
+    const storedInitial = localStorage.getItem(`${accountId}_initial-debt-total`);
+    if (storedInitial !== null && JSON.parse(storedInitial) !== initialDebt) return;
+    const celebratedKey = `${accountId}_celebrated-achievements`;
+    if (localStorage.getItem(celebratedKey) === null) {
+      const stored = localStorage.getItem(`${accountId}_unlocked-achievements`);
+      setCelebratedIds(stored ? JSON.parse(stored) : []);
+      return;
+    }
     const currentUnlocked = achievements.filter(a => a.unlocked).map(a => a.id);
-    const newlyUnlocked = currentUnlocked.filter(id => !previousUnlockedRef.current.includes(id));
+    const persisted: string[] = JSON.parse(localStorage.getItem(celebratedKey) ?? '[]');
+    const newlyUnlocked = currentUnlocked.filter(id => !persisted.includes(id));
+    if (JSON.stringify(currentUnlocked) !== JSON.stringify(unlockedIds)) setUnlockedIds(currentUnlocked);
     
     if (newlyUnlocked.length > 0) {
       // Update storage with timestamps
@@ -157,18 +176,20 @@ export function useAchievements(currentStats: DebtStats) {
           newTimestamps[id] = now;
         }
       });
-      setUnlockedIds(currentUnlocked);
-      setUnlockTimestamps(newTimestamps);
+      setCelebratedIds(previous => [...new Set([...(previous ?? []), ...newlyUnlocked])]);
+      setUnlockTimestamps(previous => ({ ...newTimestamps, ...previous }));
       
       // Trigger confetti for each newly unlocked achievement
       newlyUnlocked.forEach((id, index) => {
         setTimeout(() => {
           const achievement = achievements.find(a => a.id === id);
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           
           // Different confetti patterns based on achievement importance
           if (achievement?.id === 'freedom') {
             // Epic confetti for debt freedom
             playAchievementUnlockSound('epic');
+            if (reducedMotion) return;
             const duration = 3000;
             const end = Date.now() + duration;
             
@@ -195,6 +216,7 @@ export function useAchievements(currentStats: DebtStats) {
           } else if (achievement?.id === 'halfway-hero' || achievement?.id === 'three-quarters') {
             // Medium celebration for major milestones
             playAchievementUnlockSound('milestone');
+            if (reducedMotion) return;
             confetti({
               particleCount: 100,
               spread: 70,
@@ -204,6 +226,7 @@ export function useAchievements(currentStats: DebtStats) {
           } else {
             // Standard celebration
             playAchievementUnlockSound('basic');
+            if (reducedMotion) return;
             confetti({
               particleCount: 50,
               spread: 60,
@@ -215,8 +238,7 @@ export function useAchievements(currentStats: DebtStats) {
       });
     }
     
-    previousUnlockedRef.current = currentUnlocked;
-  }, [achievements, setUnlockedIds, setUnlockTimestamps, unlockTimestamps]);
+  }, [ready, accountId, initialDebt, achievements, unlockedIds, celebratedIds, setCelebratedIds, setUnlockedIds, setUnlockTimestamps, unlockTimestamps]);
 
   return {
     achievements,
@@ -227,7 +249,6 @@ export function useAchievements(currentStats: DebtStats) {
       setInitialDebt(0);
       setUnlockedIds([]);
       setUnlockTimestamps({});
-      previousUnlockedRef.current = [];
     },
   };
 }

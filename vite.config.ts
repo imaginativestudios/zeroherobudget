@@ -26,6 +26,8 @@ export default defineConfig(({ mode }) => ({
     }),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null,
+      devOptions: { enabled: false },
       includeAssets: ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png'],
       manifest: {
         name: 'Zero Hero - Transform Debt Into Victory',
@@ -61,8 +63,17 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: true,
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
+        navigateFallback: null,
         runtimeCaching: [
+          {
+            urlPattern: ({ request, url }) => request.mode === 'navigate' && !url.pathname.startsWith('/~oauth'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'pages',
+              networkTimeoutSeconds: 3,
+            }
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',

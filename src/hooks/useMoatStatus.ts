@@ -5,7 +5,9 @@
  * Provides repair plan calculations and UI state management.
  */
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useAuth } from './useAuth';
+import { DEMO_USER_ID } from '@/lib/demoDataLoader';
 import { useHeroProfile } from './useHeroProfile';
 import { useLocalExpenses } from './useLocalExpenses';
 import { 
@@ -49,6 +51,9 @@ export interface MoatStatusResult {
 }
 
 export function useMoatStatus(): MoatStatusResult {
+  const { user } = useAuth();
+  const accountId = user?.id ?? DEMO_USER_ID;
+  const previousStatus = useRef<{ accountId: string; secure: boolean } | null>(null);
   const { savingsVault, updateSavingsVault } = useHeroProfile();
   const { expenses } = useLocalExpenses();
   
@@ -129,10 +134,11 @@ export function useMoatStatus(): MoatStatusResult {
   }, []);
   
   const activateRepairMode = useCallback(() => {
+    localStorage.setItem(`${accountId}_moat-recovery-event`, crypto.randomUUID());
     setRepairModeActive(true);
     localStorage.setItem(REPAIR_MODE_KEY, 'true');
     updateSavingsVault({ repair_mode_active: true });
-  }, [updateSavingsVault]);
+  }, [accountId, updateSavingsVault]);
   
   const deactivateRepairMode = useCallback(() => {
     setRepairModeActive(false);
@@ -174,7 +180,7 @@ export function useMoatStatus(): MoatStatusResult {
       });
       if (Date.now() < animationEnd) requestAnimationFrame(frame);
     };
-    frame();
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) frame();
     
     // Show heroic toast
     toast.success('Defenses Fully Restored!', {
@@ -186,9 +192,20 @@ export function useMoatStatus(): MoatStatusResult {
   
   // Clear repair mode when moat is secure
   useEffect(() => {
+    const storedVault = localStorage.getItem(`${accountId}_bdt_savings_vault`);
+    const loadedVault = storedVault ? JSON.parse(storedVault) : null;
+    if (!loadedVault || loadedVault.moat_balance !== savingsVault.moat_balance || loadedVault.moat_target !== savingsVault.moat_target) return;
+    const previous = previousStatus.current;
+    previousStatus.current = { accountId, secure: isSecure };
     if (isSecure && repairModeActive) {
       // Trigger recovery celebration before clearing repair mode
-      triggerRecoveryCelebration();
+      const eventKey = `${accountId}_celebrated-moat-recoveries`;
+      const eventId = localStorage.getItem(`${accountId}_moat-recovery-event`) ?? savingsVault.last_secure_date ?? 'initial';
+      const celebrated: string[] = JSON.parse(localStorage.getItem(eventKey) ?? '[]');
+      if (!celebrated.includes(eventId)) {
+        localStorage.setItem(eventKey, JSON.stringify([...celebrated, eventId]));
+        if (previous?.accountId === accountId && !previous.secure) triggerRecoveryCelebration();
+      }
       
       deactivateRepairMode();
       // Reset banner dismissal for next potential breach
@@ -196,7 +213,7 @@ export function useMoatStatus(): MoatStatusResult {
       setBannerDismissed(false);
       window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
     }
-  }, [isSecure, repairModeActive, deactivateRepairMode, triggerRecoveryCelebration]);
+  }, [accountId, savingsVault, isSecure, repairModeActive, deactivateRepairMode, triggerRecoveryCelebration]);
   
   return {
     status,

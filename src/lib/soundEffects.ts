@@ -2,6 +2,9 @@
  * Sound effect utilities using Web Audio API
  */
 
+import { supabase } from '@/integrations/supabase/client';
+import { DEMO_USER_ID } from '@/lib/demoDataLoader';
+
 let audioContext: AudioContext | null = null;
 
 const getAudioContext = () => {
@@ -14,8 +17,12 @@ const getAudioContext = () => {
 /**
  * Play a subtle tone
  */
-const playTone = (frequency: number, duration: number, volume: number = 0.1) => {
+const playTone = async (frequency: number, duration: number, volume: number = 0.1) => {
   try {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) return;
+    const userId = data.session?.user.id ?? DEMO_USER_ID;
+    if (localStorage.getItem(`${userId}_celebration-sounds`) !== 'true') return;
     const ctx = getAudioContext();
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();

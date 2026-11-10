@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { useMemo } from "react";
 
 export const Achievements = () => {
-  const { debts } = useLocalDebts();
+  const { debts, isLoading: isLoadingDebts } = useLocalDebts();
   
   const totalDebt = debts.reduce((sum, debt) => sum + (debt.balance || 0), 0);
   const debtsPaidOff = useMemo(() => 
@@ -21,7 +21,7 @@ export const Achievements = () => {
     totalDebt,
     debtsPaidOff,
     totalDebts: debts.length,
-  });
+  }, !isLoadingDebts);
 
   const completionPercentage = (unlockedCount / totalCount) * 100;
   const debtReduction = initialDebt > 0 ? ((initialDebt - totalDebt) / initialDebt) * 100 : 0;

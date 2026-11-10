@@ -109,7 +109,7 @@ const Pricing = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       <SEO
         title="Pricing — Zero Hero"
-        description="Simple, transparent pricing for Zero Hero. Choose monthly at $5/mo or annual at $50/yr. 7-day free trial, cancel anytime."
+        description={`Budgeting is free on Zero Hero. Premium adds bank sync for $${STRIPE_PRICES.monthly.amount}/mo or $${STRIPE_PRICES.annual.amount}/yr, with a 7-day free trial. Cancel anytime.`}
         path="/pricing"
         jsonLd={{
           "@context": "https://schema.org",

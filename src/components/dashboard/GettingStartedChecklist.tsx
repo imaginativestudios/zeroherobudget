@@ -54,7 +54,7 @@ export function GettingStartedChecklist({
   moatCurrent,
   accounts,
 }: GettingStartedChecklistProps) {
-  const [isCollapsed, setIsCollapsed] = useUserLocalStorage('bdt_checklist_collapsed', false);
+  const [isCollapsed, setIsCollapsed] = useUserLocalStorage('bdt_checklist_collapsed_v2', true);
   const [hasShownCelebration, setHasShownCelebration] = useUserLocalStorage('bdt_checklist_celebrated', false);
   const [isHidden, setIsHidden] = useState(false);
   const { linkedAccounts } = useLinkedAccounts();
@@ -201,7 +201,7 @@ export function GettingStartedChecklist({
                 <CardTitle className="text-lg font-semibold">
                   {allComplete ? (
                     <span className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-amber-400" />
+                      <Sparkles className="h-5 w-5 text-primary" />
                       Setup Complete!
                     </span>
                   ) : (
@@ -211,7 +211,7 @@ export function GettingStartedChecklist({
                 <p className="text-sm text-muted-foreground">
                   {allComplete 
                     ? 'All systems operational. Your dashboard is fully unlocked.'
-                    : 'Complete these steps to unlock your full dashboard'
+                    : `${completedCount} of ${tasks.length} steps done. Expand to see what's next.`
                   }
                 </p>
               </div>
@@ -237,7 +237,7 @@ export function GettingStartedChecklist({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Progress</span>
-              <span className="font-medium text-amber-400">
+              <span className="font-medium text-foreground">
                 {completedCount} of {tasks.length} Complete
               </span>
             </div>

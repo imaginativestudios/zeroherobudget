@@ -493,8 +493,8 @@ export const Dashboard = () => {
         isTrialing={isTrialing}
         trialEnd={trialEnd}
         interval={interval}
-        isRegrouping={isRegrouping}
-        isVulnerable={isVulnerable}
+        isRegrouping={false}
+        isVulnerable={false}
         bannerDismissed={bannerDismissed}
       />
 

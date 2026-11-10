@@ -20,6 +20,7 @@ import { Loader2, ArrowLeft, Mail, CheckCircle2, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { checkGeoAccess } from '@/hooks/useGeoAccess';
 import { supabase } from '@/integrations/supabase/client';
+import { applyPendingOnboarding } from '@/lib/onboardingHandoff';
 
 
 interface AuthModalProps {
@@ -29,6 +30,8 @@ interface AuthModalProps {
   signupFirst?: boolean;
   contextTitle?: string;
   onAuthenticated?: () => void;
+  onAccountCreated?: (userId: string) => void;
+  freeAccount?: boolean;
 }
 
 type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'confirmation-sent';
@@ -39,7 +42,9 @@ export function AuthModal({
   defaultMode = 'login',
   signupFirst = false,
   contextTitle,
-  onAuthenticated
+  onAuthenticated,
+  onAccountCreated,
+  freeAccount = false
 }: AuthModalProps) {
   const [showLoginInSignupFirst, setShowLoginInSignupFirst] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -105,6 +110,9 @@ export function AuthModal({
 
       const result = await signUp(email, password, firstName, lastName);
       const { error } = result;
+      if ('createdUserId' in result && result.createdUserId) {
+        onAccountCreated?.(result.createdUserId);
+      }
 
       if ((result as any).alreadyRegistered) {
         toast({
@@ -128,6 +136,8 @@ export function AuthModal({
           });
         }
       } else {
+        const { data: { user: authenticatedUser } } = await supabase.auth.getUser();
+        if (authenticatedUser) applyPendingOnboarding(authenticatedUser.id);
         toast({
           title: 'Welcome!',
           description: 'Account created successfully.',
@@ -246,7 +256,7 @@ export function AuthModal({
                   {contextTitle || 'Create Your Account'}
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm sm:text-base">
-                  7 days free, then just ${STRIPE_PRICES.monthly.amount}/month
+                  {freeAccount ? 'Budgeting, debt payoff and reports are free. Bank linking is optional and paid.' : `7 days free, then just $${STRIPE_PRICES.monthly.amount}/month`}
                 </DialogDescription>
               </DialogHeader>
 

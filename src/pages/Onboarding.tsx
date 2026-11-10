@@ -522,6 +522,7 @@ export default function Onboarding() {
                 transition={slideTransition}
               >
                 <PricingStep
+                  setupData={{ hourlyWage: data.hourlyWage ?? undefined, debtName: data.primaryDebt?.name, debtBalance: data.primaryDebt?.balance, debtApr: data.primaryDebt?.apr, debtMinPayment: data.primaryDebt?.minimumPayment, moatTarget: data.moatTarget }}
                   onStartTrial={handlePricingStartTrial}
                   onSkipTrial={handlePricingSkip}
                 />

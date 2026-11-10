@@ -9,10 +9,15 @@ import { AuthModal } from '@/components/AuthModal';
 import { toast } from 'sonner';
 import { STRIPE_PRICES, type PricingInterval } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
+import type { OnboardingData } from '@/hooks/useHeroProfile';
+import { applyPendingOnboarding, stageOnboarding } from '@/lib/onboardingHandoff';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PricingStepProps {
   onStartTrial: () => void;
   onSkipTrial: () => void;
+  setupData: OnboardingData;
 }
 
 const features = [
@@ -20,7 +25,9 @@ const features = [
   'Budgeting, debt payoff and reports stay free for everyone',
 ];
 
-export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
+export function PricingStep({ onStartTrial, onSkipTrial, setupData }: PricingStepProps) {
+  const navigate = useNavigate();
+  const [freeAccount, setFreeAccount] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState<PricingInterval>('annual');
   const [processing, setProcessing] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -60,6 +67,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
   };
 
   const handleStartTrial = async () => {
+    setFreeAccount(false);
     if (!user) {
       pendingCheckoutRef.current = true;
       setShowAuthModal(true);
@@ -175,7 +183,7 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
             Choose Your Plan
           </h1>
           <p className="text-muted-foreground">
-            Choose your plan to unlock the full experience
+            Budgeting, debt payoff and reports are free. Add optional bank linking with a subscription.
           </p>
         </motion.div>
 
@@ -298,11 +306,16 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
 
           <Button
             variant="ghost"
-            onClick={onSkipTrial}
+            onClick={() => {
+              if (user) { onSkipTrial(); return; }
+              pendingCheckoutRef.current = false;
+              setFreeAccount(true);
+              setShowAuthModal(true);
+            }}
             className="w-full text-muted-foreground"
             disabled={processing}
           >
-            Skip — Explore Demo Mode
+            Continue with a Free Account
           </Button>
 
           <p className="text-xs text-center text-muted-foreground pt-2">
@@ -315,11 +328,22 @@ export function PricingStep({ onStartTrial, onSkipTrial }: PricingStepProps) {
         open={showAuthModal} 
         onOpenChange={setShowAuthModal}
         signupFirst={true}
-        contextTitle="Start Your Free Trial"
-        onAuthenticated={() => {
+        contextTitle={freeAccount ? 'Create Your Free Account' : 'Start Your Free Trial'}
+        freeAccount={freeAccount}
+        onAccountCreated={(userId) => {
+          if (freeAccount) stageOnboarding(userId, setupData, true);
+        }}
+        onAuthenticated={async () => {
           // Stay on this step: the effect above starts the pending checkout
           // as soon as the signed-in user is available.
           setShowAuthModal(false);
+          if (freeAccount) {
+            const { data: { user: authenticatedUser } } = await supabase.auth.getUser();
+            if (!authenticatedUser) return;
+            stageOnboarding(authenticatedUser.id, setupData, true);
+            applyPendingOnboarding(authenticatedUser.id);
+            navigate('/dashboard');
+          }
         }}
       />
     </>

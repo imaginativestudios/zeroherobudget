@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { clearDemoData, isDemoDataLoaded } from '@/lib/demoDataLoader';
 import { clearAllUserData } from '@/lib/dataClear';
+import { applyPendingOnboarding } from '@/lib/onboardingHandoff';
 
 export interface AuthState {
   user: User | null;
@@ -29,6 +30,9 @@ export const useRealAuth = () => {
           }
         }
         
+        if (session?.user) {
+          try { applyPendingOnboarding(session.user.id); } catch (error) { console.error('Unable to restore onboarding', error); }
+        }
         setState({
           user: session?.user ?? null,
           session,
@@ -39,6 +43,9 @@ export const useRealAuth = () => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        try { applyPendingOnboarding(session.user.id); } catch (error) { console.error('Unable to restore onboarding', error); }
+      }
       setState({
         user: session?.user ?? null,
         session,
@@ -83,11 +90,12 @@ export const useRealAuth = () => {
       return {
         error: {
           message: 'Please check your email to confirm your account before signing in.'
-        } as AuthError
+        } as AuthError,
+        createdUserId: data.user.id,
       };
     }
 
-    return { error: null };
+    return { error: null, createdUserId: data.user?.id };
   };
 
   const signIn = async (email: string, password: string) => {

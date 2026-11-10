@@ -1,4 +1,5 @@
 ## Profile persistence
+- Stage pre-signup onboarding under the returned account ID and consume it before session state is exposed; this preserves confirmation-delayed setup without assigning drafts to unrelated accounts.
 - Update profile fields through functional `useUserLocalStorage` setters using the latest account-scoped stored value, so consecutive onboarding saves and separate hook instances cannot overwrite unrelated fields with stale React state.
 
 ## Realtime listeners

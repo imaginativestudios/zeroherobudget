@@ -211,7 +211,7 @@ export function GettingStartedChecklist({
                 <p className="text-sm text-muted-foreground">
                   {allComplete 
                     ? 'All systems operational. Your dashboard is fully unlocked.'
-                    : `${completedCount} of ${tasks.length} steps done. Expand to see what's next.`
+                    : `${completedCount} of ${tasks.length} setup tasks done. Expand to see what's next.`
                   }
                 </p>
               </div>
@@ -238,7 +238,7 @@ export function GettingStartedChecklist({
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Progress</span>
               <span className="font-medium text-foreground">
-                {completedCount} of {tasks.length} Complete
+                {completedCount} of {tasks.length} Tasks Complete
               </span>
             </div>
             <Progress 
@@ -280,7 +280,7 @@ export function GettingStartedChecklist({
               </Link>
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
-              See all 6 steps to financial freedom
+              Explore the 7-stage roadmap to financial freedom
             </p>
           </div>
         </CardContent>

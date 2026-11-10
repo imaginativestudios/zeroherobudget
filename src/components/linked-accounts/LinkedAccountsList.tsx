@@ -18,7 +18,7 @@ import { DeviceLossWarning } from './DeviceLossWarning';
 import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
 
-export function LinkedAccountsList() {
+export function LinkedAccountsList({ refreshSignal = 0 }: { refreshSignal?: number }) {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts, reload } = useLinkedAccounts();
   const { user } = useAuth();
   const [disconnecting, setDisconnecting] = useState<LinkedAccountMeta | null>(null);
@@ -35,6 +35,17 @@ export function LinkedAccountsList() {
   // Demo mode (no user) keeps the existing linking flow.
   const needsSubscription =
     !!user && !subLoading && !betaLoading && !subscribed && !isTrialing && !betaEligible;
+
+  // Parent pages bump `refreshSignal` after changing accounts (e.g. deleting one
+  // from the All Accounts table) so this list re-reads from the server.
+  const reloadRef = useRef(reload);
+  reloadRef.current = reload;
+  const lastSignal = useRef(refreshSignal);
+  useEffect(() => {
+    if (lastSignal.current === refreshSignal) return;
+    lastSignal.current = refreshSignal;
+    reloadRef.current();
+  }, [refreshSignal]);
 
   const handleStartTrial = async () => {
     setIsStartingTrial(true);

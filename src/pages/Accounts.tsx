@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Wallet, PiggyBank, CreditCard, Banknote, TrendingUp, Pencil, Trash2, Power, Building2 } from "lucide-react";
+import { Plus, Wallet, PiggyBank, CreditCard, Banknote, TrendingUp, Pencil, Trash2, Power, Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -23,10 +23,13 @@ const ACCOUNT_TYPE_CONFIG = {
 } as const;
 
 export function Accounts() {
-  const { accounts, addAccount, updateAccount, removeAccount } = useLocalAccounts();
+  const { accounts, addAccount, updateAccount, removeAccount, reload: reloadAccounts } = useLocalAccounts();
   const [showForm, setShowForm] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<Account | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  // Bumped after a successful delete so the Linked Bank Accounts list re-reads.
+  const [linkedRefreshSignal, setLinkedRefreshSignal] = useState(0);
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
   const activeCount = accounts.filter((acc) => acc.is_active).length;
@@ -47,11 +50,33 @@ export function Accounts() {
     setEditingAccount(null);
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (!deleteConfirm) return;
-    
-    removeAccount(deleteConfirm.id);
-    toast({ title: "Account deleted", description: `${deleteConfirm.name} has been removed.` });
+    const account = deleteConfirm;
+
+    setIsDeleting(true);
+    const result = await removeAccount(account.id);
+
+    if (result.ok) {
+      toast({ title: "Account deleted", description: `${account.name} has been removed.` });
+      // Refresh both lists so the deleted account can't linger in either.
+      await reloadAccounts();
+      setLinkedRefreshSignal((n) => n + 1);
+    } else if (result.reason === "not_owner") {
+      toast({
+        title: "Can't delete this account",
+        description: "Only the person who added this account can delete it.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Couldn't delete the account",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+
+    setIsDeleting(false);
     setDeleteConfirm(null);
   };
 
@@ -271,7 +296,7 @@ export function Accounts() {
 
       {/* Linked Bank Accounts Section */}
       <Separator />
-      <LinkedAccountsList />
+      <LinkedAccountsList refreshSignal={linkedRefreshSignal} />
 
       {/* Add/Edit Form Dialog */}
       <AccountForm
@@ -295,12 +320,14 @@ export function Accounts() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="min-h-[44px]">Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            <Button
               onClick={handleDeleteAccount}
+              disabled={isDeleting}
               className="min-h-[44px] bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
-            </AlertDialogAction>
+              {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

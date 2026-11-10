@@ -19,6 +19,16 @@ export interface Account {
   updated_at: string;
 }
 
+/**
+ * Outcome of a delete request: `{ ok: true }`, `{ ok: false, reason: 'not_owner' }`
+ * (delete matched no rows — RLS only lets the account's owner delete it, e.g. a
+ * household member's account) or `{ ok: false, reason: 'error' }`.
+ */
+export interface AccountDeleteResult {
+  ok: boolean;
+  reason?: 'not_owner' | 'error';
+}
+
 const mapRowToAccount = (row: any): Account => ({
   id: row.id,
   name: row.name,
@@ -157,17 +167,27 @@ export function useLocalAccounts() {
     );
   };
 
-  const removeAccount = async (id: string) => {
+  const removeAccount = async (id: string): Promise<AccountDeleteResult> => {
     if (isAuthed) {
-      const { error } = await supabase.from('accounts').delete().eq('id', id);
+      // `.select('id')` makes the response tell us whether a row was removed:
+      // RLS silently matches zero rows when the caller isn't the account owner.
+      const { data, error } = await supabase
+        .from('accounts')
+        .delete()
+        .eq('id', id)
+        .select('id');
       if (error) {
         console.error('removeAccount error:', error);
-        return;
+        return { ok: false, reason: 'error' };
+      }
+      if (!data || data.length === 0) {
+        return { ok: false, reason: 'not_owner' };
       }
       setRemoteAccounts((prev) => prev.filter((a) => a.id !== id));
-      return;
+      return { ok: true };
     }
     setLocalAccounts(localAccounts.filter((account) => account.id !== id));
+    return { ok: true };
   };
 
   const getActiveAccounts = () => accounts.filter((account) => account.is_active);

@@ -22,6 +22,10 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { useLinkedAccounts } from '@/hooks/useLinkedAccounts';
+import { useAuth } from '@/hooks/useAuth';
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { useBetaAccess } from '@/hooks/useBetaAccess';
+import { Badge } from '@/components/ui/badge';
 import confetti from 'canvas-confetti';
 import type { Expense } from '@/hooks/useLocalExpenses';
 import type { Debt } from '@/hooks/useLocalDebts';
@@ -41,6 +45,7 @@ interface ChecklistTask {
   id: string;
   title: string;
   description: string;
+  badge?: string;
   icon: React.ElementType;
   isComplete: boolean;
   href?: string;
@@ -58,6 +63,11 @@ export function GettingStartedChecklist({
   const [hasShownCelebration, setHasShownCelebration] = useUserLocalStorage('bdt_checklist_celebrated', false);
   const [isHidden, setIsHidden] = useState(false);
   const { linkedAccounts } = useLinkedAccounts();
+  const { user } = useAuth();
+  const { subscribed, isTrialing, loading: subLoading } = useSubscriptionStatus();
+  const { eligible: betaEligible, loading: betaLoading } = useBetaAccess();
+  const needsSubscription =
+    !!user && !subLoading && !betaLoading && !subscribed && !isTrialing && !betaEligible;
 
   // Check for savings / HYSA accounts
   const hasSavingsAccount = accounts.some(a =>
@@ -141,7 +151,8 @@ export function GettingStartedChecklist({
     {
       id: 'bank', 
       title: 'Link a bank account', 
-      description: 'Auto-import account names securely',
+      description: needsSubscription ? 'Included in your 7-day free trial' : 'Auto-import account names securely',
+      badge: needsSubscription ? 'Free trial' : undefined,
       icon: Building2,
       isComplete: linkedAccounts.length > 0, 
       href: '/accounts'
@@ -316,9 +327,16 @@ function TaskItem({ task }: { task: ChecklistTask }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium truncate ${task.isComplete ? 'text-primary' : ''}`}>
-          {task.title}
-        </p>
+        <div className="flex items-center gap-2 min-w-0">
+          <p className={`text-sm font-medium truncate ${task.isComplete ? 'text-primary' : ''}`}>
+            {task.title}
+          </p>
+          {task.badge && !task.isComplete && (
+            <Badge variant="secondary" className="shrink-0 px-1.5 py-0 text-[10px] font-semibold">
+              {task.badge}
+            </Badge>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground truncate">
           {task.description}
         </p>

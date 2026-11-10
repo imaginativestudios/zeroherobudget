@@ -6,28 +6,19 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
 
-const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-
 async function callEdgeFunction<T>(name: string, body?: Record<string, unknown>): Promise<T> {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
+  const { data, error } = await supabase.functions.invoke(name, { body: body ?? {} });
 
-  const url = `https://${PROJECT_ID}.supabase.co/functions/v1/${name}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken ?? ''}`,
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `Edge function ${name} failed (${res.status})`);
+  if (error) {
+    let message: string | undefined;
+    const context = (error as { context?: unknown }).context;
+    if (context instanceof Response) {
+      const errBody = await context.clone().json().catch(() => ({}));
+      message = errBody?.error;
+    }
+    throw new Error(message || `Edge function ${name} failed`);
   }
-  return res.json();
+  return data as T;
 }
 
 /** Shown when bank linking needs a subscription (server returns subscription_required). */

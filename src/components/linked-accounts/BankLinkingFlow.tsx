@@ -77,9 +77,12 @@ export function BankLinkingFlow({ onComplete, onCancel, addAccounts }: BankLinki
         onCancel();
         return;
       }
-      // Plaid not configured — fall back to mock
-      setUsePlaid(false);
-      setStep('search');
+      toast({
+        title: 'Bank connection unavailable',
+        description: "We couldn't connect to your bank right now. Please try again in a few minutes.",
+        variant: 'destructive',
+      });
+      onCancel();
     }
   }, [user, onCancel]);
 

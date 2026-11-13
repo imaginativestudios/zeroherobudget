@@ -20,8 +20,8 @@ export const TEST_USER = {
 // Helper to login
 export async function loginUser(page: any, email?: string, password?: string) {
   await page.goto('/auth');
-  await page.getByPlaceholder(/email/i).fill(email || TEST_USER.email);
-  await page.getByPlaceholder(/password/i).fill(password || TEST_USER.password);
+  await page.getByLabel(/email/i).fill(email || TEST_USER.email);
+  await page.getByLabel(/password/i).fill(password || TEST_USER.password);
   await page.getByRole('button', { name: /sign in/i }).click();
   
   // Wait for redirect to dashboard

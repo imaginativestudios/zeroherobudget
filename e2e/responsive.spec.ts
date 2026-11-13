@@ -48,7 +48,7 @@ test.describe('Responsive Design', () => {
     await page.goto('/auth');
     
     // Form inputs should be visible and tappable
-    const emailInput = page.getByPlaceholder(/email/i);
+    const emailInput = page.getByLabel(/email/i);
     await expect(emailInput).toBeVisible();
     
     // Input should be wide enough to tap

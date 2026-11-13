@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/billing.fixture';
 
 test.describe('Stripe Checkout Integration', () => {
   test('pricing page subscribe button is functional', async ({ page }) => {
     await page.goto('/pricing');
     
     // Find the subscribe/trial button
-    const subscribeButton = page.getByRole('button', { name: /subscribe|start.*trial|get started/i }).first();
+    const subscribeButton = page.getByRole('button', { name: /start 7-day free trial/i }).first();
     await expect(subscribeButton).toBeVisible();
     await expect(subscribeButton).toBeEnabled();
   });
@@ -13,40 +13,20 @@ test.describe('Stripe Checkout Integration', () => {
   test('checkout requires authentication', async ({ page }) => {
     await page.goto('/pricing');
     
-    const subscribeButton = page.getByRole('button', { name: /subscribe|start.*trial|get started/i }).first();
-    
-    if (await subscribeButton.isVisible()) {
-      await subscribeButton.click();
-      
-      // Should either redirect to auth or show auth modal
-      await expect(
-        page.getByPlaceholder(/email/i)
-          .or(page.getByText(/sign in|log in|create account/i).first())
-          .or(page.getByRole('dialog'))
-      ).toBeVisible({ timeout: 5000 });
-    }
+    await page.getByRole('button', { name: 'Start 7-day free trial', exact: true }).click();
+    await expect(page).toHaveURL(/\/auth$/);
+    await expect(page.getByLabel(/email/i)).toBeVisible();
+    await expect(page.getByLabel(/password/i)).toBeVisible();
   });
 
-  test('pricing slider updates checkout amount', async ({ page }) => {
+  test('billing interval selects the fixed checkout price', async ({ page }) => {
     await page.goto('/pricing');
-    
-    const slider = page.locator('input[type="range"]');
-    
-    if (await slider.isVisible()) {
-      // Get initial displayed price
-      const priceDisplay = page.getByText(/\$\d+/);
-      const initialText = await priceDisplay.first().textContent();
-      
-      // Move slider to different position
-      await slider.evaluate((el: HTMLInputElement) => {
-        el.value = '15';
-        el.dispatchEvent(new Event('input', { bubbles: true }));
-        el.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-      
-      // Price should reflect the slider value
-      await expect(priceDisplay.first()).toBeVisible();
-    }
+    await page.getByRole('button', { name: /monthly/i }).click();
+    await expect(page.getByText('$10', { exact: true })).toBeVisible();
+    await expect(page.getByText('Free for 7 days, then $10/month. Cancel anytime.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: /annual/i }).click();
+    await expect(page.getByText('$99', { exact: true })).toBeVisible();
+    await expect(page.getByText('Free for 7 days, then $99/year. Cancel anytime.', { exact: true })).toBeVisible();
   });
 
   test('trial period messaging is accurate', async ({ page }) => {
@@ -67,7 +47,7 @@ test.describe('Stripe Checkout Integration', () => {
       }));
     });
     
-    const subscribeButton = page.getByRole('button', { name: /subscribe|start.*trial/i }).first();
+    const subscribeButton = page.getByRole('button', { name: /start 7-day free trial/i }).first();
     
     if (await subscribeButton.isVisible()) {
       // Button should be clickable
@@ -97,7 +77,7 @@ test.describe('Stripe Checkout Success Page', () => {
     
     // Should show either subscription info or redirect to pricing
     await expect(
-      page.getByText(/quest begins|no active subscription/i)
+      page.getByText(/no active subscription found/i)
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -114,11 +94,10 @@ test.describe('Stripe Checkout Success Page', () => {
     // Clear any auth state
     await page.goto('/checkout-success');
     
-    // Should handle gracefully - either show message or redirect
-    await expect(
-      page.getByText(/no active subscription|sign in|pricing/i).first()
-        .or(page.getByRole('button', { name: /pricing|sign in/i }))
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('No active subscription found.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'View Pricing', exact: true }).click();
+    await expect(page).toHaveURL(/\/pricing$/);
+    await expect(page.getByText('Premium', { exact: true })).toBeVisible();
   });
 });
 
@@ -131,7 +110,7 @@ test.describe('Stripe Checkout - Edge Cases', () => {
       route.abort('failed');
     });
     
-    const subscribeButton = page.getByRole('button', { name: /subscribe|start.*trial/i }).first();
+    const subscribeButton = page.getByRole('button', { name: /start 7-day free trial/i }).first();
     
     if (await subscribeButton.isVisible()) {
       await subscribeButton.click();
@@ -155,16 +134,18 @@ test.describe('Stripe Checkout - Edge Cases', () => {
     });
     
     // Page should handle gracefully
-    await expect(page.getByRole('button', { name: /subscribe|start|get started/i }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /start 7-day free trial/i }).first()).toBeVisible();
   });
 
   test('canceled checkout redirects back to pricing', async ({ page }) => {
     await page.goto('/pricing?canceled=true');
     
     // Should be on pricing page without query param after redirect
-    await page.waitForURL(/\/pricing(?:\?|$)/, { timeout: 5000 });
+    await expect(page).toHaveURL(/\/pricing$/);
     
     // Pricing content should be visible
-    await expect(page.getByText(/pay what you can/i)).toBeVisible();
+    await expect(page.getByText('Checkout canceled', { exact: true })).toBeVisible();
+    await expect(page.getByText('Free', { exact: true })).toBeVisible();
+    await expect(page.getByText('Premium', { exact: true })).toBeVisible();
   });
 });

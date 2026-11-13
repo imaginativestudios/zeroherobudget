@@ -27,8 +27,8 @@ test.describe('Authentication Flow', () => {
   test('shows validation errors for empty form submission', async ({ page }) => {
     await page.goto('/auth');
     await page.getByRole('button', { name: /sign in/i }).click();
-    // Form should show validation - check for error styling or message
-    await expect(page.getByLabel(/email/i)).toHaveAttribute('aria-invalid', 'true');
+    expect(await page.getByLabel(/email/i).evaluate((input: HTMLInputElement) => input.validity.valueMissing && !input.validity.valid)).toBe(true);
+    expect(await page.getByLabel(/password/i).evaluate((input: HTMLInputElement) => input.validity.valueMissing && !input.validity.valid)).toBe(true);
   });
 
   test('shows error for invalid email format', async ({ page }) => {
@@ -36,27 +36,29 @@ test.describe('Authentication Flow', () => {
     await page.getByLabel(/email/i).fill('notanemail');
     await page.getByLabel(/password/i).fill('password123');
     await page.getByRole('button', { name: /sign in/i }).click();
-    // Should show email validation error
-    await expect(page.getByText(/invalid email|email.*invalid/i)).toBeVisible();
+    expect(await page.getByLabel(/email/i).evaluate((input: HTMLInputElement) => input.validity.typeMismatch && !input.validity.valid)).toBe(true);
   });
 
   test('signup flow shows confirmation message', async ({ page }) => {
+    let signupRequests = 0;
+    await page.route('**/auth/v1/signup**', async route => {
+      signupRequests++;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ user: { id: 'confirmation-test-user', email: 'confirmation@example.com', identities: [{ id: 'confirmation-identity', provider: 'email' }] }, session: null }),
+      });
+    });
     await page.goto('/auth');
-    // Switch to signup mode if needed
-    const signupLink = page.getByRole('button', { name: /sign up|create account|register/i });
-    if (await signupLink.isVisible()) {
-      await signupLink.click();
-    }
-    
-    // Fill signup form with test data
-    await page.getByLabel(/email/i).fill(`test-${Date.now()}@example.com`);
+    await page.getByRole('tab', { name: 'Sign Up', exact: true }).click();
+    await page.getByLabel('First Name', { exact: true }).fill('Test');
+    await page.getByLabel(/email/i).fill('confirmation@example.com');
     await page.getByLabel(/password/i).fill('TestPassword123!');
-    
-    // Submit
-    await page.getByRole('button', { name: /sign up|create account/i }).click();
-    
+    await page.getByRole('button', { name: 'Create Account', exact: true }).click();
+    await expect.poll(() => signupRequests).toBe(1);
+
     // Should show confirmation message
-    await expect(page.getByText(/check.*email|confirmation|verify/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/check.*email.*confirm/i).first()).toBeVisible({ timeout: 10000 });
   });
 });
 

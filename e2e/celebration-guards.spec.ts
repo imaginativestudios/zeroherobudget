@@ -7,8 +7,10 @@ test('achievements wait for debts and seed old unlocks without celebrating', asy
     const source = await fetch('/src/main.tsx').then(response => response.text());
     const reactDomPath = source.match(/from "([^"]*react-dom_client[^"]*)"/)?.[1] ?? '/node_modules/.vite/deps/react-dom_client.js';
     const reactPath = reactDomPath.replace('react-dom_client', 'react');
-    const React = await load(reactPath);
-    const ReactDOM = await load(reactDomPath);
+    const reactModule = await load(reactPath);
+    const React = reactModule.default ?? reactModule;
+    const reactDomModule = await load(reactDomPath);
+    const ReactDOM = reactDomModule.default ?? reactDomModule;
     const { useAchievements } = await load('/src/hooks/useAchievements.ts');
     const { DEMO_USER_ID } = await load('/src/lib/demoDataLoader.ts');
     const key = (name: string) => `${DEMO_USER_ID}_${name}`;

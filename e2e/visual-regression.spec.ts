@@ -156,7 +156,12 @@ test.describe('Visual Regression - Empty States', () => {
 
   test('Empty Dashboard', async ({ visualPage }) => {
     await visualPage.gotoApp('/dashboard');
-    await visualPage.compareScreenshot('dashboard-empty', { fullPage: true });
+    // The chat FAB's infinite fab-shine pseudo-element restarts when CSS
+    // duration is set to zero. Stop it outright in this test only.
+    await visualPage.addStyleTag({ content: '.fab-shine::before { animation: none !important; }' });
+    // Clearing demo debts can trigger confetti; canvas pixels are not CSS
+    // animations, so screenshot animation disabling cannot stop them.
+    await visualPage.compareScreenshot('dashboard-empty', { fullPage: true, hideSelectors: ['canvas'] });
   });
 
   test('Empty Transactions', async ({ visualPage }) => {

@@ -112,14 +112,37 @@ test.describe('Onboarding Wizard (Character Creation)', () => {
     // Step 4: Aha Moment - Continue
     await page.getByRole('button', { name: /continue/i }).click({ timeout: 5000 });
     
-    // Step 5: Pricing - Skip to demo mode
-    await page.getByRole('button', { name: /skip|demo|explore/i }).click({ timeout: 5000 });
-    
-    // Step 6: Ceremony - Go to Dashboard
-    await page.getByRole('button', { name: /Go to Dashboard/i }).click({ timeout: 5000 });
+    // Free signup completes setup without starting a paid checkout.
+    await page.getByRole('button', { name: 'Continue with a Free Account', exact: true }).click();
+    const user = { id: '00000000-0000-4000-8000-000000000037', email: 'onboarding@example.com', aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: new Date().toISOString() };
+    let signupRequests = 0;
+    let checkoutRequests = 0;
+    await page.route('**/*.supabase.co/**', async route => {
+      const url = route.request().url();
+      if (url.includes('/auth/v1/signup')) {
+        signupRequests++;
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ access_token: 'mock-onboarding-token', token_type: 'bearer', expires_in: 3600, refresh_token: 'mock-refresh-token', user }) });
+      } else if (url.includes('/auth/v1/user')) {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(user) });
+      } else if (url.includes('/functions/v1/')) {
+        if (url.includes('/create-checkout')) checkoutRequests++;
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ subscribed: false }) });
+      } else {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+      }
+    });
+    await page.getByLabel('First Name', { exact: true }).fill('Test');
+    await page.getByLabel('Email', { exact: true }).fill(user.email);
+    await page.getByLabel('Password', { exact: true }).fill('TestPassword123!');
+    await page.getByRole('button', { name: 'Create Account', exact: true }).click();
     
     // Should be on dashboard
     await expect(page).toHaveURL(/dashboard/);
+    expect(signupRequests).toBe(1);
+    expect(checkoutRequests).toBe(0);
+    const profile = await page.evaluate(id => JSON.parse(localStorage.getItem(`${id}_bdt_hero_profile`) ?? '{}'), user.id);
+    expect(profile.hourly_wage).toBe(25);
+    expect(profile.onboarding_completed).toBe(true);
   });
 
   test('can skip Step 1 (hourly wage)', async ({ page }) => {

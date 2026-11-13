@@ -8,8 +8,8 @@ test.describe('Authenticated User Flow', () => {
 
   test('successful login redirects to dashboard', async ({ page }) => {
     await page.goto('/auth');
-    await page.getByPlaceholder(/email/i).fill(TEST_USER.email);
-    await page.getByPlaceholder(/password/i).fill(TEST_USER.password);
+    await page.getByLabel(/email/i).fill(TEST_USER.email);
+    await page.getByLabel(/password/i).fill(TEST_USER.password);
     await page.getByRole('button', { name: /sign in/i }).click();
     
     // Should redirect after login (may show error if test user doesn't exist)
@@ -23,7 +23,7 @@ test.describe('Authenticated User Flow', () => {
     
     // Should redirect to auth or show login prompt
     await expect(
-      page.getByPlaceholder(/email/i).or(page.getByText(/sign in|log in/i).first())
+      page.getByLabel(/email/i)
     ).toBeVisible({ timeout: 5000 });
   });
 

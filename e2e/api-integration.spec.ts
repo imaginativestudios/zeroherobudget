@@ -81,8 +81,8 @@ test.describe('Database Connection', () => {
     await page.goto('/auth');
     
     // Page should have auth components
-    await expect(page.getByPlaceholder(/email/i)).toBeVisible();
-    await expect(page.getByPlaceholder(/password/i)).toBeVisible();
+    await expect(page.getByLabel(/email/i)).toBeVisible();
+    await expect(page.getByLabel(/password/i)).toBeVisible();
   });
 });
 
@@ -124,15 +124,16 @@ test.describe('Error Handling', () => {
     await page.goto('/auth');
     
     // Simulate rate limiting
-    await page.route('**/supabase.co/auth/**', route => {
+    await page.route('**/auth/v1/token**', route => {
       route.fulfill({
         status: 429,
-        body: JSON.stringify({ error: 'Too many requests' }),
+        contentType: 'application/json',
+        body: JSON.stringify({ msg: 'Too many requests' }),
       });
     });
     
-    await page.getByPlaceholder(/email/i).fill('test@example.com');
-    await page.getByPlaceholder(/password/i).fill('password');
+    await page.getByLabel(/email/i).fill('test@example.com');
+    await page.getByLabel(/password/i).fill('password');
     await page.getByRole('button', { name: /sign in/i }).click();
     
     // Should show rate limit error

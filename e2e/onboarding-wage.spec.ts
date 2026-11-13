@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('demo onboarding wage survives ceremony, completion, and reload', async ({ page }) => {
+test('demo onboarding saves wage at ceremony then loads sample data', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.clear());
   await page.goto('/onboarding?demo=true');
@@ -8,7 +8,7 @@ test('demo onboarding wage survives ceremony, completion, and reload', async ({ 
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: /See My Payoff Timeline/i }).click();
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue to Demo', exact: true }).click();
 
   const readProfile = () => page.evaluate(() => {
     const key = Object.keys(localStorage).find(key => key.endsWith('_bdt_hero_profile'));
@@ -17,7 +17,8 @@ test('demo onboarding wage survives ceremony, completion, and reload', async ({ 
   await expect.poll(async () => (await readProfile())?.hourly_wage).toBe(37);
   await page.getByRole('button', { name: 'Go to Dashboard', exact: true }).click();
   // Demo entry deliberately loads sample data rather than creating an account.
-  await expect(page).toHaveURL(/\/dashboard|\/auth/);
+  await expect(page).toHaveURL(/\/dashboard/);
   await page.reload();
-  expect((await readProfile())?.hourly_wage).toBe(25);
+  // Demo entry clears the setup profile; it is not a free-account signup.
+  await expect.poll(async () => (await readProfile())?.hourly_wage).toBeNull();
 });

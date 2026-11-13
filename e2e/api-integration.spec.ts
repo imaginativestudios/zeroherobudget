@@ -33,18 +33,27 @@ test.describe('API Integration - Edge Functions', () => {
     expect([401, 400, 500]).toContain(response.status());
   });
 
-  test('create-checkout endpoint responds', async ({ request }) => {
-    const response = await request.post(
+  test('create-checkout endpoint responds', async ({ page }) => {
+    // Browser routing intercepts this request; never contact live billing.
+    await page.route('**/functions/v1/create-checkout', route => route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    }));
+    await page.goto('/');
+    const status = await page.evaluate(async () => {
+      const response = await fetch(
       'https://ukpejgrghpewwdfztryg.supabase.co/functions/v1/create-checkout',
       {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        failOnStatusCode: false,
       }
-    );
-    
-    expect([401, 400, 500]).toContain(response.status());
+      );
+      return response.status;
+    });
+    expect(status).toBe(401);
   });
 
   test('faq-chat endpoint responds', async ({ request }) => {

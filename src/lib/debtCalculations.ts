@@ -69,7 +69,8 @@ export function simulatePayoff(
   rawDebts: DebtItem[],
   extraBudget: number,
   strategy: "Snowball" | "Avalanche" = "Snowball",
-  monthsLimit: number = 600
+  monthsLimit: number = 600,
+  rollover: boolean = true
 ): PayoffResult {
   const leftover = Math.max(0, extraBudget || 0);
   
@@ -82,6 +83,8 @@ export function simulatePayoff(
     _monthsToZero: null as number | null,
     _orig: d._orig ?? Math.max(0, d.balance || 0)
   })).filter(d => d.balance > 0);
+
+  const monthlyBudget = debts.reduce((sum, debt) => sum + debt.min, 0) + leftover;
 
   if (!debts.length) {
     return { timeline: [], totalInterest: 0, perDebt: [] };
@@ -118,8 +121,11 @@ export function simulatePayoff(
       minimumMap.set(debt.id, Math.min(debt.min, totalDue));
     }
 
-    // Distribute extra payment using debt strategy
-    let extraRemaining = leftover;
+    // Reserve all active minimums, then roll freed minimums and same-month
+    // unused minimum amounts into the strategy's next debt.
+    let extraRemaining = rollover
+      ? Math.max(0, monthlyBudget - [...minimumMap.values()].reduce((sum, minimum) => sum + minimum, 0))
+      : leftover;
     const extraPayments = new Map<string, number>();
     
     // Initialize all extra payments to 0
@@ -222,7 +228,8 @@ export interface PayoffComparison {
 export function calculatePayoffPlan(
   rawDebts: DebtItem[],
   extraMonthly: number,
-  strategy: "Snowball" | "Avalanche" = "Avalanche"
+  strategy: "Snowball" | "Avalanche" = "Avalanche",
+  rollover: boolean = true
 ): PayoffPlan {
   const activeDebts = rawDebts.filter(d => d.balance > 0);
   const totalDebt = activeDebts.reduce((sum, d) => sum + d.balance, 0);
@@ -246,7 +253,7 @@ export function calculatePayoffPlan(
       : (a, b) => a.balance - b.balance || b.apr - a.apr
   );
 
-  const result = simulatePayoff(activeDebts, extraMonthly, strategy);
+  const result = simulatePayoff(activeDebts, extraMonthly, strategy, 600, rollover);
 
   const priorityOrder = sortedDebts.map((debt, index) => {
     const perDebtInfo = result.perDebt.find(d => d.id === debt.id);
@@ -309,7 +316,8 @@ export function getDetailedPaymentSchedule(
   rawDebts: DebtItem[],
   extraBudget: number,
   strategy: "Snowball" | "Avalanche" = "Snowball",
-  monthsLimit: number = 600
+  monthsLimit: number = 600,
+  rollover: boolean = true
 ): DetailedPaymentSchedule {
   const leftover = Math.max(0, extraBudget || 0);
   
@@ -322,6 +330,8 @@ export function getDetailedPaymentSchedule(
     _monthsToZero: null as number | null,
     _orig: d._orig ?? Math.max(0, d.balance || 0)
   })).filter(d => d.balance > 0);
+
+  const monthlyBudget = debts.reduce((sum, debt) => sum + debt.min, 0) + leftover;
 
   if (!debts.length) {
     return { 
@@ -370,8 +380,11 @@ export function getDetailedPaymentSchedule(
       minimumMap.set(debt.id, Math.min(debt.min, totalDue));
     }
 
-    // Distribute extra payment using debt strategy
-    let extraRemaining = leftover;
+    // Match simulatePayoff: the original monthly budget stays fixed unless
+    // rollover is explicitly disabled for a minimum-payment-only baseline.
+    let extraRemaining = rollover
+      ? Math.max(0, monthlyBudget - [...minimumMap.values()].reduce((sum, minimum) => sum + minimum, 0))
+      : leftover;
     const extraPayments = new Map<string, number>();
     
     for (const debt of activeDebts) {

@@ -57,7 +57,7 @@ export default function DebtPayoffCalculator() {
             setResults({
               snowball: calculatePayoffPlan(debts, Number(extra), 'Snowball'),
               avalanche: calculatePayoffPlan(debts, Number(extra), 'Avalanche'),
-              baseline: calculatePayoffPlan(debts, 0, 'Snowball'),
+              baseline: calculatePayoffPlan(debts, 0, 'Snowball', false),
             });
           }}>
             <div className="flex items-center justify-between gap-4">
@@ -104,7 +104,7 @@ export default function DebtPayoffCalculator() {
                 );
               })}
             </div>
-            <p className="text-sm text-muted-foreground">Estimates use monthly interest, fixed minimum payments, and your extra payment starting this month. They exclude fees, rate changes, and new borrowing. Paid-off minimum payments are not automatically added to your extra payment. This is an estimate, not financial advice.</p>
+            <p className="text-sm text-muted-foreground">Estimates use monthly interest, fixed minimum payments, and your extra payment starting this month. They exclude fees, rate changes, and new borrowing. This is an estimate, not financial advice.</p>
             <Button asChild size="lg" className="min-h-11"><Link to="/onboarding">Save your plan free<ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
           </section>
         )}
@@ -118,7 +118,7 @@ export default function DebtPayoffCalculator() {
             <p className="leading-relaxed text-muted-foreground">Avalanche targets the debt with the highest interest rate first. Reducing that balance sooner generally cuts interest costs. It is a good fit if saving money is your main motivation and you are comfortable waiting longer for your first account to reach zero. When rates match, a smaller balance can be a useful next target.</p>
             <h3 className="text-xl font-semibold">Choose a sustainable payment</h3>
             <p className="leading-relaxed text-muted-foreground">Compare the dates and interest totals above, but also consider which plan you will follow. Keep enough money for essentials and unexpected expenses before increasing payments. Check your statements for accurate balances, rates, and minimums. Your lender may calculate interest differently, so treat these results as estimates rather than promises.</p>
-            <p className="leading-relaxed text-muted-foreground">As debts disappear, you can put their old payments toward the next debt by increasing your extra monthly amount. Revisit the calculator when your income or rates change. If you enter hourly pay, the hours shown translate estimated interest savings into working time, not a guarantee of fewer hours at your job.</p>
+            <p className="leading-relaxed text-muted-foreground">The calculator already rolls each paid-off debt's payment into the next debt. Revisit the calculator when your income or rates change. If you enter hourly pay, the hours shown translate estimated interest savings into working time, not a guarantee of fewer hours at your job.</p>
           </div>
         </section>
       </main>

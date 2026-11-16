@@ -18,3 +18,4 @@
 
 ## Public payoff calculator
 - Reuse the pure debt payoff engine with page-local React state only; report incomplete simulations without a payoff date and define work hours saved against the minimum-payment-only baseline so estimates remain comparable without storing visitor data.
+- Default payoff simulations and schedules to a fixed original-minimums-plus-extra budget with rollover; explicitly disable rollover for the public calculator's minimum-only baseline so freed payments do not distort savings.

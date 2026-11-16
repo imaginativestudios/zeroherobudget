@@ -29,7 +29,7 @@ test('public comparison reuses the engine and saves no visitor entries', async (
   await page.getByLabel('Extra monthly payment', { exact: true }).fill('100');
   await page.getByLabel('Hourly pay (optional)', { exact: true }).fill('20');
   await page.getByRole('button', { name: 'Compare payoff plans' }).click();
-  const baseline = calculatePayoffPlan(debts, 0, 'Snowball');
+  const baseline = calculatePayoffPlan(debts, 0, 'Snowball', false);
   for (const [method, strategy] of [['snowball', 'Snowball'], ['avalanche', 'Avalanche']] as const) {
     const plan = calculatePayoffPlan(debts, 100, strategy);
     await expect(page.getByTestId(`${method}-months`)).toHaveText(String(plan.months));

@@ -24,6 +24,7 @@ import { NetWorthReport } from "@/pages/reports/NetWorthReport";
 import RootPage from "./pages/RootPage";
 import PlaidOAuth from "./pages/PlaidOAuth";
 import Landing from "./pages/Landing";
+import DebtPayoffCalculator from "./pages/DebtPayoffCalculator";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -64,7 +65,7 @@ const queryClient = new QueryClient();
 
 function RouteIndexing() {
   const { pathname } = useLocation();
-  const publicPaths = ['/', '/landing', '/pricing', '/help', '/privacy', '/terms', '/legal', '/data-privacy'];
+  const publicPaths = ['/', '/landing', '/pricing', '/help', '/privacy', '/terms', '/legal', '/data-privacy', '/debt-payoff-calculator'];
   return (
     <Helmet>
       <meta name="robots" content={publicPaths.includes(pathname) ? 'index, follow' : 'noindex, follow'} />
@@ -91,6 +92,7 @@ const App = () => (
           {/* Public routes */}
           <Route path="/" element={<RootPage />} />
           <Route path="/landing" element={<Landing />} />
+          <Route path="/debt-payoff-calculator" element={<DebtPayoffCalculator />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />

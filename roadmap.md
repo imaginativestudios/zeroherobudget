@@ -1,4 +1,5 @@
 # Footer and trademark updates
+- [x] Add public debt payoff calculator with browser-only state, shared payoff engine, footer links, and indexing; three calculator regressions and desktop/mobile flows passed using available Chromium, preview build passed. Broader search suite did not complete; nothing published.
 - [x] Update public SEO, route search exclusions, home structured data, and page-specific sitemap dates; 47 regression checks and preview build passed using available Chromium. Public metadata and desktop/mobile hero checked; no publishing.
 - [x] Fix navigation caching, sign-in tab selection, and account-scoped celebration replay; build and browser regression scenario passed. Standard Playwright runner blocked by missing matching browser; published update cycle unverified.
 - [x] Add free onboarding signup and preserve entered setup details across account creation/confirmation.

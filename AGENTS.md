@@ -15,3 +15,6 @@
 ## Search metadata
 - Keep route indexing in the app's shared Helmet metadata guard, allowing only public information pages; this covers private routes and removes noindex when navigating back to public pages.
 - Set sitemap lastmod only from significant page-content changes, never a build or sitemap-generation timestamp, so dates remain trustworthy.
+
+## Public payoff calculator
+- Reuse the pure debt payoff engine with page-local React state only; report incomplete simulations without a payoff date and define work hours saved against the minimum-payment-only baseline so estimates remain comparable without storing visitor data.

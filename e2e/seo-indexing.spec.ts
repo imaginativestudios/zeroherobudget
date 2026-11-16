@@ -2,6 +2,17 @@ import { test, expect } from '@playwright/test';
 import { seedDemoData } from './fixtures/demo.fixture';
 
 test.describe('Search indexing boundaries', () => {
+  test('public debt strategy guide reaches the calculator without signing in', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Snowball vs. avalanche', exact: true }).click();
+    await expect(page).toHaveURL(/\/learn\/debt-strategies$/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://zeroherobudget.com/learn/debt-strategies');
+    await page.getByRole('link', { name: 'Compare your payoff plans', exact: true }).click();
+    await expect(page).toHaveURL(/\/debt-payoff-calculator$/);
+    await expect(page.getByLabel('Balance', { exact: true })).toBeVisible();
+  });
+
   for (const path of ['/auth', '/onboarding', '/reset-password', '/checkout-success', '/accept-invite/invalid', '/install', '/plaid-oauth', '/internal/coming-soon', '/internal/style-guide/icons', '/internal/style-guide/colors', '/internal/sitemap', '/internal/unavailable', '/internal/join-beta', '/admin', '/admin/login', '/admin/waitlist', '/admin/beta-codes']) {
     test(`${path} is excluded from indexing`, async ({ page }) => {
       await page.goto(path);

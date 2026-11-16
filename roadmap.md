@@ -1,4 +1,5 @@
 # Footer and trademark updates
+- [x] Resolve stale Search Console setup finding and add approved public debt-strategy comparison guide; 41 navigation/indexing tests, desktop/mobile checks, and preview build passed. Nothing published.
 - [x] Correct shared payoff rollover and preserve the no-rollover public baseline; calculator guidance/content date updated, six calculation tests and preview build passed. Public calculator scenarios verified with available Chromium because the standard runner's browser is missing; nothing published.
 - [x] Add public debt payoff calculator with browser-only state, shared payoff engine, footer links, and indexing; three calculator regressions and desktop/mobile flows passed using available Chromium, preview build passed. Broader search suite did not complete; nothing published.
 - [x] Update public SEO, route search exclusions, home structured data, and page-specific sitemap dates; 47 regression checks and preview build passed using available Chromium. Public metadata and desktop/mobile hero checked; no publishing.

@@ -391,6 +391,9 @@ export default function Landing() {
                 <Link to="/debt-payoff-calculator" className="hover:text-foreground transition-colors">
                   Debt payoff calculator
                 </Link>
+                <Link to="/learn/debt-strategies" className="hover:text-foreground transition-colors">
+                  Snowball vs. avalanche
+                </Link>
                 <Link to="/pricing" className="hover:text-foreground transition-colors">
                   Pricing
                 </Link>

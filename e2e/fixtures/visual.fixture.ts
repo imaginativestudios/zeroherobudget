@@ -26,6 +26,7 @@ export const test = base.extend<{
 }>({
   timezoneId: 'UTC',
   locale: 'en-US',
+  reducedMotion: 'reduce',
   visualPage: async ({ page }, use) => {
     // Freeze demo dates before seedDemoData's first navigation, without pausing timers.
     await page.clock.setFixedTime(new Date('2026-06-15T12:00:00Z'));
@@ -46,8 +47,8 @@ export const test = base.extend<{
       // Wait for fonts to load
       await page.evaluate(() => document.fonts.ready);
       
-      // Wait for any Framer Motion animations to complete
-      await page.waitForTimeout(500);
+      // Let delayed Framer Motion entrances and springs reach their final transforms.
+      await page.waitForTimeout(1500);
       
       // Disable CSS animations for consistency
       await page.addStyleTag({
@@ -92,6 +93,8 @@ export const test = base.extend<{
 
     // Take and compare screenshot
     visualPage.compareScreenshot = async (name: string, options: VisualTestOptions = {}) => {
+      // Click positions must not leave an unrelated link/icon in a hover state.
+      await page.mouse.move(0, 0);
       await visualPage.waitForPageReady();
 
       // Hide dynamic content (dates, times, random values)

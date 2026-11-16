@@ -24,7 +24,19 @@ type VisualPage = Page & {
 export const test = base.extend<{
   visualPage: VisualPage;
 }>({
+  timezoneId: 'UTC',
+  locale: 'en-US',
   visualPage: async ({ page }, use) => {
+    // Freeze demo dates before seedDemoData's first navigation, without pausing timers.
+    await page.clock.setFixedTime(new Date('2026-06-15T12:00:00Z'));
+    // Keep randomly selected content reproducible across fresh pages and CI runs.
+    await page.addInitScript(() => {
+      let seed = 20260615;
+      Math.random = () => {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+    });
     const visualPage = page as VisualPage;
 
     // Wait for page to be fully ready (fonts, images, animations)
@@ -41,6 +53,8 @@ export const test = base.extend<{
       await page.addStyleTag({
         content: `
           *, *::before, *::after {
+            caret-color: transparent !important;
+            animation: none !important;
             animation-duration: 0s !important;
             animation-delay: 0s !important;
             transition-duration: 0s !important;

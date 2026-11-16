@@ -1,4 +1,5 @@
 # Footer and trademark updates
+- [x] Update public SEO, route search exclusions, home structured data, and page-specific sitemap dates; 47 regression checks and preview build passed using available Chromium. Public metadata and desktop/mobile hero checked; no publishing.
 - [x] Fix navigation caching, sign-in tab selection, and account-scoped celebration replay; build and browser regression scenario passed. Standard Playwright runner blocked by missing matching browser; published update cycle unverified.
 - [x] Add free onboarding signup and preserve entered setup details across account creation/confirmation.
 - [x] Storage regression and preview checks passed; bank-link checks unchanged. Hosted signup remains unverified on external Supabase; existing browser e2e blocked by missing matching Playwright binary.

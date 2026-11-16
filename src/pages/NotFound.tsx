@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Home, LayoutDashboard, FileText } from "lucide-react";
@@ -16,6 +17,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <Helmet><meta name="robots" content="noindex, follow" /></Helmet>
       {/* Solid Background */}
       <div className="absolute inset-0 bg-primary">
         {/* Decorative blur elements */}
@@ -71,7 +73,7 @@ const NotFound = () => {
 
         {/* Additional helpful links */}
         <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
-          <Link to="/budget" className="hover:text-white transition-colors flex items-center gap-1">
+          <Link to="/budgets" className="hover:text-white transition-colors flex items-center gap-1">
             <FileText className="h-4 w-4" />
             Budget
           </Link>
@@ -83,7 +85,7 @@ const NotFound = () => {
             <FileText className="h-4 w-4" />
             Reports
           </Link>
-          <Link to="/debt-snowball" className="hover:text-white transition-colors flex items-center gap-1">
+          <Link to="/debts" className="hover:text-white transition-colors flex items-center gap-1">
             <FileText className="h-4 w-4" />
             Debt Payoff
           </Link>

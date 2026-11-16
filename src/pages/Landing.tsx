@@ -93,9 +93,27 @@ export default function Landing() {
   return (
     <>
       <SEO
-        title="Zero Hero — From Balances Due to a More Balanced You"
-        description="Track budgets and eliminate debt with proven strategies. Zero Hero helps you build a safety net, pay off debts, and reclaim your time."
+        title="Zero Hero: AI Debt Coach and Debt Payoff Planner"
+        description="Pay off debt with a plan. Zero Hero drafts your budget, picks snowball or avalanche, and shows your debt-free date. Budgeting is free."
         path="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'Zero Hero',
+          applicationCategory: 'FinanceApplication',
+          operatingSystem: 'Web',
+          url: 'https://zeroherobudget.com',
+          offers: [
+            { '@type': 'Offer', name: 'Free', price: 0, priceCurrency: 'USD' },
+            {
+              '@type': 'Offer', name: 'Premium', price: 10, priceCurrency: 'USD',
+              priceSpecification: {
+                '@type': 'UnitPriceSpecification', price: 10, priceCurrency: 'USD',
+                unitText: 'month', billingDuration: 'P1M',
+              },
+            },
+          ],
+        }}
       />
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
         {/* Hero Section */}
@@ -128,6 +146,10 @@ export default function Landing() {
             >
               From Balances Due to a More Balanced You
             </motion.h1>
+
+            <p className="text-sm sm:text-base md:text-lg font-normal text-primary-foreground mb-4 max-w-3xl mx-auto px-2">
+              Zero Hero is an AI debt coach that drafts your budget, picks your payoff order and shows your debt-free date.
+            </p>
 
             {/* Subheadline */}
             <motion.p
@@ -216,7 +238,7 @@ export default function Landing() {
                   <h3 className="text-xl sm:text-2xl font-bold mb-3 text-card-foreground">
                     {oath.title}
                   </h3>
-                  <p className="text-accent font-medium italic mb-4 text-sm sm:text-base">
+                  <p className="text-accent font-normal mb-4 text-sm sm:text-base">
                     {oath.quote}
                   </p>
                   <p className="text-muted-foreground text-sm sm:text-base">
@@ -270,7 +292,7 @@ export default function Landing() {
                     <h3 className="text-lg sm:text-xl font-bold text-card-foreground mb-1">
                       Step {level.level}: {level.title}
                     </h3>
-                    <p className="text-accent font-medium italic text-sm mb-3">
+                    <p className="text-accent font-normal text-sm mb-3">
                       "{level.quote}"
                     </p>
                     <ul className={`space-y-1.5 text-sm text-muted-foreground ${

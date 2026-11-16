@@ -1,10 +1,12 @@
 import { LegalFooterNotice } from "@/components/LegalFooterNotice";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, AlertTriangle, Scale, UserX, Shield } from "lucide-react";
 const TermsOfService = () => {
   return <div className="min-h-screen bg-background">
+      <SEO title="Terms of Service — Zero Hero" description="Read the rules for using Zero Hero, including free features, paid plans, trial terms, cancellation, and your responsibilities." path="/terms" />
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">

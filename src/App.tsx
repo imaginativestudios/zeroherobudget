@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/Layout";
 import { PublicPageFooter } from "@/components/PublicPageFooter";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -61,6 +62,16 @@ import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
+function RouteIndexing() {
+  const { pathname } = useLocation();
+  const publicPaths = ['/', '/landing', '/pricing', '/help', '/privacy', '/terms', '/legal', '/data-privacy'];
+  return (
+    <Helmet>
+      <meta name="robots" content={publicPaths.includes(pathname) ? 'index, follow' : 'noindex, follow'} />
+    </Helmet>
+  );
+}
+
 // Keeps the installed app and the website on the newest publish; renders nothing itself.
 function ServiceWorkerUpdate() {
   useServiceWorkerUpdate();
@@ -74,6 +85,7 @@ const App = () => (
             <Toaster />
             <Sonner />
           <BrowserRouter>
+            <RouteIndexing />
             <BehavioralTriggerProvider>
         <Routes>
           {/* Public routes */}

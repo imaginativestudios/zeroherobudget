@@ -1,17 +1,27 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /internal
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /internal
 
 User-agent: Twitterbot
 Allow: /
+Disallow: /admin
+Disallow: /internal
 
 User-agent: facebookexternalhit
 Allow: /
+Disallow: /admin
+Disallow: /internal
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /internal
 
 Sitemap: https://zeroherobudget.com/sitemap.xml
 

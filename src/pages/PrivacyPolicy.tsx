@@ -1,4 +1,5 @@
 import { LegalFooterNotice } from "@/components/LegalFooterNotice";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { ArrowLeft, Shield, Lock, Eye, Database, UserCheck, Mail, Link2 } from "
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Privacy Policy — Zero Hero" description="Read what data Zero Hero collects, where it is stored, who receives it, and how to access or delete it." path="/privacy" />
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">

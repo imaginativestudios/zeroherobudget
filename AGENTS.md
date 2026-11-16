@@ -11,3 +11,7 @@
 
 ## Legal footers
 - Reuse LegalFooterNotice for page and Layout footers; PublicPageFooter covers standalone routes without an existing footer so each page has one copyright notice.
+
+## Search metadata
+- Keep route indexing in the app's shared Helmet metadata guard, allowing only public information pages; this covers private routes and removes noindex when navigating back to public pages.
+- Set sitemap lastmod only from significant page-content changes, never a build or sitemap-generation timestamp, so dates remain trustworthy.

@@ -1,4 +1,5 @@
 import { LegalFooterNotice } from "@/components/LegalFooterNotice";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import {
@@ -39,6 +40,7 @@ const HelpSupport = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Help and Support — Zero Hero" description="Find answers about setting up Zero Hero, budgets, debt payoff, accounts, data backups, and how to contact support." path="/help" />
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">

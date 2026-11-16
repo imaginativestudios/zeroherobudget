@@ -1,4 +1,5 @@
 import { LegalFooterNotice } from "@/components/LegalFooterNotice";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 const Legal = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Legal and Privacy — Zero Hero" description="Understand Zero Hero's privacy practices, terms, payment rules, bank connections, and financial information disclaimer." path="/legal" />
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-card/50 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast';
 import { clearDemoData, isDemoDataLoaded } from '@/lib/demoDataLoader';
 import { clearAllUserData } from '@/lib/dataClear';
 import { applyPendingOnboarding } from '@/lib/onboardingHandoff';
+import { referralMetadata, type ReferralAnswer } from '@/lib/referralSource';
 
 export interface AuthState {
   user: User | null;
@@ -56,7 +57,7 @@ export const useRealAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+  const signUp = async (email: string, password: string, firstName?: string, lastName?: string, referral?: ReferralAnswer) => {
     const redirectUrl = `${window.location.origin}/dashboard`;
     
     const { data, error } = await supabase.auth.signUp({
@@ -67,6 +68,7 @@ export const useRealAuth = () => {
         data: {
           first_name: firstName,
           last_name: lastName,
+          ...referralMetadata(referral),
         },
       },
     });

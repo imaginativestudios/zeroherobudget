@@ -330,6 +330,7 @@ export function PricingStep({ onStartTrial, onSkipTrial, setupData }: PricingSte
         signupFirst={true}
         contextTitle={freeAccount ? 'Create Your Free Account' : 'Start Your Free Trial'}
         freeAccount={freeAccount}
+        referral={setupData.referral}
         onAccountCreated={(userId) => {
           if (freeAccount) stageOnboarding(userId, setupData, true);
         }}

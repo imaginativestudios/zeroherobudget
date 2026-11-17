@@ -21,6 +21,7 @@ import { Logo } from '@/components/Logo';
 import { checkGeoAccess } from '@/hooks/useGeoAccess';
 import { supabase } from '@/integrations/supabase/client';
 import { applyPendingOnboarding } from '@/lib/onboardingHandoff';
+import type { ReferralAnswer } from '@/lib/referralSource';
 
 
 interface AuthModalProps {
@@ -32,6 +33,7 @@ interface AuthModalProps {
   onAuthenticated?: () => void;
   onAccountCreated?: (userId: string) => void;
   freeAccount?: boolean;
+  referral?: ReferralAnswer;
 }
 
 type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'confirmation-sent';
@@ -44,7 +46,8 @@ export function AuthModal({
   contextTitle,
   onAuthenticated,
   onAccountCreated,
-  freeAccount = false
+  freeAccount = false,
+  referral,
 }: AuthModalProps) {
   const [showLoginInSignupFirst, setShowLoginInSignupFirst] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,7 +117,7 @@ export function AuthModal({
         return;
       }
 
-      const result = await signUp(email, password, firstName, lastName);
+      const result = await signUp(email, password, firstName, lastName, referral);
       const { error } = result;
       if ('createdUserId' in result && result.createdUserId) {
         onAccountCreated?.(result.createdUserId);

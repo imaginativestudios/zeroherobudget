@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { REFERRAL_SOURCES } from '@/lib/referralSource';
 import { Logo } from '@/components/Logo';
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
 import { HeroTip } from '@/components/onboarding/HeroTip';
@@ -74,6 +76,7 @@ export default function Onboarding() {
     setHourlyWage,
     setPrimaryDebt,
     setMoatTarget,
+    setReferral,
     nextStep,
     prevStep,
     skipStep,
@@ -424,6 +427,38 @@ export default function Onboarding() {
                       <HeroTip>
                         A $1,000 emergency fund protects 80% of people from falling back into debt when life happens.
                       </HeroTip>
+
+                      {!isDemoMode && (
+                        <div className="space-y-3">
+                          <Label htmlFor="referral-source">How did you hear about Zero Hero?</Label>
+                          <p className="text-sm text-muted-foreground">Optional</p>
+                          <Select
+                            value={data.referral?.source ?? 'skip'}
+                            onValueChange={source => setReferral(source === 'skip' ? undefined : { source })}
+                          >
+                            <SelectTrigger id="referral-source">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="skip">Skip this question</SelectItem>
+                              {REFERRAL_SOURCES.map(source => (
+                                <SelectItem key={source} value={source}>{source}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {data.referral?.source === 'Other' && (
+                            <div className="space-y-2">
+                              <Label htmlFor="referral-other">Where did you hear about us? (optional)</Label>
+                              <Input
+                                id="referral-other"
+                                maxLength={120}
+                                value={data.referral.other ?? ''}
+                                onChange={event => setReferral({ source: 'Other', other: event.target.value })}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </motion.div>
@@ -522,7 +557,7 @@ export default function Onboarding() {
                 transition={slideTransition}
               >
                 <PricingStep
-                  setupData={{ hourlyWage: data.hourlyWage ?? undefined, debtName: data.primaryDebt?.name, debtBalance: data.primaryDebt?.balance, debtApr: data.primaryDebt?.apr, debtMinPayment: data.primaryDebt?.minimumPayment, moatTarget: data.moatTarget }}
+                  setupData={{ hourlyWage: data.hourlyWage ?? undefined, debtName: data.primaryDebt?.name, debtBalance: data.primaryDebt?.balance, debtApr: data.primaryDebt?.apr, debtMinPayment: data.primaryDebt?.minimumPayment, moatTarget: data.moatTarget, referral: data.referral }}
                   onStartTrial={handlePricingStartTrial}
                   onSkipTrial={handlePricingSkip}
                 />

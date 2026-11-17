@@ -4,6 +4,9 @@ import { useHeroProfile, OnboardingData } from './useHeroProfile';
 import { useLocalDebts } from './useLocalDebts';
 import { toast } from 'sonner';
 import { loadDemoData } from '@/lib/demoDataLoader';
+import { useAuth } from './useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { referralMetadata, type ReferralAnswer } from '@/lib/referralSource';
 
 export interface DebtEntry {
   name: string;
@@ -16,6 +19,7 @@ export interface OnboardingDataState {
   hourlyWage: number | null;
   primaryDebt: DebtEntry | null;
   moatTarget: number;
+  referral?: ReferralAnswer;
 }
 
 export interface UseOnboardingStateResult {
@@ -24,6 +28,7 @@ export interface UseOnboardingStateResult {
   setHourlyWage: (wage: number | null) => void;
   setPrimaryDebt: (debt: DebtEntry | null) => void;
   setMoatTarget: (target: number) => void;
+  setReferral: (answer?: ReferralAnswer) => void;
   nextStep: () => void;
   prevStep: () => void;
   skipStep: () => void;
@@ -41,6 +46,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isDemoMode = searchParams.get('demo') === 'true';
+  const { user } = useAuth();
   const { 
     setMoatTarget: setProfileMoatTarget, 
     setHourlyWage: setProfileHourlyWage,
@@ -92,6 +98,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
         minimumPayment: savedData.debtMinPayment || 25,
       } : null,
       moatTarget: savedData?.moatTarget || 1000,
+      referral: savedData?.referral,
     };
   });
 
@@ -130,6 +137,22 @@ export function useOnboardingState(): UseOnboardingStateResult {
     setData((prev) => ({ ...prev, moatTarget: target }));
   }, []);
 
+  const setReferral = useCallback((referral?: ReferralAnswer) => {
+    setData(prev => ({ ...prev, referral }));
+  }, []);
+
+  // Existing signed-in users can answer too; this optional save never gates onboarding.
+  useEffect(() => {
+    if (!user || isDemoMode || !data.referral) return;
+    const metadata = referralMetadata(data.referral);
+    const timer = window.setTimeout(() => {
+      void supabase.auth.updateUser({ data: metadata }).then(({ error }) => {
+        if (error) console.error('Unable to save referral answer:', error.message);
+      });
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [user?.id, isDemoMode, data.referral]);
+
   const saveProgress = useCallback((step: 1 | 2 | 3 | 4 | 5 | 6, currentData: OnboardingDataState) => {
     const persistData: OnboardingData = {
       hourlyWage: currentData.hourlyWage || undefined,
@@ -138,6 +161,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
       debtApr: currentData.primaryDebt?.apr,
       debtMinPayment: currentData.primaryDebt?.minimumPayment,
       moatTarget: currentData.moatTarget,
+      referral: currentData.referral,
     };
     saveOnboardingProgress(step, persistData);
   }, [saveOnboardingProgress]);
@@ -252,6 +276,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
     setHourlyWage,
     setPrimaryDebt,
     setMoatTarget,
+    setReferral,
     nextStep,
     prevStep,
     skipStep,

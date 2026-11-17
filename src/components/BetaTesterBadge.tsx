@@ -4,15 +4,15 @@ import { FlaskConical, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useBetaAccess } from "@/hooks/useBetaAccess";
+import { useAuth } from "@/hooks/useAuth";
 
 export function BetaTesterBadge() {
   const [isOpen, setIsOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
   const location = useLocation();
-  const { isBeta } = useBetaAccess();
+  const { user } = useAuth();
 
-  if (!isBeta) return null;
+  if (!user) return null;
 
   const handleSubmit = () => {
     const subject = encodeURIComponent("Zero Hero Beta Feedback");
@@ -31,7 +31,7 @@ export function BetaTesterBadge() {
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm flex items-center gap-2">
               <FlaskConical className="h-4 w-4 text-primary" />
-              Beta Feedback
+              Feedback
             </CardTitle>
             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
               <X className="h-3.5 w-3.5" />
@@ -56,7 +56,7 @@ export function BetaTesterBadge() {
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-royal hover:scale-105 transition-transform duration-150"
         >
           <FlaskConical className="h-3.5 w-3.5" />
-          Beta
+          Feedback
         </button>
       )}
     </div>

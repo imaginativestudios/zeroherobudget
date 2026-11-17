@@ -9,6 +9,7 @@ import { useMemo, useCallback } from 'react';
 import { format, subDays, parseISO, startOfDay } from 'date-fns';
 import { useUserLocalStorage } from './useUserLocalStorage';
 import { useStrategy } from './useLocalSettings';
+import type { ReferralAnswer } from '@/lib/referralSource';
 
 export interface OnboardingData {
   hourlyWage?: number;
@@ -17,6 +18,7 @@ export interface OnboardingData {
   debtApr?: number;
   debtMinPayment?: number;
   moatTarget?: number;
+  referral?: ReferralAnswer;
 }
 
 export interface HeroProfile {

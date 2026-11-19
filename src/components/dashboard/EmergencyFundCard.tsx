@@ -74,9 +74,10 @@ export function EmergencyFundCard({
       initial="hidden"
       animate="visible"
       variants={cardVariants}
+      className="h-full"
     >
       <Card className={cn(
-        "shadow-royal hover-lift bg-white dark:bg-card",
+        "h-full shadow-royal hover-lift bg-white dark:bg-card",
         isComplete && "ring-2 ring-success/30"
       )}>
         <CardHeader className="pb-3">

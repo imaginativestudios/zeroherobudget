@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { DEFAULT_ASSETS, SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
+import { DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
@@ -14,9 +14,11 @@ import { CHART_COLORS, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/c
 import { exportNetWorthCSV, exportNetWorthPDF } from '@/lib/reportExports';
 import { toast } from 'sonner';
 
+import { useDebtItems } from '@/hooks/useDebtItems';
+
 export const NetWorthReport = () => {
   const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
-  const [debts] = useLocalStorage("bdt_debts", SAMPLE_DEBTS);
+  const [debts] = useDebtItems();
   const [income] = useLocalStorage("bdt_income", 18254);
   const [expenses] = useLocalStorage("bdt_expenses", []);
   const [strategy] = useLocalStorage("bdt_strategy", "Snowball");

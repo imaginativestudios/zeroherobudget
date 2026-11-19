@@ -89,8 +89,9 @@ export function BehavioralHintCard({
       initial="hidden"
       animate="visible"
       variants={cardVariants}
+      className="h-full"
     >
-      <Card className="shadow-royal bg-white dark:bg-card">
+      <Card className="h-full shadow-royal bg-white dark:bg-card">
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           <CardHeader className="pb-2">
             <CollapsibleTrigger asChild>

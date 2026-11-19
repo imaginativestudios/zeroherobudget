@@ -90,11 +90,7 @@ export function InitializeMissionCard() {
           </motion.div>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-sm">or</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
+          <p className="text-center text-xs text-muted-foreground">or</p>
 
           {/* Secondary Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

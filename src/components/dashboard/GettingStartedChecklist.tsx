@@ -279,7 +279,7 @@ export function GettingStartedChecklist({
           </AnimatePresence>
 
           {/* Journey Link */}
-          <div className="mt-4 pt-4 border-t border-border">
+          <div className="mt-6">
             <Button 
               variant="outline" 
               className="w-full min-h-[44px]" 

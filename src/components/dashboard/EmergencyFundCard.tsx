@@ -176,7 +176,7 @@ export function EmergencyFundCard({
           </div>
 
           {/* Status Message */}
-          <p className="text-xs text-muted-foreground text-center italic">
+          <p className="text-xs text-muted-foreground text-center font-semibold">
             {statusMessage}
           </p>
 

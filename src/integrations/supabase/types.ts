@@ -462,6 +462,48 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_notification_receipts: {
+        Row: {
+          created_at: string
+          first_attempt_at: string | null
+          lease_until: string | null
+          other: string | null
+          provider_id: string | null
+          sent_at: string | null
+          signup_at: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_attempt_at?: string | null
+          lease_until?: string | null
+          other?: string | null
+          provider_id?: string | null
+          sent_at?: string | null
+          signup_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_attempt_at?: string | null
+          lease_until?: string | null
+          other?: string | null
+          provider_id?: string | null
+          sent_at?: string | null
+          signup_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_matches: {
         Row: {
           confidence_score: number
@@ -771,6 +813,15 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { invitation_token: string }; Returns: Json }
+      claim_referral_notifications: {
+        Args: never
+        Returns: {
+          other: string
+          signup_at: string
+          source: string
+          user_id: string
+        }[]
+      }
       create_default_household: { Args: never; Returns: string }
       get_household_member_profiles: {
         Args: { _household_id: string }

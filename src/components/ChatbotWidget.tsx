@@ -20,14 +20,51 @@ const QUICK_SUGGESTIONS = [
   "How much emergency fund do I need?",
 ];
 
+const readZoraFlag = (key: string) => {
+  try {
+    return localStorage.getItem(key) === "true";
+  } catch {
+    return false;
+  }
+};
+
+const saveZoraFlag = (key: string) => {
+  try {
+    localStorage.setItem(key, "true");
+  } catch {
+    // Keep the controls usable when browser storage is blocked.
+  }
+};
+
 export const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
+  const [hasOpened, setHasOpened] = useState(() => readZoraFlag("zora_opened"));
+  const [introDismissed, setIntroDismissed] = useState(() => readZoraFlag("zora_intro_dismissed"));
+  const [showIntro, setShowIntro] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (hasOpened || introDismissed) return;
+    const timer = window.setTimeout(() => setShowIntro(true), 1500);
+    return () => window.clearTimeout(timer);
+  }, [hasOpened, introDismissed]);
+
+  const dismissIntro = () => {
+    setShowIntro(false);
+    setIntroDismissed(true);
+    saveZoraFlag("zora_intro_dismissed");
+  };
+
+  const openChat = () => {
+    setIsOpen(true);
+    setHasOpened(true);
+    saveZoraFlag("zora_opened");
+    dismissIntro();
+  };
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -213,6 +250,27 @@ export const ChatbotWidget = () => {
 
   return (
     <div className="fixed bottom-20 lg:bottom-4 right-4 z-50" data-tour="chatbot-widget">
+      {showIntro && !hasOpened && !introDismissed && !isOpen && (
+        <div className="absolute bottom-20 right-0 w-60 max-w-[calc(100vw-2rem)] bg-card border border-border shadow-md rounded-xl motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200">
+          <Button
+            variant="ghost"
+            onClick={openChat}
+            className="h-auto sm:h-auto w-full flex-col items-start whitespace-normal p-4 pr-12 text-left text-foreground hover:bg-muted rounded-xl"
+          >
+            <span className="font-bold">Hi, I'm Zora</span>
+            <span className="text-sm font-normal">Your AI money coach. Ask me about your budget or debt plan.</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={dismissIntro}
+            aria-label="Dismiss"
+            className="absolute right-0 top-0 h-11 sm:h-11 w-11 sm:w-11 text-muted-foreground hover:text-foreground rounded-xl"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      )}
       {/* Chat Panel */}
       <div
         id="chat-panel"
@@ -336,11 +394,14 @@ export const ChatbotWidget = () => {
       {/* Floating Bubble */}
       <Button
         onClick={() => {
-          setIsOpen(!isOpen);
-          if (!hasOpened) setHasOpened(true);
+          if (isOpen) setIsOpen(false);
+          else openChat();
         }}
         size="icon"
-        className="h-16 w-16 rounded-full shadow-[0_0_20px_hsl(var(--primary)/0.4)] bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110 overflow-hidden relative fab-shine"
+        className={cn(
+          "h-16 sm:h-16 rounded-full shadow-[0_0_20px_hsl(var(--primary)/0.4)] bg-primary hover:bg-primary-light transition-all duration-300 hover:scale-110 overflow-hidden relative fab-shine",
+          hasOpened ? "w-16 sm:w-16" : "w-auto sm:w-auto px-5 gap-2 font-semibold"
+        )}
         aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
         aria-expanded={isOpen}
         aria-controls="chat-panel"
@@ -348,7 +409,10 @@ export const ChatbotWidget = () => {
         {isOpen ? (
           <X className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
         ) : (
-          <Sparkles className="h-8 w-8 text-primary-foreground" aria-hidden="true" />
+          <>
+            <Sparkles className="h-8 w-8 text-primary-foreground" aria-hidden="true" />
+            {!hasOpened && <span>Ask Zora</span>}
+          </>
         )}
       </Button>
     </div>

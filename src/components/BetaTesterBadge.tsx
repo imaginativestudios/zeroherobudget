@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FlaskConical, X, Send } from "lucide-react";
+import { MessageSquare, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,7 @@ export function BetaTesterBadge() {
         <Card className="w-72 shadow-lg border-primary/20 animate-in slide-in-from-bottom-2 duration-200">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm flex items-center gap-2">
-              <FlaskConical className="h-4 w-4 text-primary" />
+              <MessageSquare className="h-4 w-4 text-primary" />
               Feedback
             </CardTitle>
             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
@@ -55,7 +55,7 @@ export function BetaTesterBadge() {
           onClick={() => setIsOpen(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-royal hover:scale-105 transition-transform duration-150"
         >
-          <FlaskConical className="h-3.5 w-3.5" />
+          <MessageSquare className="h-3.5 w-3.5" />
           Feedback
         </button>
       )}

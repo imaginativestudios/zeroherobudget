@@ -1,4 +1,5 @@
 # Footer and trademark updates
+- [ ] Correct shared page-title top spacing only in src/index.css; measure phone/tablet header and verify 24px clearance and 40px desktop spacing.
 - [ ] Email new signup referral answers to info@zeroherobudget.com; configure delivery, test duplicate/skip safeguards, and activate the schedule after email-service confirmation.
 - [x] Show feedback to all signed-in users and collect optional onboarding referral answers in existing Supabase user metadata; 11 tests, type check, preview build, and mocked confirmation-delayed signup passed. Live authenticated saving is unverified on external Supabase; nothing published.
 - [x] Resolve stale Search Console setup finding and add approved public debt-strategy comparison guide; 41 navigation/indexing tests, desktop/mobile checks, and preview build passed. Nothing published.

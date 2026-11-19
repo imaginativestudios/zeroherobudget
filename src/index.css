@@ -262,18 +262,19 @@ All colors MUST be HSL.
     box-shadow: none;
   }
 
-  /* Ensure content clears fixed mobile/tablet header safely (with notches) */
+  /* Measured header: 72px on phones, 68px on tablets, plus its 1px border. */
   .safe-header-pt {
-    padding-top: calc(72px + env(safe-area-inset-top)) !important;
+    --fixed-header-height: 72px;
+    padding-top: calc(var(--fixed-header-height) + 1px + 24px + env(safe-area-inset-top, 0px)) !important;
   }
   @media (min-width: 640px) {
     .safe-header-pt {
-      padding-top: calc(88px + env(safe-area-inset-top)) !important;
+      --fixed-header-height: 68px;
     }
   }
   @media (min-width: 1024px) {
     .safe-header-pt {
-      padding-top: 0px !important;
+      padding-top: 40px !important;
     }
   }
 

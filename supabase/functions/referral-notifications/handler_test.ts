@@ -47,3 +47,10 @@ Deno.test('Other detail is included only for Other and limited to 120 characters
   assertEquals(text.includes(`Other: ${'x'.repeat(120)}\n`), true);
   assertEquals(notificationText({ ...answer, other: 'ignore' }).includes('ignore'), false);
 });
+
+Deno.test('completed batches disarm retries after drain', async () => {
+  let finishes = 0;
+  const handler = createHandler({ cronSecret: 'test-only', claim: async () => [], send: async () => 'id', markSent: async () => {}, finishBatch: async () => { finishes++; } });
+  assertEquals((await handler(request())).status, 200);
+  assertEquals(finishes, 1);
+});

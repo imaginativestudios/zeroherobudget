@@ -823,6 +823,7 @@ export type Database = {
         }[]
       }
       create_default_household: { Args: never; Returns: string }
+      finish_referral_notification_batch: { Args: never; Returns: undefined }
       get_household_member_profiles: {
         Args: { _household_id: string }
         Returns: {
@@ -843,6 +844,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      wake_referral_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

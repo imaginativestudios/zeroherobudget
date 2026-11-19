@@ -14,6 +14,7 @@ interface Dependencies {
   claim: () => Promise<ReferralNotification[]>;
   send: (answer: ReferralNotification) => Promise<string>;
   markSent: (userId: string, providerId: string) => Promise<void>;
+  finishBatch?: () => Promise<void>;
 }
 
 const sources = new Set(['A friend or family member', 'LinkedIn', 'Reddit', 'Facebook group', 'Google search', 'Product Hunt', 'Other']);
@@ -51,6 +52,7 @@ export function createHandler(deps: Dependencies) {
           console.error('Referral notification delivery failed; receipt remains pending');
         }
       }
+      await deps.finishBatch?.();
       return response(failed ? 502 : 200, { sent, failed });
     } catch {
       console.error('Referral notification batch failed');

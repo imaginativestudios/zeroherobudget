@@ -23,8 +23,9 @@ import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Tooltip as UITooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUserLocalStorage } from "@/hooks/useUserLocalStorage";
+import { useDebtItems } from "@/hooks/useDebtItems";
 import { useTransactions } from "@/hooks/useTransactions";
-import { SAMPLE_DEBTS, formatCurrency } from "@/lib/constants";
+import { formatCurrency } from "@/lib/constants";
 import { simulatePayoff, getDetailedPaymentSchedule, calculatePayoffPlan, compareStrategies } from "@/lib/debtCalculations";
 import { toCsv, downloadCsv, parseCsv, mapDebtCsv, validateCsvFile, type Debt } from "@/lib/csvUtils";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -40,7 +41,7 @@ import { generateDebtCoachTips } from "@/lib/debtInsights";
 import { cn } from "@/lib/utils";
 
 export const DebtSnowball = () => {
-  const [debts, setDebts] = useUserLocalStorage("bdt_debts", SAMPLE_DEBTS);
+  const [debts, setDebts] = useDebtItems();
   const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
   const [income] = useUserLocalStorage("bdt_income", 0);
   const [expenses] = useUserLocalStorage("bdt_expenses", []);

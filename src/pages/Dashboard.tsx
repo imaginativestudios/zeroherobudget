@@ -593,11 +593,7 @@ export const Dashboard = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="space-y-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="h-px bg-border flex-1"></div>
-            <h2 className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">Financial Overview</h2>
-            <div className="h-px bg-border flex-1"></div>
-          </div>
+          <h2 className="pt-8 text-xs font-semibold text-muted-foreground tracking-widest uppercase">Financial Overview</h2>
           <div 
             className={cn(
               "grid gap-6 items-stretch",
@@ -675,13 +671,9 @@ export const Dashboard = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="space-y-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="h-px bg-border flex-1"></div>
-            <h2 className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
-              Insights & Progress
-            </h2>
-            <div className="h-px bg-border flex-1"></div>
-          </div>
+          <h2 className="pt-8 text-xs font-semibold text-muted-foreground tracking-widest uppercase">
+            Insights &amp; Progress
+          </h2>
 
           <Tabs defaultValue={dashboardState.canShowAnalytics ? "analytics" : "achievements"} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">

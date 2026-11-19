@@ -354,7 +354,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
         
         {/* Footer with privacy badge */}
-        <footer className="mt-auto pt-8 pb-4 text-center border-t border-border/50">
+        <footer className="mt-auto pt-8 pb-4 text-center border-t border-border">
           <div className="flex flex-col items-center gap-3">
             <LocalFirstBadge variant="footer" />
             <Link 
@@ -364,7 +364,7 @@ export const Layout = ({ children }: LayoutProps) => {
               Legal & Privacy
             </Link>
           </div>
-          <LegalFooterNotice className="px-4" />
+          <LegalFooterNotice className="px-4 mt-4 border-t-0 pt-0" />
         </footer>
       </main>
       

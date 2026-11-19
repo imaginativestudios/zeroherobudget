@@ -140,7 +140,7 @@ export function FreedomTimelineWidget({ debts, extraBudget, strategy }: FreedomT
         </div>
 
         {/* Heroic Message */}
-        <p className="text-sm text-center text-muted-foreground italic">
+        <p className="text-sm text-center text-muted-foreground font-semibold">
           "{heroMessage}"
         </p>
 

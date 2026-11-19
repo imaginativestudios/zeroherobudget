@@ -118,7 +118,7 @@ export function InitializeMissionCard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-8 pt-6 border-t border-border"
+            className="mt-8"
           >
             <p className="text-sm text-muted-foreground mb-4">
               Once you add debts, you'll unlock:

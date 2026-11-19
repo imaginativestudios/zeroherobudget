@@ -19,7 +19,6 @@ import {
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -149,7 +148,7 @@ export function PayoffStrategyCard({
                     </span>
                   </div>
                   
-                  <Separator className="my-2" />
+                  <div className="h-2" aria-hidden="true" />
                   
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-muted-foreground">Debt-Free By</span>
@@ -183,8 +182,6 @@ export function PayoffStrategyCard({
                   </div>
                 </div>
               </div>
-
-              <Separator />
 
               {/* Section 2: What-If Simulator */}
               {leftover > 0 ? (

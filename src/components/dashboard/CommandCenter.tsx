@@ -20,7 +20,6 @@ import {
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { EditableValue } from '@/components/ui/editable-value';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -163,10 +162,8 @@ export function CommandCenter({
                 </>
               )}
               
-              <Separator className="my-3" />
-              
               {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 pt-3">
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -281,8 +278,6 @@ export function CommandCenter({
                   </p>
                 </div>
               )}
-              
-              <Separator />
               
               {/* Available for Debt */}
               <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">

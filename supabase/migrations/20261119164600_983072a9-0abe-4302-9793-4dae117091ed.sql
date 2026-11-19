@@ -1,0 +1,2 @@
+CREATE POLICY "Notification service manages receipts" ON public.referral_notification_receipts FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE TRIGGER update_referral_notification_receipts_updated_at BEFORE UPDATE ON public.referral_notification_receipts FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

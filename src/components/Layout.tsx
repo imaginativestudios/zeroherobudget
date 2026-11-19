@@ -222,7 +222,7 @@ export const Layout = ({ children }: LayoutProps) => {
         data-tour="nav-sidebar"
       >
         <nav className="bg-sidebar shadow-md border-r border-sidebar-border h-full flex flex-col" role="navigation" aria-label="Primary navigation">
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 min-w-0 [&_[data-radix-scroll-area-viewport]>div]:!block">
             <div className="p-4 lg:p-6">
               {/* Desktop Header */}
               <Link to="/dashboard" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity" aria-label="Zero Hero home">
@@ -256,14 +256,14 @@ export const Layout = ({ children }: LayoutProps) => {
                         className={cn(
                           "flex items-center gap-3 px-3 lg:px-4 py-3 rounded-lg transition-royal text-sm lg:text-base min-w-0",
                           isActive
-                            ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                            ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                             : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                         aria-current={isActive ? "page" : undefined}
                         data-tour={tourId}
                       >
                         <item.icon className={cn("h-5 w-5", isActive && "text-primary-foreground")} aria-hidden="true" />
-                        <span className="font-medium truncate">{item.name}</span>
+                        <span className="font-medium min-w-0 truncate">{item.name}</span>
                       </Link>
                     </li>
                   );

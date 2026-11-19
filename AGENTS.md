@@ -2,7 +2,7 @@
 - Stage pre-signup onboarding under the returned account ID and consume it before session state is exposed; this preserves confirmation-delayed setup without assigning drafts to unrelated accounts.
 - Update profile fields through functional `useUserLocalStorage` setters using the latest account-scoped stored value, so consecutive onboarding saves and separate hook instances cannot overwrite unrelated fields with stale React state.
 - Store optional referral attribution in Supabase user metadata at signup (including confirmation-delayed signup), or via updateUser during signed-in onboarding; attribution must never gate signup or grant privileges.
-- Deliver referral signup notifications through a scheduled, secret-authenticated worker with service-only receipts and provider idempotency; exclude pre-existing accounts, lease concurrent batches, and stop automatic retries before the provider's 24-hour idempotency window expires so email failures never block signup or cause duplicate mail.
+- Wake the secret-authenticated referral worker on new profile creation, with service-only receipts and provider idempotency; exclude pre-existing accounts, lease concurrent batches, arm five-minute retries only while pending, and disarm after drain or before the provider's 24-hour idempotency window expires so email failures never block signup or duplicate mail.
 
 ## Realtime listeners
 - Give each subscription-status effect a unique channel name and clean up its own channel; Supabase reuses identical topics, so concurrent hooks must not attach callbacks to an already subscribed channel.

@@ -1,6 +1,7 @@
 # Footer and trademark updates
-- [ ] Correct shared page-title top spacing only in src/index.css; measure phone/tablet header and verify 24px clearance and 40px desktop spacing.
-- [ ] Email new signup referral answers to info@zeroherobudget.com; configure delivery, test duplicate/skip safeguards, and activate the schedule after email-service confirmation.
+- [x] Fix sidebar ScrollArea width and soften active shadow only in Layout.tsx; Dashboard, Budget and Data Management verified at 1280px with demo data, equal 24px insets excluding the border, unclipped badge and preserved title spacing. Preview build passed.
+- [x] Correct shared page-title spacing only in src/index.css; measured 73px phone/69px tablet headers including borders, verified 24px clearance and 40px desktop spacing across 18 route/viewport checks.
+- [x] Activate event-driven referral emails to info@zeroherobudget.com via existing Resend; seven tests/type checks/build passed, live labeled test accepted by Resend and repeat check sent zero. Inbox receipt and real signup trigger remain unverified; no site publishing.
 - [x] Show feedback to all signed-in users and collect optional onboarding referral answers in existing Supabase user metadata; 11 tests, type check, preview build, and mocked confirmation-delayed signup passed. Live authenticated saving is unverified on external Supabase; nothing published.
 - [x] Resolve stale Search Console setup finding and add approved public debt-strategy comparison guide; 41 navigation/indexing tests, desktop/mobile checks, and preview build passed. Nothing published.
 - [x] Correct shared payoff rollover and preserve the no-rollover public baseline; calculator guidance/content date updated, six calculation tests and preview build passed. Public calculator scenarios verified with available Chromium because the standard runner's browser is missing; nothing published.

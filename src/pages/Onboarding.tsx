@@ -84,6 +84,7 @@ export default function Onboarding() {
     showPricing,
     showCeremony,
     skipTrial,
+    skipToDemo,
     enterDashboard,
     isCompleting,
     isDemoMode,
@@ -661,6 +662,7 @@ export default function Onboarding() {
                   >
                     <Link
                       to="/dashboard"
+                      onClick={skipToDemo}
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline"
                     >
                       Skip to Demo Mode

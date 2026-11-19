@@ -36,6 +36,7 @@ export interface UseOnboardingStateResult {
   showPricing: () => void;
   showCeremony: () => void;
   skipTrial: () => void;
+  skipToDemo: () => void;
   enterDashboard: () => void;
   isCompleting: boolean;
   isReturning: boolean;
@@ -61,21 +62,31 @@ export function useOnboardingState(): UseOnboardingStateResult {
   // Check for returning user with saved progress
   const savedStep = profile.onboarding_step;
   const savedData = profile.onboarding_data;
-  
+
+  // One-time cleanup: older demo runs saved the demo sample (Amex $3,500,
+  // $25/hour) as real onboarding progress, so "Get Started Free" could reopen
+  // the Profile Created screen with demo goals. Treat it as no saved progress.
+  const isStaleDemoProgress = !isDemoMode
+    && savedData?.debtName === 'Amex'
+    && savedData?.debtBalance === 3500
+    && savedData?.hourlyWage === 25;
+  const effectiveSavedStep = isStaleDemoProgress ? undefined : savedStep;
+  const effectiveSavedData = isStaleDemoProgress ? undefined : savedData;
+
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(() => {
     // Check for Stripe redirect (canceled only - success now goes to /checkout-success)
     const canceled = searchParams.get('canceled');
-    
+
     if (canceled === 'true') {
       return 5; // Stay on pricing
     }
     // Restore from saved progress
-    return savedStep || 1;
+    return effectiveSavedStep || 1;
   });
-  
+
   const [isCompleting, setIsCompleting] = useState(false);
-  const [isReturning, setIsReturning] = useState(!!savedStep && savedStep > 1);
-  
+  const [isReturning, setIsReturning] = useState(!!effectiveSavedStep && effectiveSavedStep > 1);
+
   const [data, setData] = useState<OnboardingDataState>(() => {
     if (isDemoMode) {
       return {
@@ -90,17 +101,25 @@ export function useOnboardingState(): UseOnboardingStateResult {
       };
     }
     return {
-      hourlyWage: savedData?.hourlyWage || null,
-      primaryDebt: savedData?.debtName ? {
-        name: savedData.debtName,
-        balance: savedData.debtBalance || 0,
-        apr: savedData.debtApr || 0,
-        minimumPayment: savedData.debtMinPayment || 25,
+      hourlyWage: effectiveSavedData?.hourlyWage || null,
+      primaryDebt: effectiveSavedData?.debtName ? {
+        name: effectiveSavedData.debtName,
+        balance: effectiveSavedData.debtBalance || 0,
+        apr: effectiveSavedData.debtApr || 0,
+        minimumPayment: effectiveSavedData.debtMinPayment || 25,
       } : null,
-      moatTarget: savedData?.moatTarget || 1000,
-      referral: savedData?.referral,
+      moatTarget: effectiveSavedData?.moatTarget || 1000,
+      referral: effectiveSavedData?.referral,
     };
   });
+
+  // Remove stale demo progress from browser storage (state setters must not
+  // run during render, so this happens in an effect).
+  useEffect(() => {
+    if (isStaleDemoProgress) {
+      clearOnboardingProgress();
+    }
+  }, [isStaleDemoProgress, clearOnboardingProgress]);
 
   // Handle Stripe redirect (canceled only - success now goes to /checkout-success)
   useEffect(() => {
@@ -154,6 +173,9 @@ export function useOnboardingState(): UseOnboardingStateResult {
   }, [user?.id, isDemoMode, data.referral]);
 
   const saveProgress = useCallback((step: 1 | 2 | 3 | 4 | 5 | 6, currentData: OnboardingDataState) => {
+    // Demo onboarding keeps its sample values in memory only; it must never
+    // write onboarding_step / onboarding_data into shared browser storage.
+    if (isDemoMode) return;
     const persistData: OnboardingData = {
       hourlyWage: currentData.hourlyWage || undefined,
       debtName: currentData.primaryDebt?.name,
@@ -164,7 +186,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
       referral: currentData.referral,
     };
     saveOnboardingProgress(step, persistData);
-  }, [saveOnboardingProgress]);
+  }, [saveOnboardingProgress, isDemoMode]);
 
   const nextStep = useCallback(() => {
     if (currentStep < 3) {
@@ -251,6 +273,12 @@ export function useOnboardingState(): UseOnboardingStateResult {
     showCeremony();
   }, [setTrialStarted, showCeremony]);
 
+  // "Skip to Demo Mode" leaves the ceremony without completing onboarding;
+  // clear saved progress first so a later "Get Started Free" starts at step 1.
+  const skipToDemo = useCallback(() => {
+    clearOnboardingProgress();
+  }, [clearOnboardingProgress]);
+
   const enterDashboard = useCallback(() => {
     if (isDemoMode) {
       // Load demo data before entering dashboard
@@ -284,6 +312,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
     showPricing,
     showCeremony,
     skipTrial,
+    skipToDemo,
     enterDashboard,
     isCompleting,
     isReturning,

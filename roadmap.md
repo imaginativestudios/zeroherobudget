@@ -1,4 +1,5 @@
 # Footer and trademark updates
+- [ ] Email new signup referral answers to info@zeroherobudget.com; configure delivery, test duplicate/skip safeguards, and activate the schedule after email-service confirmation.
 - [x] Show feedback to all signed-in users and collect optional onboarding referral answers in existing Supabase user metadata; 11 tests, type check, preview build, and mocked confirmation-delayed signup passed. Live authenticated saving is unverified on external Supabase; nothing published.
 - [x] Resolve stale Search Console setup finding and add approved public debt-strategy comparison guide; 41 navigation/indexing tests, desktop/mobile checks, and preview build passed. Nothing published.
 - [x] Correct shared payoff rollover and preserve the no-rollover public baseline; calculator guidance/content date updated, six calculation tests and preview build passed. Public calculator scenarios verified with available Chromium because the standard runner's browser is missing; nothing published.

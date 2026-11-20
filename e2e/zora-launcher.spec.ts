@@ -6,6 +6,10 @@ import { test, expect, type Page } from '@playwright/test';
 // someone is signed in.
 const signInStub = () => 'const user = { id: "zora-launcher-user" }; export const useAuth = () => ({ user, session: null });';
 
+// This sandbox serves the app slowly enough that the default 30s budget is
+// spent before a page finishes booting, so the whole file gets a longer one.
+test.setTimeout(90000);
+
 // Navigations wait for domcontentloaded, not the full `load` event: the app
 // keeps requests to the hosted backend open, so `load` can arrive long after
 // the page is actually usable (or not at all), which made these specs time out.

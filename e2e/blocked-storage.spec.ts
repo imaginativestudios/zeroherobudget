@@ -10,6 +10,16 @@ test.describe('blocked browser storage', () => {
     });
   });
 
+  test('auth client raises no background storage errors', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('console', (m) => { if (m.type() === 'error' && /Storage blocked/.test(m.text())) errors.push(m.text()); });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#root')).not.toBeEmpty({ timeout: 20000 });
+    await page.waitForTimeout(3000);
+    expect(errors.filter((e) => /Storage blocked/.test(e))).toEqual([]);
+  });
+
   for (const path of ['/', '/onboarding']) {
     test(`${path} still renders when storage throws from first load`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'domcontentloaded' });

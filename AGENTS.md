@@ -27,3 +27,4 @@
 
 ## Browser storage
 - Access localStorage/sessionStorage only through `src/lib/safeStorage` helpers; browsers that block site data throw on access, which otherwise blanks the app.
+- Import `src/lib/storageFallback` first in `main.tsx`; when the browser blocks site data it swaps in per-visit in-memory storage so the generated Supabase auth client never throws, while working storage is untouched.

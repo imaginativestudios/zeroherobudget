@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 type Message = {
   role: "user" | "assistant";
@@ -37,6 +38,7 @@ const saveZoraFlag = (key: string) => {
 };
 
 export const ChatbotWidget = () => {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -247,6 +249,11 @@ export const ChatbotWidget = () => {
     e.preventDefault();
     sendMessage(inputValue);
   };
+
+  // Zora only answers for signed-in users, so a visitor gets nothing but a
+  // generic error from the button. Render nothing until there is an account.
+  // Placed after every hook above so hook order stays stable across renders.
+  if (!user) return null;
 
   return (
     <div className="fixed bottom-20 lg:bottom-4 right-4 z-50" data-tour="chatbot-widget">

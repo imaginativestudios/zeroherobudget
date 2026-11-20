@@ -7,6 +7,7 @@ import { loadDemoData } from '@/lib/demoDataLoader';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { referralMetadata, type ReferralAnswer } from '@/lib/referralSource';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 export interface DebtEntry {
   name: string;
@@ -126,7 +127,7 @@ export function useOnboardingState(): UseOnboardingStateResult {
     const canceled = searchParams.get('canceled');
     
     if (canceled === 'true') {
-      localStorage.removeItem('bdt_checkout_in_progress');
+      safeLocalStorage.removeItem('bdt_checkout_in_progress');
       toast.info('No worries!', {
         description: 'You can still explore in demo mode.',
       });

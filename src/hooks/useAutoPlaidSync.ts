@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { syncPlaidTransactions } from '@/lib/plaidProvider';
+import { safeSessionStorage } from '@/lib/safeStorage';
 
 const SESSION_KEY = 'plaid_synced_this_session';
 
@@ -14,8 +15,8 @@ export function useAutoPlaidSync(onComplete?: () => void) {
 
   useEffect(() => {
     if (!user) return;
-    if (sessionStorage.getItem(SESSION_KEY) === '1') return;
-    sessionStorage.setItem(SESSION_KEY, '1');
+    if (safeSessionStorage.getItem(SESSION_KEY) === '1') return;
+    safeSessionStorage.setItem(SESSION_KEY, '1');
 
     syncPlaidTransactions()
       .then((res) => {

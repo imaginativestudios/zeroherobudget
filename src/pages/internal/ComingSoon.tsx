@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { ScrollCue } from "@/components/ScrollCue";
 import { loadDemoData } from "@/lib/demoDataLoader";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const ComingSoon = () => {
   const navigate = useNavigate();
@@ -90,10 +91,10 @@ const ComingSoon = () => {
       console.error("Error subscribing to waitlist:", error);
       
       // Fallback to localStorage if edge function fails
-      const existingEmails = JSON.parse(localStorage.getItem("coming_soon_emails") || "[]");
+      const existingEmails = JSON.parse(safeLocalStorage.getItem("coming_soon_emails") || "[]");
       if (!existingEmails.includes(email)) {
         existingEmails.push(email);
-        localStorage.setItem("coming_soon_emails", JSON.stringify(existingEmails));
+        safeLocalStorage.setItem("coming_soon_emails", JSON.stringify(existingEmails));
       }
 
       setSubmitted(true);

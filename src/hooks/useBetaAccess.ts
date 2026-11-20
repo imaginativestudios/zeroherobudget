@@ -2,12 +2,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const LEGACY_KEY = "beta_access";
 const DEVICE_KEY = "beta_ui_enabled";
 
 function readDeviceFlag(): boolean | null {
-  const v = localStorage.getItem(DEVICE_KEY);
+  const v = safeLocalStorage.getItem(DEVICE_KEY);
   if (v === "true") return true;
   if (v === "false") return false;
   return null;
@@ -20,20 +21,20 @@ export function useBetaAccess() {
   const [loading, setLoading] = useState(true);
   const [deviceFlag, setDeviceFlag] = useState<boolean | null>(() => readDeviceFlag());
   const [legacyFlag, setLegacyFlag] = useState(
-    () => localStorage.getItem(LEGACY_KEY) === "true"
+    () => safeLocalStorage.getItem(LEGACY_KEY) === "true"
   );
 
   // Handle URL params (?beta=true / ?beta=false)
   useEffect(() => {
     const betaParam = searchParams.get("beta");
     if (betaParam === "true") {
-      localStorage.setItem(DEVICE_KEY, "true");
-      localStorage.setItem(LEGACY_KEY, "true");
+      safeLocalStorage.setItem(DEVICE_KEY, "true");
+      safeLocalStorage.setItem(LEGACY_KEY, "true");
       setDeviceFlag(true);
       setLegacyFlag(true);
     } else if (betaParam === "false") {
-      localStorage.setItem(DEVICE_KEY, "false");
-      localStorage.removeItem(LEGACY_KEY);
+      safeLocalStorage.setItem(DEVICE_KEY, "false");
+      safeLocalStorage.removeItem(LEGACY_KEY);
       setDeviceFlag(false);
       setLegacyFlag(false);
     }
@@ -69,12 +70,12 @@ export function useBetaAccess() {
   const isBeta = eligible && enabledOnDevice;
 
   const enable = useCallback(() => {
-    localStorage.setItem(DEVICE_KEY, "true");
+    safeLocalStorage.setItem(DEVICE_KEY, "true");
     setDeviceFlag(true);
   }, []);
 
   const disable = useCallback(() => {
-    localStorage.setItem(DEVICE_KEY, "false");
+    safeLocalStorage.setItem(DEVICE_KEY, "false");
     setDeviceFlag(false);
   }, []);
 

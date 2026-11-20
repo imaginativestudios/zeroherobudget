@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Download, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const InstallPromptBanner = () => {
   const { isInstallable, isInstalled, promptInstall, showIOSInstructions } = usePWAInstall();
@@ -11,7 +12,7 @@ const InstallPromptBanner = () => {
 
   useEffect(() => {
     // Check if user has dismissed the banner before
-    const dismissed = localStorage.getItem('pwa-banner-dismissed');
+    const dismissed = safeLocalStorage.getItem('pwa-banner-dismissed');
     if (dismissed) {
       setIsDismissed(true);
       return;
@@ -30,7 +31,7 @@ const InstallPromptBanner = () => {
   const handleDismiss = () => {
     setShowBanner(false);
     setIsDismissed(true);
-    localStorage.setItem('pwa-banner-dismissed', 'true');
+    safeLocalStorage.setItem('pwa-banner-dismissed', 'true');
   };
 
   const handleInstall = async () => {

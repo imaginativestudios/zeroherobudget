@@ -2,6 +2,7 @@ import { Transaction } from '@/hooks/useLocalTransactions';
 import { Expense } from '@/hooks/useLocalExpenses';
 import { Debt } from '@/hooks/useLocalDebts';
 import { Subscription } from '@/hooks/useLocalSubscriptions';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 export interface BackupData {
   version: string;
@@ -52,7 +53,7 @@ function getUserKey(userId: string, key: string): string {
 export function gatherUserData(userId: string): BackupData['data'] {
   const getItem = <T>(key: string, fallback: T): T => {
     try {
-      const item = localStorage.getItem(getUserKey(userId, key));
+      const item = safeLocalStorage.getItem(getUserKey(userId, key));
       return item ? JSON.parse(item) : fallback;
     } catch {
       return fallback;
@@ -117,12 +118,12 @@ export function downloadBackup(backup: BackupData, userId?: string): void {
 
 // Save last backup timestamp
 export function saveLastBackupTimestamp(userId: string): void {
-  localStorage.setItem(getUserKey(userId, 'last_backup'), new Date().toISOString());
+  safeLocalStorage.setItem(getUserKey(userId, 'last_backup'), new Date().toISOString());
 }
 
 // Get last backup timestamp
 export function getLastBackupTimestamp(userId: string): string | null {
-  return localStorage.getItem(getUserKey(userId, 'last_backup'));
+  return safeLocalStorage.getItem(getUserKey(userId, 'last_backup'));
 }
 
 // Validate backup file structure
@@ -194,12 +195,12 @@ export function restoreFromBackup(
 ): RestoreResult {
   try {
     const setItem = (key: string, value: any) => {
-      localStorage.setItem(getUserKey(userId, key), JSON.stringify(value));
+      safeLocalStorage.setItem(getUserKey(userId, key), JSON.stringify(value));
     };
     
     const getItem = <T>(key: string, fallback: T): T => {
       try {
-        const item = localStorage.getItem(getUserKey(userId, key));
+        const item = safeLocalStorage.getItem(getUserKey(userId, key));
         return item ? JSON.parse(item) : fallback;
       } catch {
         return fallback;

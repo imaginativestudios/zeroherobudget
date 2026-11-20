@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type SetStateAction } from 'react';
 import { useAuth } from './useAuth';
 import { DEMO_USER_ID } from '@/lib/demoDataLoader';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value: SetStateAction<T>) => void, boolean] {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value
     try {
       const effectiveUserId = getEffectiveUserId();
       const userKey = `${effectiveUserId}_${key}`;
-      const item = window.localStorage.getItem(userKey);
+      const item = safeLocalStorage.getItem(userKey);
       setIsLoading(false);
       return item ? JSON.parse(item) : initialValueRef.current;
     } catch (error) {
@@ -30,7 +31,7 @@ export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value
     try {
       const effectiveUserId = getEffectiveUserId();
       const userKey = `${effectiveUserId}_${key}`;
-      const item = window.localStorage.getItem(userKey);
+      const item = safeLocalStorage.getItem(userKey);
       setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
@@ -41,19 +42,28 @@ export function useUserLocalStorage<T>(key: string, initialValue: T): [T, (value
   }, [user, key]); // Removed initialValue from dependencies
 
   const setValue = (value: SetStateAction<T>) => {
-    try {
-      const effectiveUserId = getEffectiveUserId();
-      const userKey = `${effectiveUserId}_${key}`;
-      const item = window.localStorage.getItem(userKey);
-      const currentValue: T = item ? JSON.parse(item) : initialValueRef.current;
+    const effectiveUserId = getEffectiveUserId();
+    const userKey = `${effectiveUserId}_${key}`;
+    setStoredValue((previous) => {
+      let currentValue: T = previous;
+      try {
+        const item = safeLocalStorage.getItem(userKey);
+        if (item) currentValue = JSON.parse(item);
+      } catch (error) {
+        console.error(`Error reading localStorage key "${key}":`, error);
+      }
       const nextValue = typeof value === 'function'
         ? (value as (previous: T) => T)(currentValue)
         : value;
-      window.localStorage.setItem(userKey, JSON.stringify(nextValue));
-      setStoredValue(nextValue);
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
-    }
+      let saved = false;
+      try {
+        saved = safeLocalStorage.setItem(userKey, JSON.stringify(nextValue));
+      } catch (error) {
+        console.error(`Error setting localStorage key "${key}":`, error);
+      }
+      if (!saved) console.warn(`Could not save "${key}"; keeping it for this visit only.`);
+      return nextValue;
+    });
   };
 
   return [storedValue, setValue, isLoading];

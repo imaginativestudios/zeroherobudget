@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import type { OnboardingData } from '@/hooks/useHeroProfile';
 import { applyPendingOnboarding, stageOnboarding } from '@/lib/onboardingHandoff';
 import { supabase } from '@/integrations/supabase/client';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 interface PricingStepProps {
   onStartTrial: () => void;
@@ -55,7 +56,7 @@ export function PricingStep({ onStartTrial, onSkipTrial, setupData }: PricingSte
       const checkoutUrl = await createCheckout(selectedInterval);
       
       // Save that we're in checkout flow
-      localStorage.setItem('bdt_checkout_in_progress', 'true');
+      safeLocalStorage.setItem('bdt_checkout_in_progress', 'true');
       
       window.location.assign(checkoutUrl);
     } catch (error) {

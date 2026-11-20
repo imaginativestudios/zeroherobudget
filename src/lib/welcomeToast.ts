@@ -6,6 +6,7 @@
  */
 
 import { toast } from '@/hooks/use-toast';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const WELCOME_SHOWN_KEY = 'bdt_welcome_shown';
 
@@ -13,14 +14,14 @@ const WELCOME_SHOWN_KEY = 'bdt_welcome_shown';
  * Check if the welcome toast has already been shown to this user
  */
 export function hasWelcomeBeenShown(userId: string): boolean {
-  return localStorage.getItem(`${userId}_${WELCOME_SHOWN_KEY}`) === 'true';
+  return safeLocalStorage.getItem(`${userId}_${WELCOME_SHOWN_KEY}`) === 'true';
 }
 
 /**
  * Mark the welcome toast as shown for this user
  */
 export function markWelcomeAsShown(userId: string): void {
-  localStorage.setItem(`${userId}_${WELCOME_SHOWN_KEY}`, 'true');
+  safeLocalStorage.setItem(`${userId}_${WELCOME_SHOWN_KEY}`, 'true');
 }
 
 /**

@@ -13,6 +13,7 @@ import { Debt } from '@/hooks/useLocalDebts';
 import { Transaction } from '@/hooks/useLocalTransactions';
 import { DebtItem, getDetailedPaymentSchedule } from './debtCalculations';
 import { addMonths, format } from 'date-fns';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 // =====================================================================
 // CONSTANTS
@@ -650,9 +651,9 @@ export function formatTriggerCurrency(amount: number): string {
 export function getStoredTriggerState(): TriggerState {
   try {
     return {
-      shadowCostLastTriggered: JSON.parse(localStorage.getItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_LAST) || 'null'),
-      shadowCostShownTxIds: JSON.parse(localStorage.getItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_TX_IDS) || '[]'),
-      surplusStrikeLastTriggered: JSON.parse(localStorage.getItem(TRIGGER_STORAGE_KEYS.SURPLUS_STRIKE_LAST) || 'null'),
+      shadowCostLastTriggered: JSON.parse(safeLocalStorage.getItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_LAST) || 'null'),
+      shadowCostShownTxIds: JSON.parse(safeLocalStorage.getItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_TX_IDS) || '[]'),
+      surplusStrikeLastTriggered: JSON.parse(safeLocalStorage.getItem(TRIGGER_STORAGE_KEYS.SURPLUS_STRIKE_LAST) || 'null'),
     };
   } catch {
     return { shadowCostLastTriggered: null, shadowCostShownTxIds: [], surplusStrikeLastTriggered: null };
@@ -662,13 +663,13 @@ export function getStoredTriggerState(): TriggerState {
 export function updateTriggerState(updates: Partial<TriggerState>): void {
   try {
     if (updates.shadowCostLastTriggered !== undefined) {
-      localStorage.setItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_LAST, JSON.stringify(updates.shadowCostLastTriggered));
+      safeLocalStorage.setItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_LAST, JSON.stringify(updates.shadowCostLastTriggered));
     }
     if (updates.shadowCostShownTxIds !== undefined) {
-      localStorage.setItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_TX_IDS, JSON.stringify(updates.shadowCostShownTxIds));
+      safeLocalStorage.setItem(TRIGGER_STORAGE_KEYS.SHADOW_COST_TX_IDS, JSON.stringify(updates.shadowCostShownTxIds));
     }
     if (updates.surplusStrikeLastTriggered !== undefined) {
-      localStorage.setItem(TRIGGER_STORAGE_KEYS.SURPLUS_STRIKE_LAST, JSON.stringify(updates.surplusStrikeLastTriggered));
+      safeLocalStorage.setItem(TRIGGER_STORAGE_KEYS.SURPLUS_STRIKE_LAST, JSON.stringify(updates.surplusStrikeLastTriggered));
     }
   } catch (error) {
     console.error('Failed to update trigger state:', error);

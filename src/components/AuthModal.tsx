@@ -22,6 +22,7 @@ import { checkGeoAccess } from '@/hooks/useGeoAccess';
 import { supabase } from '@/integrations/supabase/client';
 import { applyPendingOnboarding } from '@/lib/onboardingHandoff';
 import type { ReferralAnswer } from '@/lib/referralSource';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 
 interface AuthModalProps {
@@ -159,7 +160,7 @@ export function AuthModal({
           let onboardingDone = false;
           if (newUser) {
             try {
-              const raw = localStorage.getItem(`${newUser.id}_bdt_hero_profile`);
+              const raw = safeLocalStorage.getItem(`${newUser.id}_bdt_hero_profile`);
               onboardingDone = Boolean(raw && JSON.parse(raw)?.onboarding_completed);
             } catch {
               onboardingDone = false;

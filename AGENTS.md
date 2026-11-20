@@ -24,3 +24,6 @@
 - Default payoff simulations and schedules to a fixed original-minimums-plus-extra budget with rollover; explicitly disable rollover for the public calculator's minimum-only baseline so freed payments do not distort savings.
 ## Debt storage
 - Debts live only in the account-scoped `debts` store; Debt Strategy and reports read it through `useDebtItems` (calculator shape), and the retired `bdt_debts` list is merged in once and removed, so every screen shows the same debts.
+
+## Browser storage
+- Access localStorage/sessionStorage only through `src/lib/safeStorage` helpers; browsers that block site data throw on access, which otherwise blanks the app.

@@ -21,6 +21,7 @@ import { soundEffects, playAchievementUnlockSound } from '@/lib/soundEffects';
 import { haptics } from '@/lib/haptics';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
+import { safeLocalStorage, safeSessionStorage } from '@/lib/safeStorage';
 
 const BANNER_DISMISSED_KEY = 'moat_banner_dismissed_session';
 const REPAIR_MODE_KEY = 'moat_repair_mode_active';
@@ -60,13 +61,13 @@ export function useMoatStatus(): MoatStatusResult {
   // Session-based banner dismissal
   const [bannerDismissed, setBannerDismissed] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return sessionStorage.getItem(BANNER_DISMISSED_KEY) === 'true';
+    return safeSessionStorage.getItem(BANNER_DISMISSED_KEY) === 'true';
   });
   
   // Persistent repair mode
   const [repairModeActive, setRepairModeActive] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return localStorage.getItem(REPAIR_MODE_KEY) === 'true';
+    return safeLocalStorage.getItem(REPAIR_MODE_KEY) === 'true';
   });
   
   // Track if we've already played the breach alert this session
@@ -120,7 +121,7 @@ export function useMoatStatus(): MoatStatusResult {
   // Keep every hook instance in sync (the banner and its parent each call this hook)
   useEffect(() => {
     const sync = () => {
-      setBannerDismissed(sessionStorage.getItem(BANNER_DISMISSED_KEY) === 'true');
+      setBannerDismissed(safeSessionStorage.getItem(BANNER_DISMISSED_KEY) === 'true');
     };
     window.addEventListener(BANNER_SYNC_EVENT, sync);
     return () => window.removeEventListener(BANNER_SYNC_EVENT, sync);
@@ -129,20 +130,20 @@ export function useMoatStatus(): MoatStatusResult {
   // Actions
   const dismissBanner = useCallback(() => {
     setBannerDismissed(true);
-    sessionStorage.setItem(BANNER_DISMISSED_KEY, 'true');
+    safeSessionStorage.setItem(BANNER_DISMISSED_KEY, 'true');
     window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
   }, []);
   
   const activateRepairMode = useCallback(() => {
-    localStorage.setItem(`${accountId}_moat-recovery-event`, crypto.randomUUID());
+    safeLocalStorage.setItem(`${accountId}_moat-recovery-event`, crypto.randomUUID());
     setRepairModeActive(true);
-    localStorage.setItem(REPAIR_MODE_KEY, 'true');
+    safeLocalStorage.setItem(REPAIR_MODE_KEY, 'true');
     updateSavingsVault({ repair_mode_active: true });
   }, [accountId, updateSavingsVault]);
   
   const deactivateRepairMode = useCallback(() => {
     setRepairModeActive(false);
-    localStorage.removeItem(REPAIR_MODE_KEY);
+    safeLocalStorage.removeItem(REPAIR_MODE_KEY);
     updateSavingsVault({ repair_mode_active: false });
   }, [updateSavingsVault]);
   
@@ -192,7 +193,7 @@ export function useMoatStatus(): MoatStatusResult {
   
   // Clear repair mode when moat is secure
   useEffect(() => {
-    const storedVault = localStorage.getItem(`${accountId}_bdt_savings_vault`);
+    const storedVault = safeLocalStorage.getItem(`${accountId}_bdt_savings_vault`);
     const loadedVault = storedVault ? JSON.parse(storedVault) : null;
     if (!loadedVault || loadedVault.moat_balance !== savingsVault.moat_balance || loadedVault.moat_target !== savingsVault.moat_target) return;
     const previous = previousStatus.current;
@@ -200,16 +201,16 @@ export function useMoatStatus(): MoatStatusResult {
     if (isSecure && repairModeActive) {
       // Trigger recovery celebration before clearing repair mode
       const eventKey = `${accountId}_celebrated-moat-recoveries`;
-      const eventId = localStorage.getItem(`${accountId}_moat-recovery-event`) ?? savingsVault.last_secure_date ?? 'initial';
-      const celebrated: string[] = JSON.parse(localStorage.getItem(eventKey) ?? '[]');
+      const eventId = safeLocalStorage.getItem(`${accountId}_moat-recovery-event`) ?? savingsVault.last_secure_date ?? 'initial';
+      const celebrated: string[] = JSON.parse(safeLocalStorage.getItem(eventKey) ?? '[]');
       if (!celebrated.includes(eventId)) {
-        localStorage.setItem(eventKey, JSON.stringify([...celebrated, eventId]));
+        safeLocalStorage.setItem(eventKey, JSON.stringify([...celebrated, eventId]));
         if (previous?.accountId === accountId && !previous.secure) triggerRecoveryCelebration();
       }
       
       deactivateRepairMode();
       // Reset banner dismissal for next potential breach
-      sessionStorage.removeItem(BANNER_DISMISSED_KEY);
+      safeSessionStorage.removeItem(BANNER_DISMISSED_KEY);
       setBannerDismissed(false);
       window.dispatchEvent(new Event(BANNER_SYNC_EVENT));
     }

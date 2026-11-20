@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '@/lib/safeStorage';
 // Data clearing utilities for local storage
 
 export interface ClearDataOptions {
@@ -60,77 +61,77 @@ export function clearAllUserData(userId: string): void {
   // Clear standard user-prefixed keys
   LOCAL_STORAGE_KEYS.forEach(key => {
     const userKey = `${userId}_${key}`;
-    localStorage.removeItem(userKey);
+    safeLocalStorage.removeItem(userKey);
   });
   
   // Clear household view mode (uses different format)
-  localStorage.removeItem(`${HOUSEHOLD_VIEW_KEY}-${userId}`);
+  safeLocalStorage.removeItem(`${HOUSEHOLD_VIEW_KEY}-${userId}`);
 }
 
 export function clearSelectiveData(userId: string, options: ClearDataOptions): number {
   let clearedCount = 0;
   
   if (options.transactions) {
-    localStorage.removeItem(`${userId}_transactions`);
+    safeLocalStorage.removeItem(`${userId}_transactions`);
     clearedCount++;
   }
   
   if (options.expenses) {
-    localStorage.removeItem(`${userId}_expenses`);
-    localStorage.removeItem(`${userId}_bdt_expenses`);
-    localStorage.removeItem(`${userId}_bdt_group_order`);
+    safeLocalStorage.removeItem(`${userId}_expenses`);
+    safeLocalStorage.removeItem(`${userId}_bdt_expenses`);
+    safeLocalStorage.removeItem(`${userId}_bdt_group_order`);
     clearedCount++;
   }
   
   if (options.debts) {
-    localStorage.removeItem(`${userId}_debts`);
-    localStorage.removeItem(`${userId}_bdt_debts`);
+    safeLocalStorage.removeItem(`${userId}_debts`);
+    safeLocalStorage.removeItem(`${userId}_bdt_debts`);
     // Clear achievement baseline since it's debt-related
-    localStorage.removeItem(`${userId}_initial-debt-total`);
+    safeLocalStorage.removeItem(`${userId}_initial-debt-total`);
     clearedCount++;
   }
   
   if (options.subscriptions) {
-    localStorage.removeItem(`${userId}_subscriptions`);
-    localStorage.removeItem(`${userId}_bdt_subscription_matches`);
+    safeLocalStorage.removeItem(`${userId}_subscriptions`);
+    safeLocalStorage.removeItem(`${userId}_bdt_subscription_matches`);
     clearedCount++;
   }
   
   if (options.accounts) {
-    localStorage.removeItem(`${userId}_accounts`);
-    localStorage.removeItem(`${userId}_bdt_assets`);
+    safeLocalStorage.removeItem(`${userId}_accounts`);
+    safeLocalStorage.removeItem(`${userId}_bdt_assets`);
     clearedCount++;
   }
   
   if (options.settings) {
     // Income and strategy
-    localStorage.removeItem(`${userId}_bdt_income`);
-    localStorage.removeItem(`${userId}_bdt_strategy`);
+    safeLocalStorage.removeItem(`${userId}_bdt_income`);
+    safeLocalStorage.removeItem(`${userId}_bdt_strategy`);
     
     // Achievements
-    localStorage.removeItem(`${userId}_achievements`);
-    localStorage.removeItem(`${userId}_unlocked-achievements`);
-    localStorage.removeItem(`${userId}_achievement-timestamps`);
+    safeLocalStorage.removeItem(`${userId}_achievements`);
+    safeLocalStorage.removeItem(`${userId}_unlocked-achievements`);
+    safeLocalStorage.removeItem(`${userId}_achievement-timestamps`);
     
     // Behavioral engine state
-    localStorage.removeItem(`${userId}_bdt_consistency_streak`);
-    localStorage.removeItem(`${userId}_bdt_shadow_cost_last_triggered`);
-    localStorage.removeItem(`${userId}_bdt_shadow_cost_shown_tx_ids`);
-    localStorage.removeItem(`${userId}_bdt_surplus_strike_last_triggered`);
-    localStorage.removeItem(`${userId}_bdt_strategy_pivot_shown`);
-    localStorage.removeItem(`${userId}_bdt_consistency_history`);
+    safeLocalStorage.removeItem(`${userId}_bdt_consistency_streak`);
+    safeLocalStorage.removeItem(`${userId}_bdt_shadow_cost_last_triggered`);
+    safeLocalStorage.removeItem(`${userId}_bdt_shadow_cost_shown_tx_ids`);
+    safeLocalStorage.removeItem(`${userId}_bdt_surplus_strike_last_triggered`);
+    safeLocalStorage.removeItem(`${userId}_bdt_strategy_pivot_shown`);
+    safeLocalStorage.removeItem(`${userId}_bdt_consistency_history`);
     
     // Onboarding & UI
-    localStorage.removeItem(`${userId}_onboarding_complete`);
-    localStorage.removeItem(`${userId}_privacy_notice_dismissed`);
-    localStorage.removeItem(`${userId}_pwa-banner-dismissed`);
-    localStorage.removeItem(`${userId}_budget_seeded`);
+    safeLocalStorage.removeItem(`${userId}_onboarding_complete`);
+    safeLocalStorage.removeItem(`${userId}_privacy_notice_dismissed`);
+    safeLocalStorage.removeItem(`${userId}_pwa-banner-dismissed`);
+    safeLocalStorage.removeItem(`${userId}_budget_seeded`);
     
     // Backup metadata
-    localStorage.removeItem(`${userId}_last_backup`);
+    safeLocalStorage.removeItem(`${userId}_last_backup`);
     
     // Household view mode
-    localStorage.removeItem(`${HOUSEHOLD_VIEW_KEY}-${userId}`);
+    safeLocalStorage.removeItem(`${HOUSEHOLD_VIEW_KEY}-${userId}`);
     
     clearedCount++;
   }

@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 type Message = {
   role: "user" | "assistant";
@@ -23,7 +24,7 @@ const QUICK_SUGGESTIONS = [
 
 const readZoraFlag = (key: string) => {
   try {
-    return localStorage.getItem(key) === "true";
+    return safeLocalStorage.getItem(key) === "true";
   } catch {
     return false;
   }
@@ -31,7 +32,7 @@ const readZoraFlag = (key: string) => {
 
 const saveZoraFlag = (key: string) => {
   try {
-    localStorage.setItem(key, "true");
+    safeLocalStorage.setItem(key, "true");
   } catch {
     // Keep the controls usable when browser storage is blocked.
   }

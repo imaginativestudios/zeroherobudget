@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '@/lib/safeStorage';
 /**
  * Encrypted localStorage wrapper using Web Crypto API (AES-GCM).
  * All linked bank account metadata is encrypted at rest.
@@ -56,7 +57,7 @@ export async function encryptAndStore<T>(
     combined.set(new Uint8Array(ciphertext), iv.length);
 
     const encoded = btoa(String.fromCharCode(...combined));
-    localStorage.setItem(`${STORAGE_PREFIX}${storageKey}`, encoded);
+    safeLocalStorage.setItem(`${STORAGE_PREFIX}${storageKey}`, encoded);
   } catch {
     // Silently fail — never expose crypto errors with payload details
   }
@@ -67,7 +68,7 @@ export async function decryptAndLoad<T>(
   storageKey: string
 ): Promise<T | null> {
   try {
-    const stored = localStorage.getItem(`${STORAGE_PREFIX}${storageKey}`);
+    const stored = safeLocalStorage.getItem(`${STORAGE_PREFIX}${storageKey}`);
     if (!stored) return null;
 
     const key = await deriveKey(userId);
@@ -90,7 +91,7 @@ export async function decryptAndLoad<T>(
 }
 
 export function removeEncrypted(storageKey: string): void {
-  localStorage.removeItem(`${STORAGE_PREFIX}${storageKey}`);
+  safeLocalStorage.removeItem(`${STORAGE_PREFIX}${storageKey}`);
 }
 
 export function isEncryptedStorageAvailable(): boolean {

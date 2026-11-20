@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { format, subDays, subMonths, startOfMonth, addDays } from 'date-fns';
 import { DEMO_EXPENSES, DEMO_DEBTS, DEMO_ASSETS } from './constants';
 import type { Transaction } from '@/types/transactions';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 // Fixed demo user ID - completely isolated from real authenticated users
 export const DEMO_USER_ID = 'demo-hero-00000000';
@@ -579,7 +580,7 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
   try {
     // SAFETY CHECK: Detect if an auth session exists
     // Demo data should never be loaded for authenticated users
-    const hasAuthSession = Object.keys(localStorage).some(key => 
+    const hasAuthSession = safeLocalStorage.keys().some(key => 
       key.includes('sb-') && key.includes('auth-token')
     );
     
@@ -596,47 +597,47 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     
     // Expenses
     const expenses = convertDemoExpenses();
-    localStorage.setItem(`${prefix}expenses`, JSON.stringify(expenses));
+    safeLocalStorage.setItem(`${prefix}expenses`, JSON.stringify(expenses));
     
     // Debts
     const debts = convertDemoDebts();
-    localStorage.setItem(`${prefix}debts`, JSON.stringify(debts));
+    safeLocalStorage.setItem(`${prefix}debts`, JSON.stringify(debts));
     
     // Transactions
     const transactions = convertDemoTransactions();
-    localStorage.setItem(`${prefix}transactions`, JSON.stringify(transactions));
+    safeLocalStorage.setItem(`${prefix}transactions`, JSON.stringify(transactions));
     
     // Subscriptions
     const subscriptions = convertDemoSubscriptions();
-    localStorage.setItem(`${prefix}subscriptions`, JSON.stringify(subscriptions));
+    safeLocalStorage.setItem(`${prefix}subscriptions`, JSON.stringify(subscriptions));
     
     // Accounts (NEW)
     const accounts = convertDemoAccounts();
-    localStorage.setItem(`${prefix}accounts`, JSON.stringify(accounts));
-    localStorage.setItem(`${prefix}bdt_accounts`, JSON.stringify(accounts)); // Alternative key
+    safeLocalStorage.setItem(`${prefix}accounts`, JSON.stringify(accounts));
+    safeLocalStorage.setItem(`${prefix}bdt_accounts`, JSON.stringify(accounts)); // Alternative key
     
     // Hero Profile
-    localStorage.setItem(`${prefix}hero_profile`, JSON.stringify(DEMO_HERO_PROFILE));
+    safeLocalStorage.setItem(`${prefix}hero_profile`, JSON.stringify(DEMO_HERO_PROFILE));
     
     // Savings Vault (Moat)
-    localStorage.setItem(`${prefix}savings_vault`, JSON.stringify(DEMO_SAVINGS_VAULT));
+    safeLocalStorage.setItem(`${prefix}savings_vault`, JSON.stringify(DEMO_SAVINGS_VAULT));
     
     // Monthly Income
-    localStorage.setItem(`${prefix}bdt_income`, JSON.stringify(5800));
+    safeLocalStorage.setItem(`${prefix}bdt_income`, JSON.stringify(5800));
     
     // Strategy (key must match what DebtSnowball.tsx uses)
-    localStorage.setItem(`${prefix}bdt_strategy`, JSON.stringify('Snowball'));
+    safeLocalStorage.setItem(`${prefix}bdt_strategy`, JSON.stringify('Snowball'));
     
     // Consistency Streak (NEW) - for StreakTrackerWidget
-    localStorage.setItem(`${prefix}bdt_consistency_streak`, JSON.stringify(DEMO_CONSISTENCY_STREAK));
+    safeLocalStorage.setItem(`${prefix}bdt_consistency_streak`, JSON.stringify(DEMO_CONSISTENCY_STREAK));
     
     // Achievements (NEW) - for Achievements page
-    localStorage.setItem(`${prefix}unlocked-achievements`, JSON.stringify(DEMO_ACHIEVEMENTS.unlockedIds));
-    localStorage.setItem(`${prefix}achievement-timestamps`, JSON.stringify(DEMO_ACHIEVEMENTS.timestamps));
-    localStorage.setItem(`${prefix}initial-debt-total`, JSON.stringify(DEMO_ACHIEVEMENTS.initialDebt));
+    safeLocalStorage.setItem(`${prefix}unlocked-achievements`, JSON.stringify(DEMO_ACHIEVEMENTS.unlockedIds));
+    safeLocalStorage.setItem(`${prefix}achievement-timestamps`, JSON.stringify(DEMO_ACHIEVEMENTS.timestamps));
+    safeLocalStorage.setItem(`${prefix}initial-debt-total`, JSON.stringify(DEMO_ACHIEVEMENTS.initialDebt));
     
     // Behavioral engine state (enhanced)
-    localStorage.setItem(`${prefix}behavioral_engine`, JSON.stringify({
+    safeLocalStorage.setItem(`${prefix}behavioral_engine`, JSON.stringify({
       lastCheckIn: new Date().toISOString(),
       streakDays: 5,
       totalStrikesCompleted: 3,
@@ -644,7 +645,7 @@ export function loadDemoData(): { loaded: boolean; summary: string } {
     }));
     
     // Getting started checklist progress (NEW)
-    localStorage.setItem(`${prefix}getting_started_completed`, JSON.stringify([
+    safeLocalStorage.setItem(`${prefix}getting_started_completed`, JSON.stringify([
       'add_income',
       'add_expenses', 
       'add_debts',
@@ -671,19 +672,18 @@ export function clearDemoData(): void {
   const prefix = `${DEMO_USER_ID}_`;
   const keysToRemove: string[] = [];
   
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith(prefix)) {
+  for (const key of safeLocalStorage.keys()) {
+    if (key.startsWith(prefix)) {
       keysToRemove.push(key);
     }
   }
   
-  keysToRemove.forEach(key => localStorage.removeItem(key));
+  keysToRemove.forEach(key => safeLocalStorage.removeItem(key));
 }
 
 /**
  * Check if demo data is currently loaded
  */
 export function isDemoDataLoaded(): boolean {
-  return localStorage.getItem(`${DEMO_USER_ID}_expenses`) !== null;
+  return safeLocalStorage.getItem(`${DEMO_USER_ID}_expenses`) !== null;
 }

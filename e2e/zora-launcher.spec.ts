@@ -26,7 +26,7 @@ async function seedDemoData(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.route('**/src/hooks/useAuth.ts', route => route.fulfill({
+  await page.route(/\/src\/hooks\/useAuth\.ts(\?.*)?$/, route => route.fulfill({
     contentType: 'application/javascript',
     body: signInStub(),
   }));
@@ -35,7 +35,7 @@ test.beforeEach(async ({ page }) => {
 
 test('signed-out visitors see no Zora launcher or introduction', async ({ page }) => {
   for (const path of ['/', '/onboarding']) {
-    await page.unroute('**/src/hooks/useAuth.ts');
+    await page.unroute(/\/src\/hooks\/useAuth\.ts(\?.*)?$/);
     await goto(page, '/');
     await page.evaluate(() => localStorage.clear());
     await goto(page, path);

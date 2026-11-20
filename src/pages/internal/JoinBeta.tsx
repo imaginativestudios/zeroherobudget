@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useBetaAccess } from "@/hooks/useBetaAccess";
 import { toast } from "sonner";
 import { z } from "zod";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const codeSchema = z
   .string()
@@ -56,7 +57,7 @@ export default function JoinBeta() {
       // Grant device-level beta UI
       enable();
       // Also keep legacy flag for any older code paths
-      localStorage.setItem("beta_access", "true");
+      safeLocalStorage.setItem("beta_access", "true");
 
       toast.success("Welcome to the beta!");
       navigate("/");

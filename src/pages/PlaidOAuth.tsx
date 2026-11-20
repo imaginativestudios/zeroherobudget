@@ -10,10 +10,11 @@ import {
   syncPlaidTransactions,
 } from '@/lib/plaidProvider';
 import { toast } from '@/hooks/use-toast';
+import { safeSessionStorage } from '@/lib/safeStorage';
 
 function readSession(key: string): string | null {
   try {
-    return sessionStorage.getItem(key);
+    return safeSessionStorage.getItem(key);
   } catch {
     return null;
   }
@@ -21,8 +22,8 @@ function readSession(key: string): string | null {
 
 function clearSession() {
   try {
-    sessionStorage.removeItem(PLAID_LINK_TOKEN_KEY);
-    sessionStorage.removeItem(PLAID_UPDATE_ITEM_KEY);
+    safeSessionStorage.removeItem(PLAID_LINK_TOKEN_KEY);
+    safeSessionStorage.removeItem(PLAID_UPDATE_ITEM_KEY);
   } catch {
     /* ignore */
   }

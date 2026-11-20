@@ -3,6 +3,7 @@ import { Shield, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 const DISMISSED_KEY = "privacy_notice_dismissed";
 
@@ -10,12 +11,12 @@ export function PrivacyNotice() {
   const [isDismissed, setIsDismissed] = useState(true); // Start true to avoid flash
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(DISMISSED_KEY);
+    const dismissed = safeLocalStorage.getItem(DISMISSED_KEY);
     setIsDismissed(dismissed === "true");
   }, []);
 
   const handleDismiss = () => {
-    localStorage.setItem(DISMISSED_KEY, "true");
+    safeLocalStorage.setItem(DISMISSED_KEY, "true");
     setIsDismissed(true);
   };
 

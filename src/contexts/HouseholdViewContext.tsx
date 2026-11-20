@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useHouseholds } from '@/hooks/useHouseholds';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 type ViewMode = 'personal' | 'household';
 
@@ -26,7 +27,7 @@ export function HouseholdViewProvider({ children }: HouseholdViewProviderProps) 
   
   const [viewMode, setViewModeState] = useState<ViewMode>(() => {
     if (typeof window === 'undefined') return 'personal';
-    const stored = localStorage.getItem(storageKey);
+    const stored = safeLocalStorage.getItem(storageKey);
     return (stored === 'household' ? 'household' : 'personal');
   });
 
@@ -35,7 +36,7 @@ export function HouseholdViewProvider({ children }: HouseholdViewProviderProps) 
 
   const setViewMode = (mode: ViewMode) => {
     setViewModeState(mode);
-    localStorage.setItem(storageKey, mode);
+    safeLocalStorage.setItem(storageKey, mode);
   };
 
   // Reset to personal view if user can't toggle

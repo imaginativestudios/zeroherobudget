@@ -4,6 +4,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { DEMO_USER_ID } from '@/lib/demoDataLoader';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 let audioContext: AudioContext | null = null;
 
@@ -22,7 +23,7 @@ const playTone = async (frequency: number, duration: number, volume: number = 0.
     const { data, error } = await supabase.auth.getSession();
     if (error) return;
     const userId = data.session?.user.id ?? DEMO_USER_ID;
-    if (localStorage.getItem(`${userId}_celebration-sounds`) !== 'true') return;
+    if (safeLocalStorage.getItem(`${userId}_celebration-sounds`) !== 'true') return;
     const ctx = getAudioContext();
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();

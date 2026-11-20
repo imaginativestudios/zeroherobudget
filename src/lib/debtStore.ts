@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '@/lib/safeStorage';
 import type { DebtItem } from './debtCalculations';
 
 /** Shape persisted under `${userId}_debts` (the single debt store). */
@@ -50,7 +51,7 @@ export const toStoredDebt = (item: DebtItem, userId: string, prev?: StoredDebt):
  * One-time move of debts saved in the retired `${userId}_bdt_debts` list into
  * `${userId}_debts`, skipping entries already present by id or name+balance.
  */
-export function migrateLegacyDebts(userId: string, storage: Storage = localStorage): void {
+export function migrateLegacyDebts(userId: string, storage: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> = safeLocalStorage): void {
   const legacyKey = `${userId}_bdt_debts`;
   try {
     const raw = storage.getItem(legacyKey);

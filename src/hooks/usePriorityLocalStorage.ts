@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "./useAuth";
 import { LoadPriority } from "./useProgressiveLoad";
 import { DEMO_USER_ID } from "@/lib/constants";
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 /**
  * Enhanced localStorage hook with priority-based loading
@@ -28,7 +29,7 @@ export function usePriorityLocalStorage<T>(
 
       try {
         const userKey = `${effectiveUserId}_${key}`;
-        const item = window.localStorage.getItem(userKey);
+        const item = safeLocalStorage.getItem(userKey);
         setIsLoading(false);
         return item ? JSON.parse(item) : initialValueRef.current;
       } catch (error) {
@@ -51,7 +52,7 @@ export function usePriorityLocalStorage<T>(
       const effectiveUserId = user?.id ?? DEMO_USER_ID;
       try {
         const userKey = `${effectiveUserId}_${key}`;
-        const item = window.localStorage.getItem(userKey);
+        const item = safeLocalStorage.getItem(userKey);
         setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
       } catch (error) {
         console.error(`Error reading localStorage key "${key}":`, error); // FIXED: Changed backtick to parenthesis
@@ -72,7 +73,7 @@ export function usePriorityLocalStorage<T>(
     const effectiveUserId = user?.id ?? DEMO_USER_ID;
     try {
       const userKey = `${effectiveUserId}_${key}`;
-      const item = window.localStorage.getItem(userKey);
+      const item = safeLocalStorage.getItem(userKey);
       setStoredValue(item ? JSON.parse(item) : initialValueRef.current);
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error); // FIXED: Changed backtick to parenthesis
@@ -89,7 +90,7 @@ export function usePriorityLocalStorage<T>(
     try {
       setStoredValue(value);
       const userKey = `${effectiveUserId}_${key}`;
-      window.localStorage.setItem(userKey, JSON.stringify(value));
+      safeLocalStorage.setItem(userKey, JSON.stringify(value));
     } catch (error) {
       console.error(`Error setting localStorage key "${key}":`, error); // FIXED: Changed backtick to parenthesis
     }

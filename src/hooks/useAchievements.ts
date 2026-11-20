@@ -4,6 +4,7 @@ import { useAuth } from './useAuth';
 import { DEMO_USER_ID } from '@/lib/demoDataLoader';
 import confetti from 'canvas-confetti';
 import { playAchievementUnlockSound } from '@/lib/soundEffects';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 export interface Achievement {
   id: string;
@@ -43,11 +44,11 @@ export function useAchievements(currentStats: DebtStats, isReady: boolean) {
     try {
       const prefix = `${user.id}_`;
       const migrateKey = (key: string): string | null => {
-        if (localStorage.getItem(`${prefix}${key}`) !== null) return null;
-        const oldValue = localStorage.getItem(key);
+        if (safeLocalStorage.getItem(`${prefix}${key}`) !== null) return null;
+        const oldValue = safeLocalStorage.getItem(key);
         if (oldValue === null) return null;
-        localStorage.setItem(`${prefix}${key}`, oldValue);
-        localStorage.removeItem(key);
+        safeLocalStorage.setItem(`${prefix}${key}`, oldValue);
+        safeLocalStorage.removeItem(key);
         return oldValue;
       };
 
@@ -59,16 +60,16 @@ export function useAchievements(currentStats: DebtStats, isReady: boolean) {
       if (oldTimestamps !== null) setUnlockTimestamps(JSON.parse(oldTimestamps));
 
       // Migrate hourly wage from the legacy unprefixed hero profile
-      const oldProfileRaw = localStorage.getItem('bdt_hero_profile');
+      const oldProfileRaw = safeLocalStorage.getItem('bdt_hero_profile');
       if (oldProfileRaw !== null) {
         const oldProfile = JSON.parse(oldProfileRaw);
-        const prefixedProfileRaw = localStorage.getItem(`${prefix}bdt_hero_profile`);
+        const prefixedProfileRaw = safeLocalStorage.getItem(`${prefix}bdt_hero_profile`);
         const prefixedProfile = prefixedProfileRaw ? JSON.parse(prefixedProfileRaw) : {};
         if (prefixedProfile.hourly_wage === undefined && typeof oldProfile?.hourly_wage === 'number') {
           prefixedProfile.hourly_wage = oldProfile.hourly_wage;
-          localStorage.setItem(`${prefix}bdt_hero_profile`, JSON.stringify(prefixedProfile));
+          safeLocalStorage.setItem(`${prefix}bdt_hero_profile`, JSON.stringify(prefixedProfile));
         }
-        localStorage.removeItem('bdt_hero_profile');
+        safeLocalStorage.removeItem('bdt_hero_profile');
       }
     } catch (error) {
       console.error('Error migrating local data to account:', error);
@@ -77,7 +78,7 @@ export function useAchievements(currentStats: DebtStats, isReady: boolean) {
   
   // Set initial debt if not set and there are debts
   useEffect(() => {
-    const storedInitial = localStorage.getItem(`${accountId}_initial-debt-total`);
+    const storedInitial = safeLocalStorage.getItem(`${accountId}_initial-debt-total`);
     if (storedInitial !== null && JSON.parse(storedInitial) !== initialDebt) return;
     if (ready && initialDebt === 0 && currentStats.totalDebt > 0) {
       setInitialDebt(currentStats.totalDebt);
@@ -154,16 +155,16 @@ export function useAchievements(currentStats: DebtStats, isReady: boolean) {
   // Detect newly unlocked achievements and trigger confetti
   useEffect(() => {
     if (!ready) return;
-    const storedInitial = localStorage.getItem(`${accountId}_initial-debt-total`);
+    const storedInitial = safeLocalStorage.getItem(`${accountId}_initial-debt-total`);
     if (storedInitial !== null && JSON.parse(storedInitial) !== initialDebt) return;
     const celebratedKey = `${accountId}_celebrated-achievements`;
-    if (localStorage.getItem(celebratedKey) === null) {
-      const stored = localStorage.getItem(`${accountId}_unlocked-achievements`);
+    if (safeLocalStorage.getItem(celebratedKey) === null) {
+      const stored = safeLocalStorage.getItem(`${accountId}_unlocked-achievements`);
       setCelebratedIds(stored ? JSON.parse(stored) : []);
       return;
     }
     const currentUnlocked = achievements.filter(a => a.unlocked).map(a => a.id);
-    const persisted: string[] = JSON.parse(localStorage.getItem(celebratedKey) ?? '[]');
+    const persisted: string[] = JSON.parse(safeLocalStorage.getItem(celebratedKey) ?? '[]');
     const newlyUnlocked = currentUnlocked.filter(id => !persisted.includes(id));
     if (JSON.stringify(currentUnlocked) !== JSON.stringify(unlockedIds)) setUnlockedIds(currentUnlocked);
     

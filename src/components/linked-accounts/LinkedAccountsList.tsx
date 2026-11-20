@@ -17,6 +17,7 @@ import { ReconnectDialog } from './ReconnectDialog';
 import { DeviceLossWarning } from './DeviceLossWarning';
 import { BankLinkingFlow } from './BankLinkingFlow';
 import type { LinkedAccountMeta } from '@/lib/mockBankProvider';
+import { safeLocalStorage } from '@/lib/safeStorage';
 
 export function LinkedAccountsList({ refreshSignal = 0 }: { refreshSignal?: number }) {
   const { linkedAccounts, isLoading, removeAccount, updateAccountToken, encryptionAvailable, addAccounts, reload } = useLinkedAccounts();
@@ -126,8 +127,8 @@ export function LinkedAccountsList({ refreshSignal = 0 }: { refreshSignal?: numb
   useEffect(() => {
     try {
       const testKey = '__zh_incognito_test__';
-      localStorage.setItem(testKey, '1');
-      localStorage.removeItem(testKey);
+      safeLocalStorage.setItem(testKey, '1');
+      safeLocalStorage.removeItem(testKey);
       if (navigator.storage?.estimate) {
         navigator.storage.estimate().then((est) => {
           if (est.quota && est.quota < 120_000_000) {

@@ -21,6 +21,7 @@ import {
 } from '@/lib/plaidProvider';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { safeSessionStorage } from '@/lib/safeStorage';
 
 interface ReconnectDialogProps {
   account: LinkedAccountMeta | null;
@@ -64,8 +65,8 @@ export function ReconnectDialog({ account, onClose, onReconnected }: ReconnectDi
 
   const clearSession = () => {
     try {
-      sessionStorage.removeItem(PLAID_LINK_TOKEN_KEY);
-      sessionStorage.removeItem(PLAID_UPDATE_ITEM_KEY);
+      safeSessionStorage.removeItem(PLAID_LINK_TOKEN_KEY);
+      safeSessionStorage.removeItem(PLAID_UPDATE_ITEM_KEY);
     } catch {
       /* ignore */
     }
@@ -80,8 +81,8 @@ export function ReconnectDialog({ account, onClose, onReconnected }: ReconnectDi
       try {
         const token = await createLinkToken(itemId);
         try {
-          sessionStorage.setItem(PLAID_LINK_TOKEN_KEY, token);
-          sessionStorage.setItem(PLAID_UPDATE_ITEM_KEY, itemId);
+          safeSessionStorage.setItem(PLAID_LINK_TOKEN_KEY, token);
+          safeSessionStorage.setItem(PLAID_UPDATE_ITEM_KEY, itemId);
         } catch {
           /* sessionStorage unavailable */
         }

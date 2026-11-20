@@ -26,7 +26,7 @@ interface BetaCode {
 const randomCode = () => {
   const seg = () =>
     Array.from({ length: 4 }, () =>
-      'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.charAt(Math.floor(Math.random() * 32))
+      'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.charAt(crypto.getRandomValues(new Uint8Array(1))[0] % 32)
     ).join('');
   return `ZH-${seg()}-${seg()}`;
 };

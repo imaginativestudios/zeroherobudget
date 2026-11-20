@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildCors } from "../_shared/cors.ts";
+import { hasBankLinkingAccess } from "../_shared/bankAccess.ts";
 
 const PLAID_ENV = (Deno.env.get("PLAID_ENV") || "sandbox").toLowerCase();
 const PLAID_BASE =
@@ -61,6 +62,9 @@ Deno.serve(async (req) => {
       const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
       if (userErr || !userData?.user) return jsonError(401, "Unauthorized");
       userIdFilter = userData.user.id;
+      if (!(await hasBankLinkingAccess(userIdFilter, userData.user.email ?? null))) {
+        return jsonError(402, "subscription_required");
+      }
     }
 
     const clientId = Deno.env.get("PLAID_CLIENT_ID");

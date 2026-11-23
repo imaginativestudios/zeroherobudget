@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useIncome, useExpenses, useStrategy } from "@/hooks/useLocalSettings";
+import { useIncome, useExpenses, useStrategy, useAssets } from "@/hooks/useLocalSettings";
 import { plannedLeftover } from "@/lib/budgetMath";
-import { DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
+import { formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CustomPieLegend, CustomLineLegend } from "@/components/charts/CustomChartLegend";
@@ -19,7 +18,8 @@ import { toast } from 'sonner';
 import { useDebtItems } from '@/hooks/useDebtItems';
 
 export const NetWorthReport = () => {
-  const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
+  // Same account-scoped assets as the Budget page and Dashboard
+  const [assets] = useAssets();
   const [debts] = useDebtItems();
   // Same budget, income and strategy as the Budget page and Debt Strategy
   const [income] = useIncome();

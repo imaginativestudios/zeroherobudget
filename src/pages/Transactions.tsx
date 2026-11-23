@@ -360,7 +360,7 @@ const [expenses] = useExpenses();
       }
 
       // Use bulk import to avoid state update issues
-      addTransactionsBulk(parsedTransactions.map(transaction => ({
+      const savedCount = await addTransactionsBulk(parsedTransactions.map(transaction => ({
         date: transaction.date,
         description: transaction.description,
         amount: transaction.amount,
@@ -375,7 +375,7 @@ const [expenses] = useExpenses();
       const dates = parsedTransactions.map(t => t.date).sort();
       const mostRecentMonth = dates[dates.length - 1].slice(0, 7);
       setSelectedMonth(mostRecentMonth);
-      toast.success(`Successfully imported ${parsedTransactions.length} transactions`);
+      toast.success(`Successfully imported ${savedCount} transactions`);
     } catch (error) {
       toast.error("Failed to import file. Please check the format and try again.");
       console.error("Import error:", error);

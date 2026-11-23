@@ -5,6 +5,7 @@
  * to determine which UI elements should be visible.
  */
 
+import { plannedLeftover } from "@/lib/budgetMath";
 import { useMemo } from 'react';
 import { useLocalDebts, Debt } from './useLocalDebts';
 import { useLocalTransactions } from './useLocalTransactions';
@@ -96,8 +97,7 @@ export function useDashboardState(): DashboardState {
     }
 
     // Calculate totals for visibility checks
-    const totalExpenses = expenses.reduce((sum: number, expense: { planned?: number }) => sum + (expense.planned || 0), 0);
-    const leftover = Math.max(0, (income || 0) - totalExpenses);
+    const leftover = plannedLeftover(income, expenses);
 
     // Progressive disclosure conditions
     const hasNoDebts = debts.length === 0;

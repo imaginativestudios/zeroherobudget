@@ -36,7 +36,8 @@ import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
 import { DebtSimulatorCard } from "@/components/debt/DebtSimulatorCard";
 import { EditableValue } from "@/components/ui/editable-value";
-import { useExpenses } from "@/hooks/useLocalSettings";
+import { useExpenses, useIncome } from "@/hooks/useLocalSettings";
+import { plannedLeftover } from "@/lib/budgetMath";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { generateDebtCoachTips } from "@/lib/debtInsights";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ import { cn } from "@/lib/utils";
 export const DebtSnowball = () => {
   const [debts, setDebts] = useDebtItems();
   const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
-  const [income] = useUserLocalStorage("bdt_income", 0);
+  const [income] = useIncome();
   const [expenses] = useExpenses();
   const { transactions } = useTransactions();
   const [committedStrategy, setCommittedStrategy] = useUserLocalStorage<string | null>("bdt_committed_strategy", null);
@@ -52,8 +53,7 @@ export const DebtSnowball = () => {
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingNameValue, setEditingNameValue] = useState<string>('');
 
-  const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
-  const leftover = Math.max(0, (income || 0) - totalExpenses);
+  const leftover = plannedLeftover(income, expenses);
 
   // Core calculations
   const currentPlan = useMemo(() =>
@@ -65,6 +65,28 @@ export const DebtSnowball = () => {
     compareStrategies(debts, leftover, strategy as "Snowball" | "Avalanche"),
     [debts, leftover, strategy]
   );
+
+  // Debts at $0 (new or blank) are not part of the payoff plan, but they stay
+  // in the list after the ranked debts so the user can fill them in.
+  const debtListItems = useMemo(() => {
+    const ranked = currentPlan.priorityOrder;
+    const rankedIds = new Set(ranked.map(item => item.id));
+    const unranked = debts
+      .filter(d => !rankedIds.has(d.id))
+      .map((d, i) => ({
+        id: d.id,
+        name: d.name,
+        balance: d.balance,
+        apr: d.apr,
+        min: d.min,
+        type: d.type,
+        priority: ranked.length + i + 1,
+        payoffMonth: null,
+        payoffLabel: '—',
+        totalInterest: 0,
+      }));
+    return [...ranked, ...unranked];
+  }, [currentPlan.priorityOrder, debts]);
 
   const detailedSchedule = useMemo(() =>
     getDetailedPaymentSchedule(debts, leftover, strategy as "Snowball" | "Avalanche"),
@@ -104,7 +126,7 @@ export const DebtSnowball = () => {
     setDebts(debts.map(debt => {
       if (debt.id === id) {
         const updated = { ...debt, [field]: value };
-        if (field === 'balance') updated._orig = updated._orig ?? Number(value);
+        if (field === 'balance' && !updated._orig) updated._orig = Number(value);
         return updated;
       }
       return debt;
@@ -382,11 +404,11 @@ export const DebtSnowball = () => {
           <CardContent>
             <div className="space-y-3 mb-6">
               <AnimatePresence mode="popLayout">
-                {currentPlan.priorityOrder.map((item, index) => {
+                {debtListItems.map((item, index) => {
                   const debt = debts.find(d => d.id === item.id)!;
                   if (!debt) return null;
                   const progressPct = debt._orig ? ((debt._orig - debt.balance) / debt._orig) * 100 : 0;
-                  const isTarget = index === 0;
+                  const isTarget = index === 0 && debt.balance > 0;
                   const isEditingName = editingNameId === debt.id;
 
                   return (

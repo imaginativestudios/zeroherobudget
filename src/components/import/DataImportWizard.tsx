@@ -47,7 +47,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
   const [importedCount, setImportedCount] = useState(0);
   
   const { toast } = useToast();
-  const { transactions, addTransaction } = useLocalTransactions();
+  const { transactions, addTransactionsBulk } = useLocalTransactions();
   const { expenses, addExpense } = useLocalExpenses();
   const { debts, setDebts, updateDebt } = useLocalDebts();
 
@@ -104,7 +104,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
     setCurrentStep(3);
   }, [rows, headers, mapping, importType, existingData]);
 
-  const handleImport = useCallback(() => {
+  const handleImport = useCallback(async () => {
     const rowsToImport = parsedRows.filter(row => {
       if (row.errors.length > 0) return false;
       if (skipDuplicates && row.isDuplicate) return false;
@@ -112,8 +112,9 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
     });
 
     try {
+      let importedTotal = rowsToImport.length;
       if (importType === 'transactions') {
-        rowsToImport.forEach(row => {
+        const txRows = rowsToImport.map(row => {
           // Try to match debt payments to existing debts
           let debtId: string | undefined;
           if (row.data.category === 'Debt Payments' && row.data.description) {
@@ -129,7 +130,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
             }
           }
 
-          addTransaction({
+          return {
             date: row.data.date,
             description: row.data.description || 'Imported',
             amount: row.data.amount || 0,
@@ -138,8 +139,9 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
             flow: row.data.flow || 'out',
             notes: row.data.notes || '',
             debt_id: debtId,
-          });
+          };
         });
+        importedTotal = await addTransactionsBulk(txRows);
       } else if (importType === 'expenses') {
         rowsToImport.forEach(row => {
           addExpense({
@@ -165,12 +167,12 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
         setDebts([...debts, ...newDebts]);
       }
 
-      setImportedCount(rowsToImport.length);
+      setImportedCount(importedTotal);
       setCurrentStep(4);
       
       toast({
         title: 'Import Successful',
-        description: `Imported ${rowsToImport.length} ${getImportTypeLabel(importType).toLowerCase()}`,
+        description: `Imported ${importedTotal} ${getImportTypeLabel(importType).toLowerCase()}`,
       });
     } catch (error) {
       toast({
@@ -179,7 +181,7 @@ export function DataImportWizard({ open, onOpenChange, importType }: DataImportW
         variant: 'destructive',
       });
     }
-  }, [parsedRows, skipDuplicates, importType, addTransaction, addExpense, debts, setDebts, toast]);
+  }, [parsedRows, skipDuplicates, importType, addTransactionsBulk, addExpense, debts, setDebts, toast]);
 
   const canProceed = useMemo(() => {
     if (currentStep === 1) return false; // Handled by file upload

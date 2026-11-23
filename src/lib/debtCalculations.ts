@@ -305,8 +305,10 @@ export function compareStrategies(
     coachMessage = `Hey! If we stick to the Avalanche method, I can save you ${formatMoney(interestSaved)} in interest.`;
   } else if (monthsSaved > 0) {
     coachMessage = `Great news! The Avalanche method gets you debt-free ${monthsSaved} month${monthsSaved !== 1 ? 's' : ''} sooner.`;
+  } else if (currentStrategy !== optimizedStrategy && monthsSaved === 0 && Math.round(interestSaved * 100) === 0) {
+    coachMessage = `Snowball and Avalanche finish at the same time with the same interest. Pick the one that keeps you motivated.`;
   } else {
-    coachMessage = `You're already on the optimal path — keep going, you've got this!`;
+    coachMessage = `You're already on the optimal path. Keep going, you've got this!`;
   }
 
   return { current, optimized, interestSaved, monthsSaved, coachMessage };

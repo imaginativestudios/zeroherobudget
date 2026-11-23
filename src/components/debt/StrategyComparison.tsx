@@ -28,14 +28,17 @@ export function StrategyComparison({
   currentStrategy,
   onStrategyChange 
 }: StrategyComparisonProps) {
+  // Same debt set as calculatePayoffPlan (balances above $0), so the month
+  // count here matches the simulator's Your Current Path.
+  const activeDebts = useMemo(() => debts.filter(d => d.balance > 0), [debts]);
   const snowballResult = useMemo(
-    () => simulatePayoff(debts, extraBudget, "Snowball"),
-    [debts, extraBudget]
+    () => simulatePayoff(activeDebts, extraBudget, "Snowball"),
+    [activeDebts, extraBudget]
   );
 
   const avalancheResult = useMemo(
-    () => simulatePayoff(debts, extraBudget, "Avalanche"),
-    [debts, extraBudget]
+    () => simulatePayoff(activeDebts, extraBudget, "Avalanche"),
+    [activeDebts, extraBudget]
   );
 
   const comparison = useMemo(() => {
@@ -47,7 +50,10 @@ export function StrategyComparison({
     
     const interestSavings = snowballInterest - avalancheInterest;
     const timeSavings = snowballMonths - avalancheMonths;
-    const betterStrategy: "Snowball" | "Avalanche" = interestSavings > 0 ? "Avalanche" : "Snowball";
+    const interestCents = Math.round(interestSavings * 100);
+    const isTie = timeSavings === 0 && interestCents === 0;
+    const betterStrategy: "Snowball" | "Avalanche" =
+      interestCents > 0 || (interestCents === 0 && timeSavings > 0) ? "Avalanche" : "Snowball";
     
     // Calculate debt-free dates
     const today = new Date();
@@ -62,6 +68,8 @@ export function StrategyComparison({
       interestSavings: Math.abs(interestSavings),
       timeSavings: Math.abs(timeSavings),
       betterStrategy,
+      isTie,
+      snowballFaster: timeSavings > 0 ? false : timeSavings < 0,
       snowballDebtFree: format(snowballDebtFree, "yyyy-MM-dd"),
       avalancheDebtFree: format(avalancheDebtFree, "yyyy-MM-dd")
     };
@@ -145,7 +153,9 @@ export function StrategyComparison({
             <Award className="h-6 w-6 sm:h-8 sm:w-8 text-success flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <CardTitle className="text-lg sm:text-2xl">
-                {comparison.betterStrategy === "Avalanche" ? (
+                {comparison.isTie ? (
+                  <span>Both strategies tie</span>
+                ) : comparison.betterStrategy === "Avalanche" ? (
                   <span className="flex items-center gap-2 flex-wrap">
                     <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-chart-4" />
                     <span>Recommended: Avalanche</span>
@@ -158,7 +168,11 @@ export function StrategyComparison({
                 )}
               </CardTitle>
               <CardDescription className="text-sm sm:text-base mt-2">
-                {comparison.betterStrategy === "Avalanche" ? (
+                {comparison.isTie ? (
+                  <>
+                    Snowball and Avalanche finish at the same time with the same interest. Pick the one that keeps you motivated.
+                  </>
+                ) : comparison.betterStrategy === "Avalanche" ? (
                   <>
                     Save <strong className="text-success">${money2(comparison.interestSavings)}</strong> in interest
                     {comparison.timeSavings > 0 && (
@@ -166,10 +180,15 @@ export function StrategyComparison({
                     )}
                     ! This is the mathematically optimal approach.
                   </>
+                ) : comparison.snowballFaster ? (
+                  <>
+                    Pay off debt <strong className="text-success">{comparison.timeSavings} month{comparison.timeSavings !== 1 ? "s" : ""}</strong> faster! 
+                    Quick wins keep you motivated on your debt-free journey.
+                  </>
                 ) : (
                   <>
-                    Pay off debt <strong className="text-success">{comparison.timeSavings} months</strong> faster! 
-                    Quick wins keep you motivated on your debt-free journey.
+                    Both strategies finish at the same time. Snowball costs{" "}
+                    <strong className="text-success">${money2(comparison.interestSavings)}</strong> less in interest.
                   </>
                 )}
               </CardDescription>

@@ -100,9 +100,12 @@ export function useJourneyProgress(): JourneyProgress {
     const hasExpenses = expenseItems.length > 0;
     const totalMonthlyExpenses = expenseItems.reduce((sum, e) => sum + e.amount, 0);
     const moatCurrent = savingsVault?.moat_balance ?? profile?.moat_current ?? 0;
-    const totalDebt = debts.reduce((sum, d) => sum + d.balance, 0);
-    const paidOffDebts = debts.filter(d => d.balance === 0).length;
-    const totalDebts = debts.length;
+    // A $0 debt that never had a balance is a blank entry, not a paid-off one.
+    const hadBalance = (d: { _orig?: number }) => (d._orig ?? 0) > 0;
+    const trackedDebts = debts.filter(d => (d.balance || 0) > 0 || hadBalance(d as { _orig?: number }));
+    const totalDebt = trackedDebts.reduce((sum, d) => sum + d.balance, 0);
+    const paidOffDebts = trackedDebts.filter(d => (d.balance || 0) <= 0).length;
+    const totalDebts = trackedDebts.length;
 
     // Check for savings / high-yield savings accounts
     const hasSavingsAccount = accounts.some(a =>

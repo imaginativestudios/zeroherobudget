@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useUserLocalStorage } from './useUserLocalStorage';
-import { useAuth } from './useAuth';
 import { useLocalExpenses } from './useLocalExpenses';
 
 // Export individual hooks for each setting
@@ -10,20 +9,17 @@ export const useAssets = () => useUserLocalStorage('bdt_assets', []);
 export const useGroupOrder = () => useUserLocalStorage('bdt_group_order', []);
 
 /**
- * Planned budget lines in the legacy `{ planned }` shape.
- * Signed-in users keep reading their `bdt_expenses` list unchanged. Demo
- * visitors read the same `expenses` list the Budget page edits, so every
- * demo screen shows one budget.
+ * Planned budget lines in the legacy `{ planned }` shape, read from the same
+ * `expenses` list the Budget page edits (signed-in, demo and signed-out alike).
+ * Income lines are excluded. The retired `bdt_expenses` list is left in
+ * storage untouched.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useExpenses = (): [any[], (value: any) => void, boolean] => {
-  const { user } = useAuth();
-  const legacy = useUserLocalStorage<any[]>('bdt_expenses', []);
-  const { expenses: demoExpenses, isLoading: demoLoading } = useLocalExpenses('critical');
-  const demoPlanned = useMemo(
-    () => demoExpenses.filter(e => !e.is_income).map(e => ({ ...e, planned: e.amount })),
-    [demoExpenses]
+  const { expenses, isLoading } = useLocalExpenses('critical');
+  const planned = useMemo(
+    () => expenses.filter(e => !e.is_income).map(e => ({ ...e, planned: e.amount })),
+    [expenses]
   );
-  if (user) return legacy;
-  return [demoPlanned, legacy[1], demoLoading];
+  return [planned, () => {}, isLoading];
 };

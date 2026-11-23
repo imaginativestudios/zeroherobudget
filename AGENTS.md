@@ -29,3 +29,7 @@
 - Access localStorage/sessionStorage only through `src/lib/safeStorage` helpers; browsers that block site data throw on access, which otherwise blanks the app.
 - Import `src/lib/storageFallback` first in `main.tsx`; when the browser blocks site data it swaps in per-visit in-memory storage so the generated Supabase auth client never throws, while working storage is untouched.
 - Bank linking and manual bank sync share the server-side access check in `supabase/functions/_shared/bankAccess.ts` (beta or active/trialing subscription), so paid gating cannot drift between functions.
+
+## Planned budget
+- Every screen that shows planned expenses or leftover for debt reads the Budget page's `expenses` list (via `useExpenses`/`useLocalExpenses`) with `useIncome`, and computes totals with `src/lib/budgetMath` (expense lines only), so the Budget page, Dashboard and Debt Strategy always agree.
+- Signed-in transaction writes broadcast a change event that every `useLocalTransactions` instance reloads on, and bulk saves report the stored count, so imports appear right away and never over-report.

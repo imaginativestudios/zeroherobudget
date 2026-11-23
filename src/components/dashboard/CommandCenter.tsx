@@ -7,6 +7,7 @@
  * 3. Payoff Strategy - Freedom date calculator with real-time updates
  */
 
+import { totalPlannedExpenses } from "@/lib/budgetMath";
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -66,7 +67,7 @@ export function CommandCenter({
   onExpenseChange,
 }: CommandCenterProps) {
   // Calculate totals
-  const totalExpenses = expenses.reduce((sum, e) => sum + (e.planned || 0), 0);
+  const totalExpenses = totalPlannedExpenses(expenses);
   const activeDebts = debts.filter(d => d.balance > 0);
   const totalDebt = activeDebts.reduce((sum, d) => sum + d.balance, 0);
   

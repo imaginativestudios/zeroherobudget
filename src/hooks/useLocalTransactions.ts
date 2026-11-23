@@ -35,6 +35,34 @@ const flowFromDb = (v: string): 'in' | 'out' =>
 const flowToDb = (v: 'in' | 'out'): 'income' | 'expense' =>
   v === 'in' ? 'income' : 'expense';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const uuidOrNull = (v?: string | null) => (v && UUID_RE.test(v) ? v : null);
+/** Fired after a signed-in write so every hook instance reloads right away. */
+export const TRANSACTIONS_CHANGED_EVENT = 'zh:transactions-changed';
+const notifyTransactionsChanged = () => {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(TRANSACTIONS_CHANGED_EVENT));
+};
+
+type NewTransaction = Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>;
+
+/**
+ * Shape a transaction for the database. Ids that are not real database ids
+ * (placeholder accounts like "default-checking") are dropped so one bad
+ * reference cannot reject a whole import.
+ */
+const toDbRow = (t: NewTransaction) => ({
+  date: String(t.date).slice(0, 10),
+  description: String(t.description ?? '').slice(0, 500) || 'Imported',
+  amount: Number(t.amount) || 0,
+  category: t.category || 'Uncategorized',
+  account_id: uuidOrNull(t.account_id),
+  flow: flowToDb(t.flow),
+  expense_id: uuidOrNull(t.expense_id),
+  debt_id: uuidOrNull(t.debt_id),
+  notes: t.notes ?? null,
+  household_id: t.household_id ?? null,
+});
+
 const mapRowToTransaction = (row: any): Transaction => ({
   id: row.id,
   date: row.date,
@@ -88,6 +116,14 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
     }
   }, [isAuthed, reload]);
 
+  // Keep separate hook instances (import wizard, Transactions page) in sync.
+  useEffect(() => {
+    if (!isAuthed) return;
+    const onChange = () => { reload(); };
+    window.addEventListener(TRANSACTIONS_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(TRANSACTIONS_CHANGED_EVENT, onChange);
+  }, [isAuthed, reload]);
+
   const transactions = isAuthed ? remoteTransactions : localTransactions;
   const isLoading = isAuthed ? isRemoteLoading : isLocalLoading;
 
@@ -129,33 +165,31 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
     setLocalTransactions([...localTransactions, newTransaction]);
   };
 
+  /**
+   * Saves many transactions. Resolves to the number saved; throws when the
+   * signed-in save fails so callers never report rows that were not stored.
+   */
   const addTransactionsBulk = async (
-    newTransactions: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>[]
-  ) => {
+    newTransactions: NewTransaction[]
+  ): Promise<number> => {
     if (isAuthed) {
-      if (newTransactions.length === 0) return;
-      const rows = newTransactions.map((t) => ({
-        date: t.date,
-        description: t.description,
-        amount: t.amount,
-        category: t.category,
-        account_id: t.account_id,
-        flow: flowToDb(t.flow),
-        expense_id: t.expense_id ?? null,
-        debt_id: t.debt_id ?? null,
-        notes: t.notes ?? null,
-        household_id: t.household_id ?? null,
-      }));
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert(rows)
-        .select('*');
-      if (error) {
-        console.error('addTransactionsBulk error:', error);
-        return;
+      if (newTransactions.length === 0) return 0;
+      let rows = newTransactions.map(toDbRow);
+      let { data, error } = await supabase.from('transactions').insert(rows).select('*');
+      // Debts are stored in the browser, so a debt link may not exist in the
+      // database. Retry without debt links instead of losing the import.
+      if (error && error.code === '23503') {
+        rows = rows.map((r) => ({ ...r, debt_id: null }));
+        ({ data, error } = await supabase.from('transactions').insert(rows).select('*'));
       }
-      setRemoteTransactions((prev) => [...(data || []).map(mapRowToTransaction), ...prev]);
-      return;
+      if (error) {
+        console.error('addTransactionsBulk error:', error.code, error.message);
+        throw new Error('Could not save transactions');
+      }
+      const saved = (data || []).map(mapRowToTransaction);
+      setRemoteTransactions((prev) => [...saved, ...prev]);
+      notifyTransactionsChanged();
+      return saved.length;
     }
 
     const transactionsWithIds = newTransactions.map((t) => ({
@@ -166,6 +200,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
       updated_at: new Date().toISOString(),
     }));
     setLocalTransactions([...localTransactions, ...transactionsWithIds]);
+    return transactionsWithIds.length;
   };
 
   const updateTransaction = async (id: string, updates: Partial<Transaction>) => {

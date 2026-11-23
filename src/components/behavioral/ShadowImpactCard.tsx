@@ -14,7 +14,8 @@ import { getSurvivalCategories, translateToHumanTime, calculateTrueCost } from '
 import { useLocalDebts } from '@/hooks/useLocalDebts';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { formatCurrency } from '@/lib/constants';
-import { useExpenses } from '@/hooks/useLocalSettings';
+import { useExpenses, useIncome } from '@/hooks/useLocalSettings';
+import { plannedLeftover } from '@/lib/budgetMath';
 import { soundEffects } from '@/lib/soundEffects';
 import { haptics } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -43,13 +44,12 @@ export function ShadowImpactCard({
   const [hasChosen, setHasChosen] = useState(false);
   const { highestInterestRate } = useBehavioralEngine();
   const { debts } = useLocalDebts();
-  const [income] = useUserLocalStorage("bdt_income", 0);
+  const [income] = useIncome();
   const [expenses] = useExpenses();
   const [strategy] = useUserLocalStorage("bdt_strategy", "Snowball");
 
   // Calculate leftover budget
-  const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + (expense.planned || 0), 0);
-  const leftover = Math.max(0, (income || 0) - totalExpenses);
+  const leftover = plannedLeftover(income, expenses);
 
   // Only show for expenses (outflow)
   if (flow !== 'out') {

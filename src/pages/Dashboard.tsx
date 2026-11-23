@@ -5,6 +5,7 @@
  * Layout: 3-zone system with Moat (Defense), Boss (Offense), and Intel Feed.
  */
 
+import { totalPlannedExpenses, plannedLeftover } from "@/lib/budgetMath";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { DollarSign, TrendingUp, Target, AlertTriangle, BarChart3, TrendingDown, CreditCard, Trophy, Heart, Sparkles } from "lucide-react";
@@ -137,13 +138,9 @@ export const Dashboard = () => {
 
   const hasAnyTransactions = useMemo(() => transactions.length > 0, [transactions]);
 
-  const totalExpenses = useMemo(() => 
-    expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0), [expenses]
-  );
+  const totalExpenses = useMemo(() => totalPlannedExpenses(expenses), [expenses]);
   
-  const leftover = useMemo(() => 
-    Math.max(0, (income || 0) - totalExpenses), [income, totalExpenses]
-  );
+  const leftover = useMemo(() => plannedLeftover(income, expenses), [income, expenses]);
   
   // Handler for inline expense editing in Command Center
   const handleExpenseChange = useCallback((id: string, newAmount: number) => {

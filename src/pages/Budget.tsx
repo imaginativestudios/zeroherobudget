@@ -16,6 +16,7 @@ import { toCsv, downloadCsv, parseCsv, mapExpenseCsv, validateCsvFile } from "@/
 import { GroupableExpenses } from "@/components/budget/GroupableExpenses";
 import { BudgetOverviewCard } from "@/components/budget/BudgetOverviewCard";
 import { cn } from "@/lib/utils";
+import { totalPlannedExpenses, plannedLeftover } from "@/lib/budgetMath";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { CustomPieLegend, CustomBarLegend } from "@/components/charts/CustomChartLegend";
 import { CATEGORY_COLORS, getCategoryColor, STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
@@ -81,10 +82,10 @@ export const Budget = () => {
   // beside a real spend total once the demo flow literals were fixed.
   const { actuals: monthlyActuals, transactionCount } =
     getMonthlyActualsBreakdown(selectedMonth, expenses);
-  const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+  const totalExpenses = totalPlannedExpenses(expenses);
   const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
   const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
-  const leftover = Math.max(0, (income || 0) - totalExpenses);
+  const leftover = plannedLeftover(income, expenses);
   const actualLeftover = Math.max(0, (income || 0) - totalActual);
 
   // Calculate category totals for budget summary

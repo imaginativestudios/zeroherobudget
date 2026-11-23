@@ -18,20 +18,20 @@ export function useSubscriptions() {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
     };
-    setSubscriptions([...subscriptions, newSubscription]);
+    setSubscriptions(prev => [...prev, newSubscription]);
     return newSubscription;
   };
 
   const updateSubscription = (id: string, updates: Partial<Subscription>) => {
-    setSubscriptions(subscriptions.map(s => 
+    setSubscriptions(prev => prev.map(s => 
       s.id === id ? { ...s, ...updates } : s
     ));
   };
 
   const removeSubscription = (id: string) => {
-    setSubscriptions(subscriptions.filter(s => s.id !== id));
+    setSubscriptions(prev => prev.filter(s => s.id !== id));
     // Remove associated matches
-    setMatches(matches.filter(m => m.subscriptionId !== id));
+    setMatches(prev => prev.filter(m => m.subscriptionId !== id));
   };
 
   const cancelSubscription = (id: string) => {
@@ -54,7 +54,7 @@ export function useSubscriptions() {
     const existingMatch = matches.find(m => m.transactionId === transactionId);
     if (existingMatch) {
       // Update existing match
-      setMatches(matches.map(m => 
+      setMatches(prev => prev.map(m => 
         m.transactionId === transactionId 
           ? { ...m, subscriptionId, matchedOn, confidence: 1.0 }
           : m
@@ -67,7 +67,7 @@ export function useSubscriptions() {
         matchedOn,
         confidence: 1.0
       };
-      setMatches([...matches, newMatch]);
+      setMatches(prev => [...prev, newMatch]);
     }
 
     // Update subscription's last charge date if this transaction is more recent
@@ -90,7 +90,7 @@ export function useSubscriptions() {
   };
 
   const unlinkTransaction = (transactionId: string) => {
-    setMatches(matches.filter(m => m.transactionId !== transactionId));
+    setMatches(prev => prev.filter(m => m.transactionId !== transactionId));
   };
 
   const getSubscriptionForTransaction = (transactionId: string): Subscription | null => {

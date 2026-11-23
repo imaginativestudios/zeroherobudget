@@ -31,12 +31,11 @@ export function useLocalSubscriptions(priority: 'critical' | 'secondary' = 'crit
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    setSubscriptions([...subscriptions, newSubscription]);
+    setSubscriptions(prev => [...prev, newSubscription]);
   };
 
   const updateSubscription = (id: string, updates: Partial<Subscription>) => {
-    setSubscriptions(
-      subscriptions.map((subscription) =>
+    setSubscriptions(prev => prev.map((subscription) =>
         subscription.id === id
           ? { ...subscription, ...updates, updated_at: new Date().toISOString() }
           : subscription
@@ -45,7 +44,7 @@ export function useLocalSubscriptions(priority: 'critical' | 'secondary' = 'crit
   };
 
   const removeSubscription = (id: string) => {
-    setSubscriptions(subscriptions.filter((subscription) => subscription.id !== id));
+    setSubscriptions(prev => prev.filter((subscription) => subscription.id !== id));
   };
 
   const getTotalMonthlySpend = (): number => {

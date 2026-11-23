@@ -162,7 +162,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    setLocalTransactions([...localTransactions, newTransaction]);
+    setLocalTransactions(prev => [...prev, newTransaction]);
   };
 
   /**
@@ -199,7 +199,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }));
-    setLocalTransactions([...localTransactions, ...transactionsWithIds]);
+    setLocalTransactions(prev => [...prev, ...transactionsWithIds]);
     return transactionsWithIds.length;
   };
 
@@ -227,8 +227,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
       return;
     }
 
-    setLocalTransactions(
-      localTransactions.map((transaction) =>
+    setLocalTransactions(prev => prev.map((transaction) =>
         transaction.id === id
           ? { ...transaction, ...updates, updated_at: new Date().toISOString() }
           : transaction
@@ -246,7 +245,7 @@ export function useLocalTransactions(priority: 'critical' | 'secondary' = 'secon
       setRemoteTransactions((prev) => prev.filter((t) => t.id !== id));
       return;
     }
-    setLocalTransactions(localTransactions.filter((transaction) => transaction.id !== id));
+    setLocalTransactions(prev => prev.filter((transaction) => transaction.id !== id));
   };
 
   const getTransactionsByMonth = (month: Date | string, accountId?: string) => {

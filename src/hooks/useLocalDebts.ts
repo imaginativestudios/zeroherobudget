@@ -31,12 +31,11 @@ export function useLocalDebts(priority: 'critical' | 'secondary' = 'critical') {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    setDebts([...debts, newDebt]);
+    setDebts(prev => [...prev, newDebt]);
   };
 
   const updateDebt = (id: string, updates: Partial<Debt>) => {
-    setDebts(
-      debts.map((debt) =>
+    setDebts(prev => prev.map((debt) =>
         debt.id === id
           ? { ...debt, ...updates, updated_at: new Date().toISOString() }
           : debt
@@ -45,7 +44,7 @@ export function useLocalDebts(priority: 'critical' | 'secondary' = 'critical') {
   };
 
   const removeDebt = (id: string) => {
-    setDebts(debts.filter((debt) => debt.id !== id));
+    setDebts(prev => prev.filter((debt) => debt.id !== id));
   };
 
   return {

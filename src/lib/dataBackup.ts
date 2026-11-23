@@ -60,6 +60,10 @@ export function gatherUserData(userId: string): BackupData['data'] {
     }
   };
 
+  // Settings use the same keys as the Budget page; older unprefixed keys are read only as a fallback
+  const getSetting = <T>(key: string, legacyKey: string, fallback: T): T =>
+    getItem<T | undefined>(key, undefined) ?? getItem<T>(legacyKey, fallback);
+
   return {
     transactions: getItem<Transaction[]>('transactions', []),
     expenses: getItem<Expense[]>('expenses', []),
@@ -67,9 +71,9 @@ export function gatherUserData(userId: string): BackupData['data'] {
     subscriptions: getItem<Subscription[]>('subscriptions', []),
     accounts: getItem<any[]>('accounts', []),
     settings: {
-      income: getItem<number>('monthly_income', 0),
-      strategy: getItem<string>('debt_strategy', 'Snowball'),
-      assets: getItem<any[]>('assets', []),
+      income: getSetting<number>('bdt_income', 'monthly_income', 5000),
+      strategy: getSetting<string>('bdt_strategy', 'debt_strategy', 'Snowball'),
+      assets: getSetting<any[]>('bdt_assets', 'assets', []),
     },
   };
 }
@@ -277,13 +281,13 @@ export function restoreFromBackup(
     
     if (options.restoreSettings && backup.data.settings) {
       if (backup.data.settings.income !== undefined) {
-        setItem('monthly_income', backup.data.settings.income);
+        setItem('bdt_income', backup.data.settings.income);
       }
       if (backup.data.settings.strategy) {
-        setItem('debt_strategy', backup.data.settings.strategy);
+        setItem('bdt_strategy', backup.data.settings.strategy);
       }
       if (backup.data.settings.assets) {
-        setItem('assets', backup.data.settings.assets);
+        setItem('bdt_assets', backup.data.settings.assets);
       }
     }
     

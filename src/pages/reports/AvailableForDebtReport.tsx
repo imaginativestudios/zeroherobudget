@@ -7,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EmptyChartNotice } from "@/components/EmptyChartNotice";
 import { useTransactions } from "@/hooks/useTransactions";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { DEFAULT_EXPENSES, formatCurrency } from "@/lib/constants";
+import { useIncome, useExpenses } from "@/hooks/useLocalSettings";
+import { totalPlannedExpenses } from "@/lib/budgetMath";
+import { formatCurrency } from "@/lib/constants";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ComposedChart, Bar } from 'recharts';
 import { CustomComposedLegend } from "@/components/charts/CustomChartLegend";
 import { STANDARD_TOOLTIP_STYLE, currencyFormatter } from "@/lib/chartConfig";
@@ -26,8 +27,9 @@ const formatMonthDisplay = (monthStr: string) => {
 export const AvailableForDebtReport = () => {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [income] = useLocalStorage("bdt_income", 18254);
-  const [expenses] = useLocalStorage("bdt_expenses", DEFAULT_EXPENSES);
+  // Same budget and income as the Budget page
+  const [income] = useIncome();
+  const [expenses] = useExpenses();
   const { getTotalActualSpending, getTransactionsByMonth } = useTransactions();
 
   // Calculate data for the last 12 months
@@ -62,7 +64,7 @@ export const AvailableForDebtReport = () => {
     const incomeTransactions = getTransactionsByMonth(selectedMonth).filter(t => t.flow === 'in');
     const actualIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
     const monthlyIncome = actualIncome > 0 ? actualIncome : income;
-    const planned = expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0);
+    const planned = totalPlannedExpenses(expenses);
     
     return {
       income: monthlyIncome,

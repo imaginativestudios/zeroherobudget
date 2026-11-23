@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useIncome, useExpenses, useStrategy } from "@/hooks/useLocalSettings";
+import { plannedLeftover } from "@/lib/budgetMath";
 import { DEFAULT_ASSETS, formatCurrency } from "@/lib/constants";
 import { simulatePayoff } from "@/lib/debtCalculations";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -19,9 +21,10 @@ import { useDebtItems } from '@/hooks/useDebtItems';
 export const NetWorthReport = () => {
   const [assets] = useLocalStorage("bdt_assets", DEFAULT_ASSETS);
   const [debts] = useDebtItems();
-  const [income] = useLocalStorage("bdt_income", 18254);
-  const [expenses] = useLocalStorage("bdt_expenses", []);
-  const [strategy] = useLocalStorage("bdt_strategy", "Snowball");
+  // Same budget, income and strategy as the Budget page and Debt Strategy
+  const [income] = useIncome();
+  const [expenses] = useExpenses();
+  const [strategy] = useStrategy();
 
   const totalAssets = useMemo(() => 
     assets.reduce((sum, asset) => sum + (asset.value || 0), 0), 
@@ -35,12 +38,7 @@ export const NetWorthReport = () => {
   
   const netWorth = totalAssets - totalDebt;
   
-  const totalExpenses = useMemo(() => 
-    expenses.reduce((sum, expense) => sum + (expense.planned || 0), 0), 
-    [expenses]
-  );
-  
-  const leftover = Math.max(0, (income || 0) - totalExpenses);
+  const leftover = plannedLeftover(income, expenses);
 
   // Asset composition for pie chart
   const assetComposition = useMemo(() => 
@@ -53,8 +51,9 @@ export const NetWorthReport = () => {
 
   // Debt payoff projection for net worth trend
   const schedule = useMemo(() => {
-    if (leftover > 0 && debts.length > 0) {
-      return simulatePayoff(debts, leftover, strategy as "Snowball" | "Avalanche");
+    const activeDebts = debts.filter(d => d.balance > 0);
+    if (leftover > 0 && activeDebts.length > 0) {
+      return simulatePayoff(activeDebts, leftover, strategy as "Snowball" | "Avalanche");
     }
     return { timeline: [], totalInterest: 0, perDebt: [] };
   }, [debts, leftover, strategy]);

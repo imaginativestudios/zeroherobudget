@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type SetStateAction } from "react";
 import { useAuth } from "./useAuth";
 import { LoadPriority } from "./useProgressiveLoad";
 import { DEMO_USER_ID } from "@/lib/constants";
@@ -16,7 +16,7 @@ export function usePriorityLocalStorage<T>(
   initialValue: T,
   priority: LoadPriority = "critical",
   shouldLoad: boolean = true,
-): [T, (value: T) => void, boolean] {
+): [T, (value: SetStateAction<T>) => void, boolean] {
   const { user } = useAuth();
   const initialValueRef = useRef(initialValue);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,16 +83,28 @@ export function usePriorityLocalStorage<T>(
     }
   }, [user, key, shouldLoad]);
 
-  const setValue = (value: T) => {
+  // Latest value, so several quick functional updates build on each other
+  const latestRef = useRef<T>(storedValue);
+  latestRef.current = storedValue;
+
+  const setValue = (value: SetStateAction<T>) => {
     // Use demo user ID for unauthenticated users (allows demo interactions)
     const effectiveUserId = user?.id ?? DEMO_USER_ID;
-
+    const userKey = `${effectiveUserId}_${key}`;
+    let current: T = latestRef.current;
     try {
-      setStoredValue(value);
-      const userKey = `${effectiveUserId}_${key}`;
-      safeLocalStorage.setItem(userKey, JSON.stringify(value));
+      const item = safeLocalStorage.getItem(userKey);
+      if (item) current = JSON.parse(item);
     } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error); // FIXED: Changed backtick to parenthesis
+      console.error(`Error reading localStorage key "${key}":`, error);
+    }
+    const next = typeof value === "function" ? (value as (prev: T) => T)(current) : value;
+    latestRef.current = next;
+    setStoredValue(next);
+    try {
+      safeLocalStorage.setItem(userKey, JSON.stringify(next));
+    } catch (error) {
+      console.error(`Error setting localStorage key "${key}":`, error);
     }
   };
 

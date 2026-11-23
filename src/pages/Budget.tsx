@@ -41,6 +41,7 @@ export const Budget = () => {
     updateExpense: updateSupabaseExpense,
     removeExpense: removeSupabaseExpense,
     batchAddExpenses,
+    replaceAllExpenses,
     setExpensesOrder
   } = useLocalExpenses('critical');
 
@@ -196,15 +197,14 @@ export const Budget = () => {
       const rows = parseCsv(text);
       const mapped = mapExpenseCsv(rows);
       if (mapped.length) {
-        // Clear existing expenses and add new ones
-        expenses.forEach(expense => removeSupabaseExpense(expense.id));
-        mapped.forEach(expense => addSupabaseExpense({
+        // Replace expense lines in one save; Income lines stay as they are
+        const saved = replaceAllExpenses(mapped.map(expense => ({
           name: expense.name,
           amount: expense.planned || 0,
           category: expense.category || "Uncategorized",
           is_income: false
-        }));
-        toast.success(`Successfully imported ${mapped.length} expenses`);
+        })));
+        toast.success(`Imported ${saved} budget ${saved === 1 ? "line" : "lines"}`);
       } else {
         toast.error("No valid expense data found in the file");
       }

@@ -20,17 +20,35 @@ export const Reports = () => {
   // Secondary: Load transactions for chart data
   const {
     getMonthlyActualsByCategory,
+    getTransactionsByMonth,
     isLoading: isLoadingTransactions
   } = useLocalTransactions('secondary');
   const isSecondaryLoading = isLoadingTransactions;
   const monthlyActuals = getMonthlyActualsByCategory(selectedMonth, expenses);
-  const expenseData = useMemo(() => expenses.map(expense => ({
-    name: expense.name.length > 15 ? expense.name.substring(0, 15) + '...' : expense.name,
-    planned: expense.amount || 0,
-    actual: monthlyActuals[expense.id] || 0,
-    fullName: expense.name,
-    variance: (monthlyActuals[expense.id] || 0) - (expense.amount || 0)
-  })), [expenses, monthlyActuals]);
+  // Planned vs actual grouped by budget category for the chart
+  const monthTransactions = getTransactionsByMonth(selectedMonth);
+  const expenseData = useMemo(() => {
+    const rows: Record<string, { planned: number; actual: number }> = {};
+    expenses.forEach(expense => {
+      const cat = expense.category || 'Other';
+      rows[cat] = rows[cat] || { planned: 0, actual: 0 };
+      rows[cat].planned += expense.amount || 0;
+    });
+    monthTransactions.filter(t => t.flow === 'out').forEach(t => {
+      const cat = t.category || 'Other';
+      rows[cat] = rows[cat] || { planned: 0, actual: 0 };
+      rows[cat].actual += t.amount || 0;
+    });
+    return Object.entries(rows)
+      .filter(([, r]) => r.planned > 0 || r.actual > 0)
+      .map(([cat, r]) => ({
+        name: cat.length > 15 ? cat.substring(0, 15) + '...' : cat,
+        planned: Math.round(r.planned * 100) / 100,
+        actual: Math.round(r.actual * 100) / 100,
+        fullName: cat,
+        variance: Math.round((r.actual - r.planned) * 100) / 100,
+      }));
+  }, [expenses, monthTransactions]);
 
   // Generate variance alerts for significant over/under budget items
   const varianceAlerts = useMemo(() => {
@@ -48,23 +66,30 @@ export const Reports = () => {
     }).sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance)).slice(0, 3); // Show top 3 variances
   }, [expenses, monthlyActuals]);
 
-  // Generate overall insights with functional language
+  const hasTransactionData = useMemo(() => expenseData.some(row => row.actual > 0), [expenseData]);
+
+  // Overall insight from the same numbers the chart shows
   const reportInsight = useMemo(() => {
-    const totalPlanned = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-    const totalActual = Object.values(monthlyActuals).reduce((sum, actual) => sum + actual, 0);
+    const totalPlanned = expenseData.reduce((sum, row) => sum + row.planned, 0);
+    const totalActual = expenseData.reduce((sum, row) => sum + row.actual, 0);
+    if (totalActual <= 0) {
+      return "No spending logged for this month yet. Add transactions to compare them with your plan.";
+    }
+    if (totalPlanned <= 0) {
+      return `You spent ${formatCurrency(totalActual)} this month with no budget planned. Add budget items to compare.`;
+    }
     const totalVariance = totalActual - totalPlanned;
-    const variancePercentage = totalPlanned > 0 ? totalVariance / totalPlanned * 100 : 0;
+    const variancePercentage = totalVariance / totalPlanned * 100;
     if (Math.abs(variancePercentage) < 5) {
-      return "Excellent budget accuracy! Your spending closely matches your plan.";
+      return `Excellent budget accuracy! You spent ${formatCurrency(totalActual)} against a ${formatCurrency(totalPlanned)} plan.`;
     } else if (variancePercentage > 20) {
       return `Spending is ${variancePercentage.toFixed(1)}% over budget. Review high-variance categories.`;
     } else if (variancePercentage < -20) {
-      return `Great restraint! Spending is ${Math.abs(variancePercentage).toFixed(1)}% under budget.`;
+      return `Spending is ${Math.abs(variancePercentage).toFixed(1)}% under budget so far: ${formatCurrency(totalActual)} of ${formatCurrency(totalPlanned)} planned.`;
     } else {
-      return `Spending is ${variancePercentage > 0 ? 'over' : 'under'} budget by ${Math.abs(variancePercentage).toFixed(1)}%.`;
+      return `Spending is ${variancePercentage > 0 ? 'over' : 'under'} budget by ${Math.abs(variancePercentage).toFixed(1)}%: ${formatCurrency(totalActual)} of ${formatCurrency(totalPlanned)} planned.`;
     }
-  }, [expenses, monthlyActuals]);
-  const hasTransactionData = useMemo(() => Object.values(monthlyActuals).some(amount => amount > 0), [monthlyActuals]);
+  }, [expenseData]);
   const reportTypes = [{
     title: "Income Report",
     description: "Track your monthly income sources",

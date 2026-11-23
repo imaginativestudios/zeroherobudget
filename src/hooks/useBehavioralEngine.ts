@@ -20,6 +20,7 @@ import {
   checkBudgetCompliance,
   getHighestInterestRate,
   getSurvivalCategories,
+  isDiscretionaryCategory,
   SurplusPowerResult,
   ShadowCostResult,
   BudgetComplianceResult,
@@ -71,12 +72,11 @@ export function useBehavioralEngine(): BehavioralEngineResult {
   const shadowAlerts = useMemo(() => {
     if (highestInterestRate <= 0) return [];
 
-    const survivalCategories = getSurvivalCategories();
     const recentNonSurvival = transactions
       .filter(t => {
         const isRecent = t.date.startsWith(currentMonth);
         const isExpense = t.flow === 'out';
-        const isDiscretionary = !survivalCategories.includes(t.category);
+        const isDiscretionary = isDiscretionaryCategory(t.category);
         return isRecent && isExpense && isDiscretionary;
       })
       .slice(0, 5);

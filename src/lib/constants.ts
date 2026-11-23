@@ -4,64 +4,56 @@ import { Expense, Debt, Asset } from './csvUtils';
 
 // Demo data - comprehensive household budget
 export const DEMO_EXPENSES: Expense[] = [
+  // Planned total $5,401 of $5,800 income, leaving $399/mo as extra debt payment.
+  // Debt Payments lines equal the five DEMO_DEBTS minimums ($1,941).
   // Housing
-  { id: "e1", name: "Rent/Mortgage", planned: 1800, notes: "", category: "Housing" },
-  { id: "e2", name: "Property Tax", planned: 250, notes: "", category: "Housing" },
-  { id: "e3", name: "Home Insurance", planned: 125, notes: "", category: "Housing" },
-  { id: "e4", name: "HOA Fees", planned: 75, notes: "", category: "Housing" },
-  { id: "e5", name: "Repairs & Maintenance", planned: 100, notes: "", category: "Housing" },
-  
+  { id: "e1", name: "Rent", planned: 1450, notes: "", category: "Housing" },
+  { id: "e3", name: "Renters Insurance", planned: 20, notes: "", category: "Housing" },
+
   // Utilities
-  { id: "e6", name: "Electric", planned: 150, notes: "", category: "Utilities" },
-  { id: "e7", name: "Gas/Heating", planned: 80, notes: "", category: "Utilities" },
-  { id: "e8", name: "Water & Sewer", planned: 65, notes: "", category: "Utilities" },
-  { id: "e9", name: "Trash/Recycling", planned: 35, notes: "", category: "Utilities" },
-  { id: "e10", name: "Internet", planned: 75, notes: "", category: "Utilities" },
-  { id: "e11", name: "Cell Phone", planned: 120, notes: "", category: "Utilities" },
-  
+  { id: "e6", name: "Electric", planned: 110, notes: "", category: "Utilities" },
+  { id: "e7", name: "Gas/Heating", planned: 50, notes: "", category: "Utilities" },
+  { id: "e8", name: "Water & Sewer", planned: 40, notes: "", category: "Utilities" },
+  { id: "e10", name: "Internet", planned: 60, notes: "", category: "Utilities" },
+  { id: "e11", name: "Cell Phone", planned: 85, notes: "", category: "Utilities" },
+
   // Transportation
-  { id: "e12", name: "Car Payment", planned: 450, notes: "", category: "Transportation" },
-  { id: "e13", name: "Gas/Fuel", planned: 200, notes: "", category: "Transportation" },
-  { id: "e14", name: "Auto Insurance", planned: 150, notes: "", category: "Transportation" },
-  { id: "e15", name: "Maintenance & Repairs", planned: 100, notes: "", category: "Transportation" },
-  { id: "e16", name: "Parking/Tolls", planned: 50, notes: "", category: "Transportation" },
-  
+  { id: "e13", name: "Gas/Fuel", planned: 160, notes: "", category: "Transportation" },
+  { id: "e14", name: "Auto Insurance", planned: 120, notes: "", category: "Transportation" },
+  { id: "e15", name: "Maintenance & Repairs", planned: 30, notes: "", category: "Transportation" },
+
   // Food
-  { id: "e17", name: "Groceries", planned: 800, notes: "", category: "Food" },
-  { id: "e18", name: "Dining Out", planned: 300, notes: "", category: "Food" },
-  { id: "e19", name: "Coffee/Snacks", planned: 75, notes: "", category: "Food" },
-  
+  { id: "e17", name: "Groceries", planned: 600, notes: "", category: "Food" },
+  { id: "e18", name: "Dining Out", planned: 120, notes: "", category: "Food" },
+
   // Insurance & Healthcare
-  { id: "e20", name: "Health Insurance", planned: 400, notes: "", category: "Insurance & Healthcare" },
-  { id: "e21", name: "Life Insurance", planned: 50, notes: "", category: "Insurance & Healthcare" },
-  { id: "e22", name: "Medical Expenses", planned: 100, notes: "", category: "Insurance & Healthcare" },
-  { id: "e23", name: "Prescriptions", planned: 50, notes: "", category: "Insurance & Healthcare" },
-  { id: "e24", name: "Dental/Vision", planned: 25, notes: "", category: "Insurance & Healthcare" },
-  
+  { id: "e20", name: "Health Insurance", planned: 180, notes: "", category: "Insurance & Healthcare" },
+  { id: "e22", name: "Medical & Prescriptions", planned: 40, notes: "", category: "Insurance & Healthcare" },
+
   // Personal Care
-  { id: "e25", name: "Clothing", planned: 150, notes: "", category: "Personal Care" },
-  { id: "e26", name: "Personal Care/Toiletries", planned: 50, notes: "", category: "Personal Care" },
-  { id: "e27", name: "Haircuts/Grooming", planned: 40, notes: "", category: "Personal Care" },
-  
+  { id: "e25", name: "Clothing", planned: 40, notes: "", category: "Personal Care" },
+  { id: "e26", name: "Toiletries & Haircuts", planned: 40, notes: "", category: "Personal Care" },
+  { id: "e27", name: "Gym Membership", planned: 25, notes: "", category: "Personal Care" },
+
   // Entertainment
-  { id: "e28", name: "Streaming Services", planned: 60, notes: "", category: "Entertainment" },
-  { id: "e29", name: "Hobbies", planned: 100, notes: "", category: "Entertainment" },
-  { id: "e30", name: "Events/Activities", planned: 75, notes: "", category: "Entertainment" },
-  
+  { id: "e28", name: "Streaming Services", planned: 55, notes: "", category: "Entertainment" },
+  { id: "e30", name: "Events & Activities", planned: 15, notes: "", category: "Entertainment" },
+
   // Savings & Investments
-  { id: "e31", name: "Emergency Fund", planned: 500, notes: "", category: "Savings & Investments" },
-  { id: "e32", name: "Retirement (401k/IRA)", planned: 600, notes: "", category: "Savings & Investments" },
-  { id: "e33", name: "Other Savings", planned: 200, notes: "", category: "Savings & Investments" },
-  
-  // Debt Payments
-  { id: "e34", name: "Student Loans", planned: 350, notes: "", category: "Debt Payments" },
-  { id: "e35", name: "Credit Card Payment", planned: 200, notes: "", category: "Debt Payments" },
-  
+  { id: "e31", name: "Emergency Fund", planned: 100, notes: "", category: "Savings & Investments" },
+
+  // Debt Payments (minimums of the five demo debts)
+  { id: "e34", name: "Best Egg Loan", planned: 808, notes: "", category: "Debt Payments" },
+  { id: "e37", name: "401k Loan", planned: 469, notes: "", category: "Debt Payments" },
+  { id: "e12", name: "Kia Auto Loan", planned: 499, notes: "", category: "Debt Payments" },
+  { id: "e35", name: "Amex", planned: 90, notes: "", category: "Debt Payments" },
+  { id: "e36", name: "Chase Freedom", planned: 75, notes: "", category: "Debt Payments" },
+
   // Miscellaneous
-  { id: "e36", name: "Gifts", planned: 75, notes: "", category: "Miscellaneous" },
-  { id: "e37", name: "Pet Care", planned: 100, notes: "", category: "Miscellaneous" },
-  { id: "e38", name: "Subscriptions", planned: 50, notes: "", category: "Miscellaneous" },
-  { id: "e39", name: "Donations", planned: 50, notes: "", category: "Miscellaneous" },
+  { id: "e38", name: "Subscriptions", planned: 20, notes: "", category: "Miscellaneous" },
+  { id: "e40", name: "Gifts", planned: 30, notes: "", category: "Miscellaneous" },
+  { id: "e41", name: "Pet Care", planned: 50, notes: "", category: "Miscellaneous" },
+  { id: "e39", name: "Donations", planned: 20, notes: "", category: "Miscellaneous" },
 ];
 
 export const DEMO_DEBTS: Debt[] = [

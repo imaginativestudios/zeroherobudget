@@ -39,8 +39,9 @@ export function StrategyComparison({
   );
 
   const comparison = useMemo(() => {
-    const snowballMonths = snowballResult.timeline.length - 1;
-    const avalancheMonths = avalancheResult.timeline.length - 1;
+    // Same month count and date convention as the rest of the payoff views
+    const snowballMonths = snowballResult.timeline.length;
+    const avalancheMonths = avalancheResult.timeline.length;
     const snowballInterest = snowballResult.totalInterest;
     const avalancheInterest = avalancheResult.totalInterest;
     
@@ -50,8 +51,8 @@ export function StrategyComparison({
     
     // Calculate debt-free dates
     const today = new Date();
-    const snowballDebtFree = snowballMonths > 0 ? addMonths(today, snowballMonths) : today;
-    const avalancheDebtFree = avalancheMonths > 0 ? addMonths(today, avalancheMonths) : today;
+    const snowballDebtFree = snowballMonths > 0 ? addMonths(today, snowballMonths - 1) : today;
+    const avalancheDebtFree = avalancheMonths > 0 ? addMonths(today, avalancheMonths - 1) : today;
     
     return {
       snowballMonths,
@@ -126,7 +127,14 @@ export function StrategyComparison({
   }
 
   const isFasterSnowball = comparison.snowballMonths < comparison.avalancheMonths;
-  const isCheaperSnowball = comparison.snowballInterest < comparison.avalancheInterest;
+  const isFasterAvalanche = comparison.avalancheMonths < comparison.snowballMonths;
+  // Compare whole cents so rounding noise never earns a badge
+  const snowballCents = Math.round(comparison.snowballInterest * 100);
+  const avalancheCents = Math.round(comparison.avalancheInterest * 100);
+  const isCheaperSnowball = snowballCents < avalancheCents;
+  const isCheaperAvalanche = avalancheCents < snowballCents;
+  const money2 = (v: number) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const money0 = (v: number) => v.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
   return (
     <div className="space-y-6">
@@ -152,7 +160,7 @@ export function StrategyComparison({
               <CardDescription className="text-sm sm:text-base mt-2">
                 {comparison.betterStrategy === "Avalanche" ? (
                   <>
-                    Save <strong className="text-success">${comparison.interestSavings.toFixed(2)}</strong> in interest
+                    Save <strong className="text-success">${money2(comparison.interestSavings)}</strong> in interest
                     {comparison.timeSavings > 0 && (
                       <> and become debt-free <strong className="text-success">{comparison.timeSavings} months</strong> sooner</>
                     )}
@@ -215,7 +223,7 @@ export function StrategyComparison({
                   <span>Total interest</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">${comparison.snowballInterest.toFixed(2)}</span>
+                  <span className="font-semibold">${money2(comparison.snowballInterest)}</span>
                   {isCheaperSnowball && (
                     <Badge variant="default" className="bg-success">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -256,7 +264,7 @@ export function StrategyComparison({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{comparison.avalancheMonths} months</span>
-                  {!isFasterSnowball && (
+                  {isFasterAvalanche && (
                     <Badge variant="default" className="bg-success">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
                       Faster
@@ -271,8 +279,8 @@ export function StrategyComparison({
                   <span>Total interest</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">${comparison.avalancheInterest.toFixed(2)}</span>
-                  {!isCheaperSnowball && (
+                  <span className="font-semibold">${money2(comparison.avalancheInterest)}</span>
+                  {isCheaperAvalanche && (
                     <Badge variant="default" className="bg-success">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
                       Less
@@ -377,9 +385,9 @@ export function StrategyComparison({
                   <tr key={debt.name} className={index % 2 === 0 ? "bg-muted/30" : ""}>
                     <td className="py-3 px-2 sm:px-4 font-medium text-sm">
                       <div className="truncate max-w-[120px] sm:max-w-none">{debt.name}</div>
-                      <div className="text-xs text-muted-foreground sm:hidden">${debt.balance.toFixed(0)}</div>
+                      <div className="text-xs text-muted-foreground sm:hidden">${money0(debt.balance)}</div>
                     </td>
-                    <td className="py-3 px-2 sm:px-4 text-right hidden sm:table-cell">${debt.balance.toFixed(2)}</td>
+                    <td className="py-3 px-2 sm:px-4 text-right hidden sm:table-cell">${money2(debt.balance)}</td>
                     <td className="py-3 px-2 sm:px-4 text-center">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-xs sm:text-sm">{debt.snowballDate ? format(new Date(debt.snowballDate), "MMM yy") : "N/A"}</span>
@@ -450,13 +458,13 @@ export function StrategyComparison({
             <div>
               <p className="text-sm text-muted-foreground">Snowball Total Cost</p>
               <p className="text-2xl font-bold text-chart-1">
-                ${(totalPrincipal + comparison.snowballInterest).toFixed(2)}
+                ${money2(totalPrincipal + comparison.snowballInterest)}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Avalanche Total Cost</p>
               <p className="text-2xl font-bold text-chart-4">
-                ${(totalPrincipal + comparison.avalancheInterest).toFixed(2)}
+                ${money2(totalPrincipal + comparison.avalancheInterest)}
               </p>
             </div>
           </div>

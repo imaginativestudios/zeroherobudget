@@ -358,6 +358,7 @@ export const Dashboard = () => {
     totalDebt,
     totalTransactions: transactions.length,
     largestExpenseCategory,
+    payoffMonths: schedule.timeline.length,
     ...getPreviousMonthData({ income, expenses: totalExpenses, netWorth, subscriptions: monthlySubscriptionSpend, availableForDebt: leftover })
   };
 

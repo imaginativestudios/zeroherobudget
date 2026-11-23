@@ -30,6 +30,7 @@ interface DraftBudgetInput {
 function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
   const { income, expenses, debts, transactions, subscriptions } = input;
   const allocations: BudgetAllocation[] = [];
+  let remaining = income;
 
   // Calculate 3-month category averages from transactions
   const now = new Date();
@@ -66,17 +67,42 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
     }));
 
   // Fixed categories that get priority
-  const fixedCategories = ["Housing", "Utilities", "Insurance", "Transportation", "Debt Payments"];
-  const variableCategories = ["Groceries", "Gas", "Dining", "Entertainment", "Shopping", "Personal"];
+  const fixedCategories = ["Housing", "Utilities", "Insurance", "Insurance & Healthcare", "Transportation", "Debt Payments"];
 
-  let remaining = income;
+  // Spending history per budget line: transactions linked to a line count for
+  // that line only, so lines in the same category never repeat one total.
+  const lineTotals: Record<string, number> = {};
+  const linkedCategoryTotals: Record<string, number> = {};
+  recentOutflows.forEach((t) => {
+    if (!t.expense_id) return;
+    lineTotals[t.expense_id] = (lineTotals[t.expense_id] || 0) + t.amount;
+    const cat = t.category || "Other";
+    linkedCategoryTotals[cat] = (linkedCategoryTotals[cat] || 0) + t.amount;
+  });
+
+  const expenseItems = expenses.filter((e) => !e.is_income);
+  const plannedByCategory: Record<string, number> = {};
+  const countByCategory: Record<string, number> = {};
+  expenseItems.forEach((e) => {
+    plannedByCategory[e.category] = (plannedByCategory[e.category] || 0) + (e.amount || 0);
+    countByCategory[e.category] = (countByCategory[e.category] || 0) + 1;
+  });
+
+  const lineAverage = (e: Expense): number => {
+    const linked = lineTotals[e.id];
+    if (linked && linked > 0) return Math.round(linked / monthsElapsed);
+    // Unlinked category history is shared across that category's lines by planned share
+    const unlinked = (categoryTotals[e.category] || 0) - (linkedCategoryTotals[e.category] || 0);
+    if (unlinked <= 0) return 0;
+    const planned = plannedByCategory[e.category] || 0;
+    const share = planned > 0 ? (e.amount || 0) / planned : 1 / (countByCategory[e.category] || 1);
+    return Math.round((unlinked / monthsElapsed) * share);
+  };
 
   // 1. Allocate existing expenses
-  const expenseItems = expenses.filter((e) => !e.is_income);
-  
-  expenseItems.forEach((e) => {
+  const drafts = expenseItems.map((e) => {
     const isFixed = fixedCategories.includes(e.category);
-    const avg = categoryAverages[e.category];
+    const avg = lineAverage(e);
     const upcomingBill = upcomingBills.find((b) => b.name.toLowerCase().includes(e.name.toLowerCase()));
 
     let suggested = e.amount;
@@ -84,28 +110,47 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
 
     if (upcomingBill) {
       suggested = Math.max(e.amount, upcomingBill.amount);
-      reasoning = `${e.name} is due in ${upcomingBill.daysUntilDue} day${upcomingBill.daysUntilDue !== 1 ? "s" : ""} — prioritized to avoid late fees.`;
+      reasoning = `${e.name} is due in ${upcomingBill.daysUntilDue} day${upcomingBill.daysUntilDue !== 1 ? "s" : ""}, so it is prioritized to avoid late fees.`;
     } else if (isFixed) {
-      suggested = e.amount > 0 ? e.amount : (avg || 0);
-      reasoning = `Fixed expense kept at your planned amount — these bills don't change.`;
-    } else if (avg && avg > 0) {
+      suggested = e.amount > 0 ? e.amount : avg;
+      reasoning = `Fixed bill kept at your planned amount.`;
+    } else if (avg > 0) {
       suggested = avg;
-      reasoning = `Based on your 3-month average of $${avg}/mo in ${e.category}.`;
+      reasoning = `Based on your 3-month average of $${avg}/mo for ${e.name}.`;
     } else if (e.amount > 0) {
       suggested = e.amount;
       reasoning = `Kept at your current planned amount.`;
     } else {
       suggested = 0;
-      reasoning = `No spending history — set to $0 until you have data.`;
+      reasoning = `No spending history yet, so this starts at $0.`;
     }
 
-    remaining -= suggested;
+    return { e, isFlexible: !isFixed && !upcomingBill, suggested: Math.round(suggested), reasoning };
+  });
+
+  // Never plan more than the income: trim flexible lines proportionally first,
+  // then every line if fixed bills alone exceed income.
+  const fitToIncome = (pool: typeof drafts, budget: number) => {
+    const total = pool.reduce((sum, d) => sum + d.suggested, 0);
+    if (total <= budget || total <= 0) return;
+    const factor = Math.max(0, budget) / total;
+    pool.forEach((d) => {
+      d.suggested = Math.floor(d.suggested * factor);
+      d.reasoning = `${d.reasoning} Trimmed so your plan fits your income.`;
+    });
+  };
+  const fixedTotal = drafts.filter((d) => !d.isFlexible).reduce((sum, d) => sum + d.suggested, 0);
+  fitToIncome(drafts.filter((d) => d.isFlexible), income - fixedTotal);
+  fitToIncome(drafts, income);
+
+  drafts.forEach((d) => {
+    remaining -= d.suggested;
     allocations.push({
-      expenseId: e.id,
-      name: e.name,
-      category: e.category,
-      suggestedAmount: Math.round(suggested),
-      reasoning,
+      expenseId: d.e.id,
+      name: d.e.name,
+      category: d.e.category,
+      suggestedAmount: d.suggested,
+      reasoning: d.reasoning,
     });
   });
 
@@ -115,7 +160,7 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
     .sort((a, b) => b.interest_rate - a.interest_rate);
 
   if (highInterestDebts.length > 0 && remaining > 0) {
-    const extraDebtPayment = Math.round(remaining * 0.1);
+    const extraDebtPayment = Math.floor(remaining * 0.1);
     const topDebt = highInterestDebts[0];
     remaining -= extraDebtPayment;
     allocations.push({
@@ -123,7 +168,7 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
       name: `Extra ${topDebt.name} Payment`,
       category: "Debt Payments",
       suggestedAmount: extraDebtPayment,
-      reasoning: `${topDebt.name} has ${topDebt.interest_rate}% APR — putting 10% of your surplus here saves you money long-term.`,
+      reasoning: `${topDebt.name} has ${topDebt.interest_rate}% APR. Putting 10% of your surplus here saves you money long-term.`,
     });
   }
 
@@ -133,8 +178,8 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
       expenseId: "new",
       name: "Emergency Fund / Savings",
       category: "Savings",
-      suggestedAmount: Math.round(remaining),
-      reasoning: `$${Math.round(remaining)} left unassigned — building your safety net is the best use of surplus dollars.`,
+      suggestedAmount: Math.floor(remaining),
+      reasoning: `$${Math.floor(remaining)} left unassigned. Building your safety net is a strong use of surplus dollars.`,
     });
     remaining = 0;
   }
@@ -145,12 +190,12 @@ function generateLocalDraft(input: DraftBudgetInput): BudgetDraft {
     ? ` I've directed 10% of your surplus to your highest-interest debt (${highInterestDebts[0].name} at ${highInterestDebts[0].interest_rate}% APR).`
     : "";
   const billNote = upcomingBills.length > 0
-    ? ` ${upcomingBills.length} bill${upcomingBills.length !== 1 ? "s" : ""} due soon — those are prioritized.`
+    ? ` ${upcomingBills.length} bill${upcomingBills.length !== 1 ? "s" : ""} due soon, and those are prioritized.`
     : "";
 
   return {
     allocations,
-    summary: `I've allocated $${totalAllocated} of your $${income} income across ${allocations.length} categories using your spending history and upcoming bills.${debtNote}${billNote}`,
+    summary: `I've allocated $${totalAllocated.toLocaleString("en-US")} of your $${income.toLocaleString("en-US")} income across ${allocations.length} categories using your spending history and upcoming bills.${debtNote}${billNote}`,
   };
 }
 

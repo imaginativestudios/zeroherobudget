@@ -27,6 +27,13 @@ const SURVIVAL_CATEGORIES = [
   'Transportation',
 ];
 
+// Committed money that is neither essential living cost nor discretionary spending
+const NON_DISCRETIONARY_CATEGORIES = ['Income', 'Debt Payments', 'Savings', 'Savings & Investments'];
+
+export function isDiscretionaryCategory(category: string): boolean {
+  return !SURVIVAL_CATEGORIES.includes(category) && !NON_DISCRETIONARY_CATEGORIES.includes(category);
+}
+
 // Trigger cooldown periods in milliseconds
 export const TRIGGER_COOLDOWNS = {
   SHADOW_COST: 5 * 60 * 1000,        // 5 minutes between shadow cost toasts
@@ -258,8 +265,9 @@ export function calculateFreedomImpact(
   const newSchedule = getDetailedPaymentSchedule(activeDebts, currentExtraBudget + additionalAmount, strategy);
 
   const today = new Date();
-  const baselineFreedomDate = addMonths(today, baselineSchedule.summary.totalMonths);
-  const newFreedomDate = addMonths(today, newSchedule.summary.totalMonths);
+  // Month 1 of a schedule is the current month, matching the payoff engine's timeline labels
+  const baselineFreedomDate = addMonths(today, Math.max(0, baselineSchedule.summary.totalMonths - 1));
+  const newFreedomDate = addMonths(today, Math.max(0, newSchedule.summary.totalMonths - 1));
 
   const sortedDebts = [...activeDebts].sort((a, b) =>
     strategy === 'Avalanche' ? b.apr - a.apr : a.balance - b.balance
@@ -337,7 +345,7 @@ export function calculateSliderImpact(
 
   return sliderValues.map(amount => {
     const schedule = getDetailedPaymentSchedule(activeDebts, currentExtraBudget + amount, strategy);
-    const freedomDate = addMonths(today, schedule.summary.totalMonths);
+    const freedomDate = addMonths(today, Math.max(0, schedule.summary.totalMonths - 1));
     return {
       amount,
       months: schedule.summary.totalMonths,
@@ -442,7 +450,7 @@ export function calculateRecoveryState(
 }
 
 export function getDiscretionaryExpenses(expenses: Expense[]): Expense[] {
-  return expenses.filter(e => !e.is_income && !SURVIVAL_CATEGORIES.includes(e.category));
+  return expenses.filter(e => !e.is_income && isDiscretionaryCategory(e.category));
 }
 
 export function calculateRepairPlan(
@@ -506,10 +514,6 @@ export function getStatusMessage(status: RecoveryStatus, fortressIntegrity: numb
 // =====================================================================
 // SECTION 5: TRIGGER UTILITIES
 // =====================================================================
-
-export function isDiscretionaryCategory(category: string): boolean {
-  return !SURVIVAL_CATEGORIES.includes(category);
-}
 
 export function canTrigger(lastTriggered: number | null, cooldownMs: number): boolean {
   if (lastTriggered === null) return true;

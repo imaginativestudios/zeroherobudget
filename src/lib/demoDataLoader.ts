@@ -214,7 +214,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 0), 'yyyy-MM-dd'),
       description: 'Landlord - Monthly Rent',
-      amount: 1800,
+      amount: 1450,
       category: 'Housing',
       flow: 'out',
       expense_id: 'e1',
@@ -226,7 +226,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 5), 'yyyy-MM-dd'),
       description: 'City Electric Co.',
-      amount: 142 + Math.floor(Math.random() * 30) - 15,
+      amount: 104 + Math.floor(Math.random() * 12),
       category: 'Utilities',
       flow: 'out',
       expense_id: 'e6',
@@ -236,7 +236,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 8), 'yyyy-MM-dd'),
       description: 'Natural Gas Utility',
-      amount: 78 + Math.floor(Math.random() * 20) - 10,
+      amount: 46 + Math.floor(Math.random() * 8),
       category: 'Utilities',
       flow: 'out',
       expense_id: 'e7',
@@ -246,7 +246,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 10), 'yyyy-MM-dd'),
       description: 'Water & Sewer Dept',
-      amount: 62,
+      amount: 40,
       category: 'Utilities',
       flow: 'out',
       expense_id: 'e8',
@@ -256,7 +256,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 3), 'yyyy-MM-dd'),
       description: 'Xfinity Internet',
-      amount: 75,
+      amount: 60,
       category: 'Utilities',
       flow: 'out',
       expense_id: 'e10',
@@ -266,7 +266,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 12), 'yyyy-MM-dd'),
       description: 'Verizon Wireless',
-      amount: 120,
+      amount: 85,
       category: 'Utilities',
       flow: 'out',
       expense_id: 'e11',
@@ -278,10 +278,11 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 15), 'yyyy-MM-dd'),
       description: 'Kia Finance - Auto Loan',
-      amount: 450,
-      category: 'Transportation',
+      amount: 499,
+      category: 'Debt Payments',
       flow: 'out',
       expense_id: 'e12',
+      debt_id: 'd3', // Links to Kia Auto Loan
       notes: '',
     });
     
@@ -292,7 +293,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
         id: uuidv4(),
         date: format(addDays(monthStart, 2 + i * 7), 'yyyy-MM-dd'),
         description: `${gasStations[i]} Gas Station`,
-        amount: 45 + Math.floor(Math.random() * 15),
+        amount: 34 + Math.floor(Math.random() * 10),
         category: 'Transportation',
         flow: 'out',
         expense_id: 'e13',
@@ -307,7 +308,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
         id: uuidv4(),
         date: format(addDays(monthStart, 3 + i * 7), 'yyyy-MM-dd'),
         description: groceryStores[i],
-        amount: 150 + Math.floor(Math.random() * 80),
+        amount: 135 + Math.floor(Math.random() * 25),
         category: 'Food',
         flow: 'out',
         expense_id: 'e17',
@@ -322,7 +323,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
         id: uuidv4(),
         date: format(addDays(monthStart, 4 + i * 5), 'yyyy-MM-dd'),
         description: restaurants[i],
-        amount: 15 + Math.floor(Math.random() * 45),
+        amount: 14 + Math.floor(Math.random() * 16),
         category: 'Food',
         flow: 'out',
         expense_id: 'e18',
@@ -335,7 +336,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 1), 'yyyy-MM-dd'),
       description: 'Blue Cross Health Insurance',
-      amount: 400,
+      amount: 180,
       category: 'Insurance & Healthcare',
       flow: 'out',
       expense_id: 'e20',
@@ -345,7 +346,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 18), 'yyyy-MM-dd'),
       description: 'State Farm Auto Insurance',
-      amount: 150,
+      amount: 120,
       category: 'Transportation',
       flow: 'out',
       expense_id: 'e14',
@@ -383,6 +384,26 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       expense_id: 'e38',
       notes: '',
     });
+    transactions.push({
+      id: uuidv4(),
+      date: format(addDays(monthStart, 9), 'yyyy-MM-dd'),
+      description: 'Disney+',
+      amount: 13.99,
+      category: 'Entertainment',
+      flow: 'out',
+      expense_id: 'e28',
+      notes: '',
+    });
+    transactions.push({
+      id: uuidv4(),
+      date: format(addDays(monthStart, 1), 'yyyy-MM-dd'),
+      description: 'Planet Fitness',
+      amount: 24.99,
+      category: 'Personal Care',
+      flow: 'out',
+      expense_id: 'e27',
+      notes: '',
+    });
     
     // Debt payments - linked to specific debts for balance tracking
     transactions.push({
@@ -400,7 +421,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 25), 'yyyy-MM-dd'),
       description: 'Amex Payment',
-      amount: 150,
+      amount: 90,
       category: 'Debt Payments',
       flow: 'out',
       expense_id: 'e35',
@@ -414,9 +435,20 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       amount: 469,
       category: 'Debt Payments',
       flow: 'out',
-      expense_id: 'e34',
-      debt_id: 'r1', // Links to 401k Loan
+      expense_id: 'e37',
+      debt_id: 'd2', // Links to 401k Loan
       notes: 'Payroll deduction',
+    });
+    transactions.push({
+      id: uuidv4(),
+      date: format(addDays(monthStart, 24), 'yyyy-MM-dd'),
+      description: 'Chase Freedom Payment',
+      amount: 75,
+      category: 'Debt Payments',
+      flow: 'out',
+      expense_id: 'e36',
+      debt_id: 'c2', // Links to Chase Freedom
+      notes: 'Minimum payment',
     });
     
     // Savings transfer
@@ -436,7 +468,7 @@ function generateDemoTransactions(): DemoTransactionRow[] {
       id: uuidv4(),
       date: format(addDays(monthStart, 16), 'yyyy-MM-dd'),
       description: 'AMC Theaters',
-      amount: 32,
+      amount: 15,
       category: 'Entertainment',
       flow: 'out',
       expense_id: 'e30',
@@ -466,28 +498,17 @@ function generateDemoTransactions(): DemoTransactionRow[] {
         notes: 'Home goods',
       });
       
-      // Extra debt payments (Strike examples) - showcase the Strike feature
+      // Extra debt payment: this month's leftover goes to the snowball target
       transactions.push({
         id: uuidv4(),
         date: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
-        description: 'Extra Payment - Amex Card',
-        amount: 200,
+        description: 'Extra Payment - Chase Freedom',
+        amount: 350,
         category: 'Debt Payments',
         flow: 'out',
-        expense_id: null,
-        debt_id: 'c1', // Links to Amex Card
-        notes: 'Strike payment: Saved $45 in interest',
-      });
-      transactions.push({
-        id: uuidv4(),
-        date: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        description: 'Extra Payment - Best Egg Loan',
-        amount: 150,
-        category: 'Debt Payments',
-        flow: 'out',
-        expense_id: null,
-        debt_id: 'd1', // Links to Best Egg Loan
-        notes: 'Strike payment: Tax refund applied!',
+        expense_id: 'e36',
+        debt_id: 'c2', // Links to Chase Freedom
+        notes: 'Extra payment from this month\'s leftover',
       });
     }
   }

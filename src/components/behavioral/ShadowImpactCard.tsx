@@ -14,6 +14,7 @@ import { getSurvivalCategories, translateToHumanTime, calculateTrueCost } from '
 import { useLocalDebts } from '@/hooks/useLocalDebts';
 import { useUserLocalStorage } from '@/hooks/useUserLocalStorage';
 import { formatCurrency } from '@/lib/constants';
+import { useExpenses } from '@/hooks/useLocalSettings';
 import { soundEffects } from '@/lib/soundEffects';
 import { haptics } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,7 @@ export function ShadowImpactCard({
   const { highestInterestRate } = useBehavioralEngine();
   const { debts } = useLocalDebts();
   const [income] = useUserLocalStorage("bdt_income", 0);
-  const [expenses] = useUserLocalStorage("bdt_expenses", []);
+  const [expenses] = useExpenses();
   const [strategy] = useUserLocalStorage("bdt_strategy", "Snowball");
 
   // Calculate leftover budget

@@ -36,6 +36,7 @@ import { PaymentScheduleTable } from "@/components/debt/PaymentScheduleTable";
 import { StrategyComparison } from "@/components/debt/StrategyComparison";
 import { DebtSimulatorCard } from "@/components/debt/DebtSimulatorCard";
 import { EditableValue } from "@/components/ui/editable-value";
+import { useExpenses } from "@/hooks/useLocalSettings";
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { generateDebtCoachTips } from "@/lib/debtInsights";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ export const DebtSnowball = () => {
   const [debts, setDebts] = useDebtItems();
   const [strategy, setStrategy] = useUserLocalStorage("bdt_strategy", "Snowball");
   const [income] = useUserLocalStorage("bdt_income", 0);
-  const [expenses] = useUserLocalStorage("bdt_expenses", []);
+  const [expenses] = useExpenses();
   const { transactions } = useTransactions();
   const [committedStrategy, setCommittedStrategy] = useUserLocalStorage<string | null>("bdt_committed_strategy", null);
 

@@ -16,9 +16,9 @@ interface FreedomTimelineWidgetProps {
 
 const getHeroicMessage = (months: number): string => {
   if (months === 0) return "Victory! You've paid off all your debts!";
-  if (months <= 6) return "Almost there! Just a few more months!";
-  if (months <= 12) return "You're in the final stretch!";
-  if (months <= 24) return "Steady progress leads to certain success!";
+  if (months <= 6) return "Only a few months to go. Keep paying on schedule.";
+  if (months <= 12) return "Less than a year to go. Stay the course.";
+  if (months <= 24) return "Steady payments will get you there.";
   if (months <= 36) return "Your discipline will pay off!";
   return "The longest journeys start with a single step!";
 };

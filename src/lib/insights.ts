@@ -13,6 +13,8 @@ export interface InsightData {
   totalDebt: number;
   totalTransactions: number;
   largestExpenseCategory?: { name: string; amount: number; percentage: number };
+  /** Months from the payoff engine, so insights match the payoff plan */
+  payoffMonths?: number;
 }
 
 export function generateFinancialInsights(data: InsightData) {
@@ -110,7 +112,9 @@ function generateDebtInsight(data: InsightData): string | undefined {
   }
   
   if (totalDebt > 0 && availableForDebt > 0) {
-    const monthsToPayoff = Math.ceil(totalDebt / availableForDebt);
+    const monthsToPayoff = data.payoffMonths && data.payoffMonths > 0
+      ? data.payoffMonths
+      : Math.ceil(totalDebt / availableForDebt);
     if (monthsToPayoff <= 24) return `Could be debt-free in ${monthsToPayoff} months`;
     if (monthsToPayoff > 60) return `Long payoff timeline: ${monthsToPayoff} months`;
   }

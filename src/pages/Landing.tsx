@@ -8,6 +8,7 @@ import { SEO } from '@/components/SEO';
 import { DeviceMockups } from '@/components/DeviceMockups';
 import { ArrowRight, Shield, TrendingDown, Target, Heart, Zap, Sprout, ChevronRight } from 'lucide-react';
 import { ScrollCue } from '@/components/ScrollCue';
+import { ProductHuntBadge } from '@/components/ProductHuntBadge';
 import { motion } from 'framer-motion';
 
 export default function Landing() {
@@ -207,6 +208,16 @@ export default function Landing() {
                 <span>Track Every Dollar</span>
               </div>
             </motion.div>
+
+            {/* Product Hunt launch badge */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 1 }}
+              className="mt-4 flex justify-center"
+            >
+              <ProductHuntBadge theme="dark" />
+            </motion.div>
           </div>
 
           <ScrollCue targetId="oaths-section" />
@@ -404,6 +415,8 @@ export default function Landing() {
                   Support
                 </Link>
               </div>
+
+              <ProductHuntBadge theme="light" lazy />
             </div>
             <LegalFooterNotice />
           </div>

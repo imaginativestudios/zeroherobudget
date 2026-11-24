@@ -262,7 +262,7 @@ export default function Landing() {
         </section>
 
         {/* The Path Section - Journey Map */}
-        <section className="py-16 sm:py-24 bg-secondary">
+        <section className="py-16 sm:py-24 bg-secondary overflow-x-clip">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-foreground">
@@ -296,7 +296,7 @@ export default function Landing() {
 
                   {/* Content Card */}
                   <div
-                    className={`ml-12 sm:ml-0 sm:w-[calc(50%-2rem)] bg-card border border-border rounded-xl p-5 sm:p-6 ${
+                    className={`min-w-0 flex-1 ml-12 sm:flex-none sm:ml-0 sm:w-[calc(50%-2rem)] bg-card border border-border rounded-xl p-5 sm:p-6 ${
                       idx % 2 === 0 ? 'sm:mr-auto sm:text-right' : 'sm:ml-auto sm:text-left'
                     }`}
                   >
@@ -337,7 +337,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-5xl mx-auto [&>div]:flex-wrap sm:[&>div]:flex-nowrap">
               <DeviceMockups />
             </div>
           </div>

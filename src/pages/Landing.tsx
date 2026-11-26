@@ -118,7 +118,9 @@ export default function Landing() {
       />
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden">
+        {/* Bottom padding reserves room for the absolutely positioned ScrollCue so
+            centered hero content can never sit underneath it on short viewports. */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden pt-6 pb-24">
           {/* Solid Gradient Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
             {/* Subtle decorative elements for visual depth */}

@@ -282,9 +282,10 @@ export function useOnboardingState(): UseOnboardingStateResult {
 
   const enterDashboard = useCallback(() => {
     if (isDemoMode) {
-      // Load demo data before entering dashboard
-      loadDemoData();
+      // Clear onboarding progress first: its profile save would otherwise re-create
+      // the setup profile right after loadDemoData() wipes the demo keys.
       clearOnboardingProgress();
+      loadDemoData();
       toast.success('Demo Loaded! 🎉', {
         description: 'Explore a fully-populated financial dashboard.',
       });

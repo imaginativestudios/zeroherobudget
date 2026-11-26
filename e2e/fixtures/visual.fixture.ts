@@ -32,6 +32,11 @@ export const test = base.extend<{
     await page.clock.setFixedTime(new Date('2026-06-15T12:00:00Z'));
     // Keep randomly selected content reproducible across fresh pages and CI runs.
     await page.addInitScript(() => {
+      // InstallPromptBanner appears 3s after mount on iOS-like devices (the
+      // Tablet WebKit project emulates an iPad), which races the capture and
+      // made baselines flip between runs. Start every visual test with it
+      // dismissed, exactly as the banner's own close button records it.
+      try { localStorage.setItem('pwa-banner-dismissed', 'true'); } catch { /* storage blocked */ }
       let seed = 20260615;
       Math.random = () => {
         seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;

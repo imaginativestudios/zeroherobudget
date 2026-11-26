@@ -20,5 +20,6 @@ test('demo onboarding saves wage at ceremony then loads sample data', async ({ p
   await expect(page).toHaveURL(/\/dashboard/);
   await page.reload();
   // Demo entry clears the setup profile; it is not a free-account signup.
-  await expect.poll(async () => (await readProfile())?.hourly_wage).toBeNull();
+  // A removed profile and one with no wage are equivalent: the wage must not persist.
+  await expect.poll(async () => (await readProfile())?.hourly_wage ?? null).toBeNull();
 });

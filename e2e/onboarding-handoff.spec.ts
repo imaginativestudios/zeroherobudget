@@ -3,12 +3,16 @@ import { applyPendingOnboarding, stageOnboarding } from '../src/lib/onboardingHa
 
 test('free signup preserves wage, debt and savings target in only its account', () => {
   const values = new Map<string, string>();
-  const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+  const storage = {
     getItem: (key: string) => values.get(key) ?? null,
     setItem: (key: string, value: string) => values.set(key, value),
     removeItem: (key: string) => values.delete(key),
-  } });
+  };
+  // safeStorage reads window.localStorage, so this Node-run test stubs both.
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage });
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: { localStorage: storage } });
   try {
     stageOnboarding('new-account', { hourlyWage: 37, debtName: 'Visa', debtBalance: 1200, debtApr: 20, debtMinPayment: 35, moatTarget: 2000 }, true);
     applyPendingOnboarding('other-account');
@@ -28,5 +32,7 @@ test('free signup preserves wage, debt and savings target in only its account', 
   } finally {
     if (original) Object.defineProperty(globalThis, 'localStorage', original);
     else Reflect.deleteProperty(globalThis, 'localStorage');
+    if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
+    else Reflect.deleteProperty(globalThis, 'window');
   }
 });

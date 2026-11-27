@@ -26,10 +26,10 @@ const NotFound = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-xl mx-auto text-center px-4 animate-fade-in">
+      <div className="relative z-10 text-center px-4 animate-fade-in">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
-          <Logo className="w-full max-w-xs h-auto md:w-auto md:max-w-none md:h-28" />
+          <Logo className="h-20 md:h-28 w-auto" />
         </div>
 
         {/* 404 Title */}
@@ -41,7 +41,7 @@ const NotFound = () => {
           Oops! Page Not Found
         </h2>
         
-        <p className="text-lg text-white/80 mb-8 max-w-md w-full mx-auto break-words">
+        <p className="text-lg text-white/80 mb-8 max-w-md mx-auto">
           The page you're looking for doesn't exist or has been moved. 
           Let's get you back on track to financial freedom!
         </p>
